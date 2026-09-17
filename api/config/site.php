@@ -77,4 +77,88 @@ return [
         'https://www.google.com/recaptcha/api/siteverify'
     ),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Corporate CMS
+    |--------------------------------------------------------------------------
+    |
+    | Shared templates for the Kurumsal section. List path aliases exist because
+    | the reference website's pager on EN/DE sometimes keeps the Turkish slug.
+    | Superadmin-created rows are resolved by their stored url_path; these
+    | prefixes still match `/id/slug` detail URLs when the slug changes.
+    |
+    */
+
+    'corporate' => [
+        'article_types' => [
+            'news' => [
+                'list_layout' => 'three-col',
+                'detail_layout' => 'wide',
+                'list_image_alt' => 'News-photo',
+                'detail_image_alt' => 'startkey-news',
+                'lists' => [
+                    'tr' => ['/tr/haberler'],
+                    'en' => ['/en/news', '/en/haberler'],
+                    'de' => ['/de/nachricht', '/de/haberler'],
+                ],
+                'detail_prefixes' => [
+                    'tr' => ['/tr/haberler'],
+                    'en' => ['/en/news', '/en/haberler'],
+                    'de' => ['/de/nachricht', '/de/haberler'],
+                ],
+            ],
+            'announcement' => [
+                'list_layout' => 'three-col',
+                'detail_layout' => 'wide',
+                'list_image_alt' => 'News-photo',
+                'detail_image_alt' => 'startkey-notices',
+                'lists' => [
+                    'tr' => ['/tr/duyurular'],
+                    'en' => ['/en/announcements', '/en/duyurular'],
+                    'de' => ['/de/ankundigungen', '/de/duyurular'],
+                ],
+                'detail_prefixes' => [
+                    'tr' => ['/tr/duyuru-detay'],
+                    'en' => ['/en/announcements-detail', '/en/duyuru-detay'],
+                    'de' => ['/de/ankundigungen-detail', '/de/duyuru-detay'],
+                ],
+            ],
+            'blog' => [
+                'list_layout' => 'two-col-sidebar',
+                'detail_layout' => 'with-sidebar',
+                'list_image_alt' => 'Blog-photo',
+                'detail_image_alt' => 'Blog-photo',
+                'lists' => [
+                    'tr' => ['/tr/bloglar'],
+                    'en' => ['/en/blogs', '/en/bloglar'],
+                    'de' => ['/de/blogs', '/de/bloglar'],
+                ],
+                'detail_prefixes' => [
+                    'tr' => ['/tr/bloglar'],
+                    'en' => ['/en/blogs', '/en/bloglar'],
+                    'de' => ['/de/blogs', '/de/bloglar'],
+                ],
+            ],
+        ],
+        'people' => [
+            'lists' => [
+                'tr' => ['/tr/yonetim-kadrosu'],
+                'en' => ['/en/people'],
+                'de' => ['/de/people'],
+            ],
+            'detail_prefixes' => [
+                'tr' => ['/tr/kadro-detay'],
+                'en' => ['/en/people-detail', '/en/kadro-detay'],
+                'de' => ['/de/people-detail', '/de/kadro-detay'],
+            ],
+        ],
+        'champions' => [
+            'lists' => [
+                'tr' => ['/tr/sampiyonlar'],
+                'en' => ['/en/champions'],
+                'de' => ['/de/champions'],
+            ],
+        ],
+    ],
+
 ];

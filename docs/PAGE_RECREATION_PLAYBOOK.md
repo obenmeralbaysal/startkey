@@ -399,6 +399,21 @@ docker compose exec api php artisan test --filter=OSayfa
 - Filtre/lookup için network tab → `fetch-reference-lookups.py` modeli.
 - Pagination/carousel tema class’ları (`owl-carousel`) — kendi slider’ını yazma.
 
+### Kurumsal yazı ailesi (haber, duyuru, blog, yönetim, şampiyon)
+
+Tek tek statik sayfa yazma. Ortak şablon + CMS satırı:
+
+```bash
+python3 scripts/crawl-corporate.py
+```
+
+- Liste sayfalarını `pageIndex` bitene kadar tara; brifingdeki sayıyı doğrulama.
+- Her kartın detay URL’sine gir; gövde HTML’sini al.
+- EN/DE pager bazen TR slug bırakır (`/en/haberler`); alias’ı `config/site.php` `corporate` altında tut.
+- Next catch-all (`[lang]/[...path]`) `GET /api/v1/corporate?path=` ile şablonu seçer. Yeni Superadmin satırı yeni Next sayfası gerektirmez.
+- Şablonlar: `article-list` / `article-detail` / `people-list` / `people-detail` / `cms-page` / `champions`.
+- Doğrulama: `node scripts/verify-corporate.mjs http://localhost:3000`
+
 ### Detay (tek ilan, tek ofis)
 
 - Faz 1 kart `href`’leri zaten bu path’lere gidiyor.

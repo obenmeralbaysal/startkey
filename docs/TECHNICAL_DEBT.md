@@ -74,20 +74,40 @@ Referans sitedeki gerçek sonuç metinleri gözlemlendiğinde bu dosyalardaki di
 
 **Durum:** Açık
 
-### TD-005 — Ana sayfa dışındaki public sayfalar henüz yok
+### TD-005 — Ana sayfa ve Kurumsal dışındaki public sayfalar henüz yok
 
 **Alan:** Navigasyon / arama formları
 
 **Mevcut Durum:**
 
-Header, footer, arama formu ve kart bağlantıları referans sitedeki yolları (`/tr/portfoy`, `/tr/ofisler`, `/tr/sayfa/hakkimizda` vb.) korur. Bu sayfalar Faz 2 kapsamındadır; tıklanınca Next.js 404 döner.
+Header, footer ve arama formu referans sitedeki yolları korur. Kurumsal ailesi (`/tr/sayfa/hakkimizda`, `/tr/haberler`, `/tr/duyurular`, `/tr/bloglar`, `/tr/yonetim-kadrosu`, `/tr/sampiyonlar` ve dil karşılıkları) Faz 2'de eklendi. Portföy, ofis, franchise ve diğer public sayfalar tıklanınca Next.js 404 döner.
 
 **Geçici Olmasının Nedeni:**
 
-Faz 1 yalnızca ana sayfayı kapsar.
+Bu sprint yalnızca Kurumsal menüsünü kapsar.
 
 **Gelecekteki Implementasyon:**
 
-Faz 2'de her public sayfa aynı incele → asset → içerik → UI döngüsü ile eklenecektir.
+Kalan public sayfalar aynı incele → asset → içerik → paylaşılan şablon döngüsü ile eklenecektir.
+
+**Durum:** Açık
+
+### TD-006 — Kurumsal CMS içeriği referans anlık görüntüsünden geliyor
+
+**Alan:** Backend / Kurumsal sayfalar
+
+**Mevcut Durum:**
+
+Hakkımızda, vizyon-misyon, yönetim kartları, medyada biz, duyurular, blog ve şampiyon grupları `api/database/data/corporate-seed.json` içindeki referans siteden çekilmiş anlık görüntüden seed edilir. Next.js bu satırları paylaşılan şablonlara (`article-list`, `article-detail`, `people-list`, `cms-page`, `champions`) basar. Superadmin paneli henüz yazmadığı için yeni içerik API/veritabanına elle veya seed yenilemesi ile girer.
+
+Türkçe listelerde İngilizce/Almanca karşılığı olmayan az sayıda kayıt vardır (duyuru 73/72/72, blog 41/39/39); o dillerde gösterilmezler.
+
+**Geçici Olmasının Nedeni:**
+
+Nihai yazma arayüzü Superadmin paneli ve ileride Reonix/CMS entegrasyonudur. Referans sitenin private backend'i kopyalanamaz.
+
+**Gelecekteki Implementasyon:**
+
+Superadmin aynı CMS tablolarına (`cms_articles`, `cms_people`, `cms_pages`, `cms_champion_groups`) yazacak; public şablonlar değişmeden yeni satırı gösterecektir. Seed dosyası yalnızca ilk doldurma / felaket kurtarma kaynağı olarak kalır.
 
 **Durum:** Açık

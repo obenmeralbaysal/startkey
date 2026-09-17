@@ -1,3 +1,7 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 import type { HomepageContent } from "@/content/types";
 import type { Locale } from "@/lib/locales";
 
@@ -25,8 +29,9 @@ const SELECTOR_STYLES = `
 `;
 
 /**
- * Language dropdown of the header. The options link to the same culture-switch path as
- * the reference website, which sends the visitor to the chosen language's homepage.
+ * Language dropdown of the header. Options keep the reference culture-switch path
+ * and pass the current public path so inner Kurumsal pages land on their equivalent
+ * URL in the chosen language.
  */
 export function LanguageSelector({
   content,
@@ -37,6 +42,8 @@ export function LanguageSelector({
   currentCode: Locale;
   id: string;
 }) {
+  const pathname = usePathname() || `/${currentCode}`;
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: SELECTOR_STYLES }} />
@@ -69,7 +76,7 @@ export function LanguageSelector({
                   <a
                     className="dropdown-item d-flex align-items-center"
                     style={{ justifyContent: "space-evenly" }}
-                    href={`/${currentCode}/Settings/ChangeCulture?langCode=${option.code}`}
+                    href={`/${currentCode}/Settings/ChangeCulture?langCode=${option.code}&returnPath=${encodeURIComponent(pathname)}`}
                   >
                     <img src={`/img/flags/${option.code}.svg`} alt="flag" width={25} />
                     {option.label}
