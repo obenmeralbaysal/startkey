@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\CorporateController;
 use App\Http\Controllers\Api\V1\HomepageController;
 use App\Http\Controllers\Api\V1\LookupController;
 use App\Http\Controllers\Api\V1\NewsletterController;
+use App\Http\Controllers\Api\V1\TrainingApplicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -14,7 +16,12 @@ Route::prefix('v1')->group(function () {
 
     Route::get('lookups/{endpoint}', LookupController::class);
 
-    // Public write endpoint: throttled to keep the form from being used for bulk writes.
+    // Public write endpoints: throttled to keep the forms from being used for bulk writes.
     Route::post('newsletter', [NewsletterController::class, 'store'])
         ->middleware('throttle:newsletter');
+    Route::post('contact', [ContactMessageController::class, 'store'])
+        ->middleware('throttle:contact');
+    Route::post('trainings/{externalId}/applications', [TrainingApplicationController::class, 'store'])
+        ->middleware('throttle:training-application')
+        ->whereNumber('externalId');
 });

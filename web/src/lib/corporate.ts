@@ -137,6 +137,89 @@ export type CorporatePayload =
       meta: CorporateMeta;
       groups: { kicker: string; title: string; photos: string[] }[];
       alternates: Record<string, string>;
+    }
+  | {
+      kind: "training-list";
+      heading: string;
+      detailLabel: string;
+      breadcrumb: CorporateBreadcrumb;
+      meta: CorporateMeta;
+      sections: {
+        group: string;
+        heading: string;
+        headingStyle: string;
+        sectionStyle: string;
+        items: {
+          externalId: number;
+          urlPath: string;
+          title: string;
+          image: string;
+          infoLines: { icon: string; text: string }[];
+          detailLabel: string;
+        }[];
+      }[];
+      alternates: Record<string, string>;
+    }
+  | {
+      kind: "training-detail";
+      externalId: number;
+      group: string;
+      urlPath: string;
+      title: string;
+      image: string;
+      datePrefix: string;
+      dateValue: string;
+      timePrefix: string;
+      timeValue: string;
+      pricePrefix: string;
+      priceValue: string;
+      locationHeading: string;
+      locationValue: string;
+      descriptionHeading: string;
+      descriptionHtml: string;
+      formHeading: string;
+      hasApplicationForm: boolean;
+      form: {
+        placeholders: { firstName?: string; lastName?: string; email?: string };
+        required: Record<string, string>;
+        genders: { value: number; label: string }[];
+        submitLabel: string;
+        captchaError: string;
+      };
+      relatedHeading: string;
+      related: { externalId: number | null; urlPath: string; title: string; image: string }[];
+      breadcrumb: CorporateBreadcrumb;
+      meta: CorporateMeta;
+      alternates: Record<string, string>;
+    }
+  | {
+      kind: "contact";
+      key: string;
+      heading: string;
+      breadcrumb: CorporateBreadcrumb;
+      meta: CorporateMeta;
+      items: {
+        icon: string;
+        heading: string;
+        html: string;
+        itemStyle: string;
+        infoStyle: string;
+      }[];
+      kicker: string;
+      pageHeading: string;
+      intro: string;
+      hoursHeading: string;
+      hours: { labelHtml: string; value: string }[];
+      social: { href: string; icon: string }[];
+      formTitle: string;
+      placeholders: Record<string, string>;
+      required: Record<string, string>;
+      submitLabel: string;
+      captchaError: string;
+      mapHref: string;
+      mapSrc: string;
+      mapTitle: string;
+      alternates: Record<string, string>;
     };
 
 export async function fetchCorporatePage(

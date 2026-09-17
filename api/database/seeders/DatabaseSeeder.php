@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ReferenceDataSeeder::class,
             CorporateDataSeeder::class,
+            AcademyDataSeeder::class,
         ]);
     }
 }

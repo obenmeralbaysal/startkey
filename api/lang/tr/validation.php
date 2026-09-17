@@ -14,5 +14,11 @@ return [
         'email' => 'E-posta',
         'locale' => 'Dil',
         'captcha_token' => 'Doğrulama',
+        'name' => 'Ad',
+        'surname' => 'Soyad',
+        'phone' => 'Telefon',
+        'subject' => 'Konu',
+        'message' => 'Mesaj',
+        'gender_id' => 'Cinsiyet',
     ],
 ];

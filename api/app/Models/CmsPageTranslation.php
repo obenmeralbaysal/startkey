@@ -15,11 +15,13 @@ class CmsPageTranslation extends Model
         'body_html',
         'breadcrumb',
         'meta',
+        'payload',
     ];
 
     protected $casts = [
         'breadcrumb' => 'array',
         'meta' => 'array',
+        'payload' => 'array',
     ];
 
     public function page(): BelongsTo

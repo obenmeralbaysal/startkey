@@ -18,10 +18,6 @@ const LOADED_ATTRIBUTE = "data-startkey-theme-runtime";
 
 export function ThemeScripts() {
   useEffect(() => {
-    if (document.querySelector(`script[${LOADED_ATTRIBUTE}]`)) {
-      return;
-    }
-
     let cancelled = false;
 
     const loadSequentially = async () => {
@@ -29,12 +25,34 @@ export function ThemeScripts() {
         if (cancelled) {
           return;
         }
+        const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+        if (existing) {
+          if (existing.dataset.loaded !== "1") {
+            await new Promise<void>((resolve, reject) => {
+              existing.addEventListener(
+                "load",
+                () => {
+                  existing.dataset.loaded = "1";
+                  resolve();
+                },
+                { once: true },
+              );
+              existing.addEventListener("error", () => reject(new Error(`Failed to load ${src}`)), {
+                once: true,
+              });
+            });
+          }
+          continue;
+        }
         await new Promise<void>((resolve, reject) => {
           const script = document.createElement("script");
           script.src = src;
           script.async = false;
           script.setAttribute(LOADED_ATTRIBUTE, "");
-          script.addEventListener("load", () => resolve());
+          script.addEventListener("load", () => {
+            script.dataset.loaded = "1";
+            resolve();
+          });
           script.addEventListener("error", () => reject(new Error(`Failed to load ${src}`)));
           document.body.appendChild(script);
         });
@@ -43,12 +61,18 @@ export function ThemeScripts() {
 
     loadSequentially()
       .then(() => {
+        if (cancelled) {
+          return;
+        }
         // Bootstrap, AOS and Fancybox all fall back to initialising immediately when
         // the document is already parsed. Odometer only listens for
         // `DOMContentLoaded`, which has fired by the time the bundles arrive here, so
         // its counters are initialised explicitly to get the reference's markup and
         // scroll-in animation.
         window.Odometer?.init();
+        // The theme sticky handler only runs on `scroll`. Fire once so the header
+        // matches the current offset instead of waiting for the next wheel event.
+        window.dispatchEvent(new Event("scroll"));
       })
       .catch((error) => {
         console.error("Theme runtime could not be initialised", error);

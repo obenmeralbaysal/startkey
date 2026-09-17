@@ -140,6 +140,25 @@ return [
                 ],
             ],
         ],
+        'trainings' => [
+            'lists' => [
+                'tr' => ['/tr/egitimlerimiz'],
+                'en' => ['/en/our-educations', '/en/egitimlerimiz'],
+                'de' => ['/de/our-educations', '/de/egitimlerimiz'],
+            ],
+            'detail_prefixes' => [
+                'tr' => ['/tr/egitim-detay'],
+                'en' => ['/en/egitim-detay'],
+                'de' => ['/de/egitim-detay'],
+            ],
+        ],
+        'contact' => [
+            'lists' => [
+                'tr' => ['/tr/iletisim'],
+                'en' => ['/en/contact', '/en/iletisim'],
+                'de' => ['/de/kontakt', '/de/iletisim'],
+            ],
+        ],
         'people' => [
             'lists' => [
                 'tr' => ['/tr/yonetim-kadrosu'],

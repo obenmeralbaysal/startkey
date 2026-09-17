@@ -28,12 +28,6 @@ export function ArticleList({ data }: { data: Extract<CorporatePayload, { kind: 
               <>
                 <div className="col-lg-8">
                   {cards}
-                  <Pagination
-                    pageIndex={data.pagination.pageIndex}
-                    totalPages={data.pagination.totalPages}
-                    basePath={data.pagination.basePath}
-                    searchQuery={data.pagination.searchQuery}
-                  />
                 </div>
                 <div className="col-xl-4 col-lg-12">
                   {data.sidebar ? (
@@ -44,15 +38,15 @@ export function ArticleList({ data }: { data: Extract<CorporatePayload, { kind: 
             ) : (
               <div className="col-lg-12">
                 {cards}
-                <Pagination
-                  pageIndex={data.pagination.pageIndex}
-                  totalPages={data.pagination.totalPages}
-                  basePath={data.pagination.basePath}
-                  searchQuery={data.pagination.searchQuery}
-                />
               </div>
             )}
           </div>
+          <Pagination
+            pageIndex={data.pagination.pageIndex}
+            totalPages={data.pagination.totalPages}
+            basePath={data.pagination.basePath}
+            searchQuery={data.pagination.searchQuery}
+          />
         </div>
       </div>
     </>

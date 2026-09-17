@@ -47,6 +47,26 @@ class CorporateApiTest extends TestCase
             ->assertJsonPath('data.bodyHtml', '<p>Villakent Begonvilla.</p>');
     }
 
+    public function test_it_lists_articles_in_seed_position_not_external_id_order(): void
+    {
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/duyurular')
+            ->assertOk()
+            ->assertJsonPath('data.kind', 'article-list')
+            ->assertJsonPath('data.type', 'announcement')
+            ->assertJsonPath('data.items.0.externalId', 1523)
+            ->assertJsonPath('data.items.0.title', 'Startkey Çözüm')
+            ->assertJsonPath('data.items.1.externalId', 1268)
+            ->assertJsonPath('data.items.1.title', 'Startkey Melis Gayrimenkul');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/bloglar')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.externalId', 1245)
+            ->assertJsonPath('data.sidebar.popularHeading', 'Popüler Bloglar')
+            ->assertJsonPath('data.sidebar.popular.0.title', 'Bizden Bize 38')
+            ->assertJsonPath('data.sidebar.popular.0.image', '/media/content/article-85x85.jpg')
+            ->assertJsonCount(2, 'data.sidebar.popular');
+    }
+
     public function test_it_paginates_blogs_and_filters_search(): void
     {
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/bloglar&pageIndex=2')

@@ -127,12 +127,85 @@ trait SeedsCorporateFixtures
             ],
         ]);
 
+        $this->article('announcement', 1523, 0, [
+            'tr' => [
+                'url_path' => '/tr/duyuru-detay/1523/startkey-cozum',
+                'title' => 'Startkey Çözüm',
+                'date_label' => '1.9.2026',
+                'category' => '',
+                'body_html' => '<p>Çözüm duyurusu.</p>',
+                'share_label' => 'Paylaş:',
+            ],
+            'en' => [
+                'url_path' => '/en/announcements-detail/1523/startkey-solution',
+                'title' => 'Startkey Solution',
+                'date_label' => '1.9.2026',
+                'category' => '',
+                'body_html' => '<p>Solution announcement.</p>',
+                'share_label' => 'Share:',
+            ],
+            'de' => [
+                'url_path' => '/de/ankundigungen-detail/1523/startkey-loesung',
+                'title' => 'Startkey Loesung',
+                'date_label' => '1.9.2026',
+                'category' => '',
+                'body_html' => '<p>Loesung Ankuendigung.</p>',
+                'share_label' => 'Teilen:',
+            ],
+        ]);
+
+        $this->article('announcement', 1268, 1, [
+            'tr' => [
+                'url_path' => '/tr/duyuru-detay/1268/startkey-melis-gayrimenkul',
+                'title' => 'Startkey Melis Gayrimenkul',
+                'date_label' => '14.3.2024',
+                'category' => '',
+                'body_html' => '<p>Melis duyurusu.</p>',
+                'share_label' => 'Paylaş:',
+            ],
+            'en' => [
+                'url_path' => '/en/announcements-detail/1268/startkey-melis',
+                'title' => 'Startkey Melis',
+                'date_label' => '14.3.2024',
+                'category' => '',
+                'body_html' => '<p>Melis announcement.</p>',
+                'share_label' => 'Share:',
+            ],
+            'de' => [
+                'url_path' => '/de/ankundigungen-detail/1268/startkey-melis',
+                'title' => 'Startkey Melis',
+                'date_label' => '14.3.2024',
+                'category' => '',
+                'body_html' => '<p>Melis Ankuendigung.</p>',
+                'share_label' => 'Teilen:',
+            ],
+        ]);
+
         $this->listPage('news', 'tr', '/tr/haberler', '/tr/haberler', 9, 'Devamını Oku', 'Basında Biz');
         $this->listPage('news', 'en', '/en/news', '/en/haberler', 9, 'Read More', 'News');
         $this->listPage('news', 'de', '/de/nachricht', '/de/haberler', 9, 'Weiterlesen', 'Nachricht');
+        $this->listPage('announcement', 'tr', '/tr/duyurular', '/tr/duyurular', 9, 'Devamını Oku', 'Duyurular');
+        $this->listPage('announcement', 'en', '/en/announcements', '/en/duyurular', 9, 'Read More', 'Announcements');
+        $this->listPage('announcement', 'de', '/de/ankundigungen', '/de/duyurular', 9, 'Weiterlesen', 'Ankuendigungen');
         $this->listPage('blog', 'tr', '/tr/bloglar', '/tr/bloglar', 1, 'Devamını Oku', 'Blog', [
             'searchPlaceholder' => 'Ara',
             'popularHeading' => 'Popüler Bloglar',
+            'popular' => [
+                [
+                    'urlPath' => '/tr/bloglar/1245/sayi-38',
+                    'title' => 'Bizden Bize 38',
+                    'dateLabel' => '1.9.2026',
+                    'image' => '/media/content/article-85x85.jpg',
+                    'imageWebp' => '/media/content/article-85x85.webp',
+                ],
+                [
+                    'urlPath' => '/tr/bloglar/1242/sayi-37',
+                    'title' => 'Bizden Bize 37',
+                    'dateLabel' => '1.8.2026',
+                    'image' => '/media/content/article-85x85.jpg',
+                    'imageWebp' => '/media/content/article-85x85.webp',
+                ],
+            ],
         ]);
         $this->listPage('blog', 'en', '/en/blogs', '/en/bloglar', 1, 'Read More', 'Blog', [
             'searchPlaceholder' => 'Search',

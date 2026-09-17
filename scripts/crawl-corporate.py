@@ -553,6 +553,7 @@ def main() -> int:
 
     print("== people")
     people_map: dict[int, dict] = {}
+    people_order: list[int] = []
     people_ui = {}
     for lang, path in PEOPLE_LIST.items():
         print(f"  list {lang}")
@@ -562,11 +563,15 @@ def main() -> int:
         people_ui[lang] = {"breadcrumb": breadcrumb(page), "meta": meta(page), "listPath": path}
         cards = people_cards(page)
         for card in cards:
+            if card["externalId"] is None:
+                continue
             people_map.setdefault(
                 card["externalId"],
                 {"externalId": card["externalId"], "translations": {}},
             )
             people_map[card["externalId"]]["translations"][lang] = {**card}
+            if lang == "tr" and card["externalId"] not in people_order:
+                people_order.append(card["externalId"])
 
     person_jobs = []
     for ext, rec in people_map.items():
@@ -599,6 +604,7 @@ def main() -> int:
 
     print("== article lists")
     articles: dict[str, dict[int, dict]] = {"news": {}, "announcement": {}, "blog": {}}
+    article_order: dict[str, list[int]] = {"news": [], "announcement": [], "blog": []}
     list_ui: dict[str, dict] = {}
     for kind in LISTS:
         list_ui[kind] = {}
@@ -610,19 +616,27 @@ def main() -> int:
             list_ui[kind][lang] = ui
             print(f"    {len(items)} items")
         print(f"  {kind} details")
-        articles[kind] = crawl_details(kind, by_lang_cards)
+        details = crawl_details(kind, by_lang_cards)
+        articles[kind] = details
+        article_order[kind] = [
+            item["externalId"] for item in by_lang_cards["tr"] if item.get("externalId") in details
+        ]
+        for ext in details:
+            if ext not in article_order[kind]:
+                article_order[kind].append(ext)
 
     print("== media")
     download_media(collect_media(ALL_HTML))
 
     seed = {
         "pages": pages_out,
-        "people": [people_map[k] for k in sorted(people_map)],
+        "people": [people_map[k] for k in people_order if k in people_map]
+        + [people_map[k] for k in people_map if k not in people_order],
         "peopleUi": people_ui,
         "championGroups": champ_groups_by_lang,
         "championsUi": champ_ui,
         "articles": {
-            kind: [articles[kind][k] for k in sorted(articles[kind])]
+            kind: [articles[kind][ext] for ext in article_order[kind] if ext in articles[kind]]
             for kind in articles
         },
         "listUi": list_ui,
@@ -641,5 +655,54 @@ def main() -> int:
     return 0
 
 
+def reorder_existing_seed() -> int:
+    """Re-crawl list pages only and rewrite article/people arrays in list order.
+
+    Detail HTML is kept. The original seed was written with ``sorted(externalId)``,
+    which put the oldest items on page 1.
+    """
+    if not OUT.exists():
+        print(f"missing {OUT}", file=sys.stderr)
+        return 1
+
+    seed = json.loads(OUT.read_text(encoding="utf-8"))
+
+    print("== reorder people")
+    people_page = fetch(PEOPLE_LIST["tr"])
+    save_snapshot("people-tr.html", people_page)
+    people_ids = [
+        card["externalId"] for card in people_cards(people_page) if card.get("externalId") is not None
+    ]
+    people_by_id = {row["externalId"]: row for row in seed.get("people", [])}
+    seed["people"] = [people_by_id[ext] for ext in people_ids if ext in people_by_id] + [
+        row for row in seed.get("people", []) if row["externalId"] not in set(people_ids)
+    ]
+    print("  first", seed["people"][0]["externalId"] if seed["people"] else None)
+
+    for kind in LISTS:
+        print(f"== reorder {kind}")
+        items, _, _ = crawl_list(kind, "tr")
+        order = [item["externalId"] for item in items if item.get("externalId") is not None]
+        by_id = {row["externalId"]: row for row in seed["articles"].get(kind, [])}
+        seen = set()
+        reordered = []
+        for ext in order:
+            if ext in by_id and ext not in seen:
+                reordered.append(by_id[ext])
+                seen.add(ext)
+        reordered.extend(row for row in seed["articles"].get(kind, []) if row["externalId"] not in seen)
+        seed["articles"][kind] = reordered
+        print(
+            f"  {kind} n={len(reordered)} first={reordered[0]['externalId'] if reordered else None} "
+            f"last={reordered[-1]['externalId'] if reordered else None}"
+        )
+
+    OUT.write_text(json.dumps(seed, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("wrote", OUT)
+    return 0
+
+
 if __name__ == "__main__":
+    if "--reorder-lists" in sys.argv:
+        sys.exit(reorder_existing_seed())
     sys.exit(main())

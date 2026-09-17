@@ -6,9 +6,12 @@ use App\Models\CmsArticle;
 use App\Models\CmsArticleTranslation;
 use App\Models\CmsChampionGroup;
 use App\Models\CmsListPage;
+use App\Models\CmsPage;
 use App\Models\CmsPageTranslation;
 use App\Models\CmsPerson;
 use App\Models\CmsPersonTranslation;
+use App\Models\CmsTraining;
+use App\Models\CmsTrainingTranslation;
 
 /**
  * Maps a public URL to the shared Kurumsal template payload. Superadmin-created
@@ -30,11 +33,19 @@ class CorporateResolver
             return $detail;
         }
 
+        if ($detail = $this->trainingByPath($locale, $path)) {
+            return $detail;
+        }
+
         if ($person = $this->personByPath($locale, $path)) {
             return $person;
         }
 
         if ($list = $this->articleList($locale, $path, $pageIndex, $searchText)) {
+            return $list;
+        }
+
+        if ($list = $this->trainingList($locale, $path)) {
             return $list;
         }
 
@@ -47,6 +58,10 @@ class CorporateResolver
         }
 
         if ($detail = $this->articleByPrefix($locale, $path)) {
+            return $detail;
+        }
+
+        if ($detail = $this->trainingByPrefix($locale, $path)) {
             return $detail;
         }
 
@@ -82,12 +97,21 @@ class CorporateResolver
             ->with('page')
             ->first();
 
+        if ($translation === null && $this->pathMatches($path, config('site.corporate.contact.lists.'.$locale, []))) {
+            $page = CmsPage::query()->where('key', 'contact')->where('published', true)->first();
+            $translation = $page?->translations()->where('locale', $locale)->first();
+        }
+
         if ($translation === null || ! $translation->page?->published) {
             return null;
         }
 
         $page = $translation->page;
         $local = $page->translations()->where('locale', $locale)->first() ?? $translation;
+
+        if ($page->key === 'contact') {
+            return $this->contactPayload($page, $local);
+        }
 
         return [
             'kind' => 'cms-page',
@@ -97,6 +121,173 @@ class CorporateResolver
             'breadcrumb' => $local->breadcrumb ?? ['heading' => $local->heading, 'trail' => []],
             'meta' => $local->meta ?? [],
             'alternates' => $this->pageAlternates($page->id),
+        ];
+    }
+
+    private function contactPayload(CmsPage $page, CmsPageTranslation $local): array
+    {
+        $payload = $local->payload ?? [];
+
+        return [
+            'kind' => 'contact',
+            'key' => 'contact',
+            'heading' => $local->heading,
+            'breadcrumb' => $local->breadcrumb ?? ['heading' => $local->heading, 'trail' => []],
+            'meta' => $local->meta ?? [],
+            'items' => $payload['items'] ?? [],
+            'kicker' => $payload['kicker'] ?? '',
+            'pageHeading' => $payload['heading'] ?? '',
+            'intro' => $payload['intro'] ?? '',
+            'hoursHeading' => $payload['hoursHeading'] ?? '',
+            'hours' => $payload['hours'] ?? [],
+            'social' => $payload['social'] ?? [],
+            'formTitle' => $payload['formTitle'] ?? '',
+            'placeholders' => $payload['placeholders'] ?? [],
+            'required' => $payload['required'] ?? [],
+            'submitLabel' => $payload['submitLabel'] ?? '',
+            'captchaError' => $payload['captchaError'] ?? '',
+            'mapHref' => html_entity_decode((string) ($payload['mapHref'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            'mapSrc' => html_entity_decode((string) ($payload['mapSrc'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            'mapTitle' => $payload['mapTitle'] ?? '',
+            'alternates' => $this->pageAlternates($page->id),
+        ];
+    }
+
+    private function trainingByPath(string $locale, string $path): ?array
+    {
+        $translation = CmsTrainingTranslation::query()
+            ->where('url_path', $path)
+            ->with('training')
+            ->first();
+
+        if ($translation === null || ! $translation->training?->published) {
+            return null;
+        }
+
+        return $this->trainingDetailPayload($translation->training, $locale, $translation);
+    }
+
+    private function trainingByPrefix(string $locale, string $path): ?array
+    {
+        foreach (config('site.corporate.trainings.detail_prefixes.'.$locale, []) as $prefix) {
+            $id = $this->idAfterPrefix($path, $prefix);
+            if ($id === null) {
+                continue;
+            }
+            $training = CmsTraining::query()->published()->where('external_id', $id)->first();
+            if ($training === null) {
+                continue;
+            }
+
+            return $this->trainingDetailPayload($training, $locale);
+        }
+
+        return null;
+    }
+
+    private function trainingDetailPayload(CmsTraining $training, string $locale, ?CmsTrainingTranslation $fallback = null): ?array
+    {
+        $translation = $training->translations()->where('locale', $locale)->first() ?? $fallback;
+        if ($translation === null) {
+            return null;
+        }
+
+        $form = $translation->form ?? [];
+        // Tamamlanan eğitimlerde referans sayfa ön başvuru formu basmaz; yalnızca
+        // “Diğer Aktif Seminerler” listesi kalır. Form, canlı HTML’de submit düğmesi
+        // olan devam eden kayıtlarda vardır.
+        $hasApplicationForm = $training->group === 'ongoing'
+            && trim((string) ($form['submitLabel'] ?? '')) !== '';
+
+        return [
+            'kind' => 'training-detail',
+            'externalId' => $training->external_id,
+            'group' => $training->group,
+            'urlPath' => $translation->url_path,
+            'title' => $translation->title,
+            'image' => $translation->image !== '' ? $translation->image : $translation->list_image,
+            'datePrefix' => $translation->date_prefix,
+            'dateValue' => $translation->date_value,
+            'timePrefix' => $translation->time_prefix,
+            'timeValue' => $translation->time_value,
+            'pricePrefix' => $translation->price_prefix,
+            'priceValue' => $translation->price_value,
+            'locationHeading' => $translation->location_heading,
+            'locationValue' => $translation->location_value,
+            'descriptionHeading' => $translation->description_heading,
+            'descriptionHtml' => $translation->description_html ?? '',
+            'formHeading' => $hasApplicationForm ? $translation->form_heading : '',
+            'hasApplicationForm' => $hasApplicationForm,
+            'form' => [
+                'placeholders' => $hasApplicationForm ? ($form['placeholders'] ?? []) : [],
+                'required' => $hasApplicationForm ? ($form['required'] ?? []) : [],
+                'genders' => $hasApplicationForm ? ($form['genders'] ?? []) : [],
+                'submitLabel' => $hasApplicationForm ? ($form['submitLabel'] ?? '') : '',
+                'captchaError' => $hasApplicationForm ? ($form['captchaError'] ?? '') : '',
+            ],
+            'relatedHeading' => $translation->related_heading,
+            'related' => $translation->related ?? [],
+            'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->page_heading ?: $translation->title, 'trail' => []],
+            'meta' => $translation->meta ?? [],
+            'alternates' => $this->trainingAlternates($training->id),
+        ];
+    }
+
+    private function trainingList(string $locale, string $path): ?array
+    {
+        if (! $this->pathMatches($path, config('site.corporate.trainings.lists.'.$locale, []))) {
+            return null;
+        }
+
+        $list = CmsListPage::query()->where('type', 'training')->where('locale', $locale)->first();
+        if ($list === null) {
+            return null;
+        }
+
+        $sectionsMeta = $list->sidebar['sections'] ?? [];
+        $trainings = CmsTraining::query()
+            ->published()
+            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+            ->orderBy('position')
+            ->get();
+
+        $sections = [];
+        foreach ($sectionsMeta as $section) {
+            $group = $section['group'] ?? '';
+            $items = $trainings
+                ->where('group', $group)
+                ->map(function (CmsTraining $training) {
+                    $translation = $training->translations->first();
+
+                    return [
+                        'externalId' => $training->external_id,
+                        'urlPath' => $translation?->card_url_path ?: ($translation?->url_path ?? ''),
+                        'title' => $translation?->title ?? '',
+                        'image' => $translation?->list_image ?? '',
+                        'infoLines' => $translation?->info_lines ?? [],
+                        'detailLabel' => $translation?->detail_label ?? '',
+                    ];
+                })
+                ->values()
+                ->all();
+
+            $sections[] = [
+                'group' => $group,
+                'heading' => $section['heading'] ?? '',
+                'headingStyle' => $section['headingStyle'] ?? '',
+                'sectionStyle' => $section['sectionStyle'] ?? '',
+                'items' => $items,
+            ];
+        }
+
+        return [
+            'kind' => 'training-list',
+            'heading' => $list->heading,
+            'detailLabel' => $list->continue_label,
+            'breadcrumb' => $list->breadcrumb ?? ['heading' => $list->heading, 'trail' => []],
+            'meta' => $list->meta ?? [],
+            'sections' => $sections,
+            'alternates' => $this->listAlternates('training'),
         ];
     }
 
@@ -402,34 +593,40 @@ class CorporateResolver
 
     private function blogSidebar(string $locale, ?CmsListPage $list): ?array
     {
-        $popular = CmsArticle::query()
-            ->published()
-            ->ofType('blog')
-            ->whereHas('translations', fn ($builder) => $builder->where('locale', $locale))
-            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
-            ->orderBy('position')
-            ->take(5)
-            ->get()
-            ->map(function (CmsArticle $article) {
-                $translation = $article->translations->first();
-
-                return [
-                    'urlPath' => $translation?->url_path ?? '',
-                    'title' => $translation?->title ?? '',
-                    'dateLabel' => $translation?->date_label ?? '',
-                    'image' => $translation?->list_image ?: ($translation?->image ?? ''),
-                    'imageWebp' => $translation?->list_image_webp ?: ($translation?->image_webp ?? ''),
-                ];
-            })
-            ->all();
-
         $sidebar = $list?->sidebar ?? [];
+        $popular = $sidebar['popular'] ?? [];
+
+        // The reference sidebar is a captured widget (six 85x85 thumbs), not "the
+        // first N list cards". Rebuild from articles only when Superadmin has not
+        // stored that widget yet.
+        if (! is_array($popular) || $popular === []) {
+            $popular = CmsArticle::query()
+                ->published()
+                ->ofType('blog')
+                ->whereHas('translations', fn ($builder) => $builder->where('locale', $locale))
+                ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+                ->orderBy('position')
+                ->take(6)
+                ->get()
+                ->map(function (CmsArticle $article) {
+                    $translation = $article->translations->first();
+
+                    return [
+                        'urlPath' => $translation?->url_path ?? '',
+                        'title' => $translation?->title ?? '',
+                        'dateLabel' => $translation?->date_label ?? '',
+                        'image' => $translation?->list_image ?: ($translation?->image ?? ''),
+                        'imageWebp' => $translation?->list_image_webp ?: ($translation?->image_webp ?? ''),
+                    ];
+                })
+                ->all();
+        }
 
         return [
             'searchPlaceholder' => $sidebar['searchPlaceholder'] ?? '',
-            'searchAction' => $list?->url_path ?? '',
+            'searchAction' => $sidebar['searchAction'] ?? ($list?->url_path ?? ''),
             'popularHeading' => $sidebar['popularHeading'] ?? '',
-            'popular' => $popular,
+            'popular' => array_values($popular),
         ];
     }
 
@@ -472,6 +669,14 @@ class CorporateResolver
     {
         return CmsPersonTranslation::query()
             ->where('cms_person_id', $personId)
+            ->pluck('url_path', 'locale')
+            ->all();
+    }
+
+    private function trainingAlternates(int $trainingId): array
+    {
+        return CmsTrainingTranslation::query()
+            ->where('cms_training_id', $trainingId)
             ->pluck('url_path', 'locale')
             ->all();
     }

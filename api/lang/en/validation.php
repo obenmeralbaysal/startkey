@@ -14,5 +14,11 @@ return [
         'email' => 'email',
         'locale' => 'locale',
         'captcha_token' => 'captcha',
+        'name' => 'name',
+        'surname' => 'surname',
+        'phone' => 'phone',
+        'subject' => 'subject',
+        'message' => 'message',
+        'gender_id' => 'gender',
     ],
 ];
