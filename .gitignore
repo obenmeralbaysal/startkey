@@ -1,0 +1,6 @@
+.env
+node_modules/
+.next/
+vendor/
+scripts/.tools/node_modules/
+reference/screenshots/

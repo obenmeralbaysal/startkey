@@ -1,0 +1,6 @@
+{
+  "name": "startkey-visual-tools",
+  "private": true,
+  "description": "Playwright client used by scripts/visual-compare.sh inside the Playwright container.",
+  "dependencies": { "playwright": "1.55.0" }
+}

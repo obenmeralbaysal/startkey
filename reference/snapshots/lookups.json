@@ -1,0 +1,4865 @@
+{
+  "tr": {
+    "placeholder": "Seçiniz",
+    "adTypes": [
+      {
+        "id": "1",
+        "text": "Arsa"
+      },
+      {
+        "id": "2",
+        "text": "Konut"
+      },
+      {
+        "id": "4",
+        "text": "Ticari"
+      },
+      {
+        "id": "6",
+        "text": "Turistik Tesis"
+      }
+    ],
+    "processTypes": {
+      "1": [
+        {
+          "id": "84",
+          "text": "Satılık"
+        },
+        {
+          "id": "85",
+          "text": "Kiralık"
+        }
+      ],
+      "2": [
+        {
+          "id": "86",
+          "text": "Satılık"
+        },
+        {
+          "id": "87",
+          "text": "Kiralık"
+        }
+      ],
+      "4": [
+        {
+          "id": "89",
+          "text": "Satılık"
+        },
+        {
+          "id": "90",
+          "text": "Kiralık"
+        },
+        {
+          "id": "91",
+          "text": "Devren Satılık"
+        },
+        {
+          "id": "501",
+          "text": "Devren Kiralık"
+        }
+      ],
+      "6": [
+        {
+          "id": "523",
+          "text": "Satılık"
+        },
+        {
+          "id": "524",
+          "text": "Kiralık"
+        }
+      ]
+    },
+    "propertyCountries": [
+      {
+        "id": "212",
+        "text": "Türkiye"
+      }
+    ],
+    "propertyCities": {
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "16",
+          "text": "Bursa"
+        },
+        {
+          "id": "3",
+          "text": "Afyonkarahisar"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "17",
+          "text": "Çanakkale"
+        },
+        {
+          "id": "22",
+          "text": "Edirne"
+        },
+        {
+          "id": "26",
+          "text": "Eskişehir"
+        },
+        {
+          "id": "31",
+          "text": "Hatay"
+        },
+        {
+          "id": "43",
+          "text": "Kütahya"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        },
+        {
+          "id": "64",
+          "text": "Uşak"
+        }
+      ]
+    },
+    "officeCountries": [
+      {
+        "id": "82",
+        "text": "Greece"
+      },
+      {
+        "id": "212",
+        "text": "Türkiye"
+      },
+      {
+        "id": "220",
+        "text": "United Kingdom"
+      }
+    ],
+    "officeCities": {
+      "82": [
+        {
+          "id": "10490",
+          "text": "Athens"
+        }
+      ],
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "20",
+          "text": "Denizli"
+        },
+        {
+          "id": "41",
+          "text": "Kocaeli"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        },
+        {
+          "id": "82",
+          "text": "Girne (K.K.T.C.)"
+        }
+      ],
+      "220": [
+        {
+          "id": "10391",
+          "text": "London"
+        }
+      ]
+    },
+    "counties": {
+      "10": [
+        {
+          "id": "2115",
+          "text": "Altıeylül"
+        },
+        {
+          "id": "1161",
+          "text": "Ayvalık"
+        },
+        {
+          "id": "1169",
+          "text": "Balya"
+        },
+        {
+          "id": "1171",
+          "text": "Bandırma"
+        },
+        {
+          "id": "1191",
+          "text": "Bigadiç"
+        },
+        {
+          "id": "1216",
+          "text": "Burhaniye"
+        },
+        {
+          "id": "1291",
+          "text": "Dursunbey"
+        },
+        {
+          "id": "1294",
+          "text": "Edremit"
+        },
+        {
+          "id": "1310",
+          "text": "Erdek"
+        },
+        {
+          "id": "1928",
+          "text": "Gömeç"
+        },
+        {
+          "id": "1360",
+          "text": "Gönen"
+        },
+        {
+          "id": "1384",
+          "text": "Havran"
+        },
+        {
+          "id": "1418",
+          "text": "İvrindi"
+        },
+        {
+          "id": "2114",
+          "text": "Karesi"
+        },
+        {
+          "id": "1462",
+          "text": "Kepsut"
+        },
+        {
+          "id": "1514",
+          "text": "Manyas"
+        },
+        {
+          "id": "1824",
+          "text": "Marmara"
+        },
+        {
+          "id": "1608",
+          "text": "Savaştepe"
+        },
+        {
+          "id": "1619",
+          "text": "Sındırgı"
+        },
+        {
+          "id": "1644",
+          "text": "Susurluk"
+        }
+      ],
+      "10391": [
+        {
+          "id": "101877",
+          "text": "105 Thomsbeach Road"
+        },
+        {
+          "id": "101119",
+          "text": "City of London"
+        },
+        {
+          "id": "101359",
+          "text": "hackney"
+        },
+        {
+          "id": "101903",
+          "text": "Marylebone"
+        },
+        {
+          "id": "101120",
+          "text": "Mayfair"
+        },
+        {
+          "id": "102460",
+          "text": "New Eltham"
+        },
+        {
+          "id": "101756",
+          "text": "Reading"
+        },
+        {
+          "id": "101878",
+          "text": "SE61EY"
+        },
+        {
+          "id": "101121",
+          "text": "Soho"
+        },
+        {
+          "id": "101879",
+          "text": "Southend"
+        }
+      ],
+      "10490": [
+        {
+          "id": "101441",
+          "text": "Papandreou"
+        }
+      ],
+      "16": [
+        {
+          "id": "1783",
+          "text": "Büyükorhan"
+        },
+        {
+          "id": "1343",
+          "text": "Gemlik"
+        },
+        {
+          "id": "1935",
+          "text": "Gürsu"
+        },
+        {
+          "id": "1799",
+          "text": "Harmancık"
+        },
+        {
+          "id": "1411",
+          "text": "İnegöl"
+        },
+        {
+          "id": "1420",
+          "text": "İznik"
+        },
+        {
+          "id": "1434",
+          "text": "Karacabey"
+        },
+        {
+          "id": "1457",
+          "text": "Keles"
+        },
+        {
+          "id": "1960",
+          "text": "Kestel"
+        },
+        {
+          "id": "1530",
+          "text": "Mudanya"
+        },
+        {
+          "id": "1535",
+          "text": "Mustafakemalpaşa"
+        },
+        {
+          "id": "1829",
+          "text": "Nilüfer"
+        },
+        {
+          "id": "1553",
+          "text": "Orhaneli"
+        },
+        {
+          "id": "1554",
+          "text": "Orhangazi"
+        },
+        {
+          "id": "1832",
+          "text": "Osmangazi"
+        },
+        {
+          "id": "1725",
+          "text": "Yenişehir"
+        },
+        {
+          "id": "1859",
+          "text": "Yıldırım"
+        }
+      ],
+      "17": [
+        {
+          "id": "1160",
+          "text": "Ayvacık"
+        },
+        {
+          "id": "1180",
+          "text": "Bayramiç"
+        },
+        {
+          "id": "1190",
+          "text": "Biga"
+        },
+        {
+          "id": "1205",
+          "text": "Bozcaada"
+        },
+        {
+          "id": "1229",
+          "text": "Çan"
+        },
+        {
+          "id": "1293",
+          "text": "Eceabat"
+        },
+        {
+          "id": "1326",
+          "text": "Ezine"
+        },
+        {
+          "id": "1340",
+          "text": "Gelibolu"
+        },
+        {
+          "id": "1408",
+          "text": "Gökçeada"
+        },
+        {
+          "id": "1503",
+          "text": "Lapseki"
+        },
+        {
+          "id": "1230",
+          "text": "Merkez"
+        },
+        {
+          "id": "1722",
+          "text": "Yenice"
+        }
+      ],
+      "20": [
+        {
+          "id": "1102",
+          "text": "Acıpayam"
+        },
+        {
+          "id": "1769",
+          "text": "Babadağ"
+        },
+        {
+          "id": "1881",
+          "text": "Baklan"
+        },
+        {
+          "id": "1774",
+          "text": "Bekilli"
+        },
+        {
+          "id": "1888",
+          "text": "Beyağaç"
+        },
+        {
+          "id": "1889",
+          "text": "Bozkurt"
+        },
+        {
+          "id": "1214",
+          "text": "Buldan"
+        },
+        {
+          "id": "1224",
+          "text": "Çal"
+        },
+        {
+          "id": "1226",
+          "text": "Çameli"
+        },
+        {
+          "id": "1233",
+          "text": "Çardak"
+        },
+        {
+          "id": "1257",
+          "text": "Çivril"
+        },
+        {
+          "id": "1371",
+          "text": "Güney"
+        },
+        {
+          "id": "1803",
+          "text": "Honaz"
+        },
+        {
+          "id": "1426",
+          "text": "Kale"
+        },
+        {
+          "id": "2116",
+          "text": "Merkezefendi"
+        },
+        {
+          "id": "2107",
+          "text": "Pamukkale"
+        },
+        {
+          "id": "1597",
+          "text": "Sarayköy"
+        },
+        {
+          "id": "1840",
+          "text": "Serinhisar"
+        },
+        {
+          "id": "1670",
+          "text": "Tavas"
+        }
+      ],
+      "22": [
+        {
+          "id": "1307",
+          "text": "Enez"
+        },
+        {
+          "id": "1385",
+          "text": "Havsa"
+        },
+        {
+          "id": "1412",
+          "text": "İpsala"
+        },
+        {
+          "id": "1464",
+          "text": "Keşan"
+        },
+        {
+          "id": "1502",
+          "text": "Lalapaşa"
+        },
+        {
+          "id": "1523",
+          "text": "Meriç"
+        },
+        {
+          "id": "1295",
+          "text": "Merkez"
+        },
+        {
+          "id": "1988",
+          "text": "Süloğlu"
+        },
+        {
+          "id": "1705",
+          "text": "Uzunköprü"
+        }
+      ],
+      "26": [
+        {
+          "id": "1759",
+          "text": "Alpu"
+        },
+        {
+          "id": "1777",
+          "text": "Beylikova"
+        },
+        {
+          "id": "1255",
+          "text": "Çifteler"
+        },
+        {
+          "id": "1934",
+          "text": "Günyüzü"
+        },
+        {
+          "id": "1939",
+          "text": "Han"
+        },
+        {
+          "id": "1808",
+          "text": "İnönü"
+        },
+        {
+          "id": "1508",
+          "text": "Mahmudiye"
+        },
+        {
+          "id": "1973",
+          "text": "Mihalgazi"
+        },
+        {
+          "id": "1527",
+          "text": "Mihalıcçık"
+        },
+        {
+          "id": "2046",
+          "text": "Odunpazarı"
+        },
+        {
+          "id": "1599",
+          "text": "Sarıcakaya"
+        },
+        {
+          "id": "1618",
+          "text": "Seyitgazi"
+        },
+        {
+          "id": "1632",
+          "text": "Sivrihisar"
+        },
+        {
+          "id": "2047",
+          "text": "Tepebaşı"
+        }
+      ],
+      "3": [
+        {
+          "id": "1771",
+          "text": "Başmakçı"
+        },
+        {
+          "id": "1773",
+          "text": "Bayat"
+        },
+        {
+          "id": "1200",
+          "text": "Bolvadin"
+        },
+        {
+          "id": "1239",
+          "text": "Çay"
+        },
+        {
+          "id": "1906",
+          "text": "Çobanlar"
+        },
+        {
+          "id": "1267",
+          "text": "Dazkırı"
+        },
+        {
+          "id": "1281",
+          "text": "Dinar"
+        },
+        {
+          "id": "1306",
+          "text": "Emirdağ"
+        },
+        {
+          "id": "1923",
+          "text": "Evciler"
+        },
+        {
+          "id": "1944",
+          "text": "Hocalar"
+        },
+        {
+          "id": "1404",
+          "text": "İhsaniye"
+        },
+        {
+          "id": "1809",
+          "text": "İscehisar"
+        },
+        {
+          "id": "1961",
+          "text": "Kızılören"
+        },
+        {
+          "id": "1108",
+          "text": "Merkez"
+        },
+        {
+          "id": "1594",
+          "text": "Sandıklı"
+        },
+        {
+          "id": "1626",
+          "text": "Sinanpaşa"
+        },
+        {
+          "id": "1639",
+          "text": "Sultandağı"
+        },
+        {
+          "id": "1664",
+          "text": "Şuhut"
+        }
+      ],
+      "31": [
+        {
+          "id": "1131",
+          "text": "Altınözü"
+        },
+        {
+          "id": "1383",
+          "text": "Antakya"
+        },
+        {
+          "id": "2108",
+          "text": "Arsuz"
+        },
+        {
+          "id": "1887",
+          "text": "Belen"
+        },
+        {
+          "id": "2109",
+          "text": "Defne"
+        },
+        {
+          "id": "1289",
+          "text": "Dörtyol"
+        },
+        {
+          "id": "1792",
+          "text": "Erzin"
+        },
+        {
+          "id": "1382",
+          "text": "Hassa"
+        },
+        {
+          "id": "1413",
+          "text": "İskenderun"
+        },
+        {
+          "id": "1468",
+          "text": "Kırıkhan"
+        },
+        {
+          "id": "1970",
+          "text": "Kumlu"
+        },
+        {
+          "id": "2104",
+          "text": "Payas"
+        },
+        {
+          "id": "1585",
+          "text": "Reyhanlı"
+        },
+        {
+          "id": "1591",
+          "text": "Samandağ"
+        },
+        {
+          "id": "1721",
+          "text": "Yayladağı"
+        }
+      ],
+      "34": [
+        {
+          "id": "1103",
+          "text": "Adalar"
+        },
+        {
+          "id": "2048",
+          "text": "Arnavutköy"
+        },
+        {
+          "id": "2049",
+          "text": "Ataşehir"
+        },
+        {
+          "id": "2003",
+          "text": "Avcılar"
+        },
+        {
+          "id": "2004",
+          "text": "Bağcılar"
+        },
+        {
+          "id": "2005",
+          "text": "Bahçelievler"
+        },
+        {
+          "id": "1166",
+          "text": "Bakırköy"
+        },
+        {
+          "id": "2050",
+          "text": "Başakşehir"
+        },
+        {
+          "id": "1886",
+          "text": "Bayrampaşa"
+        },
+        {
+          "id": "1183",
+          "text": "Beşiktaş"
+        },
+        {
+          "id": "1185",
+          "text": "Beykoz"
+        },
+        {
+          "id": "2051",
+          "text": "Beylikdüzü"
+        },
+        {
+          "id": "1186",
+          "text": "Beyoğlu"
+        },
+        {
+          "id": "1782",
+          "text": "Büyükçekmece"
+        },
+        {
+          "id": "1237",
+          "text": "Çatalca"
+        },
+        {
+          "id": "2052",
+          "text": "Çekmeköy"
+        },
+        {
+          "id": "2016",
+          "text": "Esenler"
+        },
+        {
+          "id": "2053",
+          "text": "Esenyurt"
+        },
+        {
+          "id": "1325",
+          "text": "Eyüpsultan"
+        },
+        {
+          "id": "1327",
+          "text": "Fatih"
+        },
+        {
+          "id": "1336",
+          "text": "Gaziosmanpaşa"
+        },
+        {
+          "id": "2010",
+          "text": "Güngören"
+        },
+        {
+          "id": "1421",
+          "text": "Kadıköy"
+        },
+        {
+          "id": "1810",
+          "text": "Kağıthane"
+        },
+        {
+          "id": "1449",
+          "text": "Kartal"
+        },
+        {
+          "id": "1823",
+          "text": "Küçükçekmece"
+        },
+        {
+          "id": "2012",
+          "text": "Maltepe"
+        },
+        {
+          "id": "1835",
+          "text": "Pendik"
+        },
+        {
+          "id": "2054",
+          "text": "Sancaktepe"
+        },
+        {
+          "id": "1604",
+          "text": "Sarıyer"
+        },
+        {
+          "id": "1622",
+          "text": "Silivri"
+        },
+        {
+          "id": "2014",
+          "text": "Sultanbeyli"
+        },
+        {
+          "id": "2055",
+          "text": "Sultangazi"
+        },
+        {
+          "id": "1659",
+          "text": "Şile"
+        },
+        {
+          "id": "1663",
+          "text": "Şişli"
+        },
+        {
+          "id": "2015",
+          "text": "Tuzla"
+        },
+        {
+          "id": "1852",
+          "text": "Ümraniye"
+        },
+        {
+          "id": "1708",
+          "text": "Üsküdar"
+        },
+        {
+          "id": "1739",
+          "text": "Zeytinburnu"
+        }
+      ],
+      "35": [
+        {
+          "id": "1128",
+          "text": "Aliağa"
+        },
+        {
+          "id": "2006",
+          "text": "Balçova"
+        },
+        {
+          "id": "1178",
+          "text": "Bayındır"
+        },
+        {
+          "id": "2056",
+          "text": "Bayraklı"
+        },
+        {
+          "id": "1181",
+          "text": "Bergama"
+        },
+        {
+          "id": "1776",
+          "text": "Beydağ"
+        },
+        {
+          "id": "1203",
+          "text": "Bornova"
+        },
+        {
+          "id": "1780",
+          "text": "Buca"
+        },
+        {
+          "id": "1251",
+          "text": "Çeşme"
+        },
+        {
+          "id": "2007",
+          "text": "Çiğli"
+        },
+        {
+          "id": "1280",
+          "text": "Dikili"
+        },
+        {
+          "id": "1334",
+          "text": "Foça"
+        },
+        {
+          "id": "2009",
+          "text": "Gaziemir"
+        },
+        {
+          "id": "2018",
+          "text": "Güzelbahçe"
+        },
+        {
+          "id": "2057",
+          "text": "Karabağlar"
+        },
+        {
+          "id": "1432",
+          "text": "Karaburun"
+        },
+        {
+          "id": "1448",
+          "text": "Karşıyaka"
+        },
+        {
+          "id": "1461",
+          "text": "Kemalpaşa"
+        },
+        {
+          "id": "1467",
+          "text": "Kınık"
+        },
+        {
+          "id": "1477",
+          "text": "Kiraz"
+        },
+        {
+          "id": "1819",
+          "text": "Konak"
+        },
+        {
+          "id": "1826",
+          "text": "Menderes"
+        },
+        {
+          "id": "1521",
+          "text": "Menemen"
+        },
+        {
+          "id": "2013",
+          "text": "Narlıdere"
+        },
+        {
+          "id": "1563",
+          "text": "Ödemiş"
+        },
+        {
+          "id": "1611",
+          "text": "Seferihisar"
+        },
+        {
+          "id": "1612",
+          "text": "Selçuk"
+        },
+        {
+          "id": "1677",
+          "text": "Tire"
+        },
+        {
+          "id": "1682",
+          "text": "Torbalı"
+        },
+        {
+          "id": "1703",
+          "text": "Urla"
+        }
+      ],
+      "41": [
+        {
+          "id": "2058",
+          "text": "Başiskele"
+        },
+        {
+          "id": "2059",
+          "text": "Çayırova"
+        },
+        {
+          "id": "2060",
+          "text": "Darıca"
+        },
+        {
+          "id": "2030",
+          "text": "Derince"
+        },
+        {
+          "id": "2061",
+          "text": "Dilovası"
+        },
+        {
+          "id": "1338",
+          "text": "Gebze"
+        },
+        {
+          "id": "1355",
+          "text": "Gölcük"
+        },
+        {
+          "id": "2062",
+          "text": "İzmit"
+        },
+        {
+          "id": "1430",
+          "text": "Kandıra"
+        },
+        {
+          "id": "1440",
+          "text": "Karamürsel"
+        },
+        {
+          "id": "2063",
+          "text": "Kartepe"
+        },
+        {
+          "id": "1821",
+          "text": "Körfez"
+        }
+      ],
+      "43": [
+        {
+          "id": "1132",
+          "text": "Altıntaş"
+        },
+        {
+          "id": "1764",
+          "text": "Aslanapa"
+        },
+        {
+          "id": "1898",
+          "text": "Çavdarhisar"
+        },
+        {
+          "id": "1288",
+          "text": "Domaniç"
+        },
+        {
+          "id": "1790",
+          "text": "Dumlupınar"
+        },
+        {
+          "id": "1304",
+          "text": "Emet"
+        },
+        {
+          "id": "1339",
+          "text": "Gediz"
+        },
+        {
+          "id": "1802",
+          "text": "Hisarcık"
+        },
+        {
+          "id": "1500",
+          "text": "Merkez"
+        },
+        {
+          "id": "1979",
+          "text": "Pazarlar"
+        },
+        {
+          "id": "1625",
+          "text": "Simav"
+        },
+        {
+          "id": "1843",
+          "text": "Şaphane"
+        },
+        {
+          "id": "1671",
+          "text": "Tavşanlı"
+        }
+      ],
+      "45": [
+        {
+          "id": "1751",
+          "text": "Ahmetli"
+        },
+        {
+          "id": "1118",
+          "text": "Akhisar"
+        },
+        {
+          "id": "1127",
+          "text": "Alaşehir"
+        },
+        {
+          "id": "1269",
+          "text": "Demirci"
+        },
+        {
+          "id": "1793",
+          "text": "Gölmarmara"
+        },
+        {
+          "id": "1362",
+          "text": "Gördes"
+        },
+        {
+          "id": "1470",
+          "text": "Kırkağaç"
+        },
+        {
+          "id": "1965",
+          "text": "Köprübaşı"
+        },
+        {
+          "id": "1489",
+          "text": "Kula"
+        },
+        {
+          "id": "1590",
+          "text": "Salihli"
+        },
+        {
+          "id": "1600",
+          "text": "Sarıgöl"
+        },
+        {
+          "id": "1606",
+          "text": "Saruhanlı"
+        },
+        {
+          "id": "1613",
+          "text": "Selendi"
+        },
+        {
+          "id": "1634",
+          "text": "Soma"
+        },
+        {
+          "id": "2112",
+          "text": "Şehzadeler"
+        },
+        {
+          "id": "1689",
+          "text": "Turgutlu"
+        },
+        {
+          "id": "2113",
+          "text": "Yunusemre"
+        }
+      ],
+      "48": [
+        {
+          "id": "1197",
+          "text": "Bodrum"
+        },
+        {
+          "id": "1742",
+          "text": "Dalaman"
+        },
+        {
+          "id": "1266",
+          "text": "Datça"
+        },
+        {
+          "id": "1331",
+          "text": "Fethiye"
+        },
+        {
+          "id": "1958",
+          "text": "Kavaklıdere"
+        },
+        {
+          "id": "1488",
+          "text": "Köyceğiz"
+        },
+        {
+          "id": "1517",
+          "text": "Marmaris"
+        },
+        {
+          "id": "1532",
+          "text": "Menteşe"
+        },
+        {
+          "id": "1528",
+          "text": "Milas"
+        },
+        {
+          "id": "1831",
+          "text": "Ortaca"
+        },
+        {
+          "id": "2126",
+          "text": "Seydikemer"
+        },
+        {
+          "id": "1695",
+          "text": "Ula"
+        },
+        {
+          "id": "1719",
+          "text": "Yatağan"
+        }
+      ],
+      "6": [
+        {
+          "id": "1872",
+          "text": "Akyurt"
+        },
+        {
+          "id": "1130",
+          "text": "Altındağ"
+        },
+        {
+          "id": "1157",
+          "text": "Ayaş"
+        },
+        {
+          "id": "1167",
+          "text": "Bala"
+        },
+        {
+          "id": "1187",
+          "text": "Beypazarı"
+        },
+        {
+          "id": "1227",
+          "text": "Çamlıdere"
+        },
+        {
+          "id": "1231",
+          "text": "Çankaya"
+        },
+        {
+          "id": "1260",
+          "text": "Çubuk"
+        },
+        {
+          "id": "1302",
+          "text": "Elmadağ"
+        },
+        {
+          "id": "1922",
+          "text": "Etimesgut"
+        },
+        {
+          "id": "1924",
+          "text": "Evren"
+        },
+        {
+          "id": "1744",
+          "text": "Gölbaşı"
+        },
+        {
+          "id": "1365",
+          "text": "Güdül"
+        },
+        {
+          "id": "1387",
+          "text": "Haymana"
+        },
+        {
+          "id": "1815",
+          "text": "Kahramankazan"
+        },
+        {
+          "id": "1427",
+          "text": "Kalecik"
+        },
+        {
+          "id": "1745",
+          "text": "Keçiören"
+        },
+        {
+          "id": "1473",
+          "text": "Kızılcahamam"
+        },
+        {
+          "id": "1746",
+          "text": "Mamak"
+        },
+        {
+          "id": "1539",
+          "text": "Nallıhan"
+        },
+        {
+          "id": "1578",
+          "text": "Polatlı"
+        },
+        {
+          "id": "2034",
+          "text": "Pursaklar"
+        },
+        {
+          "id": "1747",
+          "text": "Sincan"
+        },
+        {
+          "id": "1658",
+          "text": "Şereflikoçhisar"
+        },
+        {
+          "id": "1723",
+          "text": "Yenimahalle"
+        }
+      ],
+      "64": [
+        {
+          "id": "1170",
+          "text": "Banaz"
+        },
+        {
+          "id": "1323",
+          "text": "Eşme"
+        },
+        {
+          "id": "1436",
+          "text": "Karahallı"
+        },
+        {
+          "id": "1704",
+          "text": "Merkez"
+        },
+        {
+          "id": "1629",
+          "text": "Sivaslı"
+        },
+        {
+          "id": "1697",
+          "text": "Ulubey"
+        }
+      ],
+      "7": [
+        {
+          "id": "1121",
+          "text": "Akseki"
+        },
+        {
+          "id": "2035",
+          "text": "Aksu"
+        },
+        {
+          "id": "1126",
+          "text": "Alanya"
+        },
+        {
+          "id": "1811",
+          "text": "Demre"
+        },
+        {
+          "id": "2036",
+          "text": "Döşemealtı"
+        },
+        {
+          "id": "1303",
+          "text": "Elmalı"
+        },
+        {
+          "id": "1333",
+          "text": "Finike"
+        },
+        {
+          "id": "1337",
+          "text": "Gazipaşa"
+        },
+        {
+          "id": "1370",
+          "text": "Gündoğmuş"
+        },
+        {
+          "id": "1946",
+          "text": "İbradı"
+        },
+        {
+          "id": "1451",
+          "text": "Kaş"
+        },
+        {
+          "id": "1959",
+          "text": "Kemer"
+        },
+        {
+          "id": "2037",
+          "text": "Kepez"
+        },
+        {
+          "id": "2038",
+          "text": "Konyaaltı"
+        },
+        {
+          "id": "1483",
+          "text": "Korkuteli"
+        },
+        {
+          "id": "1492",
+          "text": "Kumluca"
+        },
+        {
+          "id": "1512",
+          "text": "Manavgat"
+        },
+        {
+          "id": "2039",
+          "text": "Muratpaşa"
+        },
+        {
+          "id": "1616",
+          "text": "Serik"
+        }
+      ],
+      "82": [
+        {
+          "id": "2083",
+          "text": "Girne"
+        }
+      ],
+      "9": [
+        {
+          "id": "1206",
+          "text": "Bozdoğan"
+        },
+        {
+          "id": "1781",
+          "text": "Buharkent"
+        },
+        {
+          "id": "1256",
+          "text": "Çine"
+        },
+        {
+          "id": "2000",
+          "text": "Didim"
+        },
+        {
+          "id": "1159",
+          "text": "Efeler"
+        },
+        {
+          "id": "1348",
+          "text": "Germencik"
+        },
+        {
+          "id": "1807",
+          "text": "İncirliova"
+        },
+        {
+          "id": "1435",
+          "text": "Karacasu"
+        },
+        {
+          "id": "1957",
+          "text": "Karpuzlu"
+        },
+        {
+          "id": "1479",
+          "text": "Koçarlı"
+        },
+        {
+          "id": "1968",
+          "text": "Köşk"
+        },
+        {
+          "id": "1497",
+          "text": "Kuşadası"
+        },
+        {
+          "id": "1498",
+          "text": "Kuyucak"
+        },
+        {
+          "id": "1542",
+          "text": "Nazilli"
+        },
+        {
+          "id": "1637",
+          "text": "Söke"
+        },
+        {
+          "id": "1640",
+          "text": "Sultanhisar"
+        },
+        {
+          "id": "1724",
+          "text": "Yenipazar"
+        }
+      ]
+    },
+    "consultantCountries": [
+      {
+        "id": "212",
+        "text": "Türkiye"
+      }
+    ],
+    "consultantCities": {
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "20",
+          "text": "Denizli"
+        },
+        {
+          "id": "41",
+          "text": "Kocaeli"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        }
+      ]
+    }
+  },
+  "en": {
+    "placeholder": "Select",
+    "adTypes": [
+      {
+        "id": "1",
+        "text": "Arsa"
+      },
+      {
+        "id": "2",
+        "text": "Konut"
+      },
+      {
+        "id": "4",
+        "text": "Ticari"
+      },
+      {
+        "id": "6",
+        "text": "Turistik Tesis"
+      }
+    ],
+    "processTypes": {
+      "1": [
+        {
+          "id": "84",
+          "text": "For Sale"
+        },
+        {
+          "id": "85",
+          "text": "For Rent"
+        }
+      ],
+      "2": [
+        {
+          "id": "86",
+          "text": "For Sale"
+        },
+        {
+          "id": "87",
+          "text": "For Rent"
+        }
+      ],
+      "4": [
+        {
+          "id": "89",
+          "text": "For Sale"
+        },
+        {
+          "id": "90",
+          "text": "For Rent"
+        },
+        {
+          "id": "91",
+          "text": "For Sublease Sell"
+        },
+        {
+          "id": "501",
+          "text": "For Sublease Rent"
+        }
+      ],
+      "6": [
+        {
+          "id": "523",
+          "text": "For Sale"
+        },
+        {
+          "id": "524",
+          "text": "For Rent"
+        }
+      ]
+    },
+    "propertyCountries": [
+      {
+        "id": "212",
+        "text": "Türkiye"
+      }
+    ],
+    "propertyCities": {
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "16",
+          "text": "Bursa"
+        },
+        {
+          "id": "3",
+          "text": "Afyonkarahisar"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "17",
+          "text": "Çanakkale"
+        },
+        {
+          "id": "22",
+          "text": "Edirne"
+        },
+        {
+          "id": "26",
+          "text": "Eskişehir"
+        },
+        {
+          "id": "31",
+          "text": "Hatay"
+        },
+        {
+          "id": "43",
+          "text": "Kütahya"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        },
+        {
+          "id": "64",
+          "text": "Uşak"
+        }
+      ]
+    },
+    "officeCountries": [
+      {
+        "id": "82",
+        "text": "Greece"
+      },
+      {
+        "id": "212",
+        "text": "Türkiye"
+      },
+      {
+        "id": "220",
+        "text": "United Kingdom"
+      }
+    ],
+    "officeCities": {
+      "82": [
+        {
+          "id": "10490",
+          "text": "Athens"
+        }
+      ],
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "20",
+          "text": "Denizli"
+        },
+        {
+          "id": "41",
+          "text": "Kocaeli"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        },
+        {
+          "id": "82",
+          "text": "Girne (K.K.T.C.)"
+        }
+      ],
+      "220": [
+        {
+          "id": "10391",
+          "text": "London"
+        }
+      ]
+    },
+    "counties": {
+      "10": [
+        {
+          "id": "2115",
+          "text": "Altıeylül"
+        },
+        {
+          "id": "1161",
+          "text": "Ayvalık"
+        },
+        {
+          "id": "1169",
+          "text": "Balya"
+        },
+        {
+          "id": "1171",
+          "text": "Bandırma"
+        },
+        {
+          "id": "1191",
+          "text": "Bigadiç"
+        },
+        {
+          "id": "1216",
+          "text": "Burhaniye"
+        },
+        {
+          "id": "1291",
+          "text": "Dursunbey"
+        },
+        {
+          "id": "1294",
+          "text": "Edremit"
+        },
+        {
+          "id": "1310",
+          "text": "Erdek"
+        },
+        {
+          "id": "1928",
+          "text": "Gömeç"
+        },
+        {
+          "id": "1360",
+          "text": "Gönen"
+        },
+        {
+          "id": "1384",
+          "text": "Havran"
+        },
+        {
+          "id": "1418",
+          "text": "İvrindi"
+        },
+        {
+          "id": "2114",
+          "text": "Karesi"
+        },
+        {
+          "id": "1462",
+          "text": "Kepsut"
+        },
+        {
+          "id": "1514",
+          "text": "Manyas"
+        },
+        {
+          "id": "1824",
+          "text": "Marmara"
+        },
+        {
+          "id": "1608",
+          "text": "Savaştepe"
+        },
+        {
+          "id": "1619",
+          "text": "Sındırgı"
+        },
+        {
+          "id": "1644",
+          "text": "Susurluk"
+        }
+      ],
+      "10391": [
+        {
+          "id": "101877",
+          "text": "105 Thomsbeach Road"
+        },
+        {
+          "id": "101119",
+          "text": "City of London"
+        },
+        {
+          "id": "101359",
+          "text": "hackney"
+        },
+        {
+          "id": "101903",
+          "text": "Marylebone"
+        },
+        {
+          "id": "101120",
+          "text": "Mayfair"
+        },
+        {
+          "id": "102460",
+          "text": "New Eltham"
+        },
+        {
+          "id": "101756",
+          "text": "Reading"
+        },
+        {
+          "id": "101878",
+          "text": "SE61EY"
+        },
+        {
+          "id": "101121",
+          "text": "Soho"
+        },
+        {
+          "id": "101879",
+          "text": "Southend"
+        }
+      ],
+      "10490": [
+        {
+          "id": "101441",
+          "text": "Papandreou"
+        }
+      ],
+      "16": [
+        {
+          "id": "1783",
+          "text": "Büyükorhan"
+        },
+        {
+          "id": "1343",
+          "text": "Gemlik"
+        },
+        {
+          "id": "1935",
+          "text": "Gürsu"
+        },
+        {
+          "id": "1799",
+          "text": "Harmancık"
+        },
+        {
+          "id": "1411",
+          "text": "İnegöl"
+        },
+        {
+          "id": "1420",
+          "text": "İznik"
+        },
+        {
+          "id": "1434",
+          "text": "Karacabey"
+        },
+        {
+          "id": "1457",
+          "text": "Keles"
+        },
+        {
+          "id": "1960",
+          "text": "Kestel"
+        },
+        {
+          "id": "1530",
+          "text": "Mudanya"
+        },
+        {
+          "id": "1535",
+          "text": "Mustafakemalpaşa"
+        },
+        {
+          "id": "1829",
+          "text": "Nilüfer"
+        },
+        {
+          "id": "1553",
+          "text": "Orhaneli"
+        },
+        {
+          "id": "1554",
+          "text": "Orhangazi"
+        },
+        {
+          "id": "1832",
+          "text": "Osmangazi"
+        },
+        {
+          "id": "1725",
+          "text": "Yenişehir"
+        },
+        {
+          "id": "1859",
+          "text": "Yıldırım"
+        }
+      ],
+      "17": [
+        {
+          "id": "1160",
+          "text": "Ayvacık"
+        },
+        {
+          "id": "1180",
+          "text": "Bayramiç"
+        },
+        {
+          "id": "1190",
+          "text": "Biga"
+        },
+        {
+          "id": "1205",
+          "text": "Bozcaada"
+        },
+        {
+          "id": "1229",
+          "text": "Çan"
+        },
+        {
+          "id": "1293",
+          "text": "Eceabat"
+        },
+        {
+          "id": "1326",
+          "text": "Ezine"
+        },
+        {
+          "id": "1340",
+          "text": "Gelibolu"
+        },
+        {
+          "id": "1408",
+          "text": "Gökçeada"
+        },
+        {
+          "id": "1503",
+          "text": "Lapseki"
+        },
+        {
+          "id": "1230",
+          "text": "Merkez"
+        },
+        {
+          "id": "1722",
+          "text": "Yenice"
+        }
+      ],
+      "20": [
+        {
+          "id": "1102",
+          "text": "Acıpayam"
+        },
+        {
+          "id": "1769",
+          "text": "Babadağ"
+        },
+        {
+          "id": "1881",
+          "text": "Baklan"
+        },
+        {
+          "id": "1774",
+          "text": "Bekilli"
+        },
+        {
+          "id": "1888",
+          "text": "Beyağaç"
+        },
+        {
+          "id": "1889",
+          "text": "Bozkurt"
+        },
+        {
+          "id": "1214",
+          "text": "Buldan"
+        },
+        {
+          "id": "1224",
+          "text": "Çal"
+        },
+        {
+          "id": "1226",
+          "text": "Çameli"
+        },
+        {
+          "id": "1233",
+          "text": "Çardak"
+        },
+        {
+          "id": "1257",
+          "text": "Çivril"
+        },
+        {
+          "id": "1371",
+          "text": "Güney"
+        },
+        {
+          "id": "1803",
+          "text": "Honaz"
+        },
+        {
+          "id": "1426",
+          "text": "Kale"
+        },
+        {
+          "id": "2116",
+          "text": "Merkezefendi"
+        },
+        {
+          "id": "2107",
+          "text": "Pamukkale"
+        },
+        {
+          "id": "1597",
+          "text": "Sarayköy"
+        },
+        {
+          "id": "1840",
+          "text": "Serinhisar"
+        },
+        {
+          "id": "1670",
+          "text": "Tavas"
+        }
+      ],
+      "22": [
+        {
+          "id": "1307",
+          "text": "Enez"
+        },
+        {
+          "id": "1385",
+          "text": "Havsa"
+        },
+        {
+          "id": "1412",
+          "text": "İpsala"
+        },
+        {
+          "id": "1464",
+          "text": "Keşan"
+        },
+        {
+          "id": "1502",
+          "text": "Lalapaşa"
+        },
+        {
+          "id": "1523",
+          "text": "Meriç"
+        },
+        {
+          "id": "1295",
+          "text": "Merkez"
+        },
+        {
+          "id": "1988",
+          "text": "Süloğlu"
+        },
+        {
+          "id": "1705",
+          "text": "Uzunköprü"
+        }
+      ],
+      "26": [
+        {
+          "id": "1759",
+          "text": "Alpu"
+        },
+        {
+          "id": "1777",
+          "text": "Beylikova"
+        },
+        {
+          "id": "1255",
+          "text": "Çifteler"
+        },
+        {
+          "id": "1934",
+          "text": "Günyüzü"
+        },
+        {
+          "id": "1939",
+          "text": "Han"
+        },
+        {
+          "id": "1808",
+          "text": "İnönü"
+        },
+        {
+          "id": "1508",
+          "text": "Mahmudiye"
+        },
+        {
+          "id": "1973",
+          "text": "Mihalgazi"
+        },
+        {
+          "id": "1527",
+          "text": "Mihalıcçık"
+        },
+        {
+          "id": "2046",
+          "text": "Odunpazarı"
+        },
+        {
+          "id": "1599",
+          "text": "Sarıcakaya"
+        },
+        {
+          "id": "1618",
+          "text": "Seyitgazi"
+        },
+        {
+          "id": "1632",
+          "text": "Sivrihisar"
+        },
+        {
+          "id": "2047",
+          "text": "Tepebaşı"
+        }
+      ],
+      "3": [
+        {
+          "id": "1771",
+          "text": "Başmakçı"
+        },
+        {
+          "id": "1773",
+          "text": "Bayat"
+        },
+        {
+          "id": "1200",
+          "text": "Bolvadin"
+        },
+        {
+          "id": "1239",
+          "text": "Çay"
+        },
+        {
+          "id": "1906",
+          "text": "Çobanlar"
+        },
+        {
+          "id": "1267",
+          "text": "Dazkırı"
+        },
+        {
+          "id": "1281",
+          "text": "Dinar"
+        },
+        {
+          "id": "1306",
+          "text": "Emirdağ"
+        },
+        {
+          "id": "1923",
+          "text": "Evciler"
+        },
+        {
+          "id": "1944",
+          "text": "Hocalar"
+        },
+        {
+          "id": "1404",
+          "text": "İhsaniye"
+        },
+        {
+          "id": "1809",
+          "text": "İscehisar"
+        },
+        {
+          "id": "1961",
+          "text": "Kızılören"
+        },
+        {
+          "id": "1108",
+          "text": "Merkez"
+        },
+        {
+          "id": "1594",
+          "text": "Sandıklı"
+        },
+        {
+          "id": "1626",
+          "text": "Sinanpaşa"
+        },
+        {
+          "id": "1639",
+          "text": "Sultandağı"
+        },
+        {
+          "id": "1664",
+          "text": "Şuhut"
+        }
+      ],
+      "31": [
+        {
+          "id": "1131",
+          "text": "Altınözü"
+        },
+        {
+          "id": "1383",
+          "text": "Antakya"
+        },
+        {
+          "id": "2108",
+          "text": "Arsuz"
+        },
+        {
+          "id": "1887",
+          "text": "Belen"
+        },
+        {
+          "id": "2109",
+          "text": "Defne"
+        },
+        {
+          "id": "1289",
+          "text": "Dörtyol"
+        },
+        {
+          "id": "1792",
+          "text": "Erzin"
+        },
+        {
+          "id": "1382",
+          "text": "Hassa"
+        },
+        {
+          "id": "1413",
+          "text": "İskenderun"
+        },
+        {
+          "id": "1468",
+          "text": "Kırıkhan"
+        },
+        {
+          "id": "1970",
+          "text": "Kumlu"
+        },
+        {
+          "id": "2104",
+          "text": "Payas"
+        },
+        {
+          "id": "1585",
+          "text": "Reyhanlı"
+        },
+        {
+          "id": "1591",
+          "text": "Samandağ"
+        },
+        {
+          "id": "1721",
+          "text": "Yayladağı"
+        }
+      ],
+      "34": [
+        {
+          "id": "1103",
+          "text": "Adalar"
+        },
+        {
+          "id": "2048",
+          "text": "Arnavutköy"
+        },
+        {
+          "id": "2049",
+          "text": "Ataşehir"
+        },
+        {
+          "id": "2003",
+          "text": "Avcılar"
+        },
+        {
+          "id": "2004",
+          "text": "Bağcılar"
+        },
+        {
+          "id": "2005",
+          "text": "Bahçelievler"
+        },
+        {
+          "id": "1166",
+          "text": "Bakırköy"
+        },
+        {
+          "id": "2050",
+          "text": "Başakşehir"
+        },
+        {
+          "id": "1886",
+          "text": "Bayrampaşa"
+        },
+        {
+          "id": "1183",
+          "text": "Beşiktaş"
+        },
+        {
+          "id": "1185",
+          "text": "Beykoz"
+        },
+        {
+          "id": "2051",
+          "text": "Beylikdüzü"
+        },
+        {
+          "id": "1186",
+          "text": "Beyoğlu"
+        },
+        {
+          "id": "1782",
+          "text": "Büyükçekmece"
+        },
+        {
+          "id": "1237",
+          "text": "Çatalca"
+        },
+        {
+          "id": "2052",
+          "text": "Çekmeköy"
+        },
+        {
+          "id": "2016",
+          "text": "Esenler"
+        },
+        {
+          "id": "2053",
+          "text": "Esenyurt"
+        },
+        {
+          "id": "1325",
+          "text": "Eyüpsultan"
+        },
+        {
+          "id": "1327",
+          "text": "Fatih"
+        },
+        {
+          "id": "1336",
+          "text": "Gaziosmanpaşa"
+        },
+        {
+          "id": "2010",
+          "text": "Güngören"
+        },
+        {
+          "id": "1421",
+          "text": "Kadıköy"
+        },
+        {
+          "id": "1810",
+          "text": "Kağıthane"
+        },
+        {
+          "id": "1449",
+          "text": "Kartal"
+        },
+        {
+          "id": "1823",
+          "text": "Küçükçekmece"
+        },
+        {
+          "id": "2012",
+          "text": "Maltepe"
+        },
+        {
+          "id": "1835",
+          "text": "Pendik"
+        },
+        {
+          "id": "2054",
+          "text": "Sancaktepe"
+        },
+        {
+          "id": "1604",
+          "text": "Sarıyer"
+        },
+        {
+          "id": "1622",
+          "text": "Silivri"
+        },
+        {
+          "id": "2014",
+          "text": "Sultanbeyli"
+        },
+        {
+          "id": "2055",
+          "text": "Sultangazi"
+        },
+        {
+          "id": "1659",
+          "text": "Şile"
+        },
+        {
+          "id": "1663",
+          "text": "Şişli"
+        },
+        {
+          "id": "2015",
+          "text": "Tuzla"
+        },
+        {
+          "id": "1852",
+          "text": "Ümraniye"
+        },
+        {
+          "id": "1708",
+          "text": "Üsküdar"
+        },
+        {
+          "id": "1739",
+          "text": "Zeytinburnu"
+        }
+      ],
+      "35": [
+        {
+          "id": "1128",
+          "text": "Aliağa"
+        },
+        {
+          "id": "2006",
+          "text": "Balçova"
+        },
+        {
+          "id": "1178",
+          "text": "Bayındır"
+        },
+        {
+          "id": "2056",
+          "text": "Bayraklı"
+        },
+        {
+          "id": "1181",
+          "text": "Bergama"
+        },
+        {
+          "id": "1776",
+          "text": "Beydağ"
+        },
+        {
+          "id": "1203",
+          "text": "Bornova"
+        },
+        {
+          "id": "1780",
+          "text": "Buca"
+        },
+        {
+          "id": "1251",
+          "text": "Çeşme"
+        },
+        {
+          "id": "2007",
+          "text": "Çiğli"
+        },
+        {
+          "id": "1280",
+          "text": "Dikili"
+        },
+        {
+          "id": "1334",
+          "text": "Foça"
+        },
+        {
+          "id": "2009",
+          "text": "Gaziemir"
+        },
+        {
+          "id": "2018",
+          "text": "Güzelbahçe"
+        },
+        {
+          "id": "2057",
+          "text": "Karabağlar"
+        },
+        {
+          "id": "1432",
+          "text": "Karaburun"
+        },
+        {
+          "id": "1448",
+          "text": "Karşıyaka"
+        },
+        {
+          "id": "1461",
+          "text": "Kemalpaşa"
+        },
+        {
+          "id": "1467",
+          "text": "Kınık"
+        },
+        {
+          "id": "1477",
+          "text": "Kiraz"
+        },
+        {
+          "id": "1819",
+          "text": "Konak"
+        },
+        {
+          "id": "1826",
+          "text": "Menderes"
+        },
+        {
+          "id": "1521",
+          "text": "Menemen"
+        },
+        {
+          "id": "2013",
+          "text": "Narlıdere"
+        },
+        {
+          "id": "1563",
+          "text": "Ödemiş"
+        },
+        {
+          "id": "1611",
+          "text": "Seferihisar"
+        },
+        {
+          "id": "1612",
+          "text": "Selçuk"
+        },
+        {
+          "id": "1677",
+          "text": "Tire"
+        },
+        {
+          "id": "1682",
+          "text": "Torbalı"
+        },
+        {
+          "id": "1703",
+          "text": "Urla"
+        }
+      ],
+      "41": [
+        {
+          "id": "2058",
+          "text": "Başiskele"
+        },
+        {
+          "id": "2059",
+          "text": "Çayırova"
+        },
+        {
+          "id": "2060",
+          "text": "Darıca"
+        },
+        {
+          "id": "2030",
+          "text": "Derince"
+        },
+        {
+          "id": "2061",
+          "text": "Dilovası"
+        },
+        {
+          "id": "1338",
+          "text": "Gebze"
+        },
+        {
+          "id": "1355",
+          "text": "Gölcük"
+        },
+        {
+          "id": "2062",
+          "text": "İzmit"
+        },
+        {
+          "id": "1430",
+          "text": "Kandıra"
+        },
+        {
+          "id": "1440",
+          "text": "Karamürsel"
+        },
+        {
+          "id": "2063",
+          "text": "Kartepe"
+        },
+        {
+          "id": "1821",
+          "text": "Körfez"
+        }
+      ],
+      "43": [
+        {
+          "id": "1132",
+          "text": "Altıntaş"
+        },
+        {
+          "id": "1764",
+          "text": "Aslanapa"
+        },
+        {
+          "id": "1898",
+          "text": "Çavdarhisar"
+        },
+        {
+          "id": "1288",
+          "text": "Domaniç"
+        },
+        {
+          "id": "1790",
+          "text": "Dumlupınar"
+        },
+        {
+          "id": "1304",
+          "text": "Emet"
+        },
+        {
+          "id": "1339",
+          "text": "Gediz"
+        },
+        {
+          "id": "1802",
+          "text": "Hisarcık"
+        },
+        {
+          "id": "1500",
+          "text": "Merkez"
+        },
+        {
+          "id": "1979",
+          "text": "Pazarlar"
+        },
+        {
+          "id": "1625",
+          "text": "Simav"
+        },
+        {
+          "id": "1843",
+          "text": "Şaphane"
+        },
+        {
+          "id": "1671",
+          "text": "Tavşanlı"
+        }
+      ],
+      "45": [
+        {
+          "id": "1751",
+          "text": "Ahmetli"
+        },
+        {
+          "id": "1118",
+          "text": "Akhisar"
+        },
+        {
+          "id": "1127",
+          "text": "Alaşehir"
+        },
+        {
+          "id": "1269",
+          "text": "Demirci"
+        },
+        {
+          "id": "1793",
+          "text": "Gölmarmara"
+        },
+        {
+          "id": "1362",
+          "text": "Gördes"
+        },
+        {
+          "id": "1470",
+          "text": "Kırkağaç"
+        },
+        {
+          "id": "1965",
+          "text": "Köprübaşı"
+        },
+        {
+          "id": "1489",
+          "text": "Kula"
+        },
+        {
+          "id": "1590",
+          "text": "Salihli"
+        },
+        {
+          "id": "1600",
+          "text": "Sarıgöl"
+        },
+        {
+          "id": "1606",
+          "text": "Saruhanlı"
+        },
+        {
+          "id": "1613",
+          "text": "Selendi"
+        },
+        {
+          "id": "1634",
+          "text": "Soma"
+        },
+        {
+          "id": "2112",
+          "text": "Şehzadeler"
+        },
+        {
+          "id": "1689",
+          "text": "Turgutlu"
+        },
+        {
+          "id": "2113",
+          "text": "Yunusemre"
+        }
+      ],
+      "48": [
+        {
+          "id": "1197",
+          "text": "Bodrum"
+        },
+        {
+          "id": "1742",
+          "text": "Dalaman"
+        },
+        {
+          "id": "1266",
+          "text": "Datça"
+        },
+        {
+          "id": "1331",
+          "text": "Fethiye"
+        },
+        {
+          "id": "1958",
+          "text": "Kavaklıdere"
+        },
+        {
+          "id": "1488",
+          "text": "Köyceğiz"
+        },
+        {
+          "id": "1517",
+          "text": "Marmaris"
+        },
+        {
+          "id": "1532",
+          "text": "Menteşe"
+        },
+        {
+          "id": "1528",
+          "text": "Milas"
+        },
+        {
+          "id": "1831",
+          "text": "Ortaca"
+        },
+        {
+          "id": "2126",
+          "text": "Seydikemer"
+        },
+        {
+          "id": "1695",
+          "text": "Ula"
+        },
+        {
+          "id": "1719",
+          "text": "Yatağan"
+        }
+      ],
+      "6": [
+        {
+          "id": "1872",
+          "text": "Akyurt"
+        },
+        {
+          "id": "1130",
+          "text": "Altındağ"
+        },
+        {
+          "id": "1157",
+          "text": "Ayaş"
+        },
+        {
+          "id": "1167",
+          "text": "Bala"
+        },
+        {
+          "id": "1187",
+          "text": "Beypazarı"
+        },
+        {
+          "id": "1227",
+          "text": "Çamlıdere"
+        },
+        {
+          "id": "1231",
+          "text": "Çankaya"
+        },
+        {
+          "id": "1260",
+          "text": "Çubuk"
+        },
+        {
+          "id": "1302",
+          "text": "Elmadağ"
+        },
+        {
+          "id": "1922",
+          "text": "Etimesgut"
+        },
+        {
+          "id": "1924",
+          "text": "Evren"
+        },
+        {
+          "id": "1744",
+          "text": "Gölbaşı"
+        },
+        {
+          "id": "1365",
+          "text": "Güdül"
+        },
+        {
+          "id": "1387",
+          "text": "Haymana"
+        },
+        {
+          "id": "1815",
+          "text": "Kahramankazan"
+        },
+        {
+          "id": "1427",
+          "text": "Kalecik"
+        },
+        {
+          "id": "1745",
+          "text": "Keçiören"
+        },
+        {
+          "id": "1473",
+          "text": "Kızılcahamam"
+        },
+        {
+          "id": "1746",
+          "text": "Mamak"
+        },
+        {
+          "id": "1539",
+          "text": "Nallıhan"
+        },
+        {
+          "id": "1578",
+          "text": "Polatlı"
+        },
+        {
+          "id": "2034",
+          "text": "Pursaklar"
+        },
+        {
+          "id": "1747",
+          "text": "Sincan"
+        },
+        {
+          "id": "1658",
+          "text": "Şereflikoçhisar"
+        },
+        {
+          "id": "1723",
+          "text": "Yenimahalle"
+        }
+      ],
+      "64": [
+        {
+          "id": "1170",
+          "text": "Banaz"
+        },
+        {
+          "id": "1323",
+          "text": "Eşme"
+        },
+        {
+          "id": "1436",
+          "text": "Karahallı"
+        },
+        {
+          "id": "1704",
+          "text": "Merkez"
+        },
+        {
+          "id": "1629",
+          "text": "Sivaslı"
+        },
+        {
+          "id": "1697",
+          "text": "Ulubey"
+        }
+      ],
+      "7": [
+        {
+          "id": "1121",
+          "text": "Akseki"
+        },
+        {
+          "id": "2035",
+          "text": "Aksu"
+        },
+        {
+          "id": "1126",
+          "text": "Alanya"
+        },
+        {
+          "id": "1811",
+          "text": "Demre"
+        },
+        {
+          "id": "2036",
+          "text": "Döşemealtı"
+        },
+        {
+          "id": "1303",
+          "text": "Elmalı"
+        },
+        {
+          "id": "1333",
+          "text": "Finike"
+        },
+        {
+          "id": "1337",
+          "text": "Gazipaşa"
+        },
+        {
+          "id": "1370",
+          "text": "Gündoğmuş"
+        },
+        {
+          "id": "1946",
+          "text": "İbradı"
+        },
+        {
+          "id": "1451",
+          "text": "Kaş"
+        },
+        {
+          "id": "1959",
+          "text": "Kemer"
+        },
+        {
+          "id": "2037",
+          "text": "Kepez"
+        },
+        {
+          "id": "2038",
+          "text": "Konyaaltı"
+        },
+        {
+          "id": "1483",
+          "text": "Korkuteli"
+        },
+        {
+          "id": "1492",
+          "text": "Kumluca"
+        },
+        {
+          "id": "1512",
+          "text": "Manavgat"
+        },
+        {
+          "id": "2039",
+          "text": "Muratpaşa"
+        },
+        {
+          "id": "1616",
+          "text": "Serik"
+        }
+      ],
+      "82": [
+        {
+          "id": "2083",
+          "text": "Girne"
+        }
+      ],
+      "9": [
+        {
+          "id": "1206",
+          "text": "Bozdoğan"
+        },
+        {
+          "id": "1781",
+          "text": "Buharkent"
+        },
+        {
+          "id": "1256",
+          "text": "Çine"
+        },
+        {
+          "id": "2000",
+          "text": "Didim"
+        },
+        {
+          "id": "1159",
+          "text": "Efeler"
+        },
+        {
+          "id": "1348",
+          "text": "Germencik"
+        },
+        {
+          "id": "1807",
+          "text": "İncirliova"
+        },
+        {
+          "id": "1435",
+          "text": "Karacasu"
+        },
+        {
+          "id": "1957",
+          "text": "Karpuzlu"
+        },
+        {
+          "id": "1479",
+          "text": "Koçarlı"
+        },
+        {
+          "id": "1968",
+          "text": "Köşk"
+        },
+        {
+          "id": "1497",
+          "text": "Kuşadası"
+        },
+        {
+          "id": "1498",
+          "text": "Kuyucak"
+        },
+        {
+          "id": "1542",
+          "text": "Nazilli"
+        },
+        {
+          "id": "1637",
+          "text": "Söke"
+        },
+        {
+          "id": "1640",
+          "text": "Sultanhisar"
+        },
+        {
+          "id": "1724",
+          "text": "Yenipazar"
+        }
+      ]
+    },
+    "consultantCountries": [
+      {
+        "id": "212",
+        "text": "Türkiye"
+      }
+    ],
+    "consultantCities": {
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "20",
+          "text": "Denizli"
+        },
+        {
+          "id": "41",
+          "text": "Kocaeli"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        }
+      ]
+    }
+  },
+  "de": {
+    "placeholder": "Wählen",
+    "adTypes": [
+      {
+        "id": "1",
+        "text": "Arsa"
+      },
+      {
+        "id": "2",
+        "text": "Konut"
+      },
+      {
+        "id": "4",
+        "text": "Ticari"
+      },
+      {
+        "id": "6",
+        "text": "Turistik Tesis"
+      }
+    ],
+    "processTypes": {
+      "1": [
+        {
+          "id": "84",
+          "text": "Zu verkaufen"
+        },
+        {
+          "id": "85",
+          "text": "Vermietung"
+        }
+      ],
+      "2": [
+        {
+          "id": "86",
+          "text": "Zu verkaufen"
+        },
+        {
+          "id": "87",
+          "text": "Vermietung"
+        }
+      ],
+      "4": [
+        {
+          "id": "89",
+          "text": "Zu verkaufen"
+        },
+        {
+          "id": "90",
+          "text": "Vermietung"
+        },
+        {
+          "id": "91",
+          "text": "Zur Veräußerung bestimmte Vermögenswerte"
+        },
+        {
+          "id": "501",
+          "text": "Kreis Mieten"
+        }
+      ],
+      "6": [
+        {
+          "id": "523",
+          "text": "Zu verkaufen"
+        },
+        {
+          "id": "524",
+          "text": "Vermietung"
+        }
+      ]
+    },
+    "propertyCountries": [
+      {
+        "id": "212",
+        "text": "Türkiye"
+      }
+    ],
+    "propertyCities": {
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "16",
+          "text": "Bursa"
+        },
+        {
+          "id": "3",
+          "text": "Afyonkarahisar"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "17",
+          "text": "Çanakkale"
+        },
+        {
+          "id": "22",
+          "text": "Edirne"
+        },
+        {
+          "id": "26",
+          "text": "Eskişehir"
+        },
+        {
+          "id": "31",
+          "text": "Hatay"
+        },
+        {
+          "id": "43",
+          "text": "Kütahya"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        },
+        {
+          "id": "64",
+          "text": "Uşak"
+        }
+      ]
+    },
+    "officeCountries": [
+      {
+        "id": "82",
+        "text": "Greece"
+      },
+      {
+        "id": "212",
+        "text": "Türkiye"
+      },
+      {
+        "id": "220",
+        "text": "United Kingdom"
+      }
+    ],
+    "officeCities": {
+      "82": [
+        {
+          "id": "10490",
+          "text": "Athens"
+        }
+      ],
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "20",
+          "text": "Denizli"
+        },
+        {
+          "id": "41",
+          "text": "Kocaeli"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        },
+        {
+          "id": "82",
+          "text": "Girne (K.K.T.C.)"
+        }
+      ],
+      "220": [
+        {
+          "id": "10391",
+          "text": "London"
+        }
+      ]
+    },
+    "counties": {
+      "10": [
+        {
+          "id": "2115",
+          "text": "Altıeylül"
+        },
+        {
+          "id": "1161",
+          "text": "Ayvalık"
+        },
+        {
+          "id": "1169",
+          "text": "Balya"
+        },
+        {
+          "id": "1171",
+          "text": "Bandırma"
+        },
+        {
+          "id": "1191",
+          "text": "Bigadiç"
+        },
+        {
+          "id": "1216",
+          "text": "Burhaniye"
+        },
+        {
+          "id": "1291",
+          "text": "Dursunbey"
+        },
+        {
+          "id": "1294",
+          "text": "Edremit"
+        },
+        {
+          "id": "1310",
+          "text": "Erdek"
+        },
+        {
+          "id": "1928",
+          "text": "Gömeç"
+        },
+        {
+          "id": "1360",
+          "text": "Gönen"
+        },
+        {
+          "id": "1384",
+          "text": "Havran"
+        },
+        {
+          "id": "1418",
+          "text": "İvrindi"
+        },
+        {
+          "id": "2114",
+          "text": "Karesi"
+        },
+        {
+          "id": "1462",
+          "text": "Kepsut"
+        },
+        {
+          "id": "1514",
+          "text": "Manyas"
+        },
+        {
+          "id": "1824",
+          "text": "Marmara"
+        },
+        {
+          "id": "1608",
+          "text": "Savaştepe"
+        },
+        {
+          "id": "1619",
+          "text": "Sındırgı"
+        },
+        {
+          "id": "1644",
+          "text": "Susurluk"
+        }
+      ],
+      "10391": [
+        {
+          "id": "101877",
+          "text": "105 Thomsbeach Road"
+        },
+        {
+          "id": "101119",
+          "text": "City of London"
+        },
+        {
+          "id": "101359",
+          "text": "hackney"
+        },
+        {
+          "id": "101903",
+          "text": "Marylebone"
+        },
+        {
+          "id": "101120",
+          "text": "Mayfair"
+        },
+        {
+          "id": "102460",
+          "text": "New Eltham"
+        },
+        {
+          "id": "101756",
+          "text": "Reading"
+        },
+        {
+          "id": "101878",
+          "text": "SE61EY"
+        },
+        {
+          "id": "101121",
+          "text": "Soho"
+        },
+        {
+          "id": "101879",
+          "text": "Southend"
+        }
+      ],
+      "10490": [
+        {
+          "id": "101441",
+          "text": "Papandreou"
+        }
+      ],
+      "16": [
+        {
+          "id": "1783",
+          "text": "Büyükorhan"
+        },
+        {
+          "id": "1343",
+          "text": "Gemlik"
+        },
+        {
+          "id": "1935",
+          "text": "Gürsu"
+        },
+        {
+          "id": "1799",
+          "text": "Harmancık"
+        },
+        {
+          "id": "1411",
+          "text": "İnegöl"
+        },
+        {
+          "id": "1420",
+          "text": "İznik"
+        },
+        {
+          "id": "1434",
+          "text": "Karacabey"
+        },
+        {
+          "id": "1457",
+          "text": "Keles"
+        },
+        {
+          "id": "1960",
+          "text": "Kestel"
+        },
+        {
+          "id": "1530",
+          "text": "Mudanya"
+        },
+        {
+          "id": "1535",
+          "text": "Mustafakemalpaşa"
+        },
+        {
+          "id": "1829",
+          "text": "Nilüfer"
+        },
+        {
+          "id": "1553",
+          "text": "Orhaneli"
+        },
+        {
+          "id": "1554",
+          "text": "Orhangazi"
+        },
+        {
+          "id": "1832",
+          "text": "Osmangazi"
+        },
+        {
+          "id": "1725",
+          "text": "Yenişehir"
+        },
+        {
+          "id": "1859",
+          "text": "Yıldırım"
+        }
+      ],
+      "17": [
+        {
+          "id": "1160",
+          "text": "Ayvacık"
+        },
+        {
+          "id": "1180",
+          "text": "Bayramiç"
+        },
+        {
+          "id": "1190",
+          "text": "Biga"
+        },
+        {
+          "id": "1205",
+          "text": "Bozcaada"
+        },
+        {
+          "id": "1229",
+          "text": "Çan"
+        },
+        {
+          "id": "1293",
+          "text": "Eceabat"
+        },
+        {
+          "id": "1326",
+          "text": "Ezine"
+        },
+        {
+          "id": "1340",
+          "text": "Gelibolu"
+        },
+        {
+          "id": "1408",
+          "text": "Gökçeada"
+        },
+        {
+          "id": "1503",
+          "text": "Lapseki"
+        },
+        {
+          "id": "1230",
+          "text": "Merkez"
+        },
+        {
+          "id": "1722",
+          "text": "Yenice"
+        }
+      ],
+      "20": [
+        {
+          "id": "1102",
+          "text": "Acıpayam"
+        },
+        {
+          "id": "1769",
+          "text": "Babadağ"
+        },
+        {
+          "id": "1881",
+          "text": "Baklan"
+        },
+        {
+          "id": "1774",
+          "text": "Bekilli"
+        },
+        {
+          "id": "1888",
+          "text": "Beyağaç"
+        },
+        {
+          "id": "1889",
+          "text": "Bozkurt"
+        },
+        {
+          "id": "1214",
+          "text": "Buldan"
+        },
+        {
+          "id": "1224",
+          "text": "Çal"
+        },
+        {
+          "id": "1226",
+          "text": "Çameli"
+        },
+        {
+          "id": "1233",
+          "text": "Çardak"
+        },
+        {
+          "id": "1257",
+          "text": "Çivril"
+        },
+        {
+          "id": "1371",
+          "text": "Güney"
+        },
+        {
+          "id": "1803",
+          "text": "Honaz"
+        },
+        {
+          "id": "1426",
+          "text": "Kale"
+        },
+        {
+          "id": "2116",
+          "text": "Merkezefendi"
+        },
+        {
+          "id": "2107",
+          "text": "Pamukkale"
+        },
+        {
+          "id": "1597",
+          "text": "Sarayköy"
+        },
+        {
+          "id": "1840",
+          "text": "Serinhisar"
+        },
+        {
+          "id": "1670",
+          "text": "Tavas"
+        }
+      ],
+      "22": [
+        {
+          "id": "1307",
+          "text": "Enez"
+        },
+        {
+          "id": "1385",
+          "text": "Havsa"
+        },
+        {
+          "id": "1412",
+          "text": "İpsala"
+        },
+        {
+          "id": "1464",
+          "text": "Keşan"
+        },
+        {
+          "id": "1502",
+          "text": "Lalapaşa"
+        },
+        {
+          "id": "1523",
+          "text": "Meriç"
+        },
+        {
+          "id": "1295",
+          "text": "Merkez"
+        },
+        {
+          "id": "1988",
+          "text": "Süloğlu"
+        },
+        {
+          "id": "1705",
+          "text": "Uzunköprü"
+        }
+      ],
+      "26": [
+        {
+          "id": "1759",
+          "text": "Alpu"
+        },
+        {
+          "id": "1777",
+          "text": "Beylikova"
+        },
+        {
+          "id": "1255",
+          "text": "Çifteler"
+        },
+        {
+          "id": "1934",
+          "text": "Günyüzü"
+        },
+        {
+          "id": "1939",
+          "text": "Han"
+        },
+        {
+          "id": "1808",
+          "text": "İnönü"
+        },
+        {
+          "id": "1508",
+          "text": "Mahmudiye"
+        },
+        {
+          "id": "1973",
+          "text": "Mihalgazi"
+        },
+        {
+          "id": "1527",
+          "text": "Mihalıcçık"
+        },
+        {
+          "id": "2046",
+          "text": "Odunpazarı"
+        },
+        {
+          "id": "1599",
+          "text": "Sarıcakaya"
+        },
+        {
+          "id": "1618",
+          "text": "Seyitgazi"
+        },
+        {
+          "id": "1632",
+          "text": "Sivrihisar"
+        },
+        {
+          "id": "2047",
+          "text": "Tepebaşı"
+        }
+      ],
+      "3": [
+        {
+          "id": "1771",
+          "text": "Başmakçı"
+        },
+        {
+          "id": "1773",
+          "text": "Bayat"
+        },
+        {
+          "id": "1200",
+          "text": "Bolvadin"
+        },
+        {
+          "id": "1239",
+          "text": "Çay"
+        },
+        {
+          "id": "1906",
+          "text": "Çobanlar"
+        },
+        {
+          "id": "1267",
+          "text": "Dazkırı"
+        },
+        {
+          "id": "1281",
+          "text": "Dinar"
+        },
+        {
+          "id": "1306",
+          "text": "Emirdağ"
+        },
+        {
+          "id": "1923",
+          "text": "Evciler"
+        },
+        {
+          "id": "1944",
+          "text": "Hocalar"
+        },
+        {
+          "id": "1404",
+          "text": "İhsaniye"
+        },
+        {
+          "id": "1809",
+          "text": "İscehisar"
+        },
+        {
+          "id": "1961",
+          "text": "Kızılören"
+        },
+        {
+          "id": "1108",
+          "text": "Merkez"
+        },
+        {
+          "id": "1594",
+          "text": "Sandıklı"
+        },
+        {
+          "id": "1626",
+          "text": "Sinanpaşa"
+        },
+        {
+          "id": "1639",
+          "text": "Sultandağı"
+        },
+        {
+          "id": "1664",
+          "text": "Şuhut"
+        }
+      ],
+      "31": [
+        {
+          "id": "1131",
+          "text": "Altınözü"
+        },
+        {
+          "id": "1383",
+          "text": "Antakya"
+        },
+        {
+          "id": "2108",
+          "text": "Arsuz"
+        },
+        {
+          "id": "1887",
+          "text": "Belen"
+        },
+        {
+          "id": "2109",
+          "text": "Defne"
+        },
+        {
+          "id": "1289",
+          "text": "Dörtyol"
+        },
+        {
+          "id": "1792",
+          "text": "Erzin"
+        },
+        {
+          "id": "1382",
+          "text": "Hassa"
+        },
+        {
+          "id": "1413",
+          "text": "İskenderun"
+        },
+        {
+          "id": "1468",
+          "text": "Kırıkhan"
+        },
+        {
+          "id": "1970",
+          "text": "Kumlu"
+        },
+        {
+          "id": "2104",
+          "text": "Payas"
+        },
+        {
+          "id": "1585",
+          "text": "Reyhanlı"
+        },
+        {
+          "id": "1591",
+          "text": "Samandağ"
+        },
+        {
+          "id": "1721",
+          "text": "Yayladağı"
+        }
+      ],
+      "34": [
+        {
+          "id": "1103",
+          "text": "Adalar"
+        },
+        {
+          "id": "2048",
+          "text": "Arnavutköy"
+        },
+        {
+          "id": "2049",
+          "text": "Ataşehir"
+        },
+        {
+          "id": "2003",
+          "text": "Avcılar"
+        },
+        {
+          "id": "2004",
+          "text": "Bağcılar"
+        },
+        {
+          "id": "2005",
+          "text": "Bahçelievler"
+        },
+        {
+          "id": "1166",
+          "text": "Bakırköy"
+        },
+        {
+          "id": "2050",
+          "text": "Başakşehir"
+        },
+        {
+          "id": "1886",
+          "text": "Bayrampaşa"
+        },
+        {
+          "id": "1183",
+          "text": "Beşiktaş"
+        },
+        {
+          "id": "1185",
+          "text": "Beykoz"
+        },
+        {
+          "id": "2051",
+          "text": "Beylikdüzü"
+        },
+        {
+          "id": "1186",
+          "text": "Beyoğlu"
+        },
+        {
+          "id": "1782",
+          "text": "Büyükçekmece"
+        },
+        {
+          "id": "1237",
+          "text": "Çatalca"
+        },
+        {
+          "id": "2052",
+          "text": "Çekmeköy"
+        },
+        {
+          "id": "2016",
+          "text": "Esenler"
+        },
+        {
+          "id": "2053",
+          "text": "Esenyurt"
+        },
+        {
+          "id": "1325",
+          "text": "Eyüpsultan"
+        },
+        {
+          "id": "1327",
+          "text": "Fatih"
+        },
+        {
+          "id": "1336",
+          "text": "Gaziosmanpaşa"
+        },
+        {
+          "id": "2010",
+          "text": "Güngören"
+        },
+        {
+          "id": "1421",
+          "text": "Kadıköy"
+        },
+        {
+          "id": "1810",
+          "text": "Kağıthane"
+        },
+        {
+          "id": "1449",
+          "text": "Kartal"
+        },
+        {
+          "id": "1823",
+          "text": "Küçükçekmece"
+        },
+        {
+          "id": "2012",
+          "text": "Maltepe"
+        },
+        {
+          "id": "1835",
+          "text": "Pendik"
+        },
+        {
+          "id": "2054",
+          "text": "Sancaktepe"
+        },
+        {
+          "id": "1604",
+          "text": "Sarıyer"
+        },
+        {
+          "id": "1622",
+          "text": "Silivri"
+        },
+        {
+          "id": "2014",
+          "text": "Sultanbeyli"
+        },
+        {
+          "id": "2055",
+          "text": "Sultangazi"
+        },
+        {
+          "id": "1659",
+          "text": "Şile"
+        },
+        {
+          "id": "1663",
+          "text": "Şişli"
+        },
+        {
+          "id": "2015",
+          "text": "Tuzla"
+        },
+        {
+          "id": "1852",
+          "text": "Ümraniye"
+        },
+        {
+          "id": "1708",
+          "text": "Üsküdar"
+        },
+        {
+          "id": "1739",
+          "text": "Zeytinburnu"
+        }
+      ],
+      "35": [
+        {
+          "id": "1128",
+          "text": "Aliağa"
+        },
+        {
+          "id": "2006",
+          "text": "Balçova"
+        },
+        {
+          "id": "1178",
+          "text": "Bayındır"
+        },
+        {
+          "id": "2056",
+          "text": "Bayraklı"
+        },
+        {
+          "id": "1181",
+          "text": "Bergama"
+        },
+        {
+          "id": "1776",
+          "text": "Beydağ"
+        },
+        {
+          "id": "1203",
+          "text": "Bornova"
+        },
+        {
+          "id": "1780",
+          "text": "Buca"
+        },
+        {
+          "id": "1251",
+          "text": "Çeşme"
+        },
+        {
+          "id": "2007",
+          "text": "Çiğli"
+        },
+        {
+          "id": "1280",
+          "text": "Dikili"
+        },
+        {
+          "id": "1334",
+          "text": "Foça"
+        },
+        {
+          "id": "2009",
+          "text": "Gaziemir"
+        },
+        {
+          "id": "2018",
+          "text": "Güzelbahçe"
+        },
+        {
+          "id": "2057",
+          "text": "Karabağlar"
+        },
+        {
+          "id": "1432",
+          "text": "Karaburun"
+        },
+        {
+          "id": "1448",
+          "text": "Karşıyaka"
+        },
+        {
+          "id": "1461",
+          "text": "Kemalpaşa"
+        },
+        {
+          "id": "1467",
+          "text": "Kınık"
+        },
+        {
+          "id": "1477",
+          "text": "Kiraz"
+        },
+        {
+          "id": "1819",
+          "text": "Konak"
+        },
+        {
+          "id": "1826",
+          "text": "Menderes"
+        },
+        {
+          "id": "1521",
+          "text": "Menemen"
+        },
+        {
+          "id": "2013",
+          "text": "Narlıdere"
+        },
+        {
+          "id": "1563",
+          "text": "Ödemiş"
+        },
+        {
+          "id": "1611",
+          "text": "Seferihisar"
+        },
+        {
+          "id": "1612",
+          "text": "Selçuk"
+        },
+        {
+          "id": "1677",
+          "text": "Tire"
+        },
+        {
+          "id": "1682",
+          "text": "Torbalı"
+        },
+        {
+          "id": "1703",
+          "text": "Urla"
+        }
+      ],
+      "41": [
+        {
+          "id": "2058",
+          "text": "Başiskele"
+        },
+        {
+          "id": "2059",
+          "text": "Çayırova"
+        },
+        {
+          "id": "2060",
+          "text": "Darıca"
+        },
+        {
+          "id": "2030",
+          "text": "Derince"
+        },
+        {
+          "id": "2061",
+          "text": "Dilovası"
+        },
+        {
+          "id": "1338",
+          "text": "Gebze"
+        },
+        {
+          "id": "1355",
+          "text": "Gölcük"
+        },
+        {
+          "id": "2062",
+          "text": "İzmit"
+        },
+        {
+          "id": "1430",
+          "text": "Kandıra"
+        },
+        {
+          "id": "1440",
+          "text": "Karamürsel"
+        },
+        {
+          "id": "2063",
+          "text": "Kartepe"
+        },
+        {
+          "id": "1821",
+          "text": "Körfez"
+        }
+      ],
+      "43": [
+        {
+          "id": "1132",
+          "text": "Altıntaş"
+        },
+        {
+          "id": "1764",
+          "text": "Aslanapa"
+        },
+        {
+          "id": "1898",
+          "text": "Çavdarhisar"
+        },
+        {
+          "id": "1288",
+          "text": "Domaniç"
+        },
+        {
+          "id": "1790",
+          "text": "Dumlupınar"
+        },
+        {
+          "id": "1304",
+          "text": "Emet"
+        },
+        {
+          "id": "1339",
+          "text": "Gediz"
+        },
+        {
+          "id": "1802",
+          "text": "Hisarcık"
+        },
+        {
+          "id": "1500",
+          "text": "Merkez"
+        },
+        {
+          "id": "1979",
+          "text": "Pazarlar"
+        },
+        {
+          "id": "1625",
+          "text": "Simav"
+        },
+        {
+          "id": "1843",
+          "text": "Şaphane"
+        },
+        {
+          "id": "1671",
+          "text": "Tavşanlı"
+        }
+      ],
+      "45": [
+        {
+          "id": "1751",
+          "text": "Ahmetli"
+        },
+        {
+          "id": "1118",
+          "text": "Akhisar"
+        },
+        {
+          "id": "1127",
+          "text": "Alaşehir"
+        },
+        {
+          "id": "1269",
+          "text": "Demirci"
+        },
+        {
+          "id": "1793",
+          "text": "Gölmarmara"
+        },
+        {
+          "id": "1362",
+          "text": "Gördes"
+        },
+        {
+          "id": "1470",
+          "text": "Kırkağaç"
+        },
+        {
+          "id": "1965",
+          "text": "Köprübaşı"
+        },
+        {
+          "id": "1489",
+          "text": "Kula"
+        },
+        {
+          "id": "1590",
+          "text": "Salihli"
+        },
+        {
+          "id": "1600",
+          "text": "Sarıgöl"
+        },
+        {
+          "id": "1606",
+          "text": "Saruhanlı"
+        },
+        {
+          "id": "1613",
+          "text": "Selendi"
+        },
+        {
+          "id": "1634",
+          "text": "Soma"
+        },
+        {
+          "id": "2112",
+          "text": "Şehzadeler"
+        },
+        {
+          "id": "1689",
+          "text": "Turgutlu"
+        },
+        {
+          "id": "2113",
+          "text": "Yunusemre"
+        }
+      ],
+      "48": [
+        {
+          "id": "1197",
+          "text": "Bodrum"
+        },
+        {
+          "id": "1742",
+          "text": "Dalaman"
+        },
+        {
+          "id": "1266",
+          "text": "Datça"
+        },
+        {
+          "id": "1331",
+          "text": "Fethiye"
+        },
+        {
+          "id": "1958",
+          "text": "Kavaklıdere"
+        },
+        {
+          "id": "1488",
+          "text": "Köyceğiz"
+        },
+        {
+          "id": "1517",
+          "text": "Marmaris"
+        },
+        {
+          "id": "1532",
+          "text": "Menteşe"
+        },
+        {
+          "id": "1528",
+          "text": "Milas"
+        },
+        {
+          "id": "1831",
+          "text": "Ortaca"
+        },
+        {
+          "id": "2126",
+          "text": "Seydikemer"
+        },
+        {
+          "id": "1695",
+          "text": "Ula"
+        },
+        {
+          "id": "1719",
+          "text": "Yatağan"
+        }
+      ],
+      "6": [
+        {
+          "id": "1872",
+          "text": "Akyurt"
+        },
+        {
+          "id": "1130",
+          "text": "Altındağ"
+        },
+        {
+          "id": "1157",
+          "text": "Ayaş"
+        },
+        {
+          "id": "1167",
+          "text": "Bala"
+        },
+        {
+          "id": "1187",
+          "text": "Beypazarı"
+        },
+        {
+          "id": "1227",
+          "text": "Çamlıdere"
+        },
+        {
+          "id": "1231",
+          "text": "Çankaya"
+        },
+        {
+          "id": "1260",
+          "text": "Çubuk"
+        },
+        {
+          "id": "1302",
+          "text": "Elmadağ"
+        },
+        {
+          "id": "1922",
+          "text": "Etimesgut"
+        },
+        {
+          "id": "1924",
+          "text": "Evren"
+        },
+        {
+          "id": "1744",
+          "text": "Gölbaşı"
+        },
+        {
+          "id": "1365",
+          "text": "Güdül"
+        },
+        {
+          "id": "1387",
+          "text": "Haymana"
+        },
+        {
+          "id": "1815",
+          "text": "Kahramankazan"
+        },
+        {
+          "id": "1427",
+          "text": "Kalecik"
+        },
+        {
+          "id": "1745",
+          "text": "Keçiören"
+        },
+        {
+          "id": "1473",
+          "text": "Kızılcahamam"
+        },
+        {
+          "id": "1746",
+          "text": "Mamak"
+        },
+        {
+          "id": "1539",
+          "text": "Nallıhan"
+        },
+        {
+          "id": "1578",
+          "text": "Polatlı"
+        },
+        {
+          "id": "2034",
+          "text": "Pursaklar"
+        },
+        {
+          "id": "1747",
+          "text": "Sincan"
+        },
+        {
+          "id": "1658",
+          "text": "Şereflikoçhisar"
+        },
+        {
+          "id": "1723",
+          "text": "Yenimahalle"
+        }
+      ],
+      "64": [
+        {
+          "id": "1170",
+          "text": "Banaz"
+        },
+        {
+          "id": "1323",
+          "text": "Eşme"
+        },
+        {
+          "id": "1436",
+          "text": "Karahallı"
+        },
+        {
+          "id": "1704",
+          "text": "Merkez"
+        },
+        {
+          "id": "1629",
+          "text": "Sivaslı"
+        },
+        {
+          "id": "1697",
+          "text": "Ulubey"
+        }
+      ],
+      "7": [
+        {
+          "id": "1121",
+          "text": "Akseki"
+        },
+        {
+          "id": "2035",
+          "text": "Aksu"
+        },
+        {
+          "id": "1126",
+          "text": "Alanya"
+        },
+        {
+          "id": "1811",
+          "text": "Demre"
+        },
+        {
+          "id": "2036",
+          "text": "Döşemealtı"
+        },
+        {
+          "id": "1303",
+          "text": "Elmalı"
+        },
+        {
+          "id": "1333",
+          "text": "Finike"
+        },
+        {
+          "id": "1337",
+          "text": "Gazipaşa"
+        },
+        {
+          "id": "1370",
+          "text": "Gündoğmuş"
+        },
+        {
+          "id": "1946",
+          "text": "İbradı"
+        },
+        {
+          "id": "1451",
+          "text": "Kaş"
+        },
+        {
+          "id": "1959",
+          "text": "Kemer"
+        },
+        {
+          "id": "2037",
+          "text": "Kepez"
+        },
+        {
+          "id": "2038",
+          "text": "Konyaaltı"
+        },
+        {
+          "id": "1483",
+          "text": "Korkuteli"
+        },
+        {
+          "id": "1492",
+          "text": "Kumluca"
+        },
+        {
+          "id": "1512",
+          "text": "Manavgat"
+        },
+        {
+          "id": "2039",
+          "text": "Muratpaşa"
+        },
+        {
+          "id": "1616",
+          "text": "Serik"
+        }
+      ],
+      "82": [
+        {
+          "id": "2083",
+          "text": "Girne"
+        }
+      ],
+      "9": [
+        {
+          "id": "1206",
+          "text": "Bozdoğan"
+        },
+        {
+          "id": "1781",
+          "text": "Buharkent"
+        },
+        {
+          "id": "1256",
+          "text": "Çine"
+        },
+        {
+          "id": "2000",
+          "text": "Didim"
+        },
+        {
+          "id": "1159",
+          "text": "Efeler"
+        },
+        {
+          "id": "1348",
+          "text": "Germencik"
+        },
+        {
+          "id": "1807",
+          "text": "İncirliova"
+        },
+        {
+          "id": "1435",
+          "text": "Karacasu"
+        },
+        {
+          "id": "1957",
+          "text": "Karpuzlu"
+        },
+        {
+          "id": "1479",
+          "text": "Koçarlı"
+        },
+        {
+          "id": "1968",
+          "text": "Köşk"
+        },
+        {
+          "id": "1497",
+          "text": "Kuşadası"
+        },
+        {
+          "id": "1498",
+          "text": "Kuyucak"
+        },
+        {
+          "id": "1542",
+          "text": "Nazilli"
+        },
+        {
+          "id": "1637",
+          "text": "Söke"
+        },
+        {
+          "id": "1640",
+          "text": "Sultanhisar"
+        },
+        {
+          "id": "1724",
+          "text": "Yenipazar"
+        }
+      ]
+    },
+    "consultantCountries": [
+      {
+        "id": "212",
+        "text": "Türkiye"
+      }
+    ],
+    "consultantCities": {
+      "212": [
+        {
+          "id": "34",
+          "text": "İstanbul"
+        },
+        {
+          "id": "6",
+          "text": "Ankara"
+        },
+        {
+          "id": "35",
+          "text": "İzmir"
+        },
+        {
+          "id": "7",
+          "text": "Antalya"
+        },
+        {
+          "id": "9",
+          "text": "Aydın"
+        },
+        {
+          "id": "10",
+          "text": "Balıkesir"
+        },
+        {
+          "id": "20",
+          "text": "Denizli"
+        },
+        {
+          "id": "41",
+          "text": "Kocaeli"
+        },
+        {
+          "id": "45",
+          "text": "Manisa"
+        },
+        {
+          "id": "48",
+          "text": "Muğla"
+        }
+      ]
+    }
+  }
+}

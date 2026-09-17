@@ -1,0 +1,668 @@
+---
+
+description: "StartKey.com.tr projesinin kimliğini, amacını, teknoloji yığınını, mimarisini, birebir yeniden oluşturma gereksinimlerini, çoklu dil yapısını, asset stratejisini ve Reonix entegrasyon bağlamını tanımlar."
+alwaysApply: true
+-----------------
+
+# Proje Hakkında
+
+## 1. Proje Kimliği
+
+**Proje:** StartKey Gayrimenkul Website Yeniden Oluşturma Projesi
+
+**Referans Website:** StartKey.com.tr
+
+**Proje Türü:** Full-stack web uygulaması ve public website yeniden oluşturma projesi
+
+---
+
+# 2. Projenin Amacı
+
+Ana amaç, mevcut StartKey.com.tr public website'ini lokal olarak mümkün olan en yüksek görsel ve davranışsal doğrulukla yeniden oluşturmaktır.
+
+Bu proje "benzer bir website yapma" projesi DEĞİLDİR.
+
+Hedef, teknik olarak mümkün olduğu ölçüde mevcut public website'in birebir yeniden oluşturulmasıdır.
+
+Referans website'de gözlemlenebilen hiçbir unsur gereksiz yere basitleştirilmemeli, değiştirilmemeli veya yaklaşık olarak yeniden tasarlanmamalıdır.
+
+---
+
+# 3. Proje Arka Planı
+
+StartKey Gayrimenkul mevcut public website'ini, kaynak kodu bu projede bulunmayan harici bir sistem üzerinden kullanmaktadır.
+
+Bu proje, mevcut website'in gözlemlenebilen yapısını referans alarak bağımsız bir implementasyon oluşturacaktır.
+
+Referans website aşağıdaki konularda kaynak gerçeklik olarak kabul edilir:
+
+* Görsel tasarım
+* Layout
+* Typography
+* Renkler
+* Spacing
+* Responsive davranış
+* Navigation
+* Component'ler
+* Butonlar
+* Formlar
+* Kartlar
+* Modallar
+* Dropdown'lar
+* Slider'lar
+* Carousel'ler
+* Animasyonlar
+* Görseller
+* Videolar
+* Linkler
+* URL davranışları
+* Görünen metinler
+* Public etkileşimler
+* Diğer gözlemlenebilir işlevler
+
+Orijinal private server-side implementasyon bilinmediği için AI tarafından tahmin veya icat edilmemelidir.
+
+Yalnızca public website üzerinden gözlemlenebilen davranışlar yeniden oluşturulmalıdır.
+
+---
+
+# 4. İlk ve Ana Öncelik
+
+Projenin ilk ve ana hedefi:
+
+> StartKey.com.tr ana sayfasını tamamen lokal olarak yeniden oluşturmak.
+
+Ana sayfa doğru şekilde oluşturulduktan sonra website'in diğer public sayfaları ve bölümleri aşamalı olarak ele alınacaktır.
+
+Tüm website tek seferde oluşturulmaya çalışılmamalıdır.
+
+Çalışma adım adım ilerlemelidir.
+
+---
+
+# 5. Birebir Yeniden Oluşturma Standardı
+
+Referans website'in public olarak gözlemlenebilen tüm özellikleri teknik olarak mümkün olan en yüksek doğrulukta yeniden oluşturulmalıdır.
+
+## 5.1 Görsel Doğruluk
+
+Bunlara aşağıdakiler dahildir:
+
+* Layout
+* Typography
+* Font boyutları
+* Font ağırlıkları
+* Line height
+* Letter spacing
+* Renkler
+* Border'lar
+* Border radius
+* Shadow'lar
+* Spacing
+* Boyutlar
+* Alignment
+* Responsive breakpoint'ler
+* Desktop görünümü
+* Tablet görünümü
+* Mobile görünümü
+
+## 5.2 Component Doğruluğu
+
+Referans website'de bulunan component'ler mümkün olduğunca aynı şekilde yeniden oluşturulmalıdır:
+
+* Header
+* Navigation
+* Dropdown menüler
+* Footer
+* Hero bölümleri
+* Kartlar
+* Butonlar
+* Formlar
+* Search arayüzleri
+* Filter'lar
+* Slider'lar
+* Carousel'ler
+* Modal'lar
+* Accordion'lar
+* Tab'lar
+* Pagination
+* Icon'lar
+* Görseller
+* Videolar
+
+## 5.3 Davranışsal Doğruluk
+
+Public olarak gözlemlenebilen davranışlar birebir yeniden oluşturulmalıdır.
+
+Bunlara aşağıdakiler dahildir:
+
+* Butonlar
+* Linkler
+* Formlar
+* Menüler
+* Dropdown'lar
+* Filter'lar
+* Search
+* Carousel'ler
+* Slider'lar
+* Modal'lar
+* Dil değiştirme
+* URL navigation
+* Responsive etkileşimler
+* Diğer public etkileşimler
+
+AI, gözlemlenebilen bir davranışı sırf daha kolay olduğu için basitleştirmemelidir.
+
+---
+
+# 6. Referans Website İncelemesi
+
+AI, proje kapsamında kullanıcı tarafından verilen StartKey.com.tr URL'lerini incelemek için açık izne sahiptir.
+
+AI gerektiğinde public olarak erişilebilen:
+
+* Sayfaları
+* HTML'i
+* CSS'i
+* JavaScript davranışlarını
+* Görselleri
+* Videoları
+* Fontları
+* Linkleri
+* Route'ları
+* Dil versiyonlarını
+* Public olarak gözlemlenebilen API/network davranışlarını
+* Diğer public kaynakları
+
+inceleyebilir.
+
+Referans website mümkün olduğunca doğrudan incelenmeli ve gözlemlenen bilgiler kullanılmalıdır.
+
+Tahmin, gözlemlenen davranışın yerine geçmemelidir.
+
+---
+
+# 7. Asset Stratejisi
+
+Referans website'deki gerekli asset'ler teknik olarak mümkün olduğu sürece lokal olarak alınmalı ve projede saklanmalıdır.
+
+Bunlara aşağıdakiler dahildir:
+
+* Görseller
+* Videolar
+* Icon'lar
+* Fontlar
+* Static dosyalar
+* Diğer frontend asset'leri
+
+Website runtime sırasında StartKey.com.tr'ye hotlink yapılmamalıdır.
+
+Mümkün olduğu durumda:
+
+```html id="e0f8qz"
+<img src="https://startkey.com.tr/example.jpg">
+```
+
+gibi doğrudan referans website'e bağlı runtime asset kullanımı yerine asset lokal olarak alınmalı ve uygulama üzerinden sunulmalıdır.
+
+Aynı prensip:
+
+* Görseller
+* Videolar
+* Fontlar
+* Icon'lar
+* CSS asset'leri
+* JavaScript asset'leri
+* Diğer static kaynaklar
+
+için de geçerlidir.
+
+---
+
+# 8. Çoklu Dil / Internationalization
+
+Referans website üzerinde aktif olarak bulunan üç dil desteklenmelidir:
+
+* Türkçe (`tr`)
+* İngilizce (`en`)
+* Almanca (`de`)
+
+Üç dil de uygulamada desteklenmelidir.
+
+## 8.1 Çeviri Kuralı
+
+AI kendi çevirisini oluşturmamalıdır.
+
+Referans website'de ilgili dilin gerçek versiyonu mevcutsa metin doğrudan o versiyondan alınmalıdır.
+
+Örneğin ana sayfa yeniden oluşturulurken:
+
+* Türkçe sayfa
+* İngilizce sayfa
+* Almanca sayfa
+
+ayrı ayrı incelenmelidir.
+
+URL yapısı AI tarafından tahmin edilmemeli, referans website incelenerek belirlenmelidir.
+
+Örneğin `/en`, `/de`, `/tr` gibi route'lar mevcutsa bunların gerçek içerikleri doğrudan referans website'den alınmalıdır.
+
+## 8.2 Dil Değiştirme
+
+Kullanıcı:
+
+* Türkçe
+* English
+* Deutsch
+
+arasında geçiş yapabilmelidir.
+
+Dil değiştirme davranışı referans website'deki davranışa mümkün olduğunca birebir karşılık gelmelidir.
+
+Bir dilin metni diğer dile AI tarafından çevrilmemelidir.
+
+Referans website'deki ilgili dil versiyonunun gerçek metni kullanılmalıdır.
+
+---
+
+# 9. Frontend'in Backend'i Gereksiz Yere Beklememesi
+
+Public UI, gelecekteki backend veya CRM entegrasyonları nedeniyle gereksiz şekilde bekletilmemelidir.
+
+Bir UI component'i gerçek backend entegrasyonu henüz mevcut değilken doğru şekilde oluşturulabiliyorsa oluşturulmalıdır.
+
+Gerekli olduğu durumda geçici:
+
+* Dummy data
+* Mock data
+* Placeholder data
+
+kullanılabilir.
+
+Ancak kullanılan tüm geçici implementasyonlar:
+
+`01_TECHNICAL_DEBT.mdc`
+
+içerisinde kaydedilmelidir.
+
+Geçici veriler hiçbir zaman nihai business data gibi değerlendirilmemelidir.
+
+---
+
+# 10. Portföy ve Ofis Bölümleri
+
+Aşağıdaki gibi CRM kaynaklı bölümler ileride Reonix üzerinden gerçek veriler ile beslenecektir:
+
+* Portföyler
+* Ofisler
+* Diğer CRM kaynaklı public veriler
+
+İlk website yeniden oluşturma aşamasında tüm gerçek portföylerin veya tüm gerçek ofislerin içeri aktarılması gerekli değildir.
+
+İlk öncelik:
+
+* Layout
+* Kart yapısı
+* Görsel sunum
+* Filter'lar
+* Etkileşimler
+* Pagination
+* Carousel davranışı
+* Public olarak gözlemlenebilen frontend davranışları
+
+yeniden oluşturmaktır.
+
+Gerekli olduğu durumda sınırlı dummy data kullanılabilir.
+
+Dummy data kullanımı `01_TECHNICAL_DEBT.mdc` içerisinde kayıt altına alınmalıdır.
+
+Nihai veri kaynağı Reonix olacaktır.
+
+---
+
+# 11. Reonix Entegrasyonu
+
+Reonix ilerleyen aşamada bu projeye entegre edilecektir.
+
+Reonix'in nihai entegrasyon mimarisi henüz kesinleşmemiştir.
+
+Bu nedenle AI şu anda Reonix'in kesin olarak:
+
+* Uygulamanın içine gömülü
+* API üzerinden bağlı
+* Ayrı bir servis
+* Başka bir integration layer üzerinden bağlı
+
+olduğunu varsaymamalıdır.
+
+Nihai mimari gereksinimler netleştiğinde ayrıca belgelenecektir.
+
+Reonix hakkındaki bu belirsizlik public website'in yeniden oluşturulmasını gereksiz şekilde engellememelidir.
+
+---
+
+# 12. ReOS ve Diğer Marka Değişiklikleri
+
+Referans website üzerinde aşağıdaki gibi marka veya servis sağlayıcı referansları bulunabilir:
+
+* `ReOS CRM`
+* `ReOS`
+* CRM / MLS servis sağlayıcı referansları
+* Diğer üçüncü taraf markalar
+
+Proje kapsamında gerekli değişiklikler:
+
+| Referans                                         | Proje Karşılığı |
+| ------------------------------------------------ | --------------- |
+| `ReOS CRM`                                       | `Reonix`       |
+| `ReOS`                                           | `Reonix`       |
+| Belirlenen diğer üçüncü taraf marka referansları | `Sinap`         |
+
+Bu değişiklikler bilinçli proje gereksinimleridir.
+
+AI bu referansları tespit ettiğinde gerekli değişiklikleri uygulamalı ve yapılan değişiklikleri uygun şekilde raporlamalıdır.
+
+Değişiklik henüz nihai entegrasyonu temsil etmiyorsa `01_TECHNICAL_DEBT.mdc` içerisinde de kayıt altına alınmalıdır.
+
+---
+
+# 13. Teknoloji Yığını
+
+## Backend
+
+* Laravel
+* PHP
+
+## Database
+
+* PostgreSQL
+
+## Cache / Queue / Infrastructure
+
+* Redis
+
+## Frontend
+
+* Next.js
+* React
+* TypeScript
+* TSX
+* Tailwind CSS
+* Node.js
+
+## Infrastructure
+
+* Docker
+
+## Authentication
+
+* Laravel Sanctum
+
+Laravel Sanctum, authentication gerektiren özelliklerde uygun olduğu sürece kullanılmalıdır.
+
+## Testing
+
+* PHPUnit
+
+---
+
+# 14. Laravel Blade
+
+Laravel Blade opsiyoneldir.
+
+Projenin ana frontend'i Next.js olacaktır.
+
+Blade kullanılması zorunlu değildir.
+
+Blade hiç kullanılmadan proje geliştirilebilir.
+
+Belirli bir kullanım senaryosu gerektirirse ileride Blade kullanılabilir.
+
+Laravel desteklediği için gereksiz yere Blade kullanılmamalıdır.
+
+---
+
+# 15. Genel Mimari
+
+Mevcut öngörülen yüksek seviyeli mimari:
+
+```text id="w4h7lh"
+Next.js / React / TypeScript
+            |
+            v
+Laravel / PHP Backend
+            |
+            +---- PostgreSQL
+            |
+            +---- Redis
+            |
+            v
+Future Reonix Integration
+```
+
+API sınırları ve servis sınırları Reonix entegrasyonu netleştiğinde değişebilir.
+
+Bu mimari mevcut proje yönünü ifade eder.
+
+Nihai Reonix entegrasyon spesifikasyonu olarak değerlendirilmemelidir.
+
+---
+
+# 16. Authentication
+
+Authentication gereken özelliklerde Laravel Sanctum kullanılacaktır.
+
+Next.js ↔ Laravel mimarisi ile uyumlu şekilde uygulanmalıdır.
+
+Authentication gerektirmeyen özelliklere gereksiz authentication karmaşıklığı eklenmemelidir.
+
+---
+
+# 17. Proje Fazları
+
+## Faz 1 — StartKey.com.tr Ana Sayfa
+
+Ana hedef:
+
+StartKey.com.tr ana sayfasını birebir olarak yeniden oluşturmak.
+
+Öncelikler:
+
+1. Referans website'i incele.
+2. Ana sayfanın tüm bölümlerini tespit et.
+3. Gerekli asset'leri indir.
+4. Global layout'u oluştur.
+5. Header ve navigation'ı oluştur.
+6. Hero bölümlerini oluştur.
+7. Ana sayfadaki tüm component'leri oluştur.
+8. Footer'ı oluştur.
+9. Responsive davranışı oluştur.
+10. Türkçe içeriği referans website'den al.
+11. İngilizce içeriği referans website'den al.
+12. Almanca içeriği referans website'den al.
+13. Public etkileşimleri oluştur.
+14. Referans website ile karşılaştırarak doğrula.
+
+---
+
+## Faz 2 — Diğer StartKey.com.tr Sayfaları
+
+Ana sayfa yeterli doğruluk seviyesine ulaştıktan sonra StartKey.com.tr'nin diğer public sayfaları ve bölümleri aşamalı olarak yeniden oluşturulacaktır.
+
+Her sayfa için aynı prensip uygulanır:
+
+```text
+İncele
+  ↓
+Asset'leri al
+  ↓
+İçeriği al
+  ↓
+UI'ı oluştur
+  ↓
+Etkileşimleri oluştur
+  ↓
+Dil versiyonlarını oluştur
+  ↓
+Responsive yapıyı oluştur
+  ↓
+Referans ile karşılaştır
+```
+
+---
+
+## Faz 3 — Reonix Entegrasyonu
+
+Public website'in yeniden oluşturulması yeterli seviyeye geldikten sonra Reonix entegrasyonu ele alınacaktır.
+
+Muhtemel entegrasyon alanları:
+
+* Portföy verileri
+* Ofis verileri
+* CRM işlevleri
+* MLS işlevleri
+* Yönetim işlevleri
+* Business data
+* CRM'e bağlı diğer özellikler
+
+Nihai entegrasyon mimarisi daha sonra belirlenecektir.
+
+---
+
+# 18. Geliştirme Akışı
+
+Tercih edilen çalışma akışı:
+
+```text id="2jrtu1"
+Referans website'i incele
+        ↓
+Gözlemlenebilir davranışları anla
+        ↓
+Gerekli asset'leri al
+        ↓
+Referans içeriği al
+        ↓
+UI'ı oluştur
+        ↓
+Gözlemlenebilir etkileşimleri oluştur
+        ↓
+Localization'ı oluştur
+        ↓
+Referans ile karşılaştır
+        ↓
+Farkları düzelt
+        ↓
+Geçici implementasyonları Technical Debt'e kaydet
+        ↓
+Bir sonraki bölüme geç
+        ↓
+İlerleyen fazlarda backend / CRM entegrasyonlarını yap
+```
+
+AI tüm projeyi tek seferde oluşturmaya çalışmamalıdır.
+
+Her aşamada mevcut proje öncelikleri korunmalıdır.
+
+---
+
+# 19. Mevcut Öncelikler
+
+## Yüksek Öncelik
+
+* StartKey.com.tr ana sayfası
+* Pixel-level görsel doğruluk
+* Public olarak gözlemlenebilen davranışlar
+* Responsive yapı
+* Lokal asset'ler
+* Türkçe
+* İngilizce
+* Almanca
+* Navigation
+* Public formlar
+* Public etkileşimler
+* Doğru component yapıları
+* Referans website ile sürekli karşılaştırma
+
+## Ertelenenler
+
+* Tam Reonix entegrasyonu
+* Tam CRM data entegrasyonu
+* Tam MLS entegrasyonu
+* CRM'e bağlı gerçek portfolio verileri
+* CRM'e bağlı gerçek ofis verileri
+
+Ertelenen özellikler, doğru UI'ın oluşturulmasını gereksiz şekilde engellememelidir.
+
+---
+
+# 20. "Aynı Mantık" Ne Anlama Gelir?
+
+Orijinal source code mevcut olmadığı için bilinmeyen private server-side logic yeniden oluşturulamaz.
+
+Bu projede "aynı mantık" şu anlama gelir:
+
+> Referans website üzerinde gözlemlenebilen aynı public davranışın ve kullanıcıya görünen işlevin yeniden oluşturulması.
+
+Buna aşağıdakiler dahildir:
+
+* Butonlar
+* Linkler
+* Formlar
+* Menüler
+* Dropdown'lar
+* Filter'lar
+* Search
+* Carousel'ler
+* Slider'lar
+* Modal'lar
+* Dil değiştirme
+* URL navigation
+* Responsive etkileşimler
+* Diğer public davranışlar
+
+Bilinmeyen private backend logic AI tarafından uydurulmamalıdır.
+
+---
+
+# 21. Technical Debt ile İlişki
+
+`01_TECHNICAL_DEBT.mdc` bu projenin ayrılmaz bir parçasıdır.
+
+Mevcut implementasyonun nihai implementasyondan bilerek farklı olduğu durumlarda bu fark Technical Debt olarak kaydedilmelidir.
+
+Örneğin:
+
+* Dummy portföy verisi
+* Dummy ofis verisi
+* Placeholder CRM işlevleri
+* Reonix bekleyen UI
+* Geçici hardcoded data
+* Geçici butonlar
+* Bağlanmamış entegrasyonlar
+* Ertelenmiş özellikler
+
+Technical Debt'in bulunması sorun değildir.
+
+Sorun olan şey, bilerek oluşturulan geçici implementasyonun kaydedilmemesidir.
+
+---
+
+# 22. Başarı Kriteri
+
+Yeniden oluşturulan uygulama, teknik olarak mümkün olan en yüksek seviyede referans website'den ayırt edilemeyecek bir public website deneyimi sağlamalıdır.
+
+Bu kapsamda:
+
+* Görsel görünüm
+* Responsive layout
+* İçerik
+* Asset'ler
+* Navigation
+* Etkileşimler
+* Public davranışlar
+* Dil versiyonları
+* Kullanıcıya görünen işlevler
+
+mümkün olduğunca birebir olmalıdır.
+
+Referans website'de doğrudan gözlemlenebilen bir davranış veya yapı varsa, AI bunu generic veya basitleştirilmiş bir alternatif ile değiştirmemelidir.

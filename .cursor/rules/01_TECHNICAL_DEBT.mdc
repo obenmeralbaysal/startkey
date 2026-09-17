@@ -1,0 +1,405 @@
+---
+
+description: "Projede bilerek geçici, sahte, placeholder, hardcoded, eksik, ertelenmiş veya henüz entegre edilmemiş uygulamaların docs/TECHNICAL_DEBT.md içerisinde takip edilmesini ve yönetilmesini tanımlar."
+alwaysApply: true
+-----------------
+
+# Teknik Borç
+
+## Amaç
+
+Bu dosya; projede bilerek geçici, eksik, mock, dummy, placeholder, hardcoded, ertelenmiş veya henüz entegre edilmemiş uygulamaların nasıl tespit edileceğini ve takip edileceğini tanımlar.
+
+Teknik borçların asıl kayıtları:
+
+`docs/TECHNICAL_DEBT.md`
+
+dosyasında tutulur.
+
+Bu `.mdc` dosyası teknik borçların kendisini tutmaz; teknik borç yönetim kurallarını tanımlar.
+
+Amaç, geçici uygulamaların unutulmasını veya ileride nihai uygulama sanılmasını engellemektir.
+
+Bu kural proje genelinde her zaman geçerlidir.
+
+---
+
+# Zorunlu Kural
+
+AI herhangi bir bilerek geçici veya tamamlanmamış uygulama oluşturduğunda, değiştirdiğinde veya bıraktığında bunu:
+
+`docs/TECHNICAL_DEBT.md`
+
+dosyasına KAYDETMEK ZORUNDADIR.
+
+AI, teknik borç oluşturduğu halde yalnızca kodu değiştirip teknik borcu kayıt altına almadan çalışmaya devam edemez.
+
+Her yeni teknik borç kaydı `docs/TECHNICAL_DEBT.md` içerisine eklenmelidir.
+
+Buna aşağıdakiler dahildir ancak bunlarla sınırlı değildir:
+
+* Dummy data
+* Mock data
+* Placeholder data
+* Placeholder butonlar
+* Nihai işlevi henüz bağlanmamış butonlar
+* Geçici hardcoded metinler
+* Geçici hardcoded iş verileri
+* Geçici hardcoded konfigürasyonlar
+* Backend entegrasyonu olmadan oluşturulan UI
+* Gerçek business logic bekleyen yalnızca UI seviyesindeki implementasyonlar
+* API entegrasyonu bekleyen özellikler
+* CRM entegrasyonu bekleyen özellikler
+* reonix entegrasyonu bekleyen özellikler
+* Henüz uygulanmamış entegrasyonlar
+* Bilerek sonraki faza ertelenen işlevler
+* Geçici workaround'lar
+* Bilinen eksik implementasyonlar
+* "Daha sonra yapılacak" olarak bırakılan işlevler
+* Geçici veri eşlemeleri
+* Geçici marka veya servis sağlayıcı değişimleri
+* Sonradan gerçek veriyle değiştirilmesi planlanan veriler
+* Herhangi bir nedenle nihai implementasyon olmayan bilinçli geçici çözüm
+
+AI bu tür bir uygulamayı teknik borç olarak `docs/TECHNICAL_DEBT.md` dosyasına kaydetmeden sessizce oluşturamaz.
+
+---
+
+# Önemli Ayrım
+
+Her tamamlanmamış geliştirme işi teknik borç değildir.
+
+Yalnızca:
+
+* Bilerek geçici bırakılan,
+* Nihai implementasyonun yerine geçici olarak kullanılan,
+* İleride değiştirilmesi gereken,
+* Unutulma riski taşıyan,
+* Sonradan gerçek entegrasyonla değiştirilmesi gereken
+
+uygulamalar teknik borç olarak takip edilmelidir.
+
+Normal geliştirme işleri, sıradan görevler ve normal bug'lar otomatik olarak teknik borç kabul edilmez.
+
+---
+
+# Teknik Borç Kayıtlarının Yeri
+
+Tüm teknik borç kayıtlarının merkezi kaynağı:
+
+`docs/TECHNICAL_DEBT.md`
+
+dosyasıdır.
+
+`01_TECHNICAL_DEBT.mdc` içerisinde proje özelindeki teknik borçların detaylı listesi tutulmamalıdır.
+
+AI yeni bir teknik borç oluşturduğunda:
+
+1. Teknik borcun gerçekten teknik borç olup olmadığını değerlendir.
+2. `docs/TECHNICAL_DEBT.md` dosyasını kontrol et.
+3. Mevcut kayıtlarla ilişkiliyse mevcut kaydı güncelle.
+4. Yeni bir teknik borçsa yeni bir `TD-XXX` kaydı oluştur.
+5. Oluşturulan veya güncellenen kaydın mevcut durumu doğru şekilde açıklamasını sağla.
+6. Teknik borcu kullanıcıya yapılan değişikliklerin bir parçası olarak bildir.
+
+---
+
+# Teknik Borç Oluşturma Durumları
+
+Aşağıdaki durumlardan biri ortaya çıktığında teknik borç kaydı değerlendirilmelidir:
+
+## Geçici Veri
+
+Gerçek veri kaynağı henüz hazır olmadığı için dummy, mock veya hardcoded veri kullanılması.
+
+Örnek:
+
+* Geçici portföy verisi
+* Geçici ofis verisi
+* Mock kullanıcı verisi
+* Placeholder API response
+
+---
+
+## Geçici UI
+
+Backend veya gerçek business logic henüz hazır olmadığı halde UI'ın oluşturulması.
+
+Örnek:
+
+* Çalışmayan placeholder buton
+* Geçici modal
+* Geçici form
+* Backend'e bağlanmamış component
+* Gerçek veriyi bekleyen frontend component
+
+UI'ın oluşturulması engellenmemelidir; ancak geçici durum kayıt altına alınmalıdır.
+
+---
+
+## Geçici Entegrasyon
+
+Gerçek servis veya API henüz bağlanmadığı için geçici implementasyon kullanılması.
+
+Örnek:
+
+* API yerine mock response
+* CRM yerine dummy data
+* reonix entegrasyonu yerine local data
+* Henüz uygulanmamış üçüncü taraf servis entegrasyonu
+
+---
+
+## Ertelenmiş İşlev
+
+İşlevin bilerek sonraki aşamaya bırakılması.
+
+Örnek:
+
+* "Sonraki fazda yapılacak"
+* "Backend entegrasyonunda bağlanacak"
+* "Production'da değiştirilecek"
+* "Daha sonra gerçek veriyle değiştirilecek"
+
+---
+
+## Geçici Workaround
+
+Kalıcı çözüm yerine bilinçli olarak geçici teknik çözüm uygulanması.
+
+Workaround'un neden gerekli olduğu ve hangi koşulda kaldırılacağı mümkün olduğunca kaydedilmelidir.
+
+---
+
+# Teknik Borç Kaydı Oluşturma Zorunluluğu
+
+AI aşağıdaki durumlardan birini yapıyorsa teknik borç kaydı oluşturmalıdır:
+
+```text
+Geçici implementasyon oluştur
+        ↓
+Teknik borç olup olmadığını değerlendir
+        ↓
+Evet
+        ↓
+docs/TECHNICAL_DEBT.md dosyasını kontrol et
+        ↓
+Mevcut kayıt varsa güncelle
+        ↓
+Yoksa yeni TD-XXX oluştur
+```
+
+Teknik borç oluşturulduğu halde kayıt işlemi atlanmamalıdır.
+
+---
+
+# Mevcut Kayıtları Güncelleme
+
+Bir implementasyon mevcut bir teknik borç kaydıyla ilişkiliyse yeni ve mükerrer bir kayıt oluşturmak yerine mevcut kayıt güncellenmelidir.
+
+Örneğin:
+
+`TD-001 — Portföy Verileri`
+
+zaten mevcutsa ve portföy dummy data yapısında değişiklik yapılıyorsa yeni bir TD kaydı açılmamalıdır.
+
+Mevcut kayıt güncel durumla değiştirilmelidir.
+
+---
+
+# Teknik Borcun Çözülmesi
+
+Bir teknik borç çözüldüğünde:
+
+1. Geçici implementasyon kaldırılmalıdır.
+2. Nihai implementasyon uygulanmalıdır.
+3. `docs/TECHNICAL_DEBT.md` içerisindeki kayıt güncellenmelidir.
+4. Durum `Çözüldü` olarak değiştirilmelidir.
+5. Gerekli açıklama eklenmelidir.
+
+Çözülen teknik borç kayıtları geçmiş proje hafızasının korunması amacıyla silinmemelidir.
+
+---
+
+# Geçici Uygulamaları Gizleme
+
+AI aşağıdaki davranışları gerçekleştirmemelidir:
+
+* Dummy data'yı gerçek production data gibi göstermek
+* Placeholder işlevi tamamlanmış gibi göstermek
+* Mock API response'u gerçek API response gibi göstermek
+* Geçici hardcoded business logic'i kalıcı implementasyon gibi sunmak
+* Bağlanmamış entegrasyonu bağlı gibi göstermek
+* Teknik borcu kaydetmeden geçici çözümü bırakmak
+
+Geçici implementasyonun geçici olduğu açıkça anlaşılmalıdır.
+
+---
+
+# UI Geliştirmesini Gereksiz Yere Engelleme
+
+Gelecekteki backend, API, CRM veya reonix entegrasyonu beklenmeden doğru şekilde oluşturulabilecek bir UI varsa UI oluşturulmalıdır.
+
+Eksik entegrasyon nedeniyle frontend geliştirmesi gereksiz yere durdurulmamalıdır.
+
+Ancak kullanılan geçici veri veya işlev `docs/TECHNICAL_DEBT.md` içerisinde kayıt altına alınmalıdır.
+
+Örnek:
+
+```text
+UI hazır
++
+Dummy data kullanılıyor
++
+reonix entegrasyonu henüz yok
+=
+UI geliştirilmeye devam edilir
++
+Technical Debt kaydı oluşturulur
+```
+
+---
+
+# Geçiciyi Kalıcı Hale Getirmeme
+
+Teknik borçların zaman içerisinde fark edilmeden kalıcı implementasyona dönüşmesine izin verilmemelidir.
+
+Bir teknik borç mevcutsa ve nihai implementasyon uygulanabilecek durumdaysa, uygun aşamada geçici çözüm kaldırılmalıdır.
+
+Teknik borç yalnızca kayıt altında tutulduğu için kalıcı kabul edilmez.
+
+---
+
+# Reonix Entegrasyonu
+
+Projede reonix entegrasyonu henüz tamamlanmamışsa ve bunun yerine geçici implementasyon kullanılıyorsa ilgili teknik borç:
+
+`docs/TECHNICAL_DEBT.md`
+
+içerisinde kaydedilmelidir.
+
+Örneğin:
+
+* Dummy portföy verileri
+* Dummy ofis verileri
+* Mock CRM response'ları
+* Geçici local data
+* reonix'e bağlanmayı bekleyen component'ler
+* reonix entegrasyonunu bekleyen backend işlevleri
+
+teknik borç olarak takip edilmelidir.
+
+---
+
+# Marka ve Servis Sağlayıcı Değişiklikleri
+
+Referans website üzerinde bulunan marka veya servis sağlayıcı referanslarının proje gereksinimi nedeniyle değiştirilmesi gerekiyorsa bu değişiklik bilinçli bir proje kararı olarak değerlendirilmelidir.
+
+Örneğin:
+
+* `ReOS CRM` → `reonix`
+* `ReOS` → `reonix`
+* Belirlenen diğer üçüncü taraf marka referansları → `Sinap`
+
+Bu değişiklikler geçici bir placeholder veya nihai entegrasyonun yerine kullanılan bir çözüm niteliğindeyse `docs/TECHNICAL_DEBT.md` içerisinde kayıt altına alınmalıdır.
+
+Değişiklik nihai ve bilinçli proje gereksinimiyse yalnızca bu nedenle teknik borç oluşturulması gerekmez.
+
+---
+
+# Dosyayı Güncel Tutma
+
+Bir teknik borcun mevcut durumu değiştiğinde `docs/TECHNICAL_DEBT.md` içerisindeki kayıt da güncellenmelidir.
+
+Örneğin:
+
+```text
+Açık
+↓
+Devam Ediyor
+↓
+Çözüldü
+```
+
+Teknik borcun kapsamı değiştiğinde ilgili açıklamalar da güncellenmelidir.
+
+Yanlış veya artık geçerli olmayan bilgi dosyada bırakılmamalıdır.
+
+---
+
+# Master Rule ile İlişki
+
+Bu dosya:
+
+`00_MASTER_RULE.mdc`
+
+içerisinde tanımlanan teknik borç takip mekanizmasının proje özelindeki kural dosyasıdır.
+
+Teknik borçların gerçek kayıtları:
+
+`docs/TECHNICAL_DEBT.md`
+
+dosyasında tutulur.
+
+Master Rule ile bu dosya arasında çelişki olması durumunda `00_MASTER_RULE.mdc` önceliklidir.
+
+---
+
+# Durum Değerleri
+
+Aşağıdaki durum değerleri kullanılmalıdır:
+
+* `Açık` — Geçici implementasyon hâlâ mevcut.
+* `Devam Ediyor` — Geçici implementasyonun değiştirilmesi veya entegrasyonu aktif olarak yapılıyor.
+* `Çözüldü` — Geçici implementasyon nihai implementasyon ile değiştirildi.
+* `İptal` — Geçici implementasyon artık gerekli değil ve yerine başka bir implementasyon yapılmayacak.
+
+---
+
+# Yeni Teknik Borç Kaydı Formatı
+
+Yeni bir teknik borç tespit edildiğinde kayıt:
+
+`docs/TECHNICAL_DEBT.md`
+
+içerisine eklenmelidir.
+
+Yeni kayıtlar aşağıdaki formatta oluşturulmalıdır:
+
+```md
+### TD-XXX — Kısa Açıklama
+
+**Alan:** İlgili proje alanı
+
+**Mevcut Durum:**
+
+Geçici veya tamamlanmamış implementasyonu açıkla.
+
+**Geçici Olmasının Nedeni:**
+
+Neden nihai implementasyonun şu anda bulunmadığını açıkla.
+
+**Gelecekteki Implementasyon:**
+
+Geçici implementasyonun ileride ne ile değiştirileceğini açıkla.
+
+**Durum:** Açık
+```
+
+`TD-XXX` numarası `docs/TECHNICAL_DEBT.md` içerisindeki mevcut kayıtlar dikkate alınarak bir sonraki uygun numara olmalıdır.
+
+---
+
+# Son Kontrol
+
+AI herhangi bir kod veya configuration değişikliği tamamlamadan önce aşağıdaki soruyu değerlendirmelidir:
+
+> "Bu değişiklik bilerek geçici, mock, dummy, placeholder, hardcoded, eksik, ertelenmiş veya henüz entegre edilmemiş bir implementasyon içeriyor mu?"
+
+Cevap `Evet` ise:
+
+`docs/TECHNICAL_DEBT.md`
+
+güncellenmelidir.
+
+Cevap `Hayır` ise teknik borç kaydı oluşturulması gerekmez.

@@ -1,0 +1,687 @@
+{
+  "lang": "tr",
+  "htmlLang": "tr",
+  "meta": {
+    "title": "Startkey Türkiye | Anasayfa",
+    "description": "35 Ülke Tescili ile En Fazla Ülke Tesciline Sahip Türk Markasıdır. \"Türkiye'nin Gayrimenkul Markası\" Startkey her geçen gün büyüyen ve gelişen hizmet ağımız ile uluslararası marka tescillerimiz, yereldeki gücümüz kadar globaldeki hedeflerimizi de ifade ediyor.",
+    "keywords": "emlak,emlak firmaları,gayrimenkul firmaları,franchise veren firmalar,emlak siteleri,gayrimenkul siteleri,kurumsal emlak firmaları,franchise,emlak bayiliği,gayrimenkul franchise,gayrimenkul",
+    "siteTitle": "Startkey - Türkiye'nin Gayrimenkul Markası",
+    "ogTitle": "Startkey - Türkiye'nin Gayrimenkul Markası",
+    "ogDescription": "35 Ülke Tescili ile En Fazla Ülke Tesciline Sahip Türk Markasıdır. \"Türkiye'nin Gayrimenkul Markası\" Startkey her geçen gün büyüyen ve gelişen hizmet ağımız ile uluslararası marka tescillerimiz, yereldeki gücümüz kadar globaldeki hedeflerimizi de ifade ediyor.",
+    "ogImage": "/media/officelogo/12eb7cb9-f028-4e57-9b14-f99fc92c2045.png",
+    "twitterTitle": "Startkey - Türkiye'nin Gayrimenkul Markası",
+    "twitterDescription": "35 Ülke Tescili ile En Fazla Ülke Tesciline Sahip Türk Markasıdır. \"Türkiye'nin Gayrimenkul Markası\" Startkey her geçen gün büyüyen ve gelişen hizmet ağımız ile uluslararası marka tescillerimiz, yereldeki gücümüz kadar globaldeki hedeflerimizi de ifade ediyor.",
+    "twitterImage": "/media/officelogo/12eb7cb9-f028-4e57-9b14-f99fc92c2045.png",
+    "favicon": "/media/officelogo/682a7262-013b-4d75-9a4e-ed270bf6f765.jpg",
+    "robots": "index, follow",
+    "alternates": [
+      {
+        "hreflang": "tr",
+        "href": "/tr"
+      },
+      {
+        "hreflang": "x-default",
+        "href": "/"
+      }
+    ]
+  },
+  "structuredData": [
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": "/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Startkey nedir ve ne zaman kurulmuştur?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Startkey Türkiye, 2014 yılında kurulan; emlak franchise sistemi, teknolojik altyapı ve akademi eğitimleri ile gayrimenkul danışmanlığı hizmetleri sunan ulusal bir gayrimenkul markasıdır."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Startkey emlak franchise başvurusu nasıl yapılır?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Startkey emlak franchise sistemine katılmak için startkey.com.tr adresindeki 'Franchise Başvuru' formunu doldurabilir veya +90 232 330 53 30 numaralı telefondan kurumsal merkez ile iletişime geçerek detaylı bilgi alabilirsiniz."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Startkey franchise sisteminin girişimcilere sunduğu avantajlar nelerdir?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Startkey; düşük başlangıç maliyetleri, Startkey Akademi ile sürekli profesyonel eğitim desteği, dijital portföy yönetim altyapısı, hukuki ve teknolojik danışmanlık ile güçlü kurumsal marka bilinirliği sunar."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Startkey Akademi eğitimleri neleri kapsar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Startkey Akademi; gayrimenkul danışmanları ve franchise ofis sahipleri için satış teknikleri, dijital pazarlama, müşteri ilişkileri yönetimi, mevzuat ve hukuki süreçler gibi alanlarda profesyonel gelişim eğitimleri vermektedir."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Startkey Genel Merkezi nerededir ve nasıl iletişim kurulur?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Startkey Türkiye genel merkezi İzmir'in Çiğli ilçesinde (Yeni Mahalle Mh. Eski Havaalanı Cd. No:108LD) yer almaktadır. İletişim için info@startkey.com.tr e-posta adresi veya +90 232 330 53 30 telefon numarası kullanılabilir."
+          }
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "/#organization",
+          "name": "Startkey Türkiye",
+          "url": "/",
+          "logo": "/media/officelogo/12eb7cb9-f028-4e57-9b14-f99fc92c2045.png",
+          "image": "/media/micrositecontent/77078032-3159-4ef7-bb2a-0c88617c2eb0.jpg",
+          "description": "Startkey Türkiye, emlak franchise ve gayrimenkul franchise sistemi sunan, eğitim ve teknoloji altyapısı ile gayrimenkul danışmanlığı sağlayan ulusal bir gayrimenkul markasıdır.",
+          "telephone": "+902323305330",
+          "email": "info@startkey.com.tr",
+          "foundingDate": "2014",
+          "sameAs": [
+            "https://www.facebook.com/StartkeyEmlak/",
+            "https://www.instagram.com/startkeyturkiye/",
+            "https://www.linkedin.com/company/startkeyturkiye/"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Yeni Mahalle Mh. Eski Havaalanı Cd. No:108LD",
+            "addressLocality": "Çiğli",
+            "addressRegion": "İzmir",
+            "postalCode": "35610",
+            "addressCountry": "TR"
+          },
+          "areaServed": {
+            "@type": "Country",
+            "name": "Türkiye"
+          }
+        },
+        {
+          "@type": "RealEstateAgent",
+          "@id": "/#realestateagent",
+          "name": "Startkey Türkiye",
+          "url": "/",
+          "parentOrganization": {
+            "@id": "/#organization"
+          },
+          "description": "Türkiye genelinde emlak franchise ve gayrimenkul danışmanlığı hizmeti veren gayrimenkul markası.",
+          "areaServed": {
+            "@type": "Country",
+            "name": "Türkiye"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "/#website",
+          "url": "/",
+          "name": "Startkey Türkiye",
+          "publisher": {
+            "@id": "/#organization"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "/tr/franchise-basvuru#service",
+          "name": "Emlak Franchise & Gayrimenkul Franchise",
+          "serviceType": "Franchise Sistemi",
+          "url": "/tr/franchise-basvuru",
+          "description": "Startkey emlak franchise ve gayrimenkul franchise sistemi ile girişimcilere kendi emlak ofisini kurma imkanı sunar.",
+          "provider": {
+            "@id": "/#organization"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "/tr/portfoy#page",
+          "url": "/tr/portfoy",
+          "name": "Startkey Portföyler",
+          "description": "Satılık ve kiralık gayrimenkul portföyleri.",
+          "isPartOf": {
+            "@id": "/#website"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "/tr/egitimlerimiz#page",
+          "url": "/tr/egitimlerimiz",
+          "name": "Startkey Akademi Eğitimleri",
+          "description": "Gayrimenkul danışmanları için satış, iletişim ve profesyonel gelişim eğitimleri.",
+          "isPartOf": {
+            "@id": "/#website"
+          }
+        },
+        {
+          "@type": "WebPage",
+          "@id": "/tr/franchise-basvuru#page",
+          "url": "/tr/franchise-basvuru",
+          "name": "Emlak Franchise Başvuru",
+          "description": "Startkey ile emlak franchise ve gayrimenkul franchise başvuru sayfası.",
+          "isPartOf": {
+            "@id": "/#website"
+          }
+        }
+      ]
+    }
+  ],
+  "seminarBar": {
+    "prefix": "Yaklaşan",
+    "count": 5,
+    "suffix": "Eğitim/Seminer Bulunuyor - Detaylar İçin Tıklayınız",
+    "href": "/tr/egitimlerimiz"
+  },
+  "nav": [
+    {
+      "label": "Anasayfa",
+      "href": "/tr",
+      "children": []
+    },
+    {
+      "label": "Kurumsal",
+      "href": "#",
+      "children": [
+        {
+          "label": "Hakkımızda",
+          "href": "/tr/sayfa/hakkimizda",
+          "target": null
+        },
+        {
+          "label": "Vizyon Misyon",
+          "href": "/tr/sayfa/vizyon-misyon",
+          "target": null
+        },
+        {
+          "label": "Yönetim",
+          "href": "/tr/yonetim-kadrosu",
+          "target": null
+        },
+        {
+          "label": "Medyada Biz",
+          "href": "/tr/haberler",
+          "target": null
+        },
+        {
+          "label": "Duyurular",
+          "href": "/tr/duyurular",
+          "target": null
+        },
+        {
+          "label": "Blog",
+          "href": "/tr/bloglar",
+          "target": null
+        },
+        {
+          "label": "Şampiyonlarımız",
+          "href": "/tr/sampiyonlar",
+          "target": null
+        }
+      ]
+    },
+    {
+      "label": "Portföylerimiz",
+      "href": "/tr/portfoy",
+      "children": []
+    },
+    {
+      "label": "Startkey",
+      "href": "#",
+      "children": [
+        {
+          "label": "Ofislerimiz",
+          "href": "/tr/ofisler",
+          "target": null
+        },
+        {
+          "label": "Profesyonellerimiz",
+          "href": "/tr/danismanlar",
+          "target": null
+        }
+      ]
+    },
+    {
+      "label": "Akademi",
+      "href": "#",
+      "children": [
+        {
+          "label": "Çevrimiçi Eğitimler",
+          "href": "https://startkeyakademi.net",
+          "target": "_blank"
+        },
+        {
+          "label": "Seminerler / Eğitimler",
+          "href": "/tr/egitimlerimiz",
+          "target": null
+        }
+      ]
+    },
+    {
+      "label": "İletişim",
+      "href": "/tr/iletisim",
+      "children": []
+    }
+  ],
+  "languageSwitcher": {
+    "current": "Türkçe",
+    "options": [
+      {
+        "code": "tr",
+        "label": "Türkçe"
+      },
+      {
+        "code": "de",
+        "label": "Deutsch"
+      },
+      {
+        "code": "en",
+        "label": "English"
+      }
+    ]
+  },
+  "headerButtons": {
+    "franchise": {
+      "label": "Franchise Başvuru",
+      "href": "/tr/franchise-basvuru"
+    },
+    "crm": {
+      "label": "REOS CRM",
+      "href": "https://startkey.re-os.com/"
+    }
+  },
+  "heroSearch": {
+    "tabs": [
+      "Portföyler",
+      "Ofisler",
+      "Danışmanlar"
+    ],
+    "formActions": [
+      "/tr/portfoy",
+      "/tr/ofisler",
+      "/tr/danismanlar"
+    ],
+    "buttons": [
+      "Portföy Ara",
+      "Ara",
+      "Ara"
+    ],
+    "placeholders": [
+      "Ofis Adı",
+      "Ad",
+      "Soyad"
+    ]
+  },
+  "counters": [
+    {
+      "icon": "/themes/fela/img/counter-1.png",
+      "count": 84,
+      "suffix": "+",
+      "label": "Startkey Franchise"
+    },
+    {
+      "icon": "/themes/fela/img/counter-2.png",
+      "count": 707,
+      "suffix": "+",
+      "label": "Aktif Portföy"
+    },
+    {
+      "icon": "/themes/fela/img/counter-3.png",
+      "count": 1077,
+      "suffix": "+",
+      "label": "Başarılı Danışman"
+    },
+    {
+      "icon": "/media/micrositecontent/591fdaae-121f-41ff-be57-25cb430fc4ed.png",
+      "count": 35,
+      "suffix": "+",
+      "label": "Ülkede Tescilli Marka"
+    }
+  ],
+  "featured": {
+    "titleHtml": "<h2>Startkey Türkiye En G&#xFC;ncel &#x130;lanlar</h2> <P>&#x130;ster Yat&#x131;r&#x131;m Ama&#xE7;l&#x131; &#x130;ster Aktif Ya&#x15F;am &#x130;&#xE7;in En G&#xFC;venilir Gayrimenkuller Startkey&#x27;de</P>",
+    "properties": [
+      {
+        "id": 479134,
+        "href": "/tr/portfoy/479134/satilik/daire/aydin/kusadasi/sogucak-mahallesinde-sahile-yakin-31-satilik-dubleks-daire",
+        "image": "fdc67df4-4b74-432d-872c-7038c3056266.png",
+        "processType": "Satılık",
+        "adSubType": "Daire",
+        "adType": "Konut",
+        "price": "₺ 10.500.000",
+        "title": "Soğucak Mahallesi'nde Sahile Yakın 3+1 Satılık Dubleks Daire",
+        "location": "Aydın , Kuşadası",
+        "rooms": "3+1",
+        "area": "162 m²",
+        "detailLabel": "Detay"
+      },
+      {
+        "id": 482664,
+        "href": "/tr/portfoy/482664/satilik/daire/izmir/karabaglar/full-korfez-manzarali-yerden-isitmali-sifir-daire",
+        "image": "02c81cd0-916a-4e30-9a4d-f282e2ea4431.jpg",
+        "processType": "Satılık",
+        "adSubType": "Daire",
+        "adType": "Konut",
+        "price": "₺ 14.850.000",
+        "title": "Full Körfez Manzaralı Yerden Isıtmalı Sıfır Daire",
+        "location": "İzmir , Karabağlar",
+        "rooms": "3+1",
+        "area": "130 m²",
+        "detailLabel": "Detay"
+      },
+      {
+        "id": 482660,
+        "href": "/tr/portfoy/482660/satilik/daire/izmir/bayrakli/neva-yalida-korfez-manzarali-11-satilik-luks-daire",
+        "image": "87b491ad-da96-49f3-b9e2-9b2d19834a60.jpg",
+        "processType": "Satılık",
+        "adSubType": "Daire",
+        "adType": "Konut",
+        "price": "₺ 17.250.000",
+        "title": "Neva Yalıda Körfez Manzaralı 1+1 Satılık Lüks Daire",
+        "location": "İzmir , Bayraklı",
+        "rooms": "1+1",
+        "area": "58 m²",
+        "detailLabel": "Detay"
+      },
+      {
+        "id": 482651,
+        "href": "/tr/portfoy/482651/kiralik/daire/izmir/konak/alsancak-talatpasada-esyali-41-kiralik-luks-daire",
+        "image": "cfe5b1af-c670-445f-9328-eb9da44698b3.jpg",
+        "processType": "Kiralık",
+        "adSubType": "Daire",
+        "adType": "Konut",
+        "price": "₺ 150.000",
+        "title": "Alsancak Talatpaşa'da Eşyalı 4+1 Kiralık Lüks Daire",
+        "location": "İzmir , Konak",
+        "rooms": "4+1",
+        "area": "265 m²",
+        "detailLabel": "Detay"
+      },
+      {
+        "id": 482644,
+        "href": "/tr/portfoy/482644/kiralik/daire/izmir/bornova/bornova-lobi-parlasta-11-esyali-kiralik-daire",
+        "image": "5977813f-c7e8-487c-993a-fee347c56497.jpg",
+        "processType": "Kiralık",
+        "adSubType": "Daire",
+        "adType": "Konut",
+        "price": "₺ 37.000",
+        "title": "Bornova Lobi Parlas'ta 1+1 Eşyalı Kiralık Daire",
+        "location": "İzmir , Bornova",
+        "rooms": "1+1",
+        "area": "54 m²",
+        "detailLabel": "Detay"
+      },
+      {
+        "id": 482640,
+        "href": "/tr/portfoy/482640/satilik/villa/aydin/kusadasi/kusadasi-sogucak-ta-satilik-sifir-tas-ev-villa",
+        "image": "e5b9cbf1-2eed-45a1-9d7d-3398acdb50d2.jpg",
+        "processType": "Satılık",
+        "adSubType": "Villa",
+        "adType": "Konut",
+        "price": "₺ 23.950.000",
+        "title": "Kuşadası Soğucak 'Ta Satılık Sıfır Taş Ev Villa",
+        "location": "Aydın , Kuşadası",
+        "rooms": "4+2",
+        "area": "284 m²",
+        "detailLabel": "Detay"
+      }
+    ]
+  },
+  "about1": {
+    "titleHtml": "<span style=\"color: #cd0c0c;\">Türkiye'nin Gayrimenkul Markası</span> <h2>Startkey İzmir merkezli <strong>emlak franchise</strong> markasıdır.</h2> <p style=\"text-align: justify;\">Gayrimenkul sektörünün lider firmaları arasında yer alan Startkey, 35 ülke tescili ile en fazla ülke tesciline sahip Türk markasıdır. \"<strong>Türkiye'nin Gayrimenkul Markası</strong>\" Startkey, yurt içi ve yurt dışı franchise ağını nitelikli büyüme tercihi ile sürdürmektedir. Startkey'de girişimciler için <strong>gayrimenkul franchise</strong> fırsatlarımız ile tanışın.</p>",
+    "bodyHtml": "<h2>Gayrimenkul Franchise ile Güçlü Bir Başlangıç</h2> <p style=\"text-align: justify;\">Riskleri minimize ederek, başarıyı garantileyen bir iş modeliyle sektöre adım atın. Startkey olarak, girişimcilere özel gayrimenkul franchise sistemimizle emlak dünyasına sağlam bir başlangıç yapma imkânı sunuyoruz. Eğitimden dijital sisteme, sektörel pazarlamadan saha desteğine kadar yanınızdayız. Yerel pazarda güçlü, ulusal çapta profesyonellerine proje sunabilen güçlü bir Türk markasıyız.</p> <a class=\"btn style2\" href=\"tr/franchise-basvuru\">Franchise Başvuru</a>"
+  },
+  "about2": {
+    "contentHtml": "<h2>Emlak Franchise ile Kendi Ofisinizi Açın</h2> <p style=\"text-align: justify;\">Kendi işinizin patronu olun, ama yalnız bırakılmayın. Startkey’in emlak franchise sistemi, girişimcilere profesyonel bir ofis açma imkânı sunarken, aynı zamanda sektörel bilgi birikimimizi de paylaşıyoruz. Ofis kurulumundan uzun vadeli büyümeye kadar her adımda yanınızdayız. Emlak ofisi açmak isteyen girişimcilere hem rehber hem yol arkadaşı oluyoruz.</p> <p>Bugün başlayın, birlikte büyüyelim.</p> <p style=\"text-align: justify;\">Startkey’in <strong>Türkiye</strong>, <strong>İngiltere</strong>, <strong>Kıbrıs </strong>ve <strong>Yunanistan </strong>genelinde 80+ <strong>emlak franchise</strong> ofisi mevcut. Startkey olarak, franchise ağımızla gayrimenkul sektöründe tüketicilerin tüm ihtiyaçlarını karşılamak üzere hizmet vermekteyiz.</p> <a class=\"btn style2\" href=\"tr/franchise-basvuru\">Detayları İnceleyin</a>"
+  },
+  "about3": {
+    "contentHtml": "<h2>Neden Startkey Franchise?</h2> <p style=\"text-align: justify;\">Gayrimenkulde franchise almak sadece bir tabela değil, güçlü bir platformda yer almak demektir. Startkey, ofis açtırmanın ötesinde, ofisinizi sürdürülebilir başarıya taşıyan bir markadır.</p> <ul> <li>Dijital pazarlama desteği</li> <li>Danışmanlık ve saha desteği</li> <li>Bölge korumasına sahip gerçek sistem</li> <li>Startkey Akademi'den sektörel ya da çeşitli online eğitimler</li> </ul> <p style=\"text-align: justify;\">Sektöre özel çözümlerle öne çıkan Startkey’i tercih edin.</p> <a class=\"btn style2\" href=\"tr/franchise-basvuru\">Franchise Rehberi</a>"
+  },
+  "howItWorks": {
+    "titleHtml": "<h2>3 Adımda Gayrimenkul Uzmanı Olun</h2> <p style=\"text-align: justify;\">Etkili sunum tekniklerinden başarılı satış stratejilerine, müşteri ilişkilerinden pazarlık becerilerine kadar geniş bir yelpazede eğitimler sunan Startkey Akademi, kariyerinizde fark yaratmanıza yardımcı olacak. Startkey Akademi <strong>Broker Eğitimleri</strong>,<strong> Gayrimenkul Danışmanı Başlangıç Eğitimleri</strong> ve <strong>Asistan Eğitimleri</strong> üzerine sunduğu kapsamlı içeriklerle sektörün liderlerinden biri olmanız için gerekli donanımı kazanın.</p> <p style=\"text-align: justify;\"><a href=\"https://startkey.com.tr/tr/egitimlerimiz\"><strong>Startkey Akademi</strong></a> eğitimlerine katılın ve başarıya giden bu yolda kendiniz için yeni bir adım atın.</p>",
+    "cards": [
+      {
+        "image": "7db72a5d-790b-4e30-9921-b02c1a62f982.png",
+        "step": "01",
+        "infoHtml": "<h3>Startkey Akademi</h3> <p>Startkey Akademi Sayfasına Gidip Kayıt İşlemlerinizi Tamamlayarak İstediğiniz Eğitime Katılım Sağlayabilirsiniz</p>"
+      },
+      {
+        "image": "9f785e99-e74a-4773-9b27-0f17a43b87fc.png",
+        "step": "01",
+        "infoHtml": "<h3>Eğitime Katılmayı İhmal Etmeyin</h3> <p>Startkey Akademi Eğitimleriyle Yeteneklerinize Yetenek Katın, Gayrimenkul Uzmanlığınızı Bir Adım İleriye Taşıyın</p>"
+      },
+      {
+        "image": "2249d240-41ac-4b2f-a6bc-598642ee9e88.png",
+        "step": "01",
+        "infoHtml": "<h3>Yükselişinizin Keyfini Çıkarın</h3> <p>Startkey Akademi Eğitimleriyle Daha İyi Sunum, Daha Etkili Pazarlık ve Daha Başarılı Satış Kapatma Becerileri Kazanın</p>"
+      }
+    ],
+    "button": {
+      "label": "Startkey Akademi Hakkında Daha Fazla Bilgi Almak İçin",
+      "href": "/tr/egitimlerimiz"
+    }
+  },
+  "addListing": {
+    "background": "c9603927-74eb-4047-b35b-851c0575861d.jpg",
+    "contentHtml": "<h2>Aradığınız En Doğru Gayrimenkul Startkey Türkiye'de</h2> <p>Güvenilir Ofisleri, Profesyonel Hizmet Anlayışı ve Müşteri Odaklı Stratejisi ile Startkey Türkiye Tüm Portföyünü Sizlere Sunuyor </p>",
+    "button": {
+      "label": "Tüm Portföyleri Gör",
+      "href": "/tr/portfoy"
+    }
+  },
+  "videoPromo": {
+    "videoUrl": "https://www.youtube.com/watch?v=1H82RVXLw7E",
+    "span": "Startkey Akademi",
+    "heading": "Startkey Türkiye Güvenilir Franchise Ağı ve Eğitimleriyle Yanınızda"
+  },
+  "cities": {
+    "titleHtml": "<h2>En &#xC7;ok &#x130;lanlar&#x131; Aranan &#x15E;ehirler</h2> <p>Startkey T&#xFC;rkiye Ailesinin En &#xC7;ok Aranan &#x130;lanlar&#x131;</p>",
+    "cards": [
+      {
+        "cityId": "35",
+        "image": "15131967-d01f-479b-9fbc-051dc019f8b9.png",
+        "name": "İzmir",
+        "href": "/tr/portfoy?FilterDTO.CityId=35"
+      },
+      {
+        "cityId": "45",
+        "image": "d6c9769f-8874-4eff-806b-655c67e2f355.png",
+        "name": "Manisa",
+        "href": "/tr/portfoy?FilterDTO.CityId=45"
+      },
+      {
+        "cityId": "10",
+        "image": "4001fc3b-1575-4424-a48b-9cc7bfb5f561.jpg",
+        "name": "Balıkesir",
+        "href": "/tr/portfoy?FilterDTO.CityId=10"
+      },
+      {
+        "cityId": "34",
+        "image": "b3c8d8f2-a9b6-4f1e-bdb1-8906590ba1b4.png",
+        "name": "İstanbul",
+        "href": "/tr/portfoy?FilterDTO.CityId=34"
+      },
+      {
+        "cityId": "48",
+        "image": "64e43c98-5b8f-4407-8b1e-0fd4f143e7f8.png",
+        "name": "Muğla",
+        "href": "/tr/portfoy?FilterDTO.CityId=48"
+      },
+      {
+        "cityId": "07",
+        "image": "383850f4-84fe-4c0b-a7b0-688d286db6eb.png",
+        "name": "Antalya",
+        "href": "/tr/portfoy?FilterDTO.CityId=07"
+      },
+      {
+        "cityId": "06",
+        "image": "6f6ecba5-42cd-4f5e-a27c-51b65ae387f3.png",
+        "name": "Ankara",
+        "href": "/tr/portfoy?FilterDTO.CityId=06"
+      },
+      {
+        "cityId": "41",
+        "image": "9825f306-0074-448a-ac0a-a5a6755cb87d.png",
+        "name": "Kocaeli",
+        "href": "/tr/portfoy?FilterDTO.CityId=41"
+      },
+      {
+        "cityId": "20",
+        "image": "20fea89c-a57d-4f19-9b2b-3b26130de50b.png",
+        "name": "Denizli",
+        "href": "/tr/portfoy?FilterDTO.CityId=20"
+      }
+    ],
+    "button": {
+      "label": "Tüm Portföylerimizi Görmek İçin Tıklayınız",
+      "href": "/tr/portfoy"
+    }
+  },
+  "faq": {
+    "titleHtml": "<span style=\"color: #eb3424;\">Neden Startkey Franchise?</span><br /> <h2>Franchise Konusunda Merak Edilenler</h2>",
+    "image": "de46e0ec-c923-4dc5-8abe-884effb5f095.jpg",
+    "items": [
+      {
+        "headingId": "headingOne",
+        "collapseId": "collapseOne",
+        "buttonClass": "accordion-button",
+        "collapseClass": "accordion-collapse collapse show",
+        "expanded": true,
+        "question": "Franchise almak için ne kadar sermaye gerekir?",
+        "answerHtml": "<div class=\"single-product-text\"> <p><strong>Gayrimenkul franchise</strong> yatırımı; seçilen bölge, ofis büyüklüğü ve ekip yapısına göre farklılık gösterir.<br />Startkey olarak, düşük başlangıç maliyetiyle profesyonel bir emlak ofisi kurmanıza olanak sağlıyoruz.<br />Franchise bedelimiz; marka kullanım hakkı, kurumsal kimlik dosyaları, başlangıç eğitimleri, dijital reklam materyalleri, operasyonel destek ve teknolojik altyapı hizmetlerini kapsayan şeffaf bir yapı ile sunulur.<br />Detaylı bilgi için <a href=\"tr/franchise-basvuru\">franchise fırsatlarımızı</a> inceleyin.</p> </div>"
+      },
+      {
+        "headingId": "headingTwo",
+        "collapseId": "collapseTwo",
+        "buttonClass": "accordion-button collapsed",
+        "collapseClass": "accordion-collapse collapse",
+        "expanded": false,
+        "question": "Franchise almak için hangi adımları izlemeliyim?",
+        "answerHtml": "<p><strong>Emlak franchise </strong>alabilmek için:</p> <ul> <li>Franchise başvuru formunu doldurun</li> <li>Sizi tanımak ve bölge analizi yapmak için ön görüşme gerçekleştirilir</li> <li>Sözleşme süreci başlatılır</li> <li>Ofisiniz açılarak faaliyete başlar</li> </ul> <p>Tüm bu süreç boyunca birebir destek alır; ofis açılışından itibaren yönetsel mentorluk, bölgesel danışmanlık ve operasyonel rehberlik desteğiyle adım adım yönlendirilirsiniz.<br />Hemen şimdi <a href=\"tr/franchise-basvuru\">franchise başvurusu</a> yapın.</p>"
+      },
+      {
+        "headingId": "headingThree",
+        "collapseId": "collapseThree",
+        "buttonClass": "accordion-button collapsed",
+        "collapseClass": "accordion-collapse collapse",
+        "expanded": false,
+        "question": "Franchise aldıktan sonra destek alabiliyor muyum?",
+        "answerHtml": "<p>Elbette! Startkey, yalnızca başlangıçta değil; işinizi sürdürülebilir kılmak için her adımda yanınızda.</p> <ul> <li>Sürekli güncellenen eğitim programları</li> <li>Teknik ve dijital altyapı desteği</li> <li>Performans, danışman ve bölge bazlı raporlama sistemleri</li> <li>Pazarlama içerikleri, kampanya örnekleri ve saha operasyonları yönetimi</li> <li>Bulut tabanlı CRM sistemine erişim, ekip koordinasyon araçları ve otomatik iş akışları</li> </ul> <p>Franchise sürecinizin her aşamasında performans takibi, gelişim desteği ve iş birliği ağıyla desteklenirsiniz.</p>"
+      },
+      {
+        "headingId": "headingfour",
+        "collapseId": "collapsefour",
+        "buttonClass": "accordion-button collapsed",
+        "collapseClass": "accordion-collapse collapse",
+        "expanded": true,
+        "question": "Franchise işletmesi için hangi izin ve belgeler gereklidir?",
+        "answerHtml": "<div class=\"single-product-text\"> <p><strong>Gayrimenkul franchise</strong> ofisi açmak için gerekli yasal belgeler:</p> <ul> <li>Vergi levhası</li> <li>İşyeri açma ve çalıştırma ruhsatı</li> <li>Emlak danışmanlığı için gerekli mesleki yeterlilik belgeleri (Seviye 5 MYK)</li> <li>Taşınmaz Ticaret Yetki Belgesi (TTBS) </li> </ul> <p>Startkey, bu belgelerin temininde size rehberlik eder ve başvuru süreçlerinde gerekli yönlendirmeleri yapar.<br />Mevzuatlara uygun, güvenli bir başlangıç yapmanızı sağlıyoruz.</p> </div>"
+      },
+      {
+        "headingId": "headingfive",
+        "collapseId": "collapsefive",
+        "buttonClass": "accordion-button collapsed",
+        "collapseClass": "accordion-collapse collapse",
+        "expanded": true,
+        "question": "Franchise sözleşmesi nasıl düzenleniyor?",
+        "answerHtml": "<div class=\"single-product-text\"> <p>Franchise sözleşmesi; taraflar arasındaki hak ve sorumlulukları net şekilde belirleyen resmi bir belgedir.<br />Startkey tarafından hazırlanan sözleşmelerde öncelik sırası olarak şu başlıklar yer alır:</p> <ul> <li>Marka kullanım hakları</li> <li>Bölge koruma garantisi</li> <li>Eğitim ve operasyonel destek kapsamı</li> <li>Finansal şartlar ve yükümlülükler</li> </ul> <p>Ayrıca sözleşme sonrası, bölgesel büyüme planlaması, danışman kadrosu oluşturma desteği ve stratejik hedefler doğrultusunda ofis gelişimi de yapılandırılır.<br />Tüm süreç şeffaf ve anlaşılır biçimde tarafınıza sunulur. Uzun soluklu bir iş ortaklığı için sağlam temeller atıyoruz.</p> </div>"
+      }
+    ]
+  },
+  "newsletter": {
+    "titleHtml": "<h2>Gayrimenkul Konusunda Merak Ettiklerinizin En H&#x131;zl&#x131; Cevaplar&#x131;</h2> <p>Startkey T&#xFC;rkiye B&#xFC;ltenine Kat&#x131;l&#x131;n ve An&#x131;nda Haberdar Olun</p>",
+    "placeholders": [
+      "Ad",
+      "Soyad",
+      "Email"
+    ],
+    "submitLabel": "Bültene Kayıt Ol",
+    "submitClass": "btn style2 disabled newslet-btn",
+    "captchaError": "Captcha boş bırakılamaz!"
+  },
+  "footer": {
+    "descriptionHtml": "35 Ülke Tescili ile En Fazla Ülke Tesciline Sahip Türk Markasıdır. \"Türkiye'nin Gayrimenkul Markası\" Startkey her geçen gün büyüyen ve gelişen hizmet ağımız ile uluslararası marka tescillerimiz, yereldeki gücümüz kadar globaldeki hedeflerimizi de ifade ediyor.",
+    "crmButton": {
+      "label": "REOS CRM",
+      "href": "https://startkey.re-os.com/"
+    },
+    "widgets": [
+      {
+        "title": "En Çok Arananlar",
+        "links": [
+          {
+            "label": "Portföylerimiz",
+            "href": "/tr/portfoy"
+          },
+          {
+            "label": "Ofislerimiz",
+            "href": "/tr/ofisler"
+          },
+          {
+            "label": "İletişim",
+            "href": "/tr/iletisim"
+          },
+          {
+            "label": "Franchise",
+            "href": "/tr/franchise-basvuru"
+          }
+        ]
+      },
+      {
+        "title": "Startkey",
+        "links": [
+          {
+            "label": "Vizyon Misyon",
+            "href": "/tr/sayfa/vizyon-misyon"
+          },
+          {
+            "label": "Yönetim Kadrosu",
+            "href": "/tr/yonetim-kadrosu"
+          },
+          {
+            "label": "Medyada Biz",
+            "href": "/tr/haberler"
+          },
+          {
+            "label": "Duyurular",
+            "href": "/tr/duyurular"
+          },
+          {
+            "label": "KVKK",
+            "href": "/tr/sayfa/kvkk"
+          },
+          {
+            "label": "Hizmet Sözleşmesi",
+            "href": "/tr/sayfa/hizmet-sozlesmesi"
+          }
+        ]
+      }
+    ],
+    "copyrightHtml": "<i class=\"ri-copyright-line\"></i> 2026<span> STARTKEY</span> T&#xFC;m Haklar&#x131; Sakl&#x131;d&#x131;r.&#xD;&#xA; <br /> CRM &amp; MLS Servis Sa&#x11F;lay&#x131;c&#x131;s&#x131; <a href=\"https://re-os.com\" target=\"_blank\"> <img src=\"/img/logos/reos-logo-white-min.png\" alt=\"Re-os\" style=\"width: 55px; margin-left: 15px; cursor: pointer;\"> </a>",
+    "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d199854.60961321724!2d26.760248386718764!3d38.4939115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbd9ea0dd249b5%3A0x8f08a0dcefd1fc09!2sStartkey%20%7C%20T%C3%BCrkiye'nin%20Gayrimenkul%20Markas%C4%B1!5e0!3m2!1str!2str!4v1705257766039!5m2!1str!2str",
+    "mapLink": "https://maps.app.goo.gl/9idmLMGy95nsj4WK8",
+    "social": [
+      {
+        "icon": "ri-facebook-fill",
+        "href": "https://www.facebook.com/StartkeyEmlak/"
+      },
+      {
+        "icon": "ri-twitter-fill",
+        "href": "https://twitter.com/startkeyemlak"
+      },
+      {
+        "icon": "ri-instagram-line",
+        "href": "https://www.instagram.com/startkeyturkiye/"
+      },
+      {
+        "icon": "ri-youtube-fill",
+        "href": "https://www.youtube.com/startkeyturkiye"
+      }
+    ]
+  }
+}

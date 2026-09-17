@@ -1,0 +1,4732 @@
+{
+  "locales": [
+    "tr",
+    "en",
+    "de"
+  ],
+  "lookupPlaceholders": {
+    "tr": "Seçiniz",
+    "en": "Select",
+    "de": "Wählen"
+  },
+  "stats": [
+    {
+      "key": "stat-1",
+      "icon": "/themes/fela/img/counter-1.png",
+      "value": 84,
+      "suffix": "+",
+      "position": 1,
+      "translations": {
+        "tr": {
+          "label": "Startkey Franchise"
+        },
+        "en": {
+          "label": "Startkey Franchise"
+        },
+        "de": {
+          "label": "Startkey-Franchise"
+        }
+      }
+    },
+    {
+      "key": "stat-2",
+      "icon": "/themes/fela/img/counter-2.png",
+      "value": 707,
+      "suffix": "+",
+      "position": 2,
+      "translations": {
+        "tr": {
+          "label": "Aktif Portföy"
+        },
+        "en": {
+          "label": "Active Portfolio"
+        },
+        "de": {
+          "label": "Aktives Portfolio"
+        }
+      }
+    },
+    {
+      "key": "stat-3",
+      "icon": "/themes/fela/img/counter-3.png",
+      "value": 1077,
+      "suffix": "+",
+      "position": 3,
+      "translations": {
+        "tr": {
+          "label": "Başarılı Danışman"
+        },
+        "en": {
+          "label": "Successful Consultant"
+        },
+        "de": {
+          "label": "Erfolgreicher Berater"
+        }
+      }
+    },
+    {
+      "key": "stat-4",
+      "icon": "/media/micrositecontent/591fdaae-121f-41ff-be57-25cb430fc4ed.png",
+      "value": 35,
+      "suffix": "+",
+      "position": 4,
+      "translations": {
+        "tr": {
+          "label": "Ülkede Tescilli Marka"
+        },
+        "en": {
+          "label": "A Trademark Registered in the Country"
+        },
+        "de": {
+          "label": "Eine Im Land Eingetragene Marke"
+        }
+      }
+    }
+  ],
+  "featuredProperties": [
+    {
+      "externalId": 479134,
+      "image": "fdc67df4-4b74-432d-872c-7038c3056266.png",
+      "rooms": "3+1",
+      "area": "162 m²",
+      "position": 1,
+      "translations": {
+        "tr": {
+          "urlPath": "/tr/portfoy/479134/satilik/daire/aydin/kusadasi/sogucak-mahallesinde-sahile-yakin-31-satilik-dubleks-daire",
+          "processType": "Satılık",
+          "adSubType": "Daire",
+          "adType": "Konut",
+          "price": "₺ 10.500.000",
+          "title": "Soğucak Mahallesi'nde Sahile Yakın 3+1 Satılık Dubleks Daire",
+          "location": "Aydın , Kuşadası",
+          "detailLabel": "Detay"
+        },
+        "en": {
+          "urlPath": "/en/property/479134/for-sale/apartment/aydin/kusadasi/sogucak-mahallesinde-sahile-yakin-31-satilik-dubleks-daire",
+          "processType": "For Sale",
+          "adSubType": "Apartment",
+          "adType": "House",
+          "price": "$ 215,759",
+          "title": "Soğucak Mahallesi'nde Sahile Yakın 3+1 Satılık Dubleks Daire",
+          "location": "Aydın , Kuşadası",
+          "detailLabel": "Detail"
+        },
+        "de": {
+          "urlPath": "/de/immobilien/479134/zu-verkaufen/wohnung/aydin/kusadasi/sogucak-mahallesinde-sahile-yakin-31-satilik-dubleks-daire",
+          "processType": "Zu verkaufen",
+          "adSubType": "Wohnung",
+          "adType": "House",
+          "price": "€ 186.948",
+          "title": "Soğucak Mahallesi'nde Sahile Yakın 3+1 Satılık Dubleks Daire",
+          "location": "Aydın , Kuşadası",
+          "detailLabel": "Detail"
+        }
+      }
+    },
+    {
+      "externalId": 482664,
+      "image": "02c81cd0-916a-4e30-9a4d-f282e2ea4431.jpg",
+      "rooms": "3+1",
+      "area": "130 m²",
+      "position": 2,
+      "translations": {
+        "tr": {
+          "urlPath": "/tr/portfoy/482664/satilik/daire/izmir/karabaglar/full-korfez-manzarali-yerden-isitmali-sifir-daire",
+          "processType": "Satılık",
+          "adSubType": "Daire",
+          "adType": "Konut",
+          "price": "₺ 14.850.000",
+          "title": "Full Körfez Manzaralı Yerden Isıtmalı Sıfır Daire",
+          "location": "İzmir , Karabağlar",
+          "detailLabel": "Detay"
+        },
+        "en": {
+          "urlPath": "/en/property/482664/for-sale/apartment/izmir/karabaglar/full-korfez-manzarali-yerden-isitmali-sifir-daire",
+          "processType": "For Sale",
+          "adSubType": "Apartment",
+          "adType": "House",
+          "price": "$ 305,145",
+          "title": "Full Körfez Manzaralı Yerden Isıtmalı Sıfır Daire",
+          "location": "İzmir , Karabağlar",
+          "detailLabel": "Detail"
+        },
+        "de": {
+          "urlPath": "/de/immobilien/482664/zu-verkaufen/wohnung/izmir/karabaglar/full-korfez-manzarali-yerden-isitmali-sifir-daire",
+          "processType": "Zu verkaufen",
+          "adSubType": "Wohnung",
+          "adType": "House",
+          "price": "€ 264.397",
+          "title": "Full Körfez Manzaralı Yerden Isıtmalı Sıfır Daire",
+          "location": "İzmir , Karabağlar",
+          "detailLabel": "Detail"
+        }
+      }
+    },
+    {
+      "externalId": 482660,
+      "image": "87b491ad-da96-49f3-b9e2-9b2d19834a60.jpg",
+      "rooms": "1+1",
+      "area": "58 m²",
+      "position": 3,
+      "translations": {
+        "tr": {
+          "urlPath": "/tr/portfoy/482660/satilik/daire/izmir/bayrakli/neva-yalida-korfez-manzarali-11-satilik-luks-daire",
+          "processType": "Satılık",
+          "adSubType": "Daire",
+          "adType": "Konut",
+          "price": "₺ 17.250.000",
+          "title": "Neva Yalıda Körfez Manzaralı 1+1 Satılık Lüks Daire",
+          "location": "İzmir , Bayraklı",
+          "detailLabel": "Detay"
+        },
+        "en": {
+          "urlPath": "/en/property/482660/for-sale/apartment/izmir/bayrakli/neva-yalida-korfez-manzarali-11-satilik-luks-daire",
+          "processType": "For Sale",
+          "adSubType": "Apartment",
+          "adType": "House",
+          "price": "$ 354,461",
+          "title": "Neva Yalıda Körfez Manzaralı 1+1 Satılık Lüks Daire",
+          "location": "İzmir , Bayraklı",
+          "detailLabel": "Detail"
+        },
+        "de": {
+          "urlPath": "/de/immobilien/482660/zu-verkaufen/wohnung/izmir/bayrakli/neva-yalida-korfez-manzarali-11-satilik-luks-daire",
+          "processType": "Zu verkaufen",
+          "adSubType": "Wohnung",
+          "adType": "House",
+          "price": "€ 307.128",
+          "title": "Neva Yalıda Körfez Manzaralı 1+1 Satılık Lüks Daire",
+          "location": "İzmir , Bayraklı",
+          "detailLabel": "Detail"
+        }
+      }
+    },
+    {
+      "externalId": 482651,
+      "image": "cfe5b1af-c670-445f-9328-eb9da44698b3.jpg",
+      "rooms": "4+1",
+      "area": "265 m²",
+      "position": 4,
+      "translations": {
+        "tr": {
+          "urlPath": "/tr/portfoy/482651/kiralik/daire/izmir/konak/alsancak-talatpasada-esyali-41-kiralik-luks-daire",
+          "processType": "Kiralık",
+          "adSubType": "Daire",
+          "adType": "Konut",
+          "price": "₺ 150.000",
+          "title": "Alsancak Talatpaşa'da Eşyalı 4+1 Kiralık Lüks Daire",
+          "location": "İzmir , Konak",
+          "detailLabel": "Detay"
+        },
+        "en": {
+          "urlPath": "/en/property/482651/for-rent/apartment/izmir/konak/alsancak-talatpasada-esyali-41-kiralik-luks-daire",
+          "processType": "For Rent",
+          "adSubType": "Apartment",
+          "adType": "House",
+          "price": "$ 3,082",
+          "title": "Alsancak Talatpaşa'da Eşyalı 4+1 Kiralık Lüks Daire",
+          "location": "İzmir , Konak",
+          "detailLabel": "Detail"
+        },
+        "de": {
+          "urlPath": "/de/immobilien/482651/vermietung/wohnung/izmir/konak/alsancak-talatpasada-esyali-41-kiralik-luks-daire",
+          "processType": "Vermietung",
+          "adSubType": "Wohnung",
+          "adType": "House",
+          "price": "€ 2.671",
+          "title": "Alsancak Talatpaşa'da Eşyalı 4+1 Kiralık Lüks Daire",
+          "location": "İzmir , Konak",
+          "detailLabel": "Detail"
+        }
+      }
+    },
+    {
+      "externalId": 482644,
+      "image": "5977813f-c7e8-487c-993a-fee347c56497.jpg",
+      "rooms": "1+1",
+      "area": "54 m²",
+      "position": 5,
+      "translations": {
+        "tr": {
+          "urlPath": "/tr/portfoy/482644/kiralik/daire/izmir/bornova/bornova-lobi-parlasta-11-esyali-kiralik-daire",
+          "processType": "Kiralık",
+          "adSubType": "Daire",
+          "adType": "Konut",
+          "price": "₺ 37.000",
+          "title": "Bornova Lobi Parlas'ta 1+1 Eşyalı Kiralık Daire",
+          "location": "İzmir , Bornova",
+          "detailLabel": "Detay"
+        },
+        "en": {
+          "urlPath": "/en/property/482644/for-rent/apartment/izmir/bornova/bornova-lobi-parlasta-11-esyali-kiralik-daire",
+          "processType": "For Rent",
+          "adSubType": "Apartment",
+          "adType": "House",
+          "price": "$ 760",
+          "title": "Bornova Lobi Parlas'ta 1+1 Eşyalı Kiralık Daire",
+          "location": "İzmir , Bornova",
+          "detailLabel": "Detail"
+        },
+        "de": {
+          "urlPath": "/de/immobilien/482644/vermietung/wohnung/izmir/bornova/bornova-lobi-parlasta-11-esyali-kiralik-daire",
+          "processType": "Vermietung",
+          "adSubType": "Wohnung",
+          "adType": "House",
+          "price": "€ 659",
+          "title": "Bornova Lobi Parlas'ta 1+1 Eşyalı Kiralık Daire",
+          "location": "İzmir , Bornova",
+          "detailLabel": "Detail"
+        }
+      }
+    },
+    {
+      "externalId": 482640,
+      "image": "e5b9cbf1-2eed-45a1-9d7d-3398acdb50d2.jpg",
+      "rooms": "4+2",
+      "area": "284 m²",
+      "position": 6,
+      "translations": {
+        "tr": {
+          "urlPath": "/tr/portfoy/482640/satilik/villa/aydin/kusadasi/kusadasi-sogucak-ta-satilik-sifir-tas-ev-villa",
+          "processType": "Satılık",
+          "adSubType": "Villa",
+          "adType": "Konut",
+          "price": "₺ 23.950.000",
+          "title": "Kuşadası Soğucak 'Ta Satılık Sıfır Taş Ev Villa",
+          "location": "Aydın , Kuşadası",
+          "detailLabel": "Detay"
+        },
+        "en": {
+          "urlPath": "/en/property/482640/for-sale/villa/aydin/kusadasi/kusadasi-sogucak-ta-satilik-sifir-tas-ev-villa",
+          "processType": "For Sale",
+          "adSubType": "Villa",
+          "adType": "House",
+          "price": "$ 492,136",
+          "title": "Kuşadası Soğucak 'Ta Satılık Sıfır Taş Ev Villa",
+          "location": "Aydın , Kuşadası",
+          "detailLabel": "Detail"
+        },
+        "de": {
+          "urlPath": "/de/immobilien/482640/zu-verkaufen/villa/aydin/kusadasi/kusadasi-sogucak-ta-satilik-sifir-tas-ev-villa",
+          "processType": "Zu verkaufen",
+          "adSubType": "Villa",
+          "adType": "House",
+          "price": "€ 426.418",
+          "title": "Kuşadası Soğucak 'Ta Satılık Sıfır Taş Ev Villa",
+          "location": "Aydın , Kuşadası",
+          "detailLabel": "Detail"
+        }
+      }
+    }
+  ],
+  "popularCities": [
+    {
+      "cityCode": "35",
+      "image": "15131967-d01f-479b-9fbc-051dc019f8b9.png",
+      "position": 1,
+      "translations": {
+        "tr": {
+          "name": "İzmir",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=35"
+        },
+        "en": {
+          "name": "İzmir",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=35"
+        },
+        "de": {
+          "name": "İzmir",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=35"
+        }
+      }
+    },
+    {
+      "cityCode": "45",
+      "image": "d6c9769f-8874-4eff-806b-655c67e2f355.png",
+      "position": 2,
+      "translations": {
+        "tr": {
+          "name": "Manisa",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=45"
+        },
+        "en": {
+          "name": "Manisa",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=45"
+        },
+        "de": {
+          "name": "Manisa",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=45"
+        }
+      }
+    },
+    {
+      "cityCode": "10",
+      "image": "4001fc3b-1575-4424-a48b-9cc7bfb5f561.jpg",
+      "position": 3,
+      "translations": {
+        "tr": {
+          "name": "Balıkesir",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=10"
+        },
+        "en": {
+          "name": "Balıkesir",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=10"
+        },
+        "de": {
+          "name": "Balıkesir",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=10"
+        }
+      }
+    },
+    {
+      "cityCode": "34",
+      "image": "b3c8d8f2-a9b6-4f1e-bdb1-8906590ba1b4.png",
+      "position": 4,
+      "translations": {
+        "tr": {
+          "name": "İstanbul",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=34"
+        },
+        "en": {
+          "name": "İstanbul",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=34"
+        },
+        "de": {
+          "name": "İstanbul",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=34"
+        }
+      }
+    },
+    {
+      "cityCode": "48",
+      "image": "64e43c98-5b8f-4407-8b1e-0fd4f143e7f8.png",
+      "position": 5,
+      "translations": {
+        "tr": {
+          "name": "Muğla",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=48"
+        },
+        "en": {
+          "name": "Muğla",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=48"
+        },
+        "de": {
+          "name": "Muğla",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=48"
+        }
+      }
+    },
+    {
+      "cityCode": "07",
+      "image": "383850f4-84fe-4c0b-a7b0-688d286db6eb.png",
+      "position": 6,
+      "translations": {
+        "tr": {
+          "name": "Antalya",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=07"
+        },
+        "en": {
+          "name": "Antalya",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=07"
+        },
+        "de": {
+          "name": "Antalya",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=07"
+        }
+      }
+    },
+    {
+      "cityCode": "06",
+      "image": "6f6ecba5-42cd-4f5e-a27c-51b65ae387f3.png",
+      "position": 7,
+      "translations": {
+        "tr": {
+          "name": "Ankara",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=06"
+        },
+        "en": {
+          "name": "Ankara",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=06"
+        },
+        "de": {
+          "name": "Ankara",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=06"
+        }
+      }
+    },
+    {
+      "cityCode": "41",
+      "image": "9825f306-0074-448a-ac0a-a5a6755cb87d.png",
+      "position": 8,
+      "translations": {
+        "tr": {
+          "name": "Kocaeli",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=41"
+        },
+        "en": {
+          "name": "Kocaeli",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=41"
+        },
+        "de": {
+          "name": "Kocaeli",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=41"
+        }
+      }
+    },
+    {
+      "cityCode": "20",
+      "image": "20fea89c-a57d-4f19-9b2b-3b26130de50b.png",
+      "position": 9,
+      "translations": {
+        "tr": {
+          "name": "Denizli",
+          "urlPath": "/tr/portfoy?FilterDTO.CityId=20"
+        },
+        "en": {
+          "name": "Denizli",
+          "urlPath": "/en/portfoy?FilterDTO.CityId=20"
+        },
+        "de": {
+          "name": "Denizli",
+          "urlPath": "/de/portfoy?FilterDTO.CityId=20"
+        }
+      }
+    }
+  ],
+  "lookups": [
+    {
+      "group": "ad_types",
+      "externalId": "1",
+      "parentExternalId": null,
+      "position": 1,
+      "translations": {
+        "tr": "Arsa",
+        "en": "Arsa",
+        "de": "Arsa"
+      }
+    },
+    {
+      "group": "ad_types",
+      "externalId": "2",
+      "parentExternalId": null,
+      "position": 2,
+      "translations": {
+        "tr": "Konut",
+        "en": "Konut",
+        "de": "Konut"
+      }
+    },
+    {
+      "group": "ad_types",
+      "externalId": "4",
+      "parentExternalId": null,
+      "position": 3,
+      "translations": {
+        "tr": "Ticari",
+        "en": "Ticari",
+        "de": "Ticari"
+      }
+    },
+    {
+      "group": "ad_types",
+      "externalId": "6",
+      "parentExternalId": null,
+      "position": 4,
+      "translations": {
+        "tr": "Turistik Tesis",
+        "en": "Turistik Tesis",
+        "de": "Turistik Tesis"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "84",
+      "parentExternalId": "1",
+      "position": 1,
+      "translations": {
+        "tr": "Satılık",
+        "en": "For Sale",
+        "de": "Zu verkaufen"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "85",
+      "parentExternalId": "1",
+      "position": 2,
+      "translations": {
+        "tr": "Kiralık",
+        "en": "For Rent",
+        "de": "Vermietung"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "86",
+      "parentExternalId": "2",
+      "position": 1,
+      "translations": {
+        "tr": "Satılık",
+        "en": "For Sale",
+        "de": "Zu verkaufen"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "87",
+      "parentExternalId": "2",
+      "position": 2,
+      "translations": {
+        "tr": "Kiralık",
+        "en": "For Rent",
+        "de": "Vermietung"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "89",
+      "parentExternalId": "4",
+      "position": 1,
+      "translations": {
+        "tr": "Satılık",
+        "en": "For Sale",
+        "de": "Zu verkaufen"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "90",
+      "parentExternalId": "4",
+      "position": 2,
+      "translations": {
+        "tr": "Kiralık",
+        "en": "For Rent",
+        "de": "Vermietung"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "91",
+      "parentExternalId": "4",
+      "position": 3,
+      "translations": {
+        "tr": "Devren Satılık",
+        "en": "For Sublease Sell",
+        "de": "Zur Veräußerung bestimmte Vermögenswerte"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "501",
+      "parentExternalId": "4",
+      "position": 4,
+      "translations": {
+        "tr": "Devren Kiralık",
+        "en": "For Sublease Rent",
+        "de": "Kreis Mieten"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "523",
+      "parentExternalId": "6",
+      "position": 1,
+      "translations": {
+        "tr": "Satılık",
+        "en": "For Sale",
+        "de": "Zu verkaufen"
+      }
+    },
+    {
+      "group": "process_types",
+      "externalId": "524",
+      "parentExternalId": "6",
+      "position": 2,
+      "translations": {
+        "tr": "Kiralık",
+        "en": "For Rent",
+        "de": "Vermietung"
+      }
+    },
+    {
+      "group": "property_countries",
+      "externalId": "212",
+      "parentExternalId": null,
+      "position": 1,
+      "translations": {
+        "tr": "Türkiye",
+        "en": "Türkiye",
+        "de": "Türkiye"
+      }
+    },
+    {
+      "group": "office_countries",
+      "externalId": "82",
+      "parentExternalId": null,
+      "position": 1,
+      "translations": {
+        "tr": "Greece",
+        "en": "Greece",
+        "de": "Greece"
+      }
+    },
+    {
+      "group": "office_countries",
+      "externalId": "212",
+      "parentExternalId": null,
+      "position": 2,
+      "translations": {
+        "tr": "Türkiye",
+        "en": "Türkiye",
+        "de": "Türkiye"
+      }
+    },
+    {
+      "group": "office_countries",
+      "externalId": "220",
+      "parentExternalId": null,
+      "position": 3,
+      "translations": {
+        "tr": "United Kingdom",
+        "en": "United Kingdom",
+        "de": "United Kingdom"
+      }
+    },
+    {
+      "group": "consultant_countries",
+      "externalId": "212",
+      "parentExternalId": null,
+      "position": 1,
+      "translations": {
+        "tr": "Türkiye",
+        "en": "Türkiye",
+        "de": "Türkiye"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "34",
+      "parentExternalId": "212",
+      "position": 1,
+      "translations": {
+        "tr": "İstanbul",
+        "en": "İstanbul",
+        "de": "İstanbul"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "6",
+      "parentExternalId": "212",
+      "position": 2,
+      "translations": {
+        "tr": "Ankara",
+        "en": "Ankara",
+        "de": "Ankara"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "35",
+      "parentExternalId": "212",
+      "position": 3,
+      "translations": {
+        "tr": "İzmir",
+        "en": "İzmir",
+        "de": "İzmir"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "16",
+      "parentExternalId": "212",
+      "position": 4,
+      "translations": {
+        "tr": "Bursa",
+        "en": "Bursa",
+        "de": "Bursa"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "3",
+      "parentExternalId": "212",
+      "position": 5,
+      "translations": {
+        "tr": "Afyonkarahisar",
+        "en": "Afyonkarahisar",
+        "de": "Afyonkarahisar"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "7",
+      "parentExternalId": "212",
+      "position": 6,
+      "translations": {
+        "tr": "Antalya",
+        "en": "Antalya",
+        "de": "Antalya"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "9",
+      "parentExternalId": "212",
+      "position": 7,
+      "translations": {
+        "tr": "Aydın",
+        "en": "Aydın",
+        "de": "Aydın"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "10",
+      "parentExternalId": "212",
+      "position": 8,
+      "translations": {
+        "tr": "Balıkesir",
+        "en": "Balıkesir",
+        "de": "Balıkesir"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "17",
+      "parentExternalId": "212",
+      "position": 9,
+      "translations": {
+        "tr": "Çanakkale",
+        "en": "Çanakkale",
+        "de": "Çanakkale"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "22",
+      "parentExternalId": "212",
+      "position": 10,
+      "translations": {
+        "tr": "Edirne",
+        "en": "Edirne",
+        "de": "Edirne"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "26",
+      "parentExternalId": "212",
+      "position": 11,
+      "translations": {
+        "tr": "Eskişehir",
+        "en": "Eskişehir",
+        "de": "Eskişehir"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "31",
+      "parentExternalId": "212",
+      "position": 12,
+      "translations": {
+        "tr": "Hatay",
+        "en": "Hatay",
+        "de": "Hatay"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "43",
+      "parentExternalId": "212",
+      "position": 13,
+      "translations": {
+        "tr": "Kütahya",
+        "en": "Kütahya",
+        "de": "Kütahya"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "45",
+      "parentExternalId": "212",
+      "position": 14,
+      "translations": {
+        "tr": "Manisa",
+        "en": "Manisa",
+        "de": "Manisa"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "48",
+      "parentExternalId": "212",
+      "position": 15,
+      "translations": {
+        "tr": "Muğla",
+        "en": "Muğla",
+        "de": "Muğla"
+      }
+    },
+    {
+      "group": "property_cities",
+      "externalId": "64",
+      "parentExternalId": "212",
+      "position": 16,
+      "translations": {
+        "tr": "Uşak",
+        "en": "Uşak",
+        "de": "Uşak"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "10490",
+      "parentExternalId": "82",
+      "position": 1,
+      "translations": {
+        "tr": "Athens",
+        "en": "Athens",
+        "de": "Athens"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "34",
+      "parentExternalId": "212",
+      "position": 1,
+      "translations": {
+        "tr": "İstanbul",
+        "en": "İstanbul",
+        "de": "İstanbul"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "6",
+      "parentExternalId": "212",
+      "position": 2,
+      "translations": {
+        "tr": "Ankara",
+        "en": "Ankara",
+        "de": "Ankara"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "35",
+      "parentExternalId": "212",
+      "position": 3,
+      "translations": {
+        "tr": "İzmir",
+        "en": "İzmir",
+        "de": "İzmir"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "7",
+      "parentExternalId": "212",
+      "position": 4,
+      "translations": {
+        "tr": "Antalya",
+        "en": "Antalya",
+        "de": "Antalya"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "9",
+      "parentExternalId": "212",
+      "position": 5,
+      "translations": {
+        "tr": "Aydın",
+        "en": "Aydın",
+        "de": "Aydın"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "10",
+      "parentExternalId": "212",
+      "position": 6,
+      "translations": {
+        "tr": "Balıkesir",
+        "en": "Balıkesir",
+        "de": "Balıkesir"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "20",
+      "parentExternalId": "212",
+      "position": 7,
+      "translations": {
+        "tr": "Denizli",
+        "en": "Denizli",
+        "de": "Denizli"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "41",
+      "parentExternalId": "212",
+      "position": 8,
+      "translations": {
+        "tr": "Kocaeli",
+        "en": "Kocaeli",
+        "de": "Kocaeli"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "45",
+      "parentExternalId": "212",
+      "position": 9,
+      "translations": {
+        "tr": "Manisa",
+        "en": "Manisa",
+        "de": "Manisa"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "48",
+      "parentExternalId": "212",
+      "position": 10,
+      "translations": {
+        "tr": "Muğla",
+        "en": "Muğla",
+        "de": "Muğla"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "82",
+      "parentExternalId": "212",
+      "position": 11,
+      "translations": {
+        "tr": "Girne (K.K.T.C.)",
+        "en": "Girne (K.K.T.C.)",
+        "de": "Girne (K.K.T.C.)"
+      }
+    },
+    {
+      "group": "office_cities",
+      "externalId": "10391",
+      "parentExternalId": "220",
+      "position": 1,
+      "translations": {
+        "tr": "London",
+        "en": "London",
+        "de": "London"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "34",
+      "parentExternalId": "212",
+      "position": 1,
+      "translations": {
+        "tr": "İstanbul",
+        "en": "İstanbul",
+        "de": "İstanbul"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "6",
+      "parentExternalId": "212",
+      "position": 2,
+      "translations": {
+        "tr": "Ankara",
+        "en": "Ankara",
+        "de": "Ankara"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "35",
+      "parentExternalId": "212",
+      "position": 3,
+      "translations": {
+        "tr": "İzmir",
+        "en": "İzmir",
+        "de": "İzmir"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "7",
+      "parentExternalId": "212",
+      "position": 4,
+      "translations": {
+        "tr": "Antalya",
+        "en": "Antalya",
+        "de": "Antalya"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "9",
+      "parentExternalId": "212",
+      "position": 5,
+      "translations": {
+        "tr": "Aydın",
+        "en": "Aydın",
+        "de": "Aydın"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "10",
+      "parentExternalId": "212",
+      "position": 6,
+      "translations": {
+        "tr": "Balıkesir",
+        "en": "Balıkesir",
+        "de": "Balıkesir"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "20",
+      "parentExternalId": "212",
+      "position": 7,
+      "translations": {
+        "tr": "Denizli",
+        "en": "Denizli",
+        "de": "Denizli"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "41",
+      "parentExternalId": "212",
+      "position": 8,
+      "translations": {
+        "tr": "Kocaeli",
+        "en": "Kocaeli",
+        "de": "Kocaeli"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "45",
+      "parentExternalId": "212",
+      "position": 9,
+      "translations": {
+        "tr": "Manisa",
+        "en": "Manisa",
+        "de": "Manisa"
+      }
+    },
+    {
+      "group": "consultant_cities",
+      "externalId": "48",
+      "parentExternalId": "212",
+      "position": 10,
+      "translations": {
+        "tr": "Muğla",
+        "en": "Muğla",
+        "de": "Muğla"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2115",
+      "parentExternalId": "10",
+      "position": 1,
+      "translations": {
+        "tr": "Altıeylül",
+        "en": "Altıeylül",
+        "de": "Altıeylül"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1161",
+      "parentExternalId": "10",
+      "position": 2,
+      "translations": {
+        "tr": "Ayvalık",
+        "en": "Ayvalık",
+        "de": "Ayvalık"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1169",
+      "parentExternalId": "10",
+      "position": 3,
+      "translations": {
+        "tr": "Balya",
+        "en": "Balya",
+        "de": "Balya"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1171",
+      "parentExternalId": "10",
+      "position": 4,
+      "translations": {
+        "tr": "Bandırma",
+        "en": "Bandırma",
+        "de": "Bandırma"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1191",
+      "parentExternalId": "10",
+      "position": 5,
+      "translations": {
+        "tr": "Bigadiç",
+        "en": "Bigadiç",
+        "de": "Bigadiç"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1216",
+      "parentExternalId": "10",
+      "position": 6,
+      "translations": {
+        "tr": "Burhaniye",
+        "en": "Burhaniye",
+        "de": "Burhaniye"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1291",
+      "parentExternalId": "10",
+      "position": 7,
+      "translations": {
+        "tr": "Dursunbey",
+        "en": "Dursunbey",
+        "de": "Dursunbey"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1294",
+      "parentExternalId": "10",
+      "position": 8,
+      "translations": {
+        "tr": "Edremit",
+        "en": "Edremit",
+        "de": "Edremit"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1310",
+      "parentExternalId": "10",
+      "position": 9,
+      "translations": {
+        "tr": "Erdek",
+        "en": "Erdek",
+        "de": "Erdek"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1928",
+      "parentExternalId": "10",
+      "position": 10,
+      "translations": {
+        "tr": "Gömeç",
+        "en": "Gömeç",
+        "de": "Gömeç"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1360",
+      "parentExternalId": "10",
+      "position": 11,
+      "translations": {
+        "tr": "Gönen",
+        "en": "Gönen",
+        "de": "Gönen"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1384",
+      "parentExternalId": "10",
+      "position": 12,
+      "translations": {
+        "tr": "Havran",
+        "en": "Havran",
+        "de": "Havran"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1418",
+      "parentExternalId": "10",
+      "position": 13,
+      "translations": {
+        "tr": "İvrindi",
+        "en": "İvrindi",
+        "de": "İvrindi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2114",
+      "parentExternalId": "10",
+      "position": 14,
+      "translations": {
+        "tr": "Karesi",
+        "en": "Karesi",
+        "de": "Karesi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1462",
+      "parentExternalId": "10",
+      "position": 15,
+      "translations": {
+        "tr": "Kepsut",
+        "en": "Kepsut",
+        "de": "Kepsut"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1514",
+      "parentExternalId": "10",
+      "position": 16,
+      "translations": {
+        "tr": "Manyas",
+        "en": "Manyas",
+        "de": "Manyas"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1824",
+      "parentExternalId": "10",
+      "position": 17,
+      "translations": {
+        "tr": "Marmara",
+        "en": "Marmara",
+        "de": "Marmara"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1608",
+      "parentExternalId": "10",
+      "position": 18,
+      "translations": {
+        "tr": "Savaştepe",
+        "en": "Savaştepe",
+        "de": "Savaştepe"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1619",
+      "parentExternalId": "10",
+      "position": 19,
+      "translations": {
+        "tr": "Sındırgı",
+        "en": "Sındırgı",
+        "de": "Sındırgı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1644",
+      "parentExternalId": "10",
+      "position": 20,
+      "translations": {
+        "tr": "Susurluk",
+        "en": "Susurluk",
+        "de": "Susurluk"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101877",
+      "parentExternalId": "10391",
+      "position": 1,
+      "translations": {
+        "tr": "105 Thomsbeach Road",
+        "en": "105 Thomsbeach Road",
+        "de": "105 Thomsbeach Road"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101119",
+      "parentExternalId": "10391",
+      "position": 2,
+      "translations": {
+        "tr": "City of London",
+        "en": "City of London",
+        "de": "City of London"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101359",
+      "parentExternalId": "10391",
+      "position": 3,
+      "translations": {
+        "tr": "hackney",
+        "en": "hackney",
+        "de": "hackney"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101903",
+      "parentExternalId": "10391",
+      "position": 4,
+      "translations": {
+        "tr": "Marylebone",
+        "en": "Marylebone",
+        "de": "Marylebone"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101120",
+      "parentExternalId": "10391",
+      "position": 5,
+      "translations": {
+        "tr": "Mayfair",
+        "en": "Mayfair",
+        "de": "Mayfair"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "102460",
+      "parentExternalId": "10391",
+      "position": 6,
+      "translations": {
+        "tr": "New Eltham",
+        "en": "New Eltham",
+        "de": "New Eltham"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101756",
+      "parentExternalId": "10391",
+      "position": 7,
+      "translations": {
+        "tr": "Reading",
+        "en": "Reading",
+        "de": "Reading"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101878",
+      "parentExternalId": "10391",
+      "position": 8,
+      "translations": {
+        "tr": "SE61EY",
+        "en": "SE61EY",
+        "de": "SE61EY"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101121",
+      "parentExternalId": "10391",
+      "position": 9,
+      "translations": {
+        "tr": "Soho",
+        "en": "Soho",
+        "de": "Soho"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101879",
+      "parentExternalId": "10391",
+      "position": 10,
+      "translations": {
+        "tr": "Southend",
+        "en": "Southend",
+        "de": "Southend"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "101441",
+      "parentExternalId": "10490",
+      "position": 1,
+      "translations": {
+        "tr": "Papandreou",
+        "en": "Papandreou",
+        "de": "Papandreou"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1783",
+      "parentExternalId": "16",
+      "position": 1,
+      "translations": {
+        "tr": "Büyükorhan",
+        "en": "Büyükorhan",
+        "de": "Büyükorhan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1343",
+      "parentExternalId": "16",
+      "position": 2,
+      "translations": {
+        "tr": "Gemlik",
+        "en": "Gemlik",
+        "de": "Gemlik"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1935",
+      "parentExternalId": "16",
+      "position": 3,
+      "translations": {
+        "tr": "Gürsu",
+        "en": "Gürsu",
+        "de": "Gürsu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1799",
+      "parentExternalId": "16",
+      "position": 4,
+      "translations": {
+        "tr": "Harmancık",
+        "en": "Harmancık",
+        "de": "Harmancık"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1411",
+      "parentExternalId": "16",
+      "position": 5,
+      "translations": {
+        "tr": "İnegöl",
+        "en": "İnegöl",
+        "de": "İnegöl"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1420",
+      "parentExternalId": "16",
+      "position": 6,
+      "translations": {
+        "tr": "İznik",
+        "en": "İznik",
+        "de": "İznik"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1434",
+      "parentExternalId": "16",
+      "position": 7,
+      "translations": {
+        "tr": "Karacabey",
+        "en": "Karacabey",
+        "de": "Karacabey"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1457",
+      "parentExternalId": "16",
+      "position": 8,
+      "translations": {
+        "tr": "Keles",
+        "en": "Keles",
+        "de": "Keles"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1960",
+      "parentExternalId": "16",
+      "position": 9,
+      "translations": {
+        "tr": "Kestel",
+        "en": "Kestel",
+        "de": "Kestel"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1530",
+      "parentExternalId": "16",
+      "position": 10,
+      "translations": {
+        "tr": "Mudanya",
+        "en": "Mudanya",
+        "de": "Mudanya"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1535",
+      "parentExternalId": "16",
+      "position": 11,
+      "translations": {
+        "tr": "Mustafakemalpaşa",
+        "en": "Mustafakemalpaşa",
+        "de": "Mustafakemalpaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1829",
+      "parentExternalId": "16",
+      "position": 12,
+      "translations": {
+        "tr": "Nilüfer",
+        "en": "Nilüfer",
+        "de": "Nilüfer"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1553",
+      "parentExternalId": "16",
+      "position": 13,
+      "translations": {
+        "tr": "Orhaneli",
+        "en": "Orhaneli",
+        "de": "Orhaneli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1554",
+      "parentExternalId": "16",
+      "position": 14,
+      "translations": {
+        "tr": "Orhangazi",
+        "en": "Orhangazi",
+        "de": "Orhangazi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1832",
+      "parentExternalId": "16",
+      "position": 15,
+      "translations": {
+        "tr": "Osmangazi",
+        "en": "Osmangazi",
+        "de": "Osmangazi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1725",
+      "parentExternalId": "16",
+      "position": 16,
+      "translations": {
+        "tr": "Yenişehir",
+        "en": "Yenişehir",
+        "de": "Yenişehir"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1859",
+      "parentExternalId": "16",
+      "position": 17,
+      "translations": {
+        "tr": "Yıldırım",
+        "en": "Yıldırım",
+        "de": "Yıldırım"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1160",
+      "parentExternalId": "17",
+      "position": 1,
+      "translations": {
+        "tr": "Ayvacık",
+        "en": "Ayvacık",
+        "de": "Ayvacık"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1180",
+      "parentExternalId": "17",
+      "position": 2,
+      "translations": {
+        "tr": "Bayramiç",
+        "en": "Bayramiç",
+        "de": "Bayramiç"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1190",
+      "parentExternalId": "17",
+      "position": 3,
+      "translations": {
+        "tr": "Biga",
+        "en": "Biga",
+        "de": "Biga"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1205",
+      "parentExternalId": "17",
+      "position": 4,
+      "translations": {
+        "tr": "Bozcaada",
+        "en": "Bozcaada",
+        "de": "Bozcaada"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1229",
+      "parentExternalId": "17",
+      "position": 5,
+      "translations": {
+        "tr": "Çan",
+        "en": "Çan",
+        "de": "Çan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1293",
+      "parentExternalId": "17",
+      "position": 6,
+      "translations": {
+        "tr": "Eceabat",
+        "en": "Eceabat",
+        "de": "Eceabat"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1326",
+      "parentExternalId": "17",
+      "position": 7,
+      "translations": {
+        "tr": "Ezine",
+        "en": "Ezine",
+        "de": "Ezine"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1340",
+      "parentExternalId": "17",
+      "position": 8,
+      "translations": {
+        "tr": "Gelibolu",
+        "en": "Gelibolu",
+        "de": "Gelibolu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1408",
+      "parentExternalId": "17",
+      "position": 9,
+      "translations": {
+        "tr": "Gökçeada",
+        "en": "Gökçeada",
+        "de": "Gökçeada"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1503",
+      "parentExternalId": "17",
+      "position": 10,
+      "translations": {
+        "tr": "Lapseki",
+        "en": "Lapseki",
+        "de": "Lapseki"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1230",
+      "parentExternalId": "17",
+      "position": 11,
+      "translations": {
+        "tr": "Merkez",
+        "en": "Merkez",
+        "de": "Merkez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1722",
+      "parentExternalId": "17",
+      "position": 12,
+      "translations": {
+        "tr": "Yenice",
+        "en": "Yenice",
+        "de": "Yenice"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1102",
+      "parentExternalId": "20",
+      "position": 1,
+      "translations": {
+        "tr": "Acıpayam",
+        "en": "Acıpayam",
+        "de": "Acıpayam"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1769",
+      "parentExternalId": "20",
+      "position": 2,
+      "translations": {
+        "tr": "Babadağ",
+        "en": "Babadağ",
+        "de": "Babadağ"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1881",
+      "parentExternalId": "20",
+      "position": 3,
+      "translations": {
+        "tr": "Baklan",
+        "en": "Baklan",
+        "de": "Baklan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1774",
+      "parentExternalId": "20",
+      "position": 4,
+      "translations": {
+        "tr": "Bekilli",
+        "en": "Bekilli",
+        "de": "Bekilli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1888",
+      "parentExternalId": "20",
+      "position": 5,
+      "translations": {
+        "tr": "Beyağaç",
+        "en": "Beyağaç",
+        "de": "Beyağaç"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1889",
+      "parentExternalId": "20",
+      "position": 6,
+      "translations": {
+        "tr": "Bozkurt",
+        "en": "Bozkurt",
+        "de": "Bozkurt"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1214",
+      "parentExternalId": "20",
+      "position": 7,
+      "translations": {
+        "tr": "Buldan",
+        "en": "Buldan",
+        "de": "Buldan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1224",
+      "parentExternalId": "20",
+      "position": 8,
+      "translations": {
+        "tr": "Çal",
+        "en": "Çal",
+        "de": "Çal"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1226",
+      "parentExternalId": "20",
+      "position": 9,
+      "translations": {
+        "tr": "Çameli",
+        "en": "Çameli",
+        "de": "Çameli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1233",
+      "parentExternalId": "20",
+      "position": 10,
+      "translations": {
+        "tr": "Çardak",
+        "en": "Çardak",
+        "de": "Çardak"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1257",
+      "parentExternalId": "20",
+      "position": 11,
+      "translations": {
+        "tr": "Çivril",
+        "en": "Çivril",
+        "de": "Çivril"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1371",
+      "parentExternalId": "20",
+      "position": 12,
+      "translations": {
+        "tr": "Güney",
+        "en": "Güney",
+        "de": "Güney"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1803",
+      "parentExternalId": "20",
+      "position": 13,
+      "translations": {
+        "tr": "Honaz",
+        "en": "Honaz",
+        "de": "Honaz"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1426",
+      "parentExternalId": "20",
+      "position": 14,
+      "translations": {
+        "tr": "Kale",
+        "en": "Kale",
+        "de": "Kale"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2116",
+      "parentExternalId": "20",
+      "position": 15,
+      "translations": {
+        "tr": "Merkezefendi",
+        "en": "Merkezefendi",
+        "de": "Merkezefendi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2107",
+      "parentExternalId": "20",
+      "position": 16,
+      "translations": {
+        "tr": "Pamukkale",
+        "en": "Pamukkale",
+        "de": "Pamukkale"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1597",
+      "parentExternalId": "20",
+      "position": 17,
+      "translations": {
+        "tr": "Sarayköy",
+        "en": "Sarayköy",
+        "de": "Sarayköy"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1840",
+      "parentExternalId": "20",
+      "position": 18,
+      "translations": {
+        "tr": "Serinhisar",
+        "en": "Serinhisar",
+        "de": "Serinhisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1670",
+      "parentExternalId": "20",
+      "position": 19,
+      "translations": {
+        "tr": "Tavas",
+        "en": "Tavas",
+        "de": "Tavas"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1307",
+      "parentExternalId": "22",
+      "position": 1,
+      "translations": {
+        "tr": "Enez",
+        "en": "Enez",
+        "de": "Enez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1385",
+      "parentExternalId": "22",
+      "position": 2,
+      "translations": {
+        "tr": "Havsa",
+        "en": "Havsa",
+        "de": "Havsa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1412",
+      "parentExternalId": "22",
+      "position": 3,
+      "translations": {
+        "tr": "İpsala",
+        "en": "İpsala",
+        "de": "İpsala"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1464",
+      "parentExternalId": "22",
+      "position": 4,
+      "translations": {
+        "tr": "Keşan",
+        "en": "Keşan",
+        "de": "Keşan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1502",
+      "parentExternalId": "22",
+      "position": 5,
+      "translations": {
+        "tr": "Lalapaşa",
+        "en": "Lalapaşa",
+        "de": "Lalapaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1523",
+      "parentExternalId": "22",
+      "position": 6,
+      "translations": {
+        "tr": "Meriç",
+        "en": "Meriç",
+        "de": "Meriç"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1295",
+      "parentExternalId": "22",
+      "position": 7,
+      "translations": {
+        "tr": "Merkez",
+        "en": "Merkez",
+        "de": "Merkez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1988",
+      "parentExternalId": "22",
+      "position": 8,
+      "translations": {
+        "tr": "Süloğlu",
+        "en": "Süloğlu",
+        "de": "Süloğlu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1705",
+      "parentExternalId": "22",
+      "position": 9,
+      "translations": {
+        "tr": "Uzunköprü",
+        "en": "Uzunköprü",
+        "de": "Uzunköprü"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1759",
+      "parentExternalId": "26",
+      "position": 1,
+      "translations": {
+        "tr": "Alpu",
+        "en": "Alpu",
+        "de": "Alpu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1777",
+      "parentExternalId": "26",
+      "position": 2,
+      "translations": {
+        "tr": "Beylikova",
+        "en": "Beylikova",
+        "de": "Beylikova"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1255",
+      "parentExternalId": "26",
+      "position": 3,
+      "translations": {
+        "tr": "Çifteler",
+        "en": "Çifteler",
+        "de": "Çifteler"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1934",
+      "parentExternalId": "26",
+      "position": 4,
+      "translations": {
+        "tr": "Günyüzü",
+        "en": "Günyüzü",
+        "de": "Günyüzü"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1939",
+      "parentExternalId": "26",
+      "position": 5,
+      "translations": {
+        "tr": "Han",
+        "en": "Han",
+        "de": "Han"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1808",
+      "parentExternalId": "26",
+      "position": 6,
+      "translations": {
+        "tr": "İnönü",
+        "en": "İnönü",
+        "de": "İnönü"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1508",
+      "parentExternalId": "26",
+      "position": 7,
+      "translations": {
+        "tr": "Mahmudiye",
+        "en": "Mahmudiye",
+        "de": "Mahmudiye"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1973",
+      "parentExternalId": "26",
+      "position": 8,
+      "translations": {
+        "tr": "Mihalgazi",
+        "en": "Mihalgazi",
+        "de": "Mihalgazi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1527",
+      "parentExternalId": "26",
+      "position": 9,
+      "translations": {
+        "tr": "Mihalıcçık",
+        "en": "Mihalıcçık",
+        "de": "Mihalıcçık"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2046",
+      "parentExternalId": "26",
+      "position": 10,
+      "translations": {
+        "tr": "Odunpazarı",
+        "en": "Odunpazarı",
+        "de": "Odunpazarı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1599",
+      "parentExternalId": "26",
+      "position": 11,
+      "translations": {
+        "tr": "Sarıcakaya",
+        "en": "Sarıcakaya",
+        "de": "Sarıcakaya"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1618",
+      "parentExternalId": "26",
+      "position": 12,
+      "translations": {
+        "tr": "Seyitgazi",
+        "en": "Seyitgazi",
+        "de": "Seyitgazi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1632",
+      "parentExternalId": "26",
+      "position": 13,
+      "translations": {
+        "tr": "Sivrihisar",
+        "en": "Sivrihisar",
+        "de": "Sivrihisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2047",
+      "parentExternalId": "26",
+      "position": 14,
+      "translations": {
+        "tr": "Tepebaşı",
+        "en": "Tepebaşı",
+        "de": "Tepebaşı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1771",
+      "parentExternalId": "3",
+      "position": 1,
+      "translations": {
+        "tr": "Başmakçı",
+        "en": "Başmakçı",
+        "de": "Başmakçı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1773",
+      "parentExternalId": "3",
+      "position": 2,
+      "translations": {
+        "tr": "Bayat",
+        "en": "Bayat",
+        "de": "Bayat"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1200",
+      "parentExternalId": "3",
+      "position": 3,
+      "translations": {
+        "tr": "Bolvadin",
+        "en": "Bolvadin",
+        "de": "Bolvadin"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1239",
+      "parentExternalId": "3",
+      "position": 4,
+      "translations": {
+        "tr": "Çay",
+        "en": "Çay",
+        "de": "Çay"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1906",
+      "parentExternalId": "3",
+      "position": 5,
+      "translations": {
+        "tr": "Çobanlar",
+        "en": "Çobanlar",
+        "de": "Çobanlar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1267",
+      "parentExternalId": "3",
+      "position": 6,
+      "translations": {
+        "tr": "Dazkırı",
+        "en": "Dazkırı",
+        "de": "Dazkırı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1281",
+      "parentExternalId": "3",
+      "position": 7,
+      "translations": {
+        "tr": "Dinar",
+        "en": "Dinar",
+        "de": "Dinar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1306",
+      "parentExternalId": "3",
+      "position": 8,
+      "translations": {
+        "tr": "Emirdağ",
+        "en": "Emirdağ",
+        "de": "Emirdağ"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1923",
+      "parentExternalId": "3",
+      "position": 9,
+      "translations": {
+        "tr": "Evciler",
+        "en": "Evciler",
+        "de": "Evciler"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1944",
+      "parentExternalId": "3",
+      "position": 10,
+      "translations": {
+        "tr": "Hocalar",
+        "en": "Hocalar",
+        "de": "Hocalar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1404",
+      "parentExternalId": "3",
+      "position": 11,
+      "translations": {
+        "tr": "İhsaniye",
+        "en": "İhsaniye",
+        "de": "İhsaniye"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1809",
+      "parentExternalId": "3",
+      "position": 12,
+      "translations": {
+        "tr": "İscehisar",
+        "en": "İscehisar",
+        "de": "İscehisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1961",
+      "parentExternalId": "3",
+      "position": 13,
+      "translations": {
+        "tr": "Kızılören",
+        "en": "Kızılören",
+        "de": "Kızılören"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1108",
+      "parentExternalId": "3",
+      "position": 14,
+      "translations": {
+        "tr": "Merkez",
+        "en": "Merkez",
+        "de": "Merkez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1594",
+      "parentExternalId": "3",
+      "position": 15,
+      "translations": {
+        "tr": "Sandıklı",
+        "en": "Sandıklı",
+        "de": "Sandıklı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1626",
+      "parentExternalId": "3",
+      "position": 16,
+      "translations": {
+        "tr": "Sinanpaşa",
+        "en": "Sinanpaşa",
+        "de": "Sinanpaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1639",
+      "parentExternalId": "3",
+      "position": 17,
+      "translations": {
+        "tr": "Sultandağı",
+        "en": "Sultandağı",
+        "de": "Sultandağı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1664",
+      "parentExternalId": "3",
+      "position": 18,
+      "translations": {
+        "tr": "Şuhut",
+        "en": "Şuhut",
+        "de": "Şuhut"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1131",
+      "parentExternalId": "31",
+      "position": 1,
+      "translations": {
+        "tr": "Altınözü",
+        "en": "Altınözü",
+        "de": "Altınözü"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1383",
+      "parentExternalId": "31",
+      "position": 2,
+      "translations": {
+        "tr": "Antakya",
+        "en": "Antakya",
+        "de": "Antakya"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2108",
+      "parentExternalId": "31",
+      "position": 3,
+      "translations": {
+        "tr": "Arsuz",
+        "en": "Arsuz",
+        "de": "Arsuz"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1887",
+      "parentExternalId": "31",
+      "position": 4,
+      "translations": {
+        "tr": "Belen",
+        "en": "Belen",
+        "de": "Belen"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2109",
+      "parentExternalId": "31",
+      "position": 5,
+      "translations": {
+        "tr": "Defne",
+        "en": "Defne",
+        "de": "Defne"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1289",
+      "parentExternalId": "31",
+      "position": 6,
+      "translations": {
+        "tr": "Dörtyol",
+        "en": "Dörtyol",
+        "de": "Dörtyol"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1792",
+      "parentExternalId": "31",
+      "position": 7,
+      "translations": {
+        "tr": "Erzin",
+        "en": "Erzin",
+        "de": "Erzin"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1382",
+      "parentExternalId": "31",
+      "position": 8,
+      "translations": {
+        "tr": "Hassa",
+        "en": "Hassa",
+        "de": "Hassa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1413",
+      "parentExternalId": "31",
+      "position": 9,
+      "translations": {
+        "tr": "İskenderun",
+        "en": "İskenderun",
+        "de": "İskenderun"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1468",
+      "parentExternalId": "31",
+      "position": 10,
+      "translations": {
+        "tr": "Kırıkhan",
+        "en": "Kırıkhan",
+        "de": "Kırıkhan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1970",
+      "parentExternalId": "31",
+      "position": 11,
+      "translations": {
+        "tr": "Kumlu",
+        "en": "Kumlu",
+        "de": "Kumlu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2104",
+      "parentExternalId": "31",
+      "position": 12,
+      "translations": {
+        "tr": "Payas",
+        "en": "Payas",
+        "de": "Payas"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1585",
+      "parentExternalId": "31",
+      "position": 13,
+      "translations": {
+        "tr": "Reyhanlı",
+        "en": "Reyhanlı",
+        "de": "Reyhanlı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1591",
+      "parentExternalId": "31",
+      "position": 14,
+      "translations": {
+        "tr": "Samandağ",
+        "en": "Samandağ",
+        "de": "Samandağ"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1721",
+      "parentExternalId": "31",
+      "position": 15,
+      "translations": {
+        "tr": "Yayladağı",
+        "en": "Yayladağı",
+        "de": "Yayladağı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1103",
+      "parentExternalId": "34",
+      "position": 1,
+      "translations": {
+        "tr": "Adalar",
+        "en": "Adalar",
+        "de": "Adalar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2048",
+      "parentExternalId": "34",
+      "position": 2,
+      "translations": {
+        "tr": "Arnavutköy",
+        "en": "Arnavutköy",
+        "de": "Arnavutköy"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2049",
+      "parentExternalId": "34",
+      "position": 3,
+      "translations": {
+        "tr": "Ataşehir",
+        "en": "Ataşehir",
+        "de": "Ataşehir"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2003",
+      "parentExternalId": "34",
+      "position": 4,
+      "translations": {
+        "tr": "Avcılar",
+        "en": "Avcılar",
+        "de": "Avcılar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2004",
+      "parentExternalId": "34",
+      "position": 5,
+      "translations": {
+        "tr": "Bağcılar",
+        "en": "Bağcılar",
+        "de": "Bağcılar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2005",
+      "parentExternalId": "34",
+      "position": 6,
+      "translations": {
+        "tr": "Bahçelievler",
+        "en": "Bahçelievler",
+        "de": "Bahçelievler"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1166",
+      "parentExternalId": "34",
+      "position": 7,
+      "translations": {
+        "tr": "Bakırköy",
+        "en": "Bakırköy",
+        "de": "Bakırköy"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2050",
+      "parentExternalId": "34",
+      "position": 8,
+      "translations": {
+        "tr": "Başakşehir",
+        "en": "Başakşehir",
+        "de": "Başakşehir"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1886",
+      "parentExternalId": "34",
+      "position": 9,
+      "translations": {
+        "tr": "Bayrampaşa",
+        "en": "Bayrampaşa",
+        "de": "Bayrampaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1183",
+      "parentExternalId": "34",
+      "position": 10,
+      "translations": {
+        "tr": "Beşiktaş",
+        "en": "Beşiktaş",
+        "de": "Beşiktaş"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1185",
+      "parentExternalId": "34",
+      "position": 11,
+      "translations": {
+        "tr": "Beykoz",
+        "en": "Beykoz",
+        "de": "Beykoz"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2051",
+      "parentExternalId": "34",
+      "position": 12,
+      "translations": {
+        "tr": "Beylikdüzü",
+        "en": "Beylikdüzü",
+        "de": "Beylikdüzü"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1186",
+      "parentExternalId": "34",
+      "position": 13,
+      "translations": {
+        "tr": "Beyoğlu",
+        "en": "Beyoğlu",
+        "de": "Beyoğlu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1782",
+      "parentExternalId": "34",
+      "position": 14,
+      "translations": {
+        "tr": "Büyükçekmece",
+        "en": "Büyükçekmece",
+        "de": "Büyükçekmece"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1237",
+      "parentExternalId": "34",
+      "position": 15,
+      "translations": {
+        "tr": "Çatalca",
+        "en": "Çatalca",
+        "de": "Çatalca"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2052",
+      "parentExternalId": "34",
+      "position": 16,
+      "translations": {
+        "tr": "Çekmeköy",
+        "en": "Çekmeköy",
+        "de": "Çekmeköy"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2016",
+      "parentExternalId": "34",
+      "position": 17,
+      "translations": {
+        "tr": "Esenler",
+        "en": "Esenler",
+        "de": "Esenler"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2053",
+      "parentExternalId": "34",
+      "position": 18,
+      "translations": {
+        "tr": "Esenyurt",
+        "en": "Esenyurt",
+        "de": "Esenyurt"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1325",
+      "parentExternalId": "34",
+      "position": 19,
+      "translations": {
+        "tr": "Eyüpsultan",
+        "en": "Eyüpsultan",
+        "de": "Eyüpsultan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1327",
+      "parentExternalId": "34",
+      "position": 20,
+      "translations": {
+        "tr": "Fatih",
+        "en": "Fatih",
+        "de": "Fatih"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1336",
+      "parentExternalId": "34",
+      "position": 21,
+      "translations": {
+        "tr": "Gaziosmanpaşa",
+        "en": "Gaziosmanpaşa",
+        "de": "Gaziosmanpaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2010",
+      "parentExternalId": "34",
+      "position": 22,
+      "translations": {
+        "tr": "Güngören",
+        "en": "Güngören",
+        "de": "Güngören"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1421",
+      "parentExternalId": "34",
+      "position": 23,
+      "translations": {
+        "tr": "Kadıköy",
+        "en": "Kadıköy",
+        "de": "Kadıköy"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1810",
+      "parentExternalId": "34",
+      "position": 24,
+      "translations": {
+        "tr": "Kağıthane",
+        "en": "Kağıthane",
+        "de": "Kağıthane"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1449",
+      "parentExternalId": "34",
+      "position": 25,
+      "translations": {
+        "tr": "Kartal",
+        "en": "Kartal",
+        "de": "Kartal"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1823",
+      "parentExternalId": "34",
+      "position": 26,
+      "translations": {
+        "tr": "Küçükçekmece",
+        "en": "Küçükçekmece",
+        "de": "Küçükçekmece"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2012",
+      "parentExternalId": "34",
+      "position": 27,
+      "translations": {
+        "tr": "Maltepe",
+        "en": "Maltepe",
+        "de": "Maltepe"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1835",
+      "parentExternalId": "34",
+      "position": 28,
+      "translations": {
+        "tr": "Pendik",
+        "en": "Pendik",
+        "de": "Pendik"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2054",
+      "parentExternalId": "34",
+      "position": 29,
+      "translations": {
+        "tr": "Sancaktepe",
+        "en": "Sancaktepe",
+        "de": "Sancaktepe"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1604",
+      "parentExternalId": "34",
+      "position": 30,
+      "translations": {
+        "tr": "Sarıyer",
+        "en": "Sarıyer",
+        "de": "Sarıyer"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1622",
+      "parentExternalId": "34",
+      "position": 31,
+      "translations": {
+        "tr": "Silivri",
+        "en": "Silivri",
+        "de": "Silivri"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2014",
+      "parentExternalId": "34",
+      "position": 32,
+      "translations": {
+        "tr": "Sultanbeyli",
+        "en": "Sultanbeyli",
+        "de": "Sultanbeyli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2055",
+      "parentExternalId": "34",
+      "position": 33,
+      "translations": {
+        "tr": "Sultangazi",
+        "en": "Sultangazi",
+        "de": "Sultangazi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1659",
+      "parentExternalId": "34",
+      "position": 34,
+      "translations": {
+        "tr": "Şile",
+        "en": "Şile",
+        "de": "Şile"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1663",
+      "parentExternalId": "34",
+      "position": 35,
+      "translations": {
+        "tr": "Şişli",
+        "en": "Şişli",
+        "de": "Şişli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2015",
+      "parentExternalId": "34",
+      "position": 36,
+      "translations": {
+        "tr": "Tuzla",
+        "en": "Tuzla",
+        "de": "Tuzla"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1852",
+      "parentExternalId": "34",
+      "position": 37,
+      "translations": {
+        "tr": "Ümraniye",
+        "en": "Ümraniye",
+        "de": "Ümraniye"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1708",
+      "parentExternalId": "34",
+      "position": 38,
+      "translations": {
+        "tr": "Üsküdar",
+        "en": "Üsküdar",
+        "de": "Üsküdar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1739",
+      "parentExternalId": "34",
+      "position": 39,
+      "translations": {
+        "tr": "Zeytinburnu",
+        "en": "Zeytinburnu",
+        "de": "Zeytinburnu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1128",
+      "parentExternalId": "35",
+      "position": 1,
+      "translations": {
+        "tr": "Aliağa",
+        "en": "Aliağa",
+        "de": "Aliağa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2006",
+      "parentExternalId": "35",
+      "position": 2,
+      "translations": {
+        "tr": "Balçova",
+        "en": "Balçova",
+        "de": "Balçova"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1178",
+      "parentExternalId": "35",
+      "position": 3,
+      "translations": {
+        "tr": "Bayındır",
+        "en": "Bayındır",
+        "de": "Bayındır"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2056",
+      "parentExternalId": "35",
+      "position": 4,
+      "translations": {
+        "tr": "Bayraklı",
+        "en": "Bayraklı",
+        "de": "Bayraklı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1181",
+      "parentExternalId": "35",
+      "position": 5,
+      "translations": {
+        "tr": "Bergama",
+        "en": "Bergama",
+        "de": "Bergama"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1776",
+      "parentExternalId": "35",
+      "position": 6,
+      "translations": {
+        "tr": "Beydağ",
+        "en": "Beydağ",
+        "de": "Beydağ"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1203",
+      "parentExternalId": "35",
+      "position": 7,
+      "translations": {
+        "tr": "Bornova",
+        "en": "Bornova",
+        "de": "Bornova"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1780",
+      "parentExternalId": "35",
+      "position": 8,
+      "translations": {
+        "tr": "Buca",
+        "en": "Buca",
+        "de": "Buca"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1251",
+      "parentExternalId": "35",
+      "position": 9,
+      "translations": {
+        "tr": "Çeşme",
+        "en": "Çeşme",
+        "de": "Çeşme"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2007",
+      "parentExternalId": "35",
+      "position": 10,
+      "translations": {
+        "tr": "Çiğli",
+        "en": "Çiğli",
+        "de": "Çiğli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1280",
+      "parentExternalId": "35",
+      "position": 11,
+      "translations": {
+        "tr": "Dikili",
+        "en": "Dikili",
+        "de": "Dikili"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1334",
+      "parentExternalId": "35",
+      "position": 12,
+      "translations": {
+        "tr": "Foça",
+        "en": "Foça",
+        "de": "Foça"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2009",
+      "parentExternalId": "35",
+      "position": 13,
+      "translations": {
+        "tr": "Gaziemir",
+        "en": "Gaziemir",
+        "de": "Gaziemir"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2018",
+      "parentExternalId": "35",
+      "position": 14,
+      "translations": {
+        "tr": "Güzelbahçe",
+        "en": "Güzelbahçe",
+        "de": "Güzelbahçe"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2057",
+      "parentExternalId": "35",
+      "position": 15,
+      "translations": {
+        "tr": "Karabağlar",
+        "en": "Karabağlar",
+        "de": "Karabağlar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1432",
+      "parentExternalId": "35",
+      "position": 16,
+      "translations": {
+        "tr": "Karaburun",
+        "en": "Karaburun",
+        "de": "Karaburun"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1448",
+      "parentExternalId": "35",
+      "position": 17,
+      "translations": {
+        "tr": "Karşıyaka",
+        "en": "Karşıyaka",
+        "de": "Karşıyaka"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1461",
+      "parentExternalId": "35",
+      "position": 18,
+      "translations": {
+        "tr": "Kemalpaşa",
+        "en": "Kemalpaşa",
+        "de": "Kemalpaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1467",
+      "parentExternalId": "35",
+      "position": 19,
+      "translations": {
+        "tr": "Kınık",
+        "en": "Kınık",
+        "de": "Kınık"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1477",
+      "parentExternalId": "35",
+      "position": 20,
+      "translations": {
+        "tr": "Kiraz",
+        "en": "Kiraz",
+        "de": "Kiraz"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1819",
+      "parentExternalId": "35",
+      "position": 21,
+      "translations": {
+        "tr": "Konak",
+        "en": "Konak",
+        "de": "Konak"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1826",
+      "parentExternalId": "35",
+      "position": 22,
+      "translations": {
+        "tr": "Menderes",
+        "en": "Menderes",
+        "de": "Menderes"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1521",
+      "parentExternalId": "35",
+      "position": 23,
+      "translations": {
+        "tr": "Menemen",
+        "en": "Menemen",
+        "de": "Menemen"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2013",
+      "parentExternalId": "35",
+      "position": 24,
+      "translations": {
+        "tr": "Narlıdere",
+        "en": "Narlıdere",
+        "de": "Narlıdere"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1563",
+      "parentExternalId": "35",
+      "position": 25,
+      "translations": {
+        "tr": "Ödemiş",
+        "en": "Ödemiş",
+        "de": "Ödemiş"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1611",
+      "parentExternalId": "35",
+      "position": 26,
+      "translations": {
+        "tr": "Seferihisar",
+        "en": "Seferihisar",
+        "de": "Seferihisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1612",
+      "parentExternalId": "35",
+      "position": 27,
+      "translations": {
+        "tr": "Selçuk",
+        "en": "Selçuk",
+        "de": "Selçuk"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1677",
+      "parentExternalId": "35",
+      "position": 28,
+      "translations": {
+        "tr": "Tire",
+        "en": "Tire",
+        "de": "Tire"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1682",
+      "parentExternalId": "35",
+      "position": 29,
+      "translations": {
+        "tr": "Torbalı",
+        "en": "Torbalı",
+        "de": "Torbalı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1703",
+      "parentExternalId": "35",
+      "position": 30,
+      "translations": {
+        "tr": "Urla",
+        "en": "Urla",
+        "de": "Urla"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2058",
+      "parentExternalId": "41",
+      "position": 1,
+      "translations": {
+        "tr": "Başiskele",
+        "en": "Başiskele",
+        "de": "Başiskele"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2059",
+      "parentExternalId": "41",
+      "position": 2,
+      "translations": {
+        "tr": "Çayırova",
+        "en": "Çayırova",
+        "de": "Çayırova"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2060",
+      "parentExternalId": "41",
+      "position": 3,
+      "translations": {
+        "tr": "Darıca",
+        "en": "Darıca",
+        "de": "Darıca"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2030",
+      "parentExternalId": "41",
+      "position": 4,
+      "translations": {
+        "tr": "Derince",
+        "en": "Derince",
+        "de": "Derince"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2061",
+      "parentExternalId": "41",
+      "position": 5,
+      "translations": {
+        "tr": "Dilovası",
+        "en": "Dilovası",
+        "de": "Dilovası"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1338",
+      "parentExternalId": "41",
+      "position": 6,
+      "translations": {
+        "tr": "Gebze",
+        "en": "Gebze",
+        "de": "Gebze"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1355",
+      "parentExternalId": "41",
+      "position": 7,
+      "translations": {
+        "tr": "Gölcük",
+        "en": "Gölcük",
+        "de": "Gölcük"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2062",
+      "parentExternalId": "41",
+      "position": 8,
+      "translations": {
+        "tr": "İzmit",
+        "en": "İzmit",
+        "de": "İzmit"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1430",
+      "parentExternalId": "41",
+      "position": 9,
+      "translations": {
+        "tr": "Kandıra",
+        "en": "Kandıra",
+        "de": "Kandıra"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1440",
+      "parentExternalId": "41",
+      "position": 10,
+      "translations": {
+        "tr": "Karamürsel",
+        "en": "Karamürsel",
+        "de": "Karamürsel"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2063",
+      "parentExternalId": "41",
+      "position": 11,
+      "translations": {
+        "tr": "Kartepe",
+        "en": "Kartepe",
+        "de": "Kartepe"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1821",
+      "parentExternalId": "41",
+      "position": 12,
+      "translations": {
+        "tr": "Körfez",
+        "en": "Körfez",
+        "de": "Körfez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1132",
+      "parentExternalId": "43",
+      "position": 1,
+      "translations": {
+        "tr": "Altıntaş",
+        "en": "Altıntaş",
+        "de": "Altıntaş"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1764",
+      "parentExternalId": "43",
+      "position": 2,
+      "translations": {
+        "tr": "Aslanapa",
+        "en": "Aslanapa",
+        "de": "Aslanapa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1898",
+      "parentExternalId": "43",
+      "position": 3,
+      "translations": {
+        "tr": "Çavdarhisar",
+        "en": "Çavdarhisar",
+        "de": "Çavdarhisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1288",
+      "parentExternalId": "43",
+      "position": 4,
+      "translations": {
+        "tr": "Domaniç",
+        "en": "Domaniç",
+        "de": "Domaniç"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1790",
+      "parentExternalId": "43",
+      "position": 5,
+      "translations": {
+        "tr": "Dumlupınar",
+        "en": "Dumlupınar",
+        "de": "Dumlupınar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1304",
+      "parentExternalId": "43",
+      "position": 6,
+      "translations": {
+        "tr": "Emet",
+        "en": "Emet",
+        "de": "Emet"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1339",
+      "parentExternalId": "43",
+      "position": 7,
+      "translations": {
+        "tr": "Gediz",
+        "en": "Gediz",
+        "de": "Gediz"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1802",
+      "parentExternalId": "43",
+      "position": 8,
+      "translations": {
+        "tr": "Hisarcık",
+        "en": "Hisarcık",
+        "de": "Hisarcık"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1500",
+      "parentExternalId": "43",
+      "position": 9,
+      "translations": {
+        "tr": "Merkez",
+        "en": "Merkez",
+        "de": "Merkez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1979",
+      "parentExternalId": "43",
+      "position": 10,
+      "translations": {
+        "tr": "Pazarlar",
+        "en": "Pazarlar",
+        "de": "Pazarlar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1625",
+      "parentExternalId": "43",
+      "position": 11,
+      "translations": {
+        "tr": "Simav",
+        "en": "Simav",
+        "de": "Simav"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1843",
+      "parentExternalId": "43",
+      "position": 12,
+      "translations": {
+        "tr": "Şaphane",
+        "en": "Şaphane",
+        "de": "Şaphane"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1671",
+      "parentExternalId": "43",
+      "position": 13,
+      "translations": {
+        "tr": "Tavşanlı",
+        "en": "Tavşanlı",
+        "de": "Tavşanlı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1751",
+      "parentExternalId": "45",
+      "position": 1,
+      "translations": {
+        "tr": "Ahmetli",
+        "en": "Ahmetli",
+        "de": "Ahmetli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1118",
+      "parentExternalId": "45",
+      "position": 2,
+      "translations": {
+        "tr": "Akhisar",
+        "en": "Akhisar",
+        "de": "Akhisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1127",
+      "parentExternalId": "45",
+      "position": 3,
+      "translations": {
+        "tr": "Alaşehir",
+        "en": "Alaşehir",
+        "de": "Alaşehir"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1269",
+      "parentExternalId": "45",
+      "position": 4,
+      "translations": {
+        "tr": "Demirci",
+        "en": "Demirci",
+        "de": "Demirci"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1793",
+      "parentExternalId": "45",
+      "position": 5,
+      "translations": {
+        "tr": "Gölmarmara",
+        "en": "Gölmarmara",
+        "de": "Gölmarmara"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1362",
+      "parentExternalId": "45",
+      "position": 6,
+      "translations": {
+        "tr": "Gördes",
+        "en": "Gördes",
+        "de": "Gördes"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1470",
+      "parentExternalId": "45",
+      "position": 7,
+      "translations": {
+        "tr": "Kırkağaç",
+        "en": "Kırkağaç",
+        "de": "Kırkağaç"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1965",
+      "parentExternalId": "45",
+      "position": 8,
+      "translations": {
+        "tr": "Köprübaşı",
+        "en": "Köprübaşı",
+        "de": "Köprübaşı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1489",
+      "parentExternalId": "45",
+      "position": 9,
+      "translations": {
+        "tr": "Kula",
+        "en": "Kula",
+        "de": "Kula"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1590",
+      "parentExternalId": "45",
+      "position": 10,
+      "translations": {
+        "tr": "Salihli",
+        "en": "Salihli",
+        "de": "Salihli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1600",
+      "parentExternalId": "45",
+      "position": 11,
+      "translations": {
+        "tr": "Sarıgöl",
+        "en": "Sarıgöl",
+        "de": "Sarıgöl"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1606",
+      "parentExternalId": "45",
+      "position": 12,
+      "translations": {
+        "tr": "Saruhanlı",
+        "en": "Saruhanlı",
+        "de": "Saruhanlı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1613",
+      "parentExternalId": "45",
+      "position": 13,
+      "translations": {
+        "tr": "Selendi",
+        "en": "Selendi",
+        "de": "Selendi"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1634",
+      "parentExternalId": "45",
+      "position": 14,
+      "translations": {
+        "tr": "Soma",
+        "en": "Soma",
+        "de": "Soma"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2112",
+      "parentExternalId": "45",
+      "position": 15,
+      "translations": {
+        "tr": "Şehzadeler",
+        "en": "Şehzadeler",
+        "de": "Şehzadeler"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1689",
+      "parentExternalId": "45",
+      "position": 16,
+      "translations": {
+        "tr": "Turgutlu",
+        "en": "Turgutlu",
+        "de": "Turgutlu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2113",
+      "parentExternalId": "45",
+      "position": 17,
+      "translations": {
+        "tr": "Yunusemre",
+        "en": "Yunusemre",
+        "de": "Yunusemre"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1197",
+      "parentExternalId": "48",
+      "position": 1,
+      "translations": {
+        "tr": "Bodrum",
+        "en": "Bodrum",
+        "de": "Bodrum"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1742",
+      "parentExternalId": "48",
+      "position": 2,
+      "translations": {
+        "tr": "Dalaman",
+        "en": "Dalaman",
+        "de": "Dalaman"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1266",
+      "parentExternalId": "48",
+      "position": 3,
+      "translations": {
+        "tr": "Datça",
+        "en": "Datça",
+        "de": "Datça"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1331",
+      "parentExternalId": "48",
+      "position": 4,
+      "translations": {
+        "tr": "Fethiye",
+        "en": "Fethiye",
+        "de": "Fethiye"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1958",
+      "parentExternalId": "48",
+      "position": 5,
+      "translations": {
+        "tr": "Kavaklıdere",
+        "en": "Kavaklıdere",
+        "de": "Kavaklıdere"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1488",
+      "parentExternalId": "48",
+      "position": 6,
+      "translations": {
+        "tr": "Köyceğiz",
+        "en": "Köyceğiz",
+        "de": "Köyceğiz"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1517",
+      "parentExternalId": "48",
+      "position": 7,
+      "translations": {
+        "tr": "Marmaris",
+        "en": "Marmaris",
+        "de": "Marmaris"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1532",
+      "parentExternalId": "48",
+      "position": 8,
+      "translations": {
+        "tr": "Menteşe",
+        "en": "Menteşe",
+        "de": "Menteşe"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1528",
+      "parentExternalId": "48",
+      "position": 9,
+      "translations": {
+        "tr": "Milas",
+        "en": "Milas",
+        "de": "Milas"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1831",
+      "parentExternalId": "48",
+      "position": 10,
+      "translations": {
+        "tr": "Ortaca",
+        "en": "Ortaca",
+        "de": "Ortaca"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2126",
+      "parentExternalId": "48",
+      "position": 11,
+      "translations": {
+        "tr": "Seydikemer",
+        "en": "Seydikemer",
+        "de": "Seydikemer"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1695",
+      "parentExternalId": "48",
+      "position": 12,
+      "translations": {
+        "tr": "Ula",
+        "en": "Ula",
+        "de": "Ula"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1719",
+      "parentExternalId": "48",
+      "position": 13,
+      "translations": {
+        "tr": "Yatağan",
+        "en": "Yatağan",
+        "de": "Yatağan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1872",
+      "parentExternalId": "6",
+      "position": 1,
+      "translations": {
+        "tr": "Akyurt",
+        "en": "Akyurt",
+        "de": "Akyurt"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1130",
+      "parentExternalId": "6",
+      "position": 2,
+      "translations": {
+        "tr": "Altındağ",
+        "en": "Altındağ",
+        "de": "Altındağ"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1157",
+      "parentExternalId": "6",
+      "position": 3,
+      "translations": {
+        "tr": "Ayaş",
+        "en": "Ayaş",
+        "de": "Ayaş"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1167",
+      "parentExternalId": "6",
+      "position": 4,
+      "translations": {
+        "tr": "Bala",
+        "en": "Bala",
+        "de": "Bala"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1187",
+      "parentExternalId": "6",
+      "position": 5,
+      "translations": {
+        "tr": "Beypazarı",
+        "en": "Beypazarı",
+        "de": "Beypazarı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1227",
+      "parentExternalId": "6",
+      "position": 6,
+      "translations": {
+        "tr": "Çamlıdere",
+        "en": "Çamlıdere",
+        "de": "Çamlıdere"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1231",
+      "parentExternalId": "6",
+      "position": 7,
+      "translations": {
+        "tr": "Çankaya",
+        "en": "Çankaya",
+        "de": "Çankaya"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1260",
+      "parentExternalId": "6",
+      "position": 8,
+      "translations": {
+        "tr": "Çubuk",
+        "en": "Çubuk",
+        "de": "Çubuk"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1302",
+      "parentExternalId": "6",
+      "position": 9,
+      "translations": {
+        "tr": "Elmadağ",
+        "en": "Elmadağ",
+        "de": "Elmadağ"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1922",
+      "parentExternalId": "6",
+      "position": 10,
+      "translations": {
+        "tr": "Etimesgut",
+        "en": "Etimesgut",
+        "de": "Etimesgut"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1924",
+      "parentExternalId": "6",
+      "position": 11,
+      "translations": {
+        "tr": "Evren",
+        "en": "Evren",
+        "de": "Evren"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1744",
+      "parentExternalId": "6",
+      "position": 12,
+      "translations": {
+        "tr": "Gölbaşı",
+        "en": "Gölbaşı",
+        "de": "Gölbaşı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1365",
+      "parentExternalId": "6",
+      "position": 13,
+      "translations": {
+        "tr": "Güdül",
+        "en": "Güdül",
+        "de": "Güdül"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1387",
+      "parentExternalId": "6",
+      "position": 14,
+      "translations": {
+        "tr": "Haymana",
+        "en": "Haymana",
+        "de": "Haymana"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1815",
+      "parentExternalId": "6",
+      "position": 15,
+      "translations": {
+        "tr": "Kahramankazan",
+        "en": "Kahramankazan",
+        "de": "Kahramankazan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1427",
+      "parentExternalId": "6",
+      "position": 16,
+      "translations": {
+        "tr": "Kalecik",
+        "en": "Kalecik",
+        "de": "Kalecik"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1745",
+      "parentExternalId": "6",
+      "position": 17,
+      "translations": {
+        "tr": "Keçiören",
+        "en": "Keçiören",
+        "de": "Keçiören"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1473",
+      "parentExternalId": "6",
+      "position": 18,
+      "translations": {
+        "tr": "Kızılcahamam",
+        "en": "Kızılcahamam",
+        "de": "Kızılcahamam"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1746",
+      "parentExternalId": "6",
+      "position": 19,
+      "translations": {
+        "tr": "Mamak",
+        "en": "Mamak",
+        "de": "Mamak"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1539",
+      "parentExternalId": "6",
+      "position": 20,
+      "translations": {
+        "tr": "Nallıhan",
+        "en": "Nallıhan",
+        "de": "Nallıhan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1578",
+      "parentExternalId": "6",
+      "position": 21,
+      "translations": {
+        "tr": "Polatlı",
+        "en": "Polatlı",
+        "de": "Polatlı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2034",
+      "parentExternalId": "6",
+      "position": 22,
+      "translations": {
+        "tr": "Pursaklar",
+        "en": "Pursaklar",
+        "de": "Pursaklar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1747",
+      "parentExternalId": "6",
+      "position": 23,
+      "translations": {
+        "tr": "Sincan",
+        "en": "Sincan",
+        "de": "Sincan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1658",
+      "parentExternalId": "6",
+      "position": 24,
+      "translations": {
+        "tr": "Şereflikoçhisar",
+        "en": "Şereflikoçhisar",
+        "de": "Şereflikoçhisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1723",
+      "parentExternalId": "6",
+      "position": 25,
+      "translations": {
+        "tr": "Yenimahalle",
+        "en": "Yenimahalle",
+        "de": "Yenimahalle"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1170",
+      "parentExternalId": "64",
+      "position": 1,
+      "translations": {
+        "tr": "Banaz",
+        "en": "Banaz",
+        "de": "Banaz"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1323",
+      "parentExternalId": "64",
+      "position": 2,
+      "translations": {
+        "tr": "Eşme",
+        "en": "Eşme",
+        "de": "Eşme"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1436",
+      "parentExternalId": "64",
+      "position": 3,
+      "translations": {
+        "tr": "Karahallı",
+        "en": "Karahallı",
+        "de": "Karahallı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1704",
+      "parentExternalId": "64",
+      "position": 4,
+      "translations": {
+        "tr": "Merkez",
+        "en": "Merkez",
+        "de": "Merkez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1629",
+      "parentExternalId": "64",
+      "position": 5,
+      "translations": {
+        "tr": "Sivaslı",
+        "en": "Sivaslı",
+        "de": "Sivaslı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1697",
+      "parentExternalId": "64",
+      "position": 6,
+      "translations": {
+        "tr": "Ulubey",
+        "en": "Ulubey",
+        "de": "Ulubey"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1121",
+      "parentExternalId": "7",
+      "position": 1,
+      "translations": {
+        "tr": "Akseki",
+        "en": "Akseki",
+        "de": "Akseki"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2035",
+      "parentExternalId": "7",
+      "position": 2,
+      "translations": {
+        "tr": "Aksu",
+        "en": "Aksu",
+        "de": "Aksu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1126",
+      "parentExternalId": "7",
+      "position": 3,
+      "translations": {
+        "tr": "Alanya",
+        "en": "Alanya",
+        "de": "Alanya"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1811",
+      "parentExternalId": "7",
+      "position": 4,
+      "translations": {
+        "tr": "Demre",
+        "en": "Demre",
+        "de": "Demre"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2036",
+      "parentExternalId": "7",
+      "position": 5,
+      "translations": {
+        "tr": "Döşemealtı",
+        "en": "Döşemealtı",
+        "de": "Döşemealtı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1303",
+      "parentExternalId": "7",
+      "position": 6,
+      "translations": {
+        "tr": "Elmalı",
+        "en": "Elmalı",
+        "de": "Elmalı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1333",
+      "parentExternalId": "7",
+      "position": 7,
+      "translations": {
+        "tr": "Finike",
+        "en": "Finike",
+        "de": "Finike"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1337",
+      "parentExternalId": "7",
+      "position": 8,
+      "translations": {
+        "tr": "Gazipaşa",
+        "en": "Gazipaşa",
+        "de": "Gazipaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1370",
+      "parentExternalId": "7",
+      "position": 9,
+      "translations": {
+        "tr": "Gündoğmuş",
+        "en": "Gündoğmuş",
+        "de": "Gündoğmuş"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1946",
+      "parentExternalId": "7",
+      "position": 10,
+      "translations": {
+        "tr": "İbradı",
+        "en": "İbradı",
+        "de": "İbradı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1451",
+      "parentExternalId": "7",
+      "position": 11,
+      "translations": {
+        "tr": "Kaş",
+        "en": "Kaş",
+        "de": "Kaş"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1959",
+      "parentExternalId": "7",
+      "position": 12,
+      "translations": {
+        "tr": "Kemer",
+        "en": "Kemer",
+        "de": "Kemer"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2037",
+      "parentExternalId": "7",
+      "position": 13,
+      "translations": {
+        "tr": "Kepez",
+        "en": "Kepez",
+        "de": "Kepez"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2038",
+      "parentExternalId": "7",
+      "position": 14,
+      "translations": {
+        "tr": "Konyaaltı",
+        "en": "Konyaaltı",
+        "de": "Konyaaltı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1483",
+      "parentExternalId": "7",
+      "position": 15,
+      "translations": {
+        "tr": "Korkuteli",
+        "en": "Korkuteli",
+        "de": "Korkuteli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1492",
+      "parentExternalId": "7",
+      "position": 16,
+      "translations": {
+        "tr": "Kumluca",
+        "en": "Kumluca",
+        "de": "Kumluca"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1512",
+      "parentExternalId": "7",
+      "position": 17,
+      "translations": {
+        "tr": "Manavgat",
+        "en": "Manavgat",
+        "de": "Manavgat"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2039",
+      "parentExternalId": "7",
+      "position": 18,
+      "translations": {
+        "tr": "Muratpaşa",
+        "en": "Muratpaşa",
+        "de": "Muratpaşa"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1616",
+      "parentExternalId": "7",
+      "position": 19,
+      "translations": {
+        "tr": "Serik",
+        "en": "Serik",
+        "de": "Serik"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2083",
+      "parentExternalId": "82",
+      "position": 1,
+      "translations": {
+        "tr": "Girne",
+        "en": "Girne",
+        "de": "Girne"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1206",
+      "parentExternalId": "9",
+      "position": 1,
+      "translations": {
+        "tr": "Bozdoğan",
+        "en": "Bozdoğan",
+        "de": "Bozdoğan"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1781",
+      "parentExternalId": "9",
+      "position": 2,
+      "translations": {
+        "tr": "Buharkent",
+        "en": "Buharkent",
+        "de": "Buharkent"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1256",
+      "parentExternalId": "9",
+      "position": 3,
+      "translations": {
+        "tr": "Çine",
+        "en": "Çine",
+        "de": "Çine"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "2000",
+      "parentExternalId": "9",
+      "position": 4,
+      "translations": {
+        "tr": "Didim",
+        "en": "Didim",
+        "de": "Didim"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1159",
+      "parentExternalId": "9",
+      "position": 5,
+      "translations": {
+        "tr": "Efeler",
+        "en": "Efeler",
+        "de": "Efeler"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1348",
+      "parentExternalId": "9",
+      "position": 6,
+      "translations": {
+        "tr": "Germencik",
+        "en": "Germencik",
+        "de": "Germencik"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1807",
+      "parentExternalId": "9",
+      "position": 7,
+      "translations": {
+        "tr": "İncirliova",
+        "en": "İncirliova",
+        "de": "İncirliova"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1435",
+      "parentExternalId": "9",
+      "position": 8,
+      "translations": {
+        "tr": "Karacasu",
+        "en": "Karacasu",
+        "de": "Karacasu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1957",
+      "parentExternalId": "9",
+      "position": 9,
+      "translations": {
+        "tr": "Karpuzlu",
+        "en": "Karpuzlu",
+        "de": "Karpuzlu"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1479",
+      "parentExternalId": "9",
+      "position": 10,
+      "translations": {
+        "tr": "Koçarlı",
+        "en": "Koçarlı",
+        "de": "Koçarlı"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1968",
+      "parentExternalId": "9",
+      "position": 11,
+      "translations": {
+        "tr": "Köşk",
+        "en": "Köşk",
+        "de": "Köşk"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1497",
+      "parentExternalId": "9",
+      "position": 12,
+      "translations": {
+        "tr": "Kuşadası",
+        "en": "Kuşadası",
+        "de": "Kuşadası"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1498",
+      "parentExternalId": "9",
+      "position": 13,
+      "translations": {
+        "tr": "Kuyucak",
+        "en": "Kuyucak",
+        "de": "Kuyucak"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1542",
+      "parentExternalId": "9",
+      "position": 14,
+      "translations": {
+        "tr": "Nazilli",
+        "en": "Nazilli",
+        "de": "Nazilli"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1637",
+      "parentExternalId": "9",
+      "position": 15,
+      "translations": {
+        "tr": "Söke",
+        "en": "Söke",
+        "de": "Söke"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1640",
+      "parentExternalId": "9",
+      "position": 16,
+      "translations": {
+        "tr": "Sultanhisar",
+        "en": "Sultanhisar",
+        "de": "Sultanhisar"
+      }
+    },
+    {
+      "group": "counties",
+      "externalId": "1724",
+      "parentExternalId": "9",
+      "position": 17,
+      "translations": {
+        "tr": "Yenipazar",
+        "en": "Yenipazar",
+        "de": "Yenipazar"
+      }
+    }
+  ]
+}
