@@ -1,0 +1,7 @@
+import { akademiPage } from "../_html";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  return akademiPage("pages/kullanim-kosullari.html");
+}

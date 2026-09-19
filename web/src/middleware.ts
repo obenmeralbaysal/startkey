@@ -11,6 +11,23 @@ import { defaultLocale } from "@/lib/locales";
  * `/{lang}/Lookup/...`). They are rewritten here so the Kurumsal catch-all cannot
  * swallow them, and so both casings work without two Next.js route folders.
  */
+const RESERVED_SLUGS = new Set([
+  "tr",
+  "en",
+  "de",
+  "api",
+  "media",
+  "themes",
+  "js",
+  "css",
+  "lib",
+  "img",
+  "akademi",
+  "locales",
+  "_next",
+  "favicon.ico",
+]);
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const lookup = pathname.match(/^\/(tr|en|de)\/lookup\/([^/]+)$/i);
@@ -28,9 +45,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  const shortOffice = pathname.match(/^\/([^/]+)$/);
+  if (shortOffice && !RESERVED_SLUGS.has(shortOffice[1])) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${defaultLocale}/${shortOffice[1]}`;
+    return NextResponse.rewrite(url);
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/(tr|en|de)/lookup/:path*", "/(tr|en|de)/Lookup/:path*"],
+  matcher: ["/", "/(tr|en|de)/lookup/:path*", "/(tr|en|de)/Lookup/:path*", "/:slug"],
 };

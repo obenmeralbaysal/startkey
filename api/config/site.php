@@ -42,6 +42,11 @@ return [
         'enteredconsultantcountries' => ['group' => 'consultant_countries', 'parent' => null, 'parent_fallback' => null],
         'enteredconsultantcitiesbycountryid' => ['group' => 'consultant_cities', 'parent' => 'countryId', 'parent_fallback' => '212'],
         'counties' => ['group' => 'counties', 'parent' => 'cityId', 'parent_fallback' => null],
+        'currencies' => ['group' => 'currencies', 'parent' => null, 'parent_fallback' => null],
+        'getalloffices' => ['group' => 'offices', 'parent' => null, 'parent_fallback' => null],
+        'users' => ['group' => 'consultants', 'parent' => 'officeId', 'parent_fallback' => null],
+        'districts' => ['group' => 'districts', 'parent' => 'countyIds', 'parent_fallback' => null],
+        'cities' => ['group' => 'cities', 'parent' => null, 'parent_fallback' => null],
     ],
 
     /*
@@ -159,6 +164,25 @@ return [
                 'de' => ['/de/kontakt', '/de/iletisim'],
             ],
         ],
+        'franchise' => [
+            'lists' => [
+                'tr' => ['/tr/franchise-basvuru'],
+                'en' => ['/en/franchise-form', '/en/franchise-basvuru'],
+                'de' => ['/de/franchise-form', '/de/franchise-basvuru'],
+            ],
+        ],
+        'kvkk' => [
+            'lists' => [
+                'tr' => ['/tr/sayfa/kvkk'],
+            ],
+        ],
+        'terms' => [
+            'lists' => [
+                'tr' => ['/tr/sayfa/hizmet-sozlesmesi'],
+                'en' => ['/en/page/hizmet-sozlesmesi', '/en/sayfa/hizmet-sozlesmesi'],
+                'de' => ['/de/page/hizmet-sozlesmesi', '/de/sayfa/hizmet-sozlesmesi'],
+            ],
+        ],
         'people' => [
             'lists' => [
                 'tr' => ['/tr/yonetim-kadrosu'],
@@ -176,6 +200,42 @@ return [
                 'tr' => ['/tr/sampiyonlar'],
                 'en' => ['/en/champions'],
                 'de' => ['/de/champions'],
+            ],
+        ],
+        'listings' => [
+            'lists' => [
+                'tr' => ['/tr/portfoy', '/tr/property'],
+                'en' => ['/en/property', '/en/portfoy'],
+                'de' => ['/de/immobilien', '/de/portfoy'],
+            ],
+            'detail_prefixes' => [
+                'tr' => ['/tr/portfoy'],
+                'en' => ['/en/property'],
+                'de' => ['/de/immobilien'],
+            ],
+        ],
+        'offices' => [
+            'lists' => [
+                'tr' => ['/tr/ofisler', '/tr/ofislerimiz'],
+                'en' => ['/en/offices', '/en/ofislerimiz'],
+                'de' => ['/de/anbieteren', '/de/ofislerimiz'],
+            ],
+            'detail' => [
+                'tr' => '/tr/ofisler/{id}/{slug}',
+                'en' => '/en/offices/{id}/{slug}',
+                'de' => '/de/anbieteren/{id}/{slug}',
+            ],
+        ],
+        'consultants' => [
+            'lists' => [
+                'tr' => ['/tr/danismanlar', '/tr/danisman-liste'],
+                'en' => ['/en/agents', '/en/danisman-liste'],
+                'de' => ['/de/immobilienmakleren', '/de/danisman-liste'],
+            ],
+            'detail' => [
+                'tr' => '/tr/danismanlar/{id}/{slug}',
+                'en' => '/en/agents/{id}/{slug}',
+                'de' => '/de/immobilienmakleren/{id}/{slug}',
             ],
         ],
     ],

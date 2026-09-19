@@ -64,6 +64,8 @@ LISTS = {
 STATIC_PAGES = {
     "about": {"tr": "/tr/sayfa/hakkimizda", "en": "/en/page/about-us", "de": "/de/page/uber-uns"},
     "vision": {"tr": "/tr/sayfa/vizyon-misyon", "en": "/en/page/our-vision-mission", "de": "/de/page/unsere-vision-mission"},
+    "startkey": {"tr": "/tr/sayfa/startkey", "en": "/en/page/startkey", "de": "/de/page/startkey"},
+    "in-the-media": {"tr": "/tr/sayfa/medyada-biz"},
 }
 
 PEOPLE_LIST = {"tr": "/tr/yonetim-kadrosu", "en": "/en/people", "de": "/de/people"}
@@ -702,7 +704,74 @@ def reorder_existing_seed() -> int:
     return 0
 
 
+def sync_static_pages() -> int:
+    """Crawl STATIC_PAGES and merge into the existing seed without re-fetching articles."""
+    if not OUT.exists():
+        print(f"missing {OUT}", file=sys.stderr)
+        return 1
+
+    seed = json.loads(OUT.read_text(encoding="utf-8"))
+    by_key = {row["key"]: row for row in seed.get("pages", [])}
+    snapshot_html: list[str] = []
+
+    print("== static pages")
+    for key, paths in STATIC_PAGES.items():
+        record = by_key.setdefault(key, {"key": key, "translations": {}})
+        for lang, path in paths.items():
+            print(f"  {key} {lang} {path}")
+            page = fetch(path)
+            save_snapshot(f"{key}-{lang}.html", page)
+            snapshot_html.append(page)
+            record["translations"][lang] = {
+                "urlPath": path,
+                "bodyHtml": main_html(page),
+                "meta": meta(page),
+                "breadcrumb": breadcrumb(page),
+            }
+
+    seed["pages"] = list(by_key.values())
+    print("== media")
+    download_media(collect_media(snapshot_html + ALL_HTML))
+    OUT.write_text(json.dumps(seed, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("  pages", [p["key"] for p in seed["pages"]])
+    print("wrote", OUT)
+    return 0
+
+
+def refresh_article_categories() -> int:
+    """Re-read list-card categories from the live site (EN news / EN-DE blogs drifted)."""
+    if not OUT.exists():
+        print(f"missing {OUT}", file=sys.stderr)
+        return 1
+
+    seed = json.loads(OUT.read_text(encoding="utf-8"))
+    changed = 0
+    for kind in LISTS:
+        print(f"== categories {kind}")
+        by_id = {row["externalId"]: row for row in seed.get("articles", {}).get(kind, [])}
+        for lang in LANGS:
+            items, _, _ = crawl_list(kind, lang)
+            for item in items:
+                ext = item.get("externalId")
+                category = item.get("category") or ""
+                if ext not in by_id or not category:
+                    continue
+                trans = by_id[ext].setdefault("translations", {}).setdefault(lang, {})
+                if trans.get("category") != category:
+                    trans["category"] = category
+                    changed += 1
+                    print(f"  {kind} {lang} {ext}: {category}")
+    OUT.write_text(json.dumps(seed, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"updated {changed} category fields")
+    print("wrote", OUT)
+    return 0
+
+
 if __name__ == "__main__":
     if "--reorder-lists" in sys.argv:
         sys.exit(reorder_existing_seed())
+    if "--sync-static-pages" in sys.argv:
+        sys.exit(sync_static_pages())
+    if "--refresh-categories" in sys.argv:
+        sys.exit(refresh_article_categories())
     sys.exit(main())

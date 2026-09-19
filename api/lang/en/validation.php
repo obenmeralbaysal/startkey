@@ -20,5 +20,8 @@ return [
         'subject' => 'subject',
         'message' => 'message',
         'gender_id' => 'gender',
+        'city_id' => 'city',
+        'county_id' => 'county',
+        'notes' => 'notes',
     ],
 ];

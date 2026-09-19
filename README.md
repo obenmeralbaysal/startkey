@@ -34,6 +34,16 @@ Referans sitedeki gibi üç dil vardır: Türkçe (`tr`), English (`en`), Deutsc
 
 Sonraki public sayfalar için yöntem, checklist ve script listesi: `docs/PAGE_RECREATION_PLAYBOOK.md`.
 
+## Canlı kurulum
+
+Lokal `./start.sh` canlı VPS için değildir.
+
+| Durum | Kılavuz |
+| --- | --- |
+| Satıver + ResidenceHero **aynı** sunucu | [`docs/SETUP_COLOCATED.md`](docs/SETUP_COLOCATED.md) |
+| Boş Ubuntu VPS | [`docs/SETUP.md`](docs/SETUP.md) |
+| Fotoğraf, seed, büyük Docker imajı | [`docs/MEDIA.md`](docs/MEDIA.md) |
+
 ## Geçici veriler
 
 Portföy, istatistik, şehir ve arama dropdown verileri Reonix gelene kadar referans siteden alınmış seed verisidir. Kayıtlar `docs/TECHNICAL_DEBT.md` içindedir.

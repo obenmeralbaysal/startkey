@@ -5,13 +5,20 @@ namespace App\Support;
 use App\Models\CmsArticle;
 use App\Models\CmsArticleTranslation;
 use App\Models\CmsChampionGroup;
+use App\Models\CmsConsultant;
+use App\Models\CmsConsultantTranslation;
 use App\Models\CmsListPage;
+use App\Models\CmsListing;
+use App\Models\CmsListingTranslation;
+use App\Models\CmsOffice;
+use App\Models\CmsOfficeTranslation;
 use App\Models\CmsPage;
 use App\Models\CmsPageTranslation;
 use App\Models\CmsPerson;
 use App\Models\CmsPersonTranslation;
 use App\Models\CmsTraining;
 use App\Models\CmsTrainingTranslation;
+use App\Models\LookupItem;
 
 /**
  * Maps a public URL to the shared Kurumsal template payload. Superadmin-created
@@ -20,7 +27,7 @@ use App\Models\CmsTrainingTranslation;
  */
 class CorporateResolver
 {
-    public function resolve(string $locale, string $path, int $pageIndex = 1, string $searchText = ''): ?array
+    public function resolve(string $locale, string $path, int $pageIndex = 1, string $searchText = '', array $filters = []): ?array
     {
         $path = $this->normalisePath($path);
         $pageIndex = max(1, $pageIndex);
@@ -37,6 +44,18 @@ class CorporateResolver
             return $detail;
         }
 
+        if ($detail = $this->listingByPath($locale, $path)) {
+            return $detail;
+        }
+
+        if ($detail = $this->officeByPath($locale, $path)) {
+            return $detail;
+        }
+
+        if ($detail = $this->consultantByPath($locale, $path)) {
+            return $detail;
+        }
+
         if ($person = $this->personByPath($locale, $path)) {
             return $person;
         }
@@ -47,6 +66,22 @@ class CorporateResolver
 
         if ($list = $this->trainingList($locale, $path)) {
             return $list;
+        }
+
+        if ($list = $this->listingList($locale, $path, $pageIndex, $filters)) {
+            return $list;
+        }
+
+        if ($list = $this->officeList($locale, $path, $pageIndex, $filters)) {
+            return $list;
+        }
+
+        if ($list = $this->consultantList($locale, $path, $pageIndex, $filters)) {
+            return $list;
+        }
+
+        if ($office = $this->officeByShortSlug($locale, $path)) {
+            return $office;
         }
 
         if ($people = $this->peopleList($locale, $path)) {
@@ -62,6 +97,10 @@ class CorporateResolver
         }
 
         if ($detail = $this->trainingByPrefix($locale, $path)) {
+            return $detail;
+        }
+
+        if ($detail = $this->listingByPrefix($locale, $path)) {
             return $detail;
         }
 
@@ -97,9 +136,9 @@ class CorporateResolver
             ->with('page')
             ->first();
 
-        if ($translation === null && $this->pathMatches($path, config('site.corporate.contact.lists.'.$locale, []))) {
-            $page = CmsPage::query()->where('key', 'contact')->where('published', true)->first();
-            $translation = $page?->translations()->where('locale', $locale)->first();
+        if ($translation === null) {
+            $aliased = $this->cmsPageByAlias($locale, $path);
+            $translation = $aliased?->translations()->where('locale', $locale)->first();
         }
 
         if ($translation === null || ! $translation->page?->published) {
@@ -111,6 +150,10 @@ class CorporateResolver
 
         if ($page->key === 'contact') {
             return $this->contactPayload($page, $local);
+        }
+
+        if ($page->key === 'franchise') {
+            return $this->franchisePayload($page, $local);
         }
 
         return [
@@ -151,6 +194,43 @@ class CorporateResolver
             'mapTitle' => $payload['mapTitle'] ?? '',
             'alternates' => $this->pageAlternates($page->id),
         ];
+    }
+
+    private function franchisePayload(CmsPage $page, CmsPageTranslation $local): array
+    {
+        $payload = $local->payload ?? [];
+
+        return [
+            'kind' => 'franchise',
+            'key' => 'franchise',
+            'heading' => $local->heading,
+            'urlPath' => $local->url_path,
+            'formHeading' => $payload['formHeading'] ?? '',
+            'placeholders' => $payload['placeholders'] ?? [],
+            'required' => $payload['required'] ?? [],
+            'cities' => $payload['cities'] ?? [],
+            'countyBindUrl' => $payload['countyBindUrl'] ?? '',
+            'submitLabel' => $payload['submitLabel'] ?? '',
+            'captchaError' => $payload['captchaError'] ?? '',
+            'widgetCss' => $payload['widgetCss'] ?? '',
+            'bodyHtml' => $local->body_html,
+            'breadcrumb' => $local->breadcrumb ?? ['heading' => $local->heading, 'trail' => []],
+            'meta' => $local->meta ?? [],
+            'alternates' => $this->pageAlternates($page->id),
+        ];
+    }
+
+    private function cmsPageByAlias(string $locale, string $path): ?CmsPage
+    {
+        foreach (['contact', 'franchise', 'terms', 'kvkk'] as $key) {
+            if (! $this->pathMatches($path, config('site.corporate.'.$key.'.lists.'.$locale, []))) {
+                continue;
+            }
+
+            return CmsPage::query()->where('key', $key)->where('published', true)->first();
+        }
+
+        return null;
     }
 
     private function trainingByPath(string $locale, string $path): ?array
@@ -677,6 +757,970 @@ class CorporateResolver
     {
         return CmsTrainingTranslation::query()
             ->where('cms_training_id', $trainingId)
+            ->pluck('url_path', 'locale')
+            ->all();
+    }
+
+    private function listingByPath(string $locale, string $path): ?array
+    {
+        $translation = CmsListingTranslation::query()
+            ->where('url_path', $path)
+            ->with('listing')
+            ->first();
+
+        if ($translation === null || ! $translation->listing?->published) {
+            return null;
+        }
+
+        return $this->listingDetailPayload($translation->listing, $locale, $translation);
+    }
+
+    private function listingByPrefix(string $locale, string $path): ?array
+    {
+        foreach (config('site.corporate.listings.detail_prefixes.'.$locale, []) as $prefix) {
+            $id = $this->idAfterPrefix($path, $prefix);
+            if ($id === null) {
+                continue;
+            }
+            $listing = CmsListing::query()->published()->where('external_id', $id)->first();
+            if ($listing === null) {
+                continue;
+            }
+
+            return $this->listingDetailPayload($listing, $locale);
+        }
+
+        return null;
+    }
+
+    private function listingList(string $locale, string $path, int $pageIndex, array $filters): ?array
+    {
+        if (! $this->pathMatches($path, config('site.corporate.listings.lists.'.$locale, []))) {
+            return null;
+        }
+
+        $list = CmsListPage::query()->where('type', 'listing')->where('locale', $locale)->first();
+        if ($list === null) {
+            return null;
+        }
+
+        $perPage = max(1, $list->per_page);
+        $query = CmsListing::query()
+            ->published()
+            ->whereHas('translations', fn ($builder) => $builder->where('locale', $locale));
+
+        $this->applyListingFilters($query, $locale, $filters);
+
+        $sort = $this->filterScalar($filters, 'SortingType');
+        if ($sort === '1') {
+            $query->orderBy('price_amount')->orderBy('list_rank');
+        } elseif ($sort === '2') {
+            $query->orderByDesc('price_amount')->orderBy('list_rank');
+        } elseif ($sort === '3') {
+            $query->orderBy('updated_on')->orderBy('list_rank');
+        } elseif ($sort === '4') {
+            $query->orderByDesc('updated_on')->orderBy('list_rank');
+        } else {
+            $query->orderBy('list_rank')->orderBy('id');
+        }
+
+        $total = (clone $query)->count();
+        $totalPages = max(1, (int) ceil(max($total, 1) / $perPage));
+        if ($total === 0) {
+            $pageIndex = 1;
+            $totalPages = 1;
+        } else {
+            $pageIndex = min($pageIndex, $totalPages);
+        }
+
+        $items = [];
+        if ($total > 0) {
+            $items = $query
+                ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+                ->skip(($pageIndex - 1) * $perPage)
+                ->take($perPage)
+                ->get()
+                ->map(fn (CmsListing $listing) => $this->listingCardPayload($listing, $locale, $listing->translations->first()))
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        $sidebar = $list->sidebar ?? [];
+        $formAction = $sidebar['formAction'] ?? $list->pager_base ?: $list->url_path;
+        $queryString = $this->listingQueryString($filters);
+
+        return [
+            'kind' => 'listing-list',
+            'heading' => $list->heading,
+            'breadcrumb' => $list->breadcrumb ?? ['heading' => $list->heading, 'trail' => []],
+            'meta' => $list->meta ?? [],
+            'filter' => [
+                'action' => $formAction,
+                'heading' => $sidebar['filterHeading'] ?? '',
+                'mobileOpenLabel' => $sidebar['mobileFilterOpen'] ?? '',
+                'submitLabel' => $sidebar['submitLabel'] ?? '',
+                'labels' => $sidebar['labels'] ?? [],
+                'placeholders' => $sidebar['placeholders'] ?? [],
+                'adTypes' => $sidebar['adTypes'] ?? [],
+                'sortOptions' => $sidebar['sortOptions'] ?? [],
+                'bindUrls' => $sidebar['bindUrls'] ?? [],
+                'values' => $this->listingFilterValues($filters),
+            ],
+            'foundLabel' => str_replace('{count}', (string) $total, (string) ($sidebar['foundTemplate'] ?? '{count}')),
+            'items' => $items,
+            'hasResults' => $total > 0,
+            'pagination' => [
+                'pageIndex' => $pageIndex,
+                'perPage' => $perPage,
+                'total' => $total,
+                'totalPages' => $totalPages,
+                'basePath' => $formAction,
+                'searchQuery' => $queryString,
+            ],
+            'alternates' => $this->listAlternates('listing'),
+        ];
+    }
+
+    private function listingDetailPayload(CmsListing $listing, string $locale, ?CmsListingTranslation $fallback = null): ?array
+    {
+        $translation = $listing->translations()->where('locale', $locale)->first() ?? $fallback;
+        if ($translation === null) {
+            return null;
+        }
+
+        $detail = $translation->detail ?? [];
+        $card = $translation->card ?? [];
+        $agent = is_array($detail['agent'] ?? null) ? $detail['agent'] : [];
+        $agent['phones'] = is_array($agent['phones'] ?? null) ? $agent['phones'] : [];
+        $agent['href'] = $this->resourceUrl('consultants', $locale, $listing->consultant_id, $listing->consultant_slug);
+        $agent['officeHref'] = $this->resourceUrl('offices', $locale, $listing->office_id, $listing->office_slug);
+
+        $listPath = config('site.corporate.listings.lists.'.$locale.'.0', '/'.$locale);
+        $location = $detail['locationIds'] ?? [];
+        $locationLinks = [];
+        foreach (['city' => 'CityId', 'county' => 'CountyIds', 'district' => 'DistrictIds'] as $key => $param) {
+            $id = $location[$key.'Id'] ?? '';
+            $label = $location[$key.'Label'] ?? '';
+            if ($id === '' && $label === '') {
+                continue;
+            }
+            $locationLinks[] = [
+                'href' => $id !== '' ? $listPath.'?FilterDTO.'.$param.'='.rawurlencode((string) $id) : null,
+                'label' => $label,
+            ];
+        }
+
+        return [
+            'kind' => 'listing-detail',
+            'externalId' => $listing->external_id,
+            'urlPath' => $translation->url_path,
+            'title' => $translation->title,
+            'price' => $detail['price'] ?? ($card['price'] ?? ''),
+            'gallery' => $detail['gallery'] ?? [],
+            'locationLinks' => $locationLinks,
+            'specs' => $detail['specs'] ?? [],
+            'descriptionHeading' => $detail['descriptionHeading'] ?? '',
+            'descriptionHtml' => $detail['descriptionHtml'] ?? '',
+            'eids' => $detail['eids'] ?? null,
+            'featureGroups' => $detail['featureGroups'] ?? [],
+            'map' => $detail['map'] ?? [],
+            'agent' => $agent,
+            'form' => $detail['form'] ?? [],
+            'relatedHeading' => $detail['relatedHeading'] ?? '',
+            'related' => $this->listingRelated($listing, $locale, $detail['relatedIds'] ?? []),
+            'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->title, 'trail' => []],
+            'meta' => $translation->meta ?? [],
+            'alternates' => $this->listingAlternates($listing->id),
+        ];
+    }
+
+    /**
+     * @param  list<int|string>  $relatedIds
+     * @return list<array<string, mixed>>
+     */
+    private function listingRelated(CmsListing $listing, string $locale, array $relatedIds): array
+    {
+        $ids = [];
+        foreach ($relatedIds as $id) {
+            $id = (int) $id;
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+        $ids = array_values(array_unique($ids));
+        if ($ids === []) {
+            return [];
+        }
+
+        $related = CmsListing::query()
+            ->published()
+            ->whereIn('external_id', $ids)
+            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+            ->get()
+            ->keyBy('external_id');
+
+        $cards = [];
+        foreach ($ids as $id) {
+            $item = $related->get($id);
+            if ($item === null) {
+                continue;
+            }
+            $card = $this->listingCardPayload($item, $locale, $item->translations->first(), 'style6');
+            if ($card !== null) {
+                $cards[] = $card;
+            }
+        }
+
+        return $cards;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function listingCardPayload(CmsListing $listing, string $locale, ?CmsListingTranslation $translation, string $style = 'style3'): ?array
+    {
+        if ($translation === null) {
+            $translation = $listing->translations()->where('locale', $locale)->first();
+        }
+        if ($translation === null) {
+            return null;
+        }
+
+        $card = $translation->card ?? [];
+
+        return [
+            'externalId' => $listing->external_id,
+            'urlPath' => $card['urlPath'] ?? $translation->url_path,
+            'image' => $card['image'] ?? '',
+            'imageWebp' => $card['imageWebp'] ?? '',
+            'processType' => $card['processType'] ?? '',
+            'adSubType' => $card['adSubType'] ?? '',
+            'adTypeIcon' => $card['adTypeIcon'] ?? '',
+            'adType' => $card['adType'] ?? '',
+            'badgeImage' => $card['badgeImage'] ?? '',
+            'price' => $card['price'] ?? '',
+            'title' => $card['title'] ?? $translation->title,
+            'location' => $card['location'] ?? '',
+            'updatedLabel' => $card['updatedLabel'] ?? '',
+            'features' => $card['features'] ?? [],
+            'detailLabel' => $card['detailLabel'] ?? '',
+            'style' => $style,
+        ];
+    }
+
+    private function applyListingFilters($query, string $locale, array $filters): void
+    {
+        $keyword = trim((string) $this->filterScalar($filters, 'FilterDTO.Keyword'));
+        if ($keyword !== '') {
+            $like = '%'.$this->escapeLike($keyword).'%';
+            $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+            $query->where(function ($builder) use ($locale, $like, $operator, $keyword) {
+                $builder->whereHas('translations', function ($translation) use ($locale, $like, $operator) {
+                    $translation->where('locale', $locale)->where('title', $operator, $like);
+                });
+                if (ctype_digit($keyword)) {
+                    $builder->orWhere('external_id', (int) $keyword);
+                }
+            });
+        }
+
+        $this->whereOptional($query, 'ad_type_id', $this->filterScalar($filters, 'FilterDTO.AdTypeId'));
+        $this->whereOptional($query, 'process_type_id', $this->filterScalar($filters, 'FilterDTO.ProcessTypeId'));
+        $this->whereOptional($query, 'currency_id', $this->filterScalar($filters, 'FilterDTO.CurrencyId'));
+        $this->whereOptional($query, 'country_id', $this->filterScalar($filters, 'FilterDTO.CountryId'));
+        $this->whereOptional($query, 'city_id', $this->filterScalar($filters, 'FilterDTO.CityId'));
+        $this->whereOptional($query, 'office_id', $this->filterScalar($filters, 'FilterDTO.OfficeId'));
+        $this->whereOptional($query, 'consultant_id', $this->filterScalar($filters, 'FilterDTO.UserId'));
+
+        $counties = $this->filterList($filters, 'FilterDTO.CountyIds');
+        if ($counties !== []) {
+            $query->whereIn('county_id', $counties);
+        }
+        $districts = $this->filterList($filters, 'FilterDTO.DistrictIds');
+        if ($districts !== []) {
+            $query->whereIn('district_id', $districts);
+        }
+
+        $minPrice = $this->filterNumber($filters, 'FilterDTO.MinPrice');
+        if ($minPrice !== null) {
+            $query->where('price_amount', '>=', $minPrice);
+        }
+        $maxPrice = $this->filterNumber($filters, 'FilterDTO.MaxPrice');
+        if ($maxPrice !== null) {
+            $query->where('price_amount', '<=', $maxPrice);
+        }
+        $minArea = $this->filterNumber($filters, 'FilterDTO.MinCleanArea');
+        if ($minArea !== null) {
+            $query->where('clean_area', '>=', $minArea);
+        }
+        $maxArea = $this->filterNumber($filters, 'FilterDTO.MaxCleanArea');
+        if ($maxArea !== null) {
+            $query->where('clean_area', '<=', $maxArea);
+        }
+    }
+
+    private function whereOptional($query, string $column, ?string $value): void
+    {
+        if ($value !== null && $value !== '') {
+            $query->where($column, $value);
+        }
+    }
+
+    private function filterScalar(array $filters, string $key): ?string
+    {
+        $value = $filters[$key] ?? $filters[str_replace('.', '_', $key)] ?? null;
+        if (is_array($value)) {
+            $value = $value[0] ?? null;
+        }
+
+        return is_scalar($value) ? trim((string) $value) : null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function filterList(array $filters, string $key): array
+    {
+        $value = $filters[$key] ?? $filters[str_replace('.', '_', $key)] ?? null;
+        if ($value === null || $value === '') {
+            return [];
+        }
+        $items = is_array($value) ? $value : [$value];
+
+        return array_values(array_filter(
+            array_map(static fn ($item) => is_scalar($item) ? trim((string) $item) : '', $items),
+            static fn (string $item) => $item !== '',
+        ));
+    }
+
+    private function filterNumber(array $filters, string $key): ?int
+    {
+        $value = $this->filterScalar($filters, $key);
+        if ($value === null || $value === '') {
+            return null;
+        }
+        $digits = preg_replace('/\D+/', '', $value);
+
+        return $digits !== null && $digits !== '' ? (int) $digits : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function listingFilterValues(array $filters): array
+    {
+        $keys = [
+            'SortingType',
+            'FilterDTO.Keyword',
+            'FilterDTO.AdTypeId',
+            'FilterDTO.ProcessTypeId',
+            'FilterDTO.MinPrice',
+            'FilterDTO.MaxPrice',
+            'FilterDTO.CurrencyId',
+            'FilterDTO.MinCleanArea',
+            'FilterDTO.MaxCleanArea',
+            'FilterDTO.CountryId',
+            'FilterDTO.CityId',
+            'FilterDTO.CountyIds',
+            'FilterDTO.DistrictIds',
+            'FilterDTO.OfficeId',
+            'FilterDTO.UserId',
+        ];
+        $values = [];
+        foreach ($keys as $key) {
+            if (str_ends_with($key, 'Ids')) {
+                $values[$key] = $this->filterList($filters, $key);
+            } else {
+                $values[$key] = $this->filterScalar($filters, $key) ?? '';
+            }
+        }
+
+        return $values;
+    }
+
+    private function listingQueryString(array $filters): string
+    {
+        $pairs = [];
+        foreach ($this->listingFilterValues($filters) as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $item) {
+                    if ($item !== '') {
+                        $pairs[] = rawurlencode($key).'='.rawurlencode($item);
+                    }
+                }
+                continue;
+            }
+            if ($value !== '') {
+                $pairs[] = rawurlencode($key).'='.rawurlencode((string) $value);
+            }
+        }
+
+        return $pairs === [] ? '' : '&'.implode('&', $pairs);
+    }
+
+    private function officeByPath(string $locale, string $path): ?array
+    {
+        $translation = CmsOfficeTranslation::query()
+            ->where(function ($query) use ($path) {
+                $query->where('url_path', $path)->orWhere('short_path', $path);
+            })
+            ->with('office')
+            ->first();
+
+        if ($translation === null || ! $translation->office?->published) {
+            $prefix = preg_replace('#/\{id\}/\{slug\}$#', '', (string) config('site.corporate.offices.detail.'.$locale, ''));
+            $id = $prefix ? $this->idAfterPrefix($path, $prefix) : null;
+            if ($id === null) {
+                return null;
+            }
+            $office = CmsOffice::query()->published()->where('external_id', $id)->first();
+            if ($office === null) {
+                return null;
+            }
+
+            return $this->officeDetailPayload($office, $locale);
+        }
+
+        return $this->officeDetailPayload($translation->office, $locale, $translation);
+    }
+
+    private function officeByShortSlug(string $locale, string $path): ?array
+    {
+        $slug = $this->lastSegment($path);
+        if ($slug === '' || ! preg_match('/^[a-z0-9][a-z0-9_-]*$/i', $slug)) {
+            return null;
+        }
+        if ($this->pathMatches($path, config('site.corporate.offices.lists.'.$locale, []))) {
+            return null;
+        }
+
+        $office = CmsOffice::query()->published()->where('short_slug', $slug)->first();
+        if ($office === null) {
+            return null;
+        }
+
+        $expectedTr = '/tr/'.$slug;
+        $expectedBare = '/'.$slug;
+        $expectedLocale = '/'.$locale.'/'.$slug;
+        if (! in_array($path, [$expectedTr, $expectedBare, $expectedLocale, $office->short_slug ? '/'.$office->short_slug : ''], true)) {
+            $translation = $office->translations()->where('locale', $locale)->first();
+            if ($translation === null || ($translation->short_path !== $path && $translation->url_path !== $path)) {
+                return null;
+            }
+        }
+
+        return $this->officeDetailPayload($office, $locale);
+    }
+
+    private function consultantByPath(string $locale, string $path): ?array
+    {
+        $translation = CmsConsultantTranslation::query()
+            ->where('url_path', $path)
+            ->with('consultant')
+            ->first();
+
+        if ($translation !== null && $translation->consultant?->published) {
+            return $this->consultantDetailPayload($translation->consultant, $locale, $translation);
+        }
+
+        $prefix = preg_replace('#/\{id\}/\{slug\}$#', '', (string) config('site.corporate.consultants.detail.'.$locale, ''));
+        $id = $prefix ? $this->idAfterPrefix($path, $prefix) : null;
+        if ($id === null) {
+            return null;
+        }
+        $consultant = CmsConsultant::query()->published()->where('external_id', $id)->first();
+        if ($consultant === null) {
+            return null;
+        }
+
+        return $this->consultantDetailPayload($consultant, $locale);
+    }
+
+    private function officeList(string $locale, string $path, int $pageIndex, array $filters): ?array
+    {
+        if (! $this->pathMatches($path, config('site.corporate.offices.lists.'.$locale, []))) {
+            return null;
+        }
+
+        $list = CmsListPage::query()->where('type', 'office')->where('locale', $locale)->first();
+        if ($list === null) {
+            return null;
+        }
+
+        $perPage = max(1, $list->per_page);
+        $query = CmsOffice::query()
+            ->published()
+            ->whereHas('translations', fn ($builder) => $builder->where('locale', $locale));
+
+        $search = trim((string) ($this->filterScalar($filters, 'SearchText') ?? ''));
+        if ($search !== '') {
+            $like = '%'.$this->escapeLike($search).'%';
+            $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+            $query->whereHas('translations', function ($translation) use ($locale, $like, $operator) {
+                $translation->where('locale', $locale)->where('name', $operator, $like);
+            });
+        }
+        $this->whereOptional($query, 'country_id', $this->filterScalar($filters, 'FilterDTO.CountryId'));
+        $this->whereOptional($query, 'city_id', $this->filterScalar($filters, 'FilterDTO.CityId'));
+        $this->whereOptional($query, 'county_id', $this->filterScalar($filters, 'FilterDTO.CountyId'));
+
+        $query->orderBy('list_rank')->orderBy('id');
+
+        return $this->pagedCardList(
+            $query,
+            $list,
+            $locale,
+            $pageIndex,
+            $perPage,
+            $filters,
+            'office-list',
+            'office',
+            fn (CmsOffice $office) => $this->officeCardPayload($office, $locale, $office->translations->first()),
+            ['SearchText', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'],
+        );
+    }
+
+    private function consultantList(string $locale, string $path, int $pageIndex, array $filters): ?array
+    {
+        if (! $this->pathMatches($path, config('site.corporate.consultants.lists.'.$locale, []))) {
+            return null;
+        }
+
+        $list = CmsListPage::query()->where('type', 'consultant')->where('locale', $locale)->first();
+        if ($list === null) {
+            return null;
+        }
+
+        $perPage = max(1, $list->per_page);
+        $query = CmsConsultant::query()
+            ->published()
+            ->whereHas('translations', fn ($builder) => $builder->where('locale', $locale));
+
+        $first = trim((string) ($this->filterScalar($filters, 'FilterDTO.Firstname') ?? ''));
+        $last = trim((string) ($this->filterScalar($filters, 'FilterDTO.Lastname') ?? ''));
+        $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+        if ($first !== '') {
+            $like = $this->escapeLike($first).'%';
+            $query->where(function ($builder) use ($like, $operator, $locale) {
+                $builder->where('first_name', $operator, $like)
+                    ->orWhereHas('translations', function ($translation) use ($locale, $like, $operator) {
+                        $translation->where('locale', $locale)->where('name', $operator, $like);
+                    });
+            });
+        }
+        if ($last !== '') {
+            $like = $this->escapeLike($last).'%';
+            $query->where(function ($builder) use ($like, $operator, $locale) {
+                $builder->where('last_name', $operator, $like)
+                    ->orWhereHas('translations', function ($translation) use ($locale, $like, $operator) {
+                        $translation->where('locale', $locale)->where('name', $operator, '%'.$like);
+                    });
+            });
+        }
+        $this->whereOptional($query, 'office_id', $this->filterScalar($filters, 'FilterDTO.OfficeId'));
+        $this->whereOptional($query, 'city_id', $this->filterScalar($filters, 'FilterDTO.CityId'));
+
+        $query->orderBy('list_rank')->orderBy('id');
+
+        return $this->pagedCardList(
+            $query,
+            $list,
+            $locale,
+            $pageIndex,
+            $perPage,
+            $filters,
+            'consultant-list',
+            'consultant',
+            fn (CmsConsultant $consultant) => $this->consultantCardPayload($consultant, $locale, $consultant->translations->first()),
+            ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId'],
+        );
+    }
+
+    /**
+     * @param  callable(mixed): (?array<string, mixed>)  $card
+     * @param  list<string>  $filterKeys
+     * @return array<string, mixed>
+     */
+    private function pagedCardList($query, CmsListPage $list, string $locale, int $pageIndex, int $perPage, array $filters, string $kind, string $alternateType, callable $card, array $filterKeys): array
+    {
+        $total = (clone $query)->count();
+        $totalPages = max(1, (int) ceil(max($total, 1) / $perPage));
+        if ($total === 0) {
+            $pageIndex = 1;
+            $totalPages = 1;
+        } else {
+            $pageIndex = min($pageIndex, $totalPages);
+        }
+
+        $items = [];
+        if ($total > 0) {
+            $items = $query
+                ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+                ->skip(($pageIndex - 1) * $perPage)
+                ->take($perPage)
+                ->get()
+                ->map($card)
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        $sidebar = $list->sidebar ?? [];
+        $formAction = $sidebar['formAction'] ?? $list->url_path;
+        $values = [];
+        foreach ($filterKeys as $key) {
+            $values[$key] = $this->filterScalar($filters, $key) ?? '';
+        }
+        $queryString = $this->simpleQueryString($values);
+
+        return [
+            'kind' => $kind,
+            'heading' => $list->heading,
+            'breadcrumb' => $list->breadcrumb ?? ['heading' => $list->heading, 'trail' => []],
+            'meta' => $list->meta ?? [],
+            'filter' => [
+                'action' => $formAction,
+                'searchHeading' => $sidebar['searchHeading'] ?? '',
+                'searchPlaceholder' => $sidebar['searchPlaceholder'] ?? '',
+                'submitLabel' => $sidebar['submitLabel'] ?? '',
+                'placeholders' => $sidebar['placeholders'] ?? [],
+                'bindUrls' => $sidebar['bindUrls'] ?? [],
+                'values' => $values,
+                'selectedLabels' => $this->selectedFilterLabels($values, $locale),
+            ],
+            'foundLabel' => str_replace('{count}', (string) $total, (string) ($sidebar['foundTemplate'] ?? '{count}')),
+            'items' => $items,
+            'hasResults' => $total > 0,
+            'pagination' => [
+                'pageIndex' => $pageIndex,
+                'perPage' => $perPage,
+                'total' => $total,
+                'totalPages' => $totalPages,
+                'basePath' => $list->pager_base ?: $formAction,
+                'searchQuery' => $queryString,
+            ],
+            'alternates' => $this->listAlternates($alternateType),
+        ];
+    }
+
+    /**
+     * Maps selected lookup filter ids (office, city, …) to the visible labels
+     * so the dropdown can keep showing "Akın" instead of "18140" after search.
+     *
+     * @param  array<string, string>  $values
+     * @return array<string, string>
+     */
+    private function selectedFilterLabels(array $values, string $locale): array
+    {
+        $labels = [];
+        foreach ($values as $key => $value) {
+            if ($value === '') {
+                continue;
+            }
+            $label = $this->lookupFilterLabel($key, $value, $locale);
+            if ($label !== null && $label !== '') {
+                $labels[$key] = $label;
+            }
+        }
+
+        return $labels;
+    }
+
+    private function lookupFilterLabel(string $key, string $value, string $locale): ?string
+    {
+        $groups = match ($key) {
+            'FilterDTO.OfficeId' => ['offices'],
+            'FilterDTO.CityId' => ['cities', 'office_cities', 'consultant_cities'],
+            'FilterDTO.CountryId' => ['office_countries', 'property_countries', 'consultant_countries'],
+            'FilterDTO.CountyId' => ['counties'],
+            default => [],
+        };
+
+        if ($groups !== []) {
+            $item = LookupItem::query()
+                ->whereIn('group', $groups)
+                ->where('external_id', $value)
+                ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+                ->first();
+            $label = $item?->translations->first()?->label;
+            if (is_string($label) && $label !== '') {
+                return $label;
+            }
+        }
+
+        if ($key === 'FilterDTO.OfficeId') {
+            $office = CmsOffice::query()->where('external_id', $value)->first();
+
+            return $office?->translations()->where('locale', $locale)->value('name');
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<string, string>  $values
+     */
+    private function simpleQueryString(array $values): string
+    {
+        $pairs = [];
+        foreach ($values as $key => $value) {
+            if ($value !== '') {
+                $pairs[] = rawurlencode($key).'='.rawurlencode($value);
+            }
+        }
+
+        return $pairs === [] ? '' : '&'.implode('&', $pairs);
+    }
+
+    private function officeDetailPayload(CmsOffice $office, string $locale, ?CmsOfficeTranslation $fallback = null): ?array
+    {
+        $translation = $office->translations()->where('locale', $locale)->first() ?? $fallback;
+        if ($translation === null) {
+            return null;
+        }
+
+        $detail = $translation->detail ?? [];
+        $card = $translation->card ?? [];
+        $listPath = config('site.corporate.listings.lists.'.$locale.'.0', '/'.$locale);
+
+        $groups = [];
+        foreach ($detail['teamGroups'] ?? [] as $group) {
+            $members = [];
+            foreach ($group['consultantIds'] ?? [] as $consultantId) {
+                $consultant = CmsConsultant::query()->published()->where('external_id', (int) $consultantId)->first();
+                if ($consultant === null) {
+                    continue;
+                }
+                $member = $this->consultantCardPayload($consultant, $locale);
+                if ($member !== null) {
+                    $members[] = $member;
+                }
+            }
+            $groups[] = [
+                'heading' => $group['heading'] ?? '',
+                'members' => $members,
+            ];
+        }
+
+        $canonical = $this->resourceUrl('offices', $locale, (string) $office->external_id, $office->short_slug);
+
+        return [
+            'kind' => 'office-detail',
+            'externalId' => $office->external_id,
+            'urlPath' => $translation->url_path !== '' ? $translation->url_path : $canonical,
+            'shortPath' => $translation->short_path,
+            'name' => $translation->name,
+            'image' => $detail['image'] ?? ($card['image'] ?? ''),
+            'imageWebp' => $detail['imageWebp'] ?? ($card['imageWebp'] ?? ''),
+            'phoneHref' => $detail['phoneHref'] ?? ($card['phoneHref'] ?? ''),
+            'phoneLabel' => $detail['phoneLabel'] ?? ($card['phoneLabel'] ?? ''),
+            'email' => $detail['email'] ?? ($card['email'] ?? ''),
+            'address' => $detail['address'] ?? '',
+            'instagram' => $detail['instagram'] ?? ($card['instagram'] ?? ''),
+            'portfoliosHref' => $listPath.'?FilterDTO.OfficeId='.$office->external_id,
+            'portfoliosLabel' => $detail['portfoliosLabel'] ?? '',
+            'tabs' => $detail['tabs'] ?? [],
+            'teamGroups' => $groups,
+            'listings' => $this->listingCardsByIds($detail['listingIds'] ?? [], $locale),
+            'map' => $detail['map'] ?? [],
+            'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->name, 'trail' => []],
+            'meta' => $translation->meta ?? [],
+            'alternates' => $this->officeAlternates($office->id),
+        ];
+    }
+
+    private function consultantDetailPayload(CmsConsultant $consultant, string $locale, ?CmsConsultantTranslation $fallback = null): ?array
+    {
+        $translation = $consultant->translations()->where('locale', $locale)->first() ?? $fallback;
+        if ($translation === null) {
+            return null;
+        }
+
+        $detail = $translation->detail ?? [];
+        $card = $translation->card ?? [];
+        $listPath = config('site.corporate.listings.lists.'.$locale.'.0', '/'.$locale);
+        $officeHref = $detail['officeHref'] ?? '';
+        if ($officeHref === '' && $consultant->office_id) {
+            $office = CmsOffice::query()->published()->where('external_id', (int) $consultant->office_id)->first();
+            $officeHref = $office ? $this->resourceUrl('offices', $locale, (string) $office->external_id, $office->short_slug) : '';
+        }
+
+        $labels = [
+            'tr' => ['email' => 'Email:', 'phone' => 'Telefon:', 'office' => 'Startkey:'],
+            'en' => ['email' => 'Email:', 'phone' => 'Phone:', 'office' => 'Startkey:'],
+            'de' => ['email' => 'Email:', 'phone' => 'Telefon:', 'office' => 'Startkey:'],
+        ];
+
+        return [
+            'kind' => 'consultant-detail',
+            'externalId' => $consultant->external_id,
+            'urlPath' => $translation->url_path,
+            'name' => $translation->name,
+            'role' => $translation->role,
+            'image' => $detail['image'] ?? ($card['image'] ?? ''),
+            'imageWebp' => $detail['imageWebp'] ?? ($card['imageWebp'] ?? ''),
+            'email' => $detail['email'] ?? ($card['email'] ?? ''),
+            'phoneHref' => $detail['phoneHref'] ?? ($card['phoneHref'] ?? ''),
+            'phoneLabel' => $detail['phoneLabel'] ?? ($card['phoneLabel'] ?? ''),
+            'officeHref' => $officeHref,
+            'officeName' => $detail['officeName'] ?? '',
+            'contactLabels' => $labels[$locale] ?? $labels['tr'],
+            'tabs' => $detail['tabs'] ?? [],
+            'bioHtml' => $detail['bioHtml'] ?? '',
+            'listings' => $this->listingCardsByIds($detail['listingIds'] ?? [], $locale),
+            'allListingsHref' => $listPath.'?FilterDTO.OfficeId='.rawurlencode((string) ($consultant->office_id ?? '')).'&FilterDTO.UserId='.$consultant->external_id,
+            'allListingsLabel' => $detail['allListingsLabel'] ?? '',
+            'commentHeading' => $detail['commentHeading'] ?? '',
+            'form' => $detail['form'] ?? ['placeholders' => [], 'submitLabel' => '', 'captchaError' => ''],
+            'ratingLabel' => 'Yıldız',
+            'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->name, 'trail' => []],
+            'meta' => $translation->meta ?? [],
+            'alternates' => $this->consultantAlternates($consultant->id),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function officeCardPayload(CmsOffice $office, string $locale, ?CmsOfficeTranslation $translation = null): ?array
+    {
+        $translation ??= $office->translations()->where('locale', $locale)->first();
+        if ($translation === null) {
+            return null;
+        }
+        $card = $translation->card ?? [];
+        $detail = $translation->detail ?? [];
+        $shortPath = $translation->short_path !== '' ? $translation->short_path : ($locale === 'tr' ? '/'.$office->short_slug : '/'.$locale.'/'.$office->short_slug);
+
+        return [
+            'externalId' => $office->external_id,
+            'urlPath' => $card['urlPath'] ?? $shortPath,
+            'name' => $card['name'] ?? $translation->name,
+            'image' => $card['image'] ?? ($detail['image'] ?? ''),
+            'imageWebp' => $card['imageWebp'] ?? ($detail['imageWebp'] ?? ''),
+            'phoneHref' => $card['phoneHref'] ?? ($detail['phoneHref'] ?? ''),
+            'phoneLabel' => $card['phoneLabel'] ?? ($detail['phoneLabel'] ?? ''),
+            'email' => $card['email'] ?? ($detail['email'] ?? ''),
+            'location' => $card['location'] ?? ($office->city_label !== '' && $office->county_label !== '' ? $office->city_label.' / '.$office->county_label : $office->city_label),
+            'instagram' => $card['instagram'] ?? ($detail['instagram'] ?? ''),
+            'variant' => 'office',
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function consultantCardPayload(CmsConsultant $consultant, string $locale, ?CmsConsultantTranslation $translation = null): ?array
+    {
+        $translation ??= $consultant->translations()->where('locale', $locale)->first();
+        if ($translation === null) {
+            return null;
+        }
+        $card = $translation->card ?? [];
+        $href = $card['urlPath'] ?? $translation->url_path;
+        if ($href === '') {
+            $href = $this->resourceUrl('consultants', $locale, (string) $consultant->external_id, $consultant->slug);
+        }
+
+        return [
+            'externalId' => $consultant->external_id,
+            'urlPath' => $href,
+            'name' => $card['name'] ?? $translation->name,
+            'role' => $card['role'] ?? $translation->role,
+            'image' => $card['image'] ?? '',
+            'imageWebp' => $card['imageWebp'] ?? '',
+            'phoneHref' => $card['phoneHref'] ?? '',
+            'phoneLabel' => $card['phoneLabel'] ?? '',
+            'email' => $card['email'] ?? '',
+            'variant' => 'consultant',
+        ];
+    }
+
+    /**
+     * @param  list<int|string>  $ids
+     * @return list<array<string, mixed>>
+     */
+    private function listingCardsByIds(array $ids, string $locale): array
+    {
+        $clean = [];
+        foreach ($ids as $id) {
+            $id = (int) $id;
+            if ($id > 0) {
+                $clean[] = $id;
+            }
+        }
+        $clean = array_values(array_unique($clean));
+        if ($clean === []) {
+            return [];
+        }
+
+        $listings = CmsListing::query()
+            ->published()
+            ->whereIn('external_id', $clean)
+            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+            ->get()
+            ->keyBy('external_id');
+
+        $cards = [];
+        foreach ($clean as $id) {
+            $listing = $listings->get($id);
+            if ($listing === null) {
+                continue;
+            }
+            $card = $this->listingCardPayload($listing, $locale, $listing->translations->first(), 'style6');
+            if ($card !== null) {
+                $cards[] = $card;
+            }
+        }
+
+        return $cards;
+    }
+
+    private function officeAlternates(int $officeId): array
+    {
+        $paths = CmsOfficeTranslation::query()
+            ->where('cms_office_id', $officeId)
+            ->get()
+            ->mapWithKeys(function (CmsOfficeTranslation $translation) {
+                $path = $translation->short_path !== '' ? $translation->short_path : $translation->url_path;
+
+                return [$translation->locale => $path];
+            })
+            ->all();
+
+        return $paths;
+    }
+
+    private function consultantAlternates(int $consultantId): array
+    {
+        return CmsConsultantTranslation::query()
+            ->where('cms_consultant_id', $consultantId)
+            ->pluck('url_path', 'locale')
+            ->all();
+    }
+
+    private function lastSegment(string $path): string
+    {
+        $parts = array_values(array_filter(explode('/', $path), static fn ($part) => $part !== ''));
+
+        return (string) ($parts[array_key_last($parts)] ?? '');
+    }
+
+    private function resourceUrl(string $kind, string $locale, ?string $id, string $slug): string
+    {
+        $template = config('site.corporate.'.$kind.'.detail.'.$locale);
+        if (! is_string($template) || $id === null || $id === '') {
+            return config('site.corporate.'.$kind.'.lists.'.$locale.'.0', '/'.$locale);
+        }
+
+        return str_replace(['{id}', '{slug}'], [$id, $slug !== '' ? $slug : $id], $template);
+    }
+
+    private function listingAlternates(int $listingId): array
+    {
+        return CmsListingTranslation::query()
+            ->where('cms_listing_id', $listingId)
             ->pluck('url_path', 'locale')
             ->all();
     }

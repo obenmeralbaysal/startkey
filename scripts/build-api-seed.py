@@ -32,28 +32,35 @@ def main():
             "translations": {lang: {"label": content[lang]["counters"][index]["label"]} for lang in LANGS},
         })
 
-    properties = []
-    for index, base in enumerate(content["tr"]["featured"]["properties"]):
-        properties.append({
-            "externalId": base["id"],
-            "image": base["image"],
-            "rooms": base["rooms"],
-            "area": base["area"],
-            "position": index + 1,
-            "translations": {
-                lang: {
-                    "urlPath": content[lang]["featured"]["properties"][index]["href"],
-                    "processType": content[lang]["featured"]["properties"][index]["processType"],
-                    "adSubType": content[lang]["featured"]["properties"][index]["adSubType"],
-                    "adType": content[lang]["featured"]["properties"][index]["adType"],
-                    "price": content[lang]["featured"]["properties"][index]["price"],
-                    "title": content[lang]["featured"]["properties"][index]["title"],
-                    "location": content[lang]["featured"]["properties"][index]["location"],
-                    "detailLabel": content[lang]["featured"]["properties"][index]["detailLabel"],
-                }
-                for lang in LANGS
-            },
-        })
+    properties_by_id = {}
+    for lang in LANGS:
+        for index, card in enumerate(content[lang]["featured"]["properties"]):
+            rec = properties_by_id.setdefault(card["id"], {
+                "externalId": card["id"],
+                "image": card["image"],
+                "rooms": card["rooms"] or "",
+                "area": card["area"] or "",
+                "position": index + 1,
+                "translations": {},
+            })
+            if lang == "tr":
+                rec["image"] = card["image"]
+                rec["rooms"] = card["rooms"] or ""
+                rec["area"] = card["area"] or ""
+                rec["position"] = index + 1
+            rec["translations"][lang] = {
+                "urlPath": card["href"],
+                "processType": card["processType"],
+                "adSubType": card["adSubType"],
+                "adType": card["adType"],
+                "price": card["price"],
+                "title": card["title"],
+                "location": card["location"],
+                "detailLabel": card["detailLabel"],
+                "isFeatured": True,
+                "featuredPosition": index + 1,
+            }
+    properties = sorted(properties_by_id.values(), key=lambda row: (row["position"], row["externalId"]))
 
     cities = []
     for index, base in enumerate(content["tr"]["cities"]["cards"]):

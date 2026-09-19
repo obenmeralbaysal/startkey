@@ -1,0 +1,19 @@
+# StartKey beside Sativer + ResidenceHero + Nginx Proxy Manager.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.behind-npm.yml up -d --build
+#
+# Does not publish 80, 443, 81, or 8080. NPM reaches startkey-web:3000 on
+# startkey-network. Guide: docs/SETUP_COLOCATED.md
+#
+# Never: docker compose down -v
+
+services:
+  nginx:
+    ports: !reset []
+
+  web:
+    ports: !reset []
+
+networks:
+  default:
+    name: startkey-network

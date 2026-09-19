@@ -12,6 +12,9 @@ class DatabaseSeeder extends Seeder
             ReferenceDataSeeder::class,
             CorporateDataSeeder::class,
             AcademyDataSeeder::class,
+            FooterDataSeeder::class,
+            PortfolioDataSeeder::class,
+            OfficesDataSeeder::class,
         ]);
     }
 }

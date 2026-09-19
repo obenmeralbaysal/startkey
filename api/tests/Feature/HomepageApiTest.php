@@ -55,4 +55,17 @@ class HomepageApiTest extends TestCase
             ->assertStatus(400)
             ->assertJsonPath('message', 'Desteklenmeyen dil.');
     }
+
+    public function test_it_returns_only_the_featured_set_for_each_locale(): void
+    {
+        $this->getJson('/api/v1/homepage?locale=tr')
+            ->assertOk()
+            ->assertJsonCount(1, 'data.featuredProperties')
+            ->assertJsonPath('data.featuredProperties.0.externalId', 479134);
+
+        $this->getJson('/api/v1/homepage?locale=en')
+            ->assertOk()
+            ->assertJsonCount(2, 'data.featuredProperties')
+            ->assertJsonPath('data.featuredProperties.1.externalId', 463056);
+    }
 }

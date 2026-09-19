@@ -53,14 +53,13 @@ class LookupController extends Controller
             ->orderBy('position');
 
         if ($definition['parent'] !== null) {
-            $parent = $request->query($definition['parent']);
-            $parent = is_string($parent) && $parent !== '' ? $parent : $definition['parent_fallback'];
+            $parentIds = $this->parentIds($request->query($definition['parent']), $definition['parent_fallback']);
 
-            if ($parent === null) {
+            if ($parentIds === []) {
                 return [];
             }
 
-            $query->where('parent_external_id', (string) $parent);
+            $query->whereIn('parent_external_id', $parentIds);
         }
 
         return $query->get()
@@ -95,5 +94,28 @@ class LookupController extends Controller
         }
 
         return mb_strtolower($value, 'UTF-8');
+    }
+
+    /**
+     * Dependent dropdowns on the listing filter send one parent id, or several
+     * `countyIds=` values when more than one county is selected.
+     *
+     * @return list<string>
+     */
+    private function parentIds(mixed $parent, mixed $fallback): array
+    {
+        $values = [];
+        if (is_array($parent)) {
+            $values = $parent;
+        } elseif (is_string($parent) && $parent !== '') {
+            $values = [$parent];
+        } elseif ($fallback !== null) {
+            $values = [(string) $fallback];
+        }
+
+        return array_values(array_filter(
+            array_map(static fn ($value) => is_scalar($value) ? (string) $value : '', $values),
+            static fn (string $value) => $value !== '',
+        ));
     }
 }

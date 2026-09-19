@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\LookupItem;
 use App\Models\PopularCity;
 use App\Models\Property;
+use App\Models\PropertyTranslation;
 use App\Models\SiteStat;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -63,14 +64,27 @@ class ReferenceDataSeeder extends Seeder
 
     private function seedProperties(array $properties): void
     {
+        Property::query()->update(['is_featured' => false]);
+        PropertyTranslation::query()->update([
+            'is_featured' => false,
+            'featured_position' => 0,
+        ]);
+
         foreach ($properties as $row) {
+            $featuredLocales = [];
+            foreach ($row['translations'] as $locale => $translation) {
+                if ($translation['isFeatured'] ?? false) {
+                    $featuredLocales[$locale] = (int) ($translation['featuredPosition'] ?? $row['position']);
+                }
+            }
+
             $property = Property::updateOrCreate(
                 ['external_id' => $row['externalId']],
                 [
                     'image' => $row['image'],
-                    'rooms' => $row['rooms'],
-                    'area' => $row['area'],
-                    'is_featured' => true,
+                    'rooms' => $row['rooms'] ?? '',
+                    'area' => $row['area'] ?? '',
+                    'is_featured' => $featuredLocales !== [],
                     'position' => $row['position'],
                 ],
             );
@@ -87,6 +101,8 @@ class ReferenceDataSeeder extends Seeder
                         'title' => $translation['title'],
                         'location' => $translation['location'],
                         'detail_label' => $translation['detailLabel'],
+                        'is_featured' => isset($featuredLocales[$locale]),
+                        'featured_position' => $featuredLocales[$locale] ?? 0,
                     ],
                 );
             }

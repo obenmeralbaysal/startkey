@@ -4,3 +4,11 @@ node_modules/
 vendor/
 scripts/.tools/node_modules/
 reference/screenshots/
+
+# Listing photos stay on disk / rsync. Do not `git add` or `git clean` this tree.
+# See docs/MEDIA.md.
+web/public/media/property/
+
+# Large seed dumps; API still reads them from disk. Copy with rsync, not Git.
+api/database/data/portfolio-seed.json
+api/database/data/offices-seed.json

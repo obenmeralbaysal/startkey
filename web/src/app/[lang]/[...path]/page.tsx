@@ -27,7 +27,7 @@ export async function generateMetadata({
   searchParams,
 }: {
   params: Promise<{ lang: string; path: string[] }>;
-  searchParams: Promise<{ pageIndex?: string; searchText?: string }>;
+  searchParams: Promise<{ pageIndex?: string; searchText?: string } & Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
   const { lang, path } = await params;
   const query = await searchParams;
@@ -39,7 +39,8 @@ export async function generateMetadata({
     lang,
     publicPath(lang, path),
     Number(query.pageIndex ?? 1) || 1,
-    query.searchText ?? "",
+    typeof query.searchText === "string" ? query.searchText : "",
+    query,
   );
   if (!data) {
     return {};
@@ -64,7 +65,7 @@ export default async function CorporateCatchAll({
   searchParams,
 }: {
   params: Promise<{ lang: string; path: string[] }>;
-  searchParams: Promise<{ pageIndex?: string; searchText?: string }>;
+  searchParams: Promise<{ pageIndex?: string; searchText?: string } & Record<string, string | string[] | undefined>>;
 }) {
   const { lang, path } = await params;
   const query = await searchParams;
@@ -78,7 +79,8 @@ export default async function CorporateCatchAll({
     locale,
     pathname,
     Number(query.pageIndex ?? 1) || 1,
-    query.searchText ?? "",
+    typeof query.searchText === "string" ? query.searchText : "",
+    query,
   );
 
   if (!data) {

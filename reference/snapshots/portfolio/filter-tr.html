@@ -1,0 +1,104 @@
+<form method="get" role="form" id="prop-filter" class="filter-widget" action="/tr/portfoy">
+                <input type="hidden" id="SortingType" name="SortingType" value="" />
+
+                <div b-w7lrpixmxx class="form-group">
+                    <input placeholder="Portf&#xF6;y Ad&#x131; Veya &#x130;d Giriniz" type="text" id="FilterDTO_Keyword" name="FilterDTO.Keyword" value="" />
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.Keyword" data-valmsg-replace="true"></span>
+                </div>
+
+
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1">Portf&#xF6;y Tipi</label>
+                    <select class=" select2" data-placeholder="Portföy Tipi" id="FilterDTO_AdTypeId" name="FilterDTO.AdTypeId"><option selected="selected" value="">Se&#xE7;iniz</option>
+<option value="1">Arsa</option>
+<option value="2">Konut</option>
+<option value="4">Ticari</option>
+<option value="6">Turistik Tesis</option>
+</select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.AdTypeId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1">Portf&#xF6;y Durumu</label>
+                    <select class=" bind-select2" data-placeholder="Portföy Durumu" bind-id="FilterDTO_AdTypeId" bind-query="adType" id="FilterDTO_ProcessTypeId" name="FilterDTO.ProcessTypeId" bind-url="/tr/lookup/ProcessTypes"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.ProcessTypeId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <div b-w7lrpixmxx class="row">
+                        <div b-w7lrpixmxx class="col-md-6 col-sm-12">
+                            <label b-w7lrpixmxx id="search-text-1">Min. Fiyat</label>
+                            <input placeholder="Min" type="text" id="FilterDTO_MinPrice" name="FilterDTO.MinPrice" value="" />
+                            <span class="field-validation-valid" data-valmsg-for="FilterDTO.MinPrice" data-valmsg-replace="true"></span>
+                        </div>
+                        <div b-w7lrpixmxx class="col-md-6 col-sm-12">
+                            <label b-w7lrpixmxx id="search-text-1">Max. Fiyat</label>
+                            <input placeholder="Max" type="text" id="FilterDTO_MaxPrice" name="FilterDTO.MaxPrice" value="" />
+                            <span class="field-validation-valid" data-valmsg-for="FilterDTO.MaxPrice" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1">Para Birimi</label>
+                    <select class="bind-select2" data-placeholder="Para Birimi" id="FilterDTO_CurrencyId" name="FilterDTO.CurrencyId" bind-url="/tr/lookup/Currencies"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.CurrencyId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group row">
+                    <div b-w7lrpixmxx class="col-md-6 col-sm-12">
+                        <label b-w7lrpixmxx id="search-text-1">Min. Br&#xFC;t m<sup b-w7lrpixmxx>2</sup></label>
+                        <input placeholder="Min m²" type="text" id="FilterDTO_MinCleanArea" name="FilterDTO.MinCleanArea" value="" />
+                        <span class="field-validation-valid" data-valmsg-for="FilterDTO.MinCleanArea" data-valmsg-replace="true"></span>
+                    </div>
+                    <div b-w7lrpixmxx class="col-md-6 col-sm-12">
+                        <label b-w7lrpixmxx id="search-text-1">Max. Br&#xFC;t m<sup b-w7lrpixmxx>2</sup></label>
+                        <input placeholder="Max m²" type="text" id="FilterDTO_MaxCleanArea" name="FilterDTO.MaxCleanArea" value="" />
+                        <span class="field-validation-valid" data-valmsg-for="FilterDTO.MaxCleanArea" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1" style="margin-top: 6%;">&#xDC;lke</label>
+                    <select class="bind-select2" id="FilterDTO_CountryId" name="FilterDTO.CountryId" bind-url="/tr/Lookup/EnteredCountries"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.CountryId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1" style="margin-top: 6%;">&#x130;l</label>
+                    <select class="bind-select2" bind-id="FilterDTO_CountryId" bind-query="countryId" id="FilterDTO_CityId" name="FilterDTO.CityId" bind-url="/tr/Lookup/EnteredCitiesByCountryId"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.CityId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1">&#x130;l&#xE7;e</label>
+                    <select class=" bind-select2" multiple="multiple" bind-id="FilterDTO_CityId" bind-query="cityId" id="FilterDTO_CountyIds" name="FilterDTO.CountyIds" bind-url="/tr/Lookup/Counties"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.CountyIds" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1">Mahalle / Semt</label>
+                    <select class=" bind-select2" multiple="multiple" bind-id="FilterDTO_CountyIds" bind-query="countyIds" id="FilterDTO_DistrictIds" name="FilterDTO.DistrictIds" bind-url="/tr/Lookup/Districts"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.DistrictIds" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1">Ofis</label>
+                    <select class="bind-select2" id="FilterDTO_OfficeId" name="FilterDTO.OfficeId" bind-url="/tr/Lookup/GetAllOffices"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.OfficeId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group">
+                    <label b-w7lrpixmxx id="search-text-1">Gayrimenkul Dan&#x131;&#x15F;man&#x131;</label>
+                    <select class=" bind-select2" bind-id="FilterDTO_OfficeId" bind-query="officeId" id="FilterDTO_UserId" name="FilterDTO.UserId" bind-url="/tr/Lookup/Users"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.UserId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group" style="display: none;">
+                    <label b-w7lrpixmxx id="search-text-1">Konut Tipi</label>
+                    <select class=" select2" id="FilterDTO_HousePropertyTypeId" name="FilterDTO.HousePropertyTypeId"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.HousePropertyTypeId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group " style="display: none;">
+                    <label b-w7lrpixmxx id="search-text-1-1">Ticari Tipi</label>
+                    <select class=" select2" id="FilterDTO_CommercialPropertyTypeId" name="FilterDTO.CommercialPropertyTypeId"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.CommercialPropertyTypeId" data-valmsg-replace="true"></span>
+                </div>
+                <div b-w7lrpixmxx class="form-group" style="display: none;">
+                    <label b-w7lrpixmxx id="search-text-1-1">Arsa Tipi</label>
+                    <select class=" select2" id="FilterDTO_LandPropertyTypeId" name="FilterDTO.LandPropertyTypeId"></select>
+                    <span class="text-danger field-validation-valid" data-valmsg-for="FilterDTO.LandPropertyTypeId" data-valmsg-replace="true"></span>
+                </div>
+                            <div b-w7lrpixmxx class="form-group">
+                    <button b-w7lrpixmxx class="btn style2 d-block w-100">Sizin &#x130;&#xE7;in Bulal&#x131;m</button>
+                            </div>
+                        </form>

@@ -16,6 +16,7 @@ declare global {
   interface Window {
     grecaptcha?: ReCaptcha;
     Odometer?: OdometerStatic;
+    scrollToForm?: () => void;
   }
 }
 

@@ -1,4 +1,29 @@
+## [2026-09-19]
+
+- **[Infra]**: Web imajı `public/media` içermez; klasör runtime’da bağlanır. Satıver/NPM yanı için `docker-compose.behind-npm.yml` host portu açmaz.
+- **[Docs]**: Canlı kurulum kılavuzları eklendi: boş VPS (`SETUP.md`), Satıver/ResidenceHero yanına (`SETUP_COLOCATED.md`), görsel/veri/imaj yolu (`MEDIA.md`).
+- **[Frontend]**: Akademi Eğitimler sol “Filtrele” formu (kategori/eğitmen) ve eğitim detayındaki “Yorumlar” puan özeti referanstan sayfaya gömüldü; filtre WordPress AJAX’ı yerine yerel `?term_id=` ve eğitmen sayfalarına gider.
+- **[Frontend]**: Ana sayfa sayaçları (84 / 720 / 1082 / 35), seminer şeridi (6) ve öne çıkan ilanlar canlı siteden yenilendi; EN/DE carouseller TR’den ayrı set gösteriyor.
+- **[Frontend]**: `/tr/sayfa/startkey`, `/en/page/startkey`, `/de/page/startkey` ve `/tr/sayfa/medyada-biz` statik sayfaları eklendi; EN haber “Media Us” ve EN/DE blog “General” kategorileri canlıdan alındı.
+- **[Backend]**: Portföy seed’i 721 ilana çıktı (482977 Şirinyer kiralık); öne çıkan ilanlar dile göre `property_translations.is_featured` ile tutuluyor.
+- **[Frontend]**: Akademi eksik public sayfaları eklendi: giriş/kayıt, eğitmenler ve profiller, eğitim kategorileri, blog yazıları, sepet/ödeme/kontrol paneli ve ders koruma ekranları.
+- **[Backend]**: Portföy, ofis ve danışman seed’leri referans sitedeki tam public listelerle güncellendi (720 ilan, 84 ofis, 1082 danışman; tr/en/de).
+- **[Frontend]**: Akademi Eğitimler arşivi (3 sayfa) ve 23 eğitim detayı `/akademi/egitimler/...` altında referans belgelerinden eklendi.
+- **[Frontend]**: startkeyakademi.net/akademi sayfası yerel `/akademi/akademi` altına vizyon/misyon, sayaçlar, geri bildirimler ve ekip kartlarıyla eklendi.
+- **[Bugfix]**: Akademi SSS sol sekme listesi (Genel, Ödeme, Geri Ödeme, Sipariş Verme, Destek) artık tıklanıyor ve hover alıyor; eksik Elementor nested-tabs JS’i eklendi.
+- **[Frontend]**: Akademi footer sayfaları (SSS, İletişim, KVKK, Kullanım Koşulları, Gizlilik, Geri Ödeme, Çerez) `/akademi/...` altında referans belgelerinden eklendi; footer e-posta ikonları korundu.
+- **[Bugfix]**: Danışman ve ofis listesinde arama sonrası seçili ofis/il filtresi artık ID yerine ofis veya şehir adını gösterir.
+- **[Bugfix]**: Akademi anasayfası LiteSpeed UCSS yerine `LSCWP_CTRL=before_optm` belgesi ve Elementor inline CSS ile yeniden çekildi; ızgara, boşluk ve görseller referansla hizalandı.
+- **[Frontend]**: Ofisler ve danışmanlar liste/detay şablonları üç dilde eklendi; kısa ofis slug’ları (`/1872`), id/slug yolları, filtreler ve ofis ekibi kartları referans markup ile çalışır.
+- **[Backend]**: `cms_offices` / `cms_consultants` CRM şablon tabloları ve `/api/v1/consultants/{id}/comments` (captcha + dakikada 5 istek) eklendi.
+- **[Frontend]**: startkeyakademi.net anasayfası yerel `/akademi` altına, kurumsal layout’tan ayrı WordPress markup ve lokal asset’lerle eklendi. Alt yollar `/akademi/...` olarak map edilir; Çevrimiçi Eğitimler artık bu adresi açar.
+
 ## [2026-09-17]
+
+- **[Frontend]**: Portföylerimiz liste ve ilan detay sayfaları üç dilde paylaşılan dinamik şablonlarla eklendi; sol filtre, sıralama, galeri, danışman kartı ve ofis/danışman URL mimarisi referans markup ile çalışır.
+- **[Backend]**: `cms_listings` CRM şablon tabloları, filtre/sıralama çözümlemesi ve `/api/v1/listings/{id}/inquiries` (captcha + dakikada 5 istek) eklendi; referanstan 68 ilanlık örneklem üç dilde seed edilir.
+- **[Frontend]**: Footer’daki Franchise başvuru, KVKK ve Hizmet Sözleşmesi sayfaları üç dilde (KVKK yalnızca TR) referans markup ile eklendi; footer linkleri Portföy ve Ofis dışında çalışır.
+- **[Backend]**: Franchise formu `cms_pages` payload’ı, KVKK/Hizmet Sözleşmesi CMS satırları ve `/api/v1/franchise/applications` (captcha + dakikada 5 istek) eklendi.
 
 - **[Bugfix]**: Tamamlanan eğitim detayında referanstaki gibi ön başvuru formu gizlendi; form yalnızca devam eden seminerlerde duruyor.
 - **[Bugfix]**: İletişim haritası Google embed adresindeki `&#39;` entity yüzünden boş kalıyordu; kesme işareti çözülerek harita yeniden yüklenebilir hale getirildi.

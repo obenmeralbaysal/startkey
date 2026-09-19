@@ -17,6 +17,7 @@ class ReferenceHtml
 
         $html = preg_replace('#https?://ik\.imagekit\.io/reoscom/*(?:tr:[^/]*/)?#', '/media/', $html) ?? $html;
         $html = preg_replace('#https?://cdnc\.re-os\.com/#', '/media/', $html) ?? $html;
+        $html = preg_replace('#https?://reos-cdn-files\.s3-eu-west-1\.amazonaws\.com/#', '/media/', $html) ?? $html;
         $html = preg_replace('#https?://(?:www\.)?startkey\.com\.tr#', '', $html) ?? $html;
         $html = str_replace('/media//', '/media/', $html);
         $html = preg_replace('#\?width=[^"\'\s>]*#', '', $html) ?? $html;

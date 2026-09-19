@@ -18,6 +18,11 @@ const LOOKUP_ENDPOINTS = [
   "EnteredOfficeCitiesByCountryId",
   "EnteredConsultantCountries",
   "EnteredConsultantCitiesByCountryId",
+  "Currencies",
+  "GetAllOffices",
+  "Users",
+  "Districts",
+  "Cities",
 ];
 
 const nextConfig: NextConfig = {

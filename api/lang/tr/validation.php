@@ -20,5 +20,8 @@ return [
         'subject' => 'Konu',
         'message' => 'Mesaj',
         'gender_id' => 'Cinsiyet',
+        'city_id' => 'Şehir',
+        'county_id' => 'İlçe',
+        'notes' => 'Not',
     ],
 ];

@@ -25,7 +25,7 @@ class CorporateController extends Controller
         $pageIndex = (int) $request->query('pageIndex', 1);
         $searchText = trim((string) $request->query('searchText', ''));
 
-        $payload = $this->resolver->resolve($locale, $path, $pageIndex, $searchText);
+        $payload = $this->resolver->resolve($locale, $path, $pageIndex, $searchText, $this->listingFilters($request));
 
         if ($payload === null) {
             return response()->json(['message' => 'Not Found'], 404);
@@ -48,5 +48,19 @@ class CorporateController extends Controller
                 'urlPath' => $this->resolver->alternatePath($path, $locale),
             ],
         ]);
+    }
+
+    /**
+     * Query keys the listing filter form posts, forwarded so the shared template
+     * can filter/sort the CMS rows the same way the reference GET form does.
+     *
+     * @return array<string, mixed>
+     */
+    private function listingFilters(Request $request): array
+    {
+        $query = $request->query();
+        unset($query['locale'], $query['path'], $query['pageIndex'], $query['searchText']);
+
+        return is_array($query) ? $query : [];
     }
 }

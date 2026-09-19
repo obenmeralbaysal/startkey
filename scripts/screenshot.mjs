@@ -36,6 +36,8 @@ for (const viewport of VIEWPORTS) {
 
   await page.route("**://www.googletagmanager.com/**", (route) => route.abort());
   await page.goto(url, { waitUntil: "load", timeout: 60000 });
+  // LiteSpeed (academy) keeps JS delayed until a user gesture.
+  await page.mouse.move(12, 12);
 
   // Scroll through the page so the scroll-triggered animations and lazy images run,
   // then return to the top before capturing.

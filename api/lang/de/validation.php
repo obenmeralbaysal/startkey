@@ -20,5 +20,8 @@ return [
         'subject' => 'Betreff',
         'message' => 'Nachricht',
         'gender_id' => 'Geschlecht',
+        'city_id' => 'Stadt',
+        'county_id' => 'Landkreis',
+        'notes' => 'Notizen',
     ],
 ];

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\PopularCity;
-use App\Models\Property;
+use App\Models\PropertyTranslation;
 use App\Models\SiteStat;
 use App\Support\Locale;
 use Illuminate\Http\JsonResponse;
@@ -46,27 +46,28 @@ class HomepageController extends Controller
 
     private function featuredProperties(string $locale): array
     {
-        return Property::query()
-            ->featured()
-            ->with(['translations' => fn ($query) => $query->where('locale', $locale)])
-            ->orderBy('position')
+        return PropertyTranslation::query()
+            ->where('locale', $locale)
+            ->where('is_featured', true)
+            ->with('property')
+            ->orderBy('featured_position')
             ->get()
-            ->map(function (Property $property) {
-                $translation = $property->translations->first();
+            ->map(function (PropertyTranslation $translation) {
+                $property = $translation->property;
 
                 return [
-                    'externalId' => $property->external_id,
-                    'urlPath' => $translation?->url_path ?? '',
-                    'image' => $property->image,
-                    'processType' => $translation?->process_type ?? '',
-                    'adSubType' => $translation?->ad_sub_type ?? '',
-                    'adType' => $translation?->ad_type ?? '',
-                    'price' => $translation?->price ?? '',
-                    'title' => $translation?->title ?? '',
-                    'location' => $translation?->location ?? '',
-                    'rooms' => $property->rooms,
-                    'area' => $property->area,
-                    'detailLabel' => $translation?->detail_label ?? '',
+                    'externalId' => $property?->external_id,
+                    'urlPath' => $translation->url_path,
+                    'image' => $property?->image ?? '',
+                    'processType' => $translation->process_type,
+                    'adSubType' => $translation->ad_sub_type,
+                    'adType' => $translation->ad_type,
+                    'price' => $translation->price,
+                    'title' => $translation->title,
+                    'location' => $translation->location,
+                    'rooms' => $property?->rooms ?? '',
+                    'area' => $property?->area ?? '',
+                    'detailLabel' => $translation->detail_label,
                 ];
             })
             ->all();

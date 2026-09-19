@@ -47,6 +47,8 @@ trait SeedsHomepageFixtures
                 'title' => 'Soğucak Mahallesi',
                 'location' => 'Aydın , Kuşadası',
                 'detail_label' => 'Detay',
+                'is_featured' => true,
+                'featured_position' => 1,
             ],
             [
                 'locale' => 'en',
@@ -58,6 +60,8 @@ trait SeedsHomepageFixtures
                 'title' => 'Sogucak District',
                 'location' => 'Aydin , Kusadasi',
                 'detail_label' => 'Detail',
+                'is_featured' => true,
+                'featured_position' => 1,
             ],
             [
                 'locale' => 'de',
@@ -69,7 +73,31 @@ trait SeedsHomepageFixtures
                 'title' => 'Sogucak Viertel',
                 'location' => 'Aydin , Kusadasi',
                 'detail_label' => 'Detail',
+                'is_featured' => true,
+                'featured_position' => 1,
             ],
+        ]);
+
+        $englishOnly = Property::query()->create([
+            'external_id' => 463056,
+            'image' => 'property-en.jpg',
+            'rooms' => '4+1',
+            'area' => '160 m²',
+            'is_featured' => true,
+            'position' => 2,
+        ]);
+        $englishOnly->translations()->create([
+            'locale' => 'en',
+            'url_path' => '/en/property/463056',
+            'process_type' => 'For Sale',
+            'ad_sub_type' => 'Apartment',
+            'ad_type' => 'House',
+            'price' => '$ 177,621',
+            'title' => 'Kadınlar Denizi',
+            'location' => 'Aydın , Kuşadası',
+            'detail_label' => 'Detail',
+            'is_featured' => true,
+            'featured_position' => 2,
         ]);
 
         $city = PopularCity::query()->create([

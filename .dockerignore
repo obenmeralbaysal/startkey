@@ -1,0 +1,14 @@
+.git
+.env
+**/.env
+**/node_modules
+**/.next
+api/vendor
+reference
+scripts
+docs
+
+# Photos live on the host and are bind-mounted at runtime (docs/MEDIA.md).
+# Leaving them out of the build context keeps the image small and avoids
+# a second copy that can fill the disk.
+web/public/media

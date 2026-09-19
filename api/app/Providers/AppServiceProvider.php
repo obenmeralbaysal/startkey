@@ -35,5 +35,17 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('training-application', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
+
+        RateLimiter::for('franchise-application', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
+
+        RateLimiter::for('listing-inquiry', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
+
+        RateLimiter::for('consultant-comment', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }

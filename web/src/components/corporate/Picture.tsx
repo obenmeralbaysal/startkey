@@ -1,4 +1,4 @@
-import { createElement, type ReactNode } from "react";
+import { createElement, type CSSProperties, type ReactNode } from "react";
 
 /**
  * The reference markup puts width/height on `<picture>` as well as on `<img>`.
@@ -9,12 +9,14 @@ export function Picture({
   className,
   width,
   height,
+  style,
   children,
 }: {
   className?: string;
   width?: number;
   height?: number;
+  style?: CSSProperties;
   children: ReactNode;
 }) {
-  return createElement("picture", { className, width, height }, children);
+  return createElement("picture", { className, width, height, style }, children);
 }

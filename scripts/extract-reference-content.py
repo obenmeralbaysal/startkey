@@ -161,7 +161,7 @@ def property_cards(page):
     region = page[page.find('id="propcarousel"'):]
     region = region[:region.find('<section class="about-wrap style1')]
     cards = []
-    for chunk in re.split(r'<div b-rfdk5kq1gn class="property-card style6">', region)[1:]:
+    for chunk in re.split(r'<div[^>]*class="property-card style6">', region)[1:]:
         def g(pattern, group=1):
             return find_one(pattern, chunk, group)
 
@@ -175,8 +175,8 @@ def property_cards(page):
             "price": collapse(unescape(g(r'class="property-price">\s*([^<]+)<'))),
             "title": collapse(unescape(g(r'class="prop-title">\s*<a[^>]*>([^<]+)<'))),
             "location": collapse(unescape(g(r'flaticon-location">\s*</i>([^<]*?)</p>'))),
-            "rooms": collapse(unescape(g(r'flaticon-double-bed">\s*</i>\s*([^<\s]+)'))),
-            "area": collapse(unescape(g(r'flaticon-square">\s*</i>\s*([^<]+)'))),
+            "rooms": collapse(unescape(g(r'flaticon-double-bed">\s*</i>\s*([^<\s]+)'))) or "",
+            "area": collapse(unescape(g(r'flaticon-square">\s*</i>\s*([^<]+)'))) or "",
             "detailLabel": collapse(unescape(g(r'class="btn style2"[^>]*>\s*([^<]+)<'))),
         })
     return cards
@@ -186,7 +186,7 @@ def counters(page):
     region = page[page.find('class="counter-area'):]
     region = region[:region.find("<!-- Counter Section End -->")]
     out = []
-    for chunk in re.split(r'<div b-6c8bwhshlo class="counter-card">', region)[1:]:
+    for chunk in re.split(r'<div[^>]*class="counter-card">', region)[1:]:
         icon = find_one(r'<img src="/themes/fela/img/(counter-\d\.png)"', chunk)
         if icon:
             icon_path = f"/themes/fela/img/{icon}"
@@ -466,10 +466,21 @@ def critical_css():
     return unique.pop()
 
 
+def keep_local_academy(data):
+    """The project serves startkeyakademi.net under /akademi. Live nav still points at the remote host."""
+    for item in data.get("nav") or []:
+        if "akademi.net" in (item.get("href") or ""):
+            item["href"] = "/akademi"
+        for child in item.get("children") or []:
+            if "akademi.net" in (child.get("href") or ""):
+                child["href"] = "/akademi"
+
+
 def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for lang in LANGS:
         data = extract(lang)
+        keep_local_academy(data)
         target = OUT_DIR / f"homepage.{lang}.json"
         target.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"wrote {target.relative_to(ROOT)}")

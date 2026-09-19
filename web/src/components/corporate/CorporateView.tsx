@@ -1,7 +1,14 @@
 import { ArticleDetail } from "@/components/corporate/ArticleDetail";
 import { ArticleList } from "@/components/corporate/ArticleList";
+import { ConsultantDetail } from "@/components/corporate/ConsultantDetail";
+import { ConsultantList } from "@/components/corporate/ConsultantList";
 import { ContactPage } from "@/components/corporate/ContactPage";
+import { FranchisePage } from "@/components/corporate/FranchisePage";
+import { OfficeDetail } from "@/components/corporate/OfficeDetail";
+import { OfficeList } from "@/components/corporate/OfficeList";
 import { PeopleList, PersonDetail } from "@/components/corporate/People";
+import { PropertyDetail } from "@/components/corporate/PropertyDetail";
+import { PropertyList } from "@/components/corporate/PropertyList";
 import { ChampionsPage, CmsPage } from "@/components/corporate/StaticPages";
 import { TrainingDetail } from "@/components/corporate/TrainingDetail";
 import { TrainingList } from "@/components/corporate/TrainingList";
@@ -26,6 +33,9 @@ export function CorporateView({
     case "cms-page":
       inner = <CmsPage data={data} />;
       break;
+    case "franchise":
+      inner = <FranchisePage data={data} locale={locale} />;
+      break;
     case "article-list":
       inner = <ArticleList data={data} />;
       break;
@@ -46,6 +56,24 @@ export function CorporateView({
       break;
     case "training-detail":
       inner = <TrainingDetail data={data} locale={locale} />;
+      break;
+    case "listing-list":
+      inner = <PropertyList data={data} />;
+      break;
+    case "listing-detail":
+      inner = <PropertyDetail data={data} locale={locale} />;
+      break;
+    case "office-list":
+      inner = <OfficeList data={data} />;
+      break;
+    case "office-detail":
+      inner = <OfficeDetail data={data} />;
+      break;
+    case "consultant-list":
+      inner = <ConsultantList data={data} />;
+      break;
+    case "consultant-detail":
+      inner = <ConsultantDetail data={data} locale={locale} />;
       break;
     default:
       inner = null;
