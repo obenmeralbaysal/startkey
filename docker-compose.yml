@@ -64,7 +64,7 @@ services:
     volumes:
       - ./api:/var/www/html
     healthcheck:
-      test: ["CMD-SHELL", "nc -z 127.0.0.1 9000"]
+      test: ["CMD-SHELL", "pgrep php-fpm >/dev/null"]
       interval: 5s
       timeout: 5s
       retries: 30
