@@ -313,10 +313,17 @@ cd ~/startkey
 git pull
 # .env içine FORCE_DB_SEED= ekle (boş). 1 yazma.
 
-# 4) API’yi recreate ETME. Nginx + web’i bağla.
+# 4) API’yi recreate ETME (seed yeniden çalışır). Nginx + web.
 $SK up -d --no-deps nginx web
 
+# Nginx Restarting + inspect’te startkey_default varsa eski konteyner
+# `api` hostunu çözemez. Yalnız nginx’i overlay ağına al:
+$SK up -d --no-deps --force-recreate nginx
+# veya: docker network connect startkey-network startkey-nginx-1 && docker start startkey-nginx-1
+
 # 5) Hepsi startkey-network’te mi? (NPM dahil)
+docker inspect startkey-api-1 startkey-nginx-1 startkey-web-1 \
+  --format '{{.Name}} {{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}'
 docker network inspect startkey-network --format '{{range .Containers}}{{.Name}} {{end}}'
 ```
 

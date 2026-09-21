@@ -1,5 +1,6 @@
 ## [2026-09-21]
 
+- **[Bugfix]**: Akademi `/akademi/egitimler` (ve sayfa 2–3 + kategori arşivleri) soldaki Filtrele formunu WordPress REST iskeleti yerine gömülü kategori/eğitmen listesiyle gösteriyor.
 - **[Infra]**: API, `cms_listings` doluysa seed atlar; healthcheck `pgrep php-fpm`; nginx `service_started` bekler. Canlı `up` artık ağı silmez, tam seed yüzünden takılmaz.
 - **[Infra]**: API healthcheck `start_period` 10 dakikaya çıktı; canlıda tam seed 2 dakikayı aşınca `unhealthy` olmuyor.
 - **[Infra]**: NPM’in bağlı olduğu `startkey-network` overlay’de `external` oldu; `compose up/down` ağı silmeye çalışmaz.
