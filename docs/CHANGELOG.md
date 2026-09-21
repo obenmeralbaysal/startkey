@@ -1,5 +1,6 @@
 ## [2026-09-21]
 
+- **[Infra]**: API healthcheck `start_period` 10 dakikaya çıktı; canlıda tam seed 2 dakikayı aşınca `unhealthy` olmuyor.
 - **[Infra]**: NPM’in bağlı olduğu `startkey-network` overlay’de `external` oldu; `compose up/down` ağı silmeye çalışmaz.
 - **[Frontend]**: Kurumsal ve Akademi `robots.txt`, `sitemap.xml` / `sitemap_index.xml`, `llms.txt` ve 404/500 hata sayfaları eklendi. Kurumsal 404 Fela `error-wrap` ile TR Akademi metnini kullanır; Akademi bilinmeyen yollar referanstaki `404-hata-2` belgesini HTTP 404 olarak döner.
 - **[Frontend]**: Header/footer CRM yazısı Portal oldu; tıklanınca ReOS giriş ekranının yerel kopyası (`/portal`, tr/en/az/ru) açılıyor.

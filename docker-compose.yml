@@ -68,7 +68,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
-      start_period: 120s
+      # Full office/consultant/listing seed exceeds 2 minutes on a cold start.
+      start_period: 600s
     restart: unless-stopped
 
   nginx:
