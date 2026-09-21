@@ -22,21 +22,21 @@ Seed verisi Reonix'ten gelen canlı portföy, ofis, şehir ve lookup verileri il
 
 **Durum:** Açık
 
-### TD-002 — Reonix CRM giriş noktası boş
+### TD-002 — Portal girişi henüz gerçek kimlik doğrulamaya bağlı değil
 
-**Alan:** Header / Footer
+**Alan:** Header / Footer / Portal
 
 **Mevcut Durum:**
 
-Referans sitedeki ReOS CRM butonları proje kararı gereği Reonix olarak gösterilir. `NEXT_PUBLIC_REONIX_URL` boş olduğu için butonlar hedefi olmayan bir dış bağlantı olarak kalır.
+Referans sitedeki ReOS CRM butonları artık **Portal** olarak gösterilir ve `/portal` (ReOS giriş ekranının yerel kopyası) açılır. Form, dil seçici ve şifre göster/gizle çalışır; gönderim, Google ve Office 365 gerçek CRM oturumu açmaz. “Şifremi Unuttum” yalnızca görsel bağlantıdır.
 
 **Geçici Olmasının Nedeni:**
 
-Reonix giriş adresi henüz tanımlı değildir.
+Portal / Reonix kimlik doğrulama backend’i henüz tanımlı değildir.
 
 **Gelecekteki Implementasyon:**
 
-`.env` içindeki `NEXT_PUBLIC_REONIX_URL` gerçek Reonix adresine set edilecek; butonlar o adresi açacaktır.
+Giriş, unutulan şifre, Google ve Office 365 nihai Portal / Reonix kimlik doğrulamasına bağlanacak.
 
 **Durum:** Açık
 
@@ -227,9 +227,9 @@ Aynı şablonlar değişmeden Reonix veya Superadmin’in yazacağı `cms_listin
 
 **Mevcut Durum:**
 
-`startkey.com.tr/akademi` = `startkeyakademi.net/`. Bu bir WordPress kurulumu değildir; kurumsal site Next.js + Laravel’dir. Akademi, referans LMS’in (WordPress + LearnPress) public HTML anlık görüntüsüdür. Anasayfa, Akademi, Eğitimler (3 sayfa + 23 detay + kategori/term filtre sayfaları), giriş/kayıt, eğitmenler + profiller, 7 kategori, 3 blog yazısı + makale arşivi, sepet/ödeme/kontrol paneli, ders `egitim-erisimi` koruma ekranları ve footer hukuki sayfalar LiteSpeed UCSS’siz belgelerden lokal asset’lerle sunulur. Kurumsal header/footer/tema kullanılmaz. Alt yollar `/akademi` altına map edilir. Referansta EN/DE yoktur; çeviri yazılmadı.
+`startkey.com.tr/akademi` = `startkeyakademi.net/`. Bu bir WordPress kurulumu değildir; kurumsal site Next.js + Laravel’dir. Akademi, referans LMS’in (WordPress + LearnPress) public HTML anlık görüntüsüdür. Anasayfa, Akademi, Eğitimler (3 sayfa + 23 detay + kategori/term filtre sayfaları), giriş/kayıt, eğitmenler + profiller, 7 kategori, 3 blog yazısı + makale arşivi, sepet/ödeme/kontrol paneli, ders `egitim-erisimi` koruma ekranları, referanstaki `404-hata-2` sayfası (bilinmeyen `/akademi/...` yollarında HTTP 404 gövdesi) ve footer hukuki sayfalar LiteSpeed UCSS’siz belgelerden lokal asset’lerle sunulur. Kurumsal header/footer/tema kullanılmaz. Alt yollar `/akademi` altına map edilir. Referansta EN/DE yoktur; çeviri yazılmadı.
 
-Eğitimler sol “Filtrele” formu ve eğitim detayındaki “Yorumlar” puan özeti referanstan HTML olarak gömülüdür; WordPress REST’e gitmez. Filtre Uygula, çekilmiş `?term_id=` sayfalarına gider; tek eğitmen seçimi ilgili `/akademi/egitmen/{slug}/` profiline gider. Referanstaki 23 eğitimin tamamında canlı yorum yoktur (0.0 / boş liste); bu yüzden yorum metni görünmez. Yeni yorum yazma, giriş, sepet, ödeme, “Sepete Ekle”, iletişim/abone ve wishlist WordPress’e post etmez. Ders sayfaları referanstaki koruma metnini gösterir (“giriş yapın ya da kayıt olun”); gerçek video LMS oturumu olmadan açılmaz. Recaptcha / Cloudflare / gtag çıkarılmıştır. LiteSpeed gecikmeli JS DOMContentLoaded’da zorlanır. SSS nested-tabs chunk HTML içine gömülür. `mockup-home-300x300.webp` ve `learnpress/images/icons/ico-ai.svg` referansta HTML döndüğü için indirilmedi. `global.min.js` referansta 0 bayttır. Kurs tanıtım Vimeo’su startkeyakademi.net dışındaki host’ta 403 verebilir. Akademi daha sonra bu projeden ayrılacaktır.
+Eğitimler sol “Filtrele” formu ve eğitim detayındaki “Yorumlar” puan özeti referanstan HTML olarak gömülüdür; WordPress REST’e gitmez. Yorumlar, çekim anında `lp-ajax-handle` yanıtından (`0.0` / boş liste) sayfaya yazılır; yeni yorum sonradan gelmez. Filtre Uygula, çekilmiş `?term_id=` sayfalarına gider; tek eğitmen seçimi ilgili `/akademi/egitmen/{slug}/` profiline gider. Yeni yorum yazma, giriş, sepet, ödeme, “Sepete Ekle”, iletişim/abone ve wishlist WordPress’e post etmez. Ders sayfaları referanstaki koruma metnini gösterir (“giriş yapın ya da kayıt olun”); gerçek video LMS oturumu olmadan açılmaz. Recaptcha / Cloudflare / gtag çıkarılmıştır. LiteSpeed gecikmeli JS DOMContentLoaded’da zorlanır. SSS nested-tabs chunk HTML içine gömülür. Eğitim detayında Elementor `elementor-invisible` animasyonu kaldırılır ve kit 26315 sağ kolon (Sepete Ekle) görünür tutulur; referanstaki gibi kaydırınca sayfayla gider, yapışmaz. Kolon genişlikleri Elementor `--width:67%/33%` değeridir. `mockup-home-300x300.webp` ve `learnpress/images/icons/ico-ai.svg` referansta HTML döndüğü için indirilmedi. `global.min.js` referansta 0 bayttır. Kurs tanıtım Vimeo’su startkeyakademi.net dışındaki host’ta 403 verebilir. Akademi daha sonra bu projeden ayrılacaktır.
 
 **Geçici Olmasının Nedeni:**
 
@@ -258,3 +258,40 @@ Nihai veri kaynağı Reonix olacaktır. Seed, canlı listenin anlık kopyasıdı
 Aynı `cms_offices` / `cms_consultants` tabloları Reonix veya Superadmin ile doldurulacak; şablonlar değişmeden tam detay ve gerçek portföyleri gösterecektir.
 
 **Durum:** Açık
+
+### TD-014 — Danışman detayı Figma taslağı dummy yıl istatistikleri ve ortak sosyal linkler kullanıyor
+
+**Alan:** Frontend / Danışman detay
+
+**Mevcut Durum:**
+
+Danışman detayının varsayılan görünümü Figma taslağına yakın yeni şablondur (`ConsultantDetailDraft`). `2025 Yılı:`, ciro etiketi `Ciro (TL)` + mock `186.400.000` (mobilde `186,4 Mn`) ve işlem yalnızca sayı (`64`) her danışmanda aynıdır; frontend’de sabittir, veritabanına yazılmaz. Kulüp altında gerçek kulüp alanı yerine navbar’daki renkli Startkey PNG logosu durur. Facebook / X / Instagram ikonları Startkey kurumsal hesaplarına gider. Hakkımda / Portföyler / Yorumlar alt blokları orijinal şablon markup’ını kullanır. Eski referans şablon `ConsultantDetail.tsx` ve seed değişmeden `?layout=classic` ile açılır. Yeni etiketlerin EN/DE karşılıkları referanstan alınmamıştır; düz karşılıklardır.
+
+**Geçici Olmasının Nedeni:**
+
+Ciro, işlem ve kulüp Reonix’ten kişiye özel gelmiyor. Kulübün iş anlamı henüz net değil. Sosyal hesaplar danışmana özel değil.
+
+**Gelecekteki Implementasyon:**
+
+Yıl istatistikleri ve kulüp Reonix veya Superadmin’den danışmana özel gelecek. Sosyal ikonlar danışmanın kendi hesaplarına bağlanacak. `layout=classic` geçişi, eski şablon artık gerekmeyince kalkacak.
+
+**Durum:** Açık
+
+### TD-015 — Kurumsal ve Akademi SEO / hata sayfaları canlı siteden birebir kopya değil
+
+**Alan:** Frontend / SEO / hata sayfaları
+
+**Mevcut Durum:**
+
+`/robots.txt`, `/sitemap.xml`, `/llms.txt` ve `/akademi` altındaki eşdeğerleri (robots, `sitemap_index.xml` + çocuk urlset’ler, `llms.txt`) yerel origin ile üretilir. Kurumsal sitemap, canlı `startkey.com.tr/sitemap.xml` içindeki 274 yolun anlık kopyasıdır; veritabanından üretilmez. Canlı Startkey `/llms.txt` aslında ana sayfa HTML’idir; yerelde ana sayfa SSS ve nav metinlerinden gerçek bir `text/plain` llms dosyası yazıldı. Akademi `llms.txt` canlı metnin aynısıdır; URL’ler `/akademi/...` karşılıklarına çevrildi (`kurs-kategorisi` → `egitim-kategorisi`, `kurslar` → `egitimler`, `hakkimizda` → `akademi`). Akademi robots kuralları canlı Woo/WP şeklindedir (`add-to-cart`, `wp-admin`, wc-logs) ama `thim_elementor_kit` sitemap’i yoktur; index yalnızca gerçekten sunduğumuz sayfa/kurs/yazı/kategori yollarını listeler. Canlı Startkey bilinmeyen URL’yi 302 ile ana sayfaya alır; yerelde Fela `.error-wrap` 404 vardır. TR 404 cümlesi Akademi `404-hata-2` metnidir. Canlıda EN/DE 404 sayfası olmadığı için o dillerde gövde cümlesi yazılmadı (yalnızca `404` + Home/Startseite). 500 sayfaları referansta yok; tema iskeleti + `500` + ana sayfa linki.
+
+**Geçici Olmasının Nedeni:**
+
+Canlı kurumsal sitede gerçek 404 ve gerçek llms.txt yok. Sitemap yolları Reonix/CMS’ten değil referans anlık görüntüsünden geliyor. Akademi hâlâ WP anlık görüntüsü; Rank Math’in ürettiği tüm WP yolları burada yok.
+
+**Gelecekteki Implementasyon:**
+
+Sitemap yerel CMS / Reonix’ten üretilecek. EN/DE 404 metni referansta belirdiğinde alınacak. Akademi ayrıldığında kendi robots/sitemap/llms’i o uygulamaya taşınacak.
+
+**Durum:** Açık
+

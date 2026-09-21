@@ -11,6 +11,7 @@ Set PAGES=sss,iletisim to fetch only those slugs (default: all known pages).
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
@@ -98,6 +99,7 @@ PAGES = (
     ("sepet", "/sepet/", "pages/sepet.html"),
     ("odeme", "/odeme/", "pages/odeme.html"),
     ("kontrol-paneli", "/kontrol-paneli/", "pages/kontrol-paneli.html"),
+    ("404-hata-2", "/404-hata-2/", "pages/404-hata-2.html"),
     ("category-egitim-makaleleri", "/category/egitim-makaleleri/", "pages/category/egitim-makaleleri.html"),
     ("blog-esnek", "/esnek-egitim-modeliyle-gelecegi-sekillendirin/", "pages/esnek-egitim-modeliyle-gelecegi-sekillendirin.html"),
     ("blog-farkli", "/farkli-egitimler-ile-kariyerinizde-fark-yaratin/", "pages/farkli-egitimler-ile-kariyerinizde-fark-yaratin.html"),
@@ -609,12 +611,163 @@ def rewrite_html(html: str) -> str:
         extras += "".join(f'<link rel="stylesheet" href="{href}">' for href in FULL_CSS_HREFS)
     html = html.replace("</head>", extras + "</head>")
     html = inject_elementor_chunks(html)
+    html = embed_course_reviews(html)
+    html = fix_course_single_layout(html)
     html = re.sub(
         r"/akademi/egitimler/(?:&|\?)paged=(\d+)",
         r"/akademi/egitimler/page/\1/",
         html,
     )
     return html
+
+
+def fix_course_single_layout(html: str) -> str:
+    """Course kit 26315 keeps the purchase card in a right column.
+
+    Elementor leaves `.elementor-invisible` on the sidebar until the slide-up
+    animation JS runs. Locally that JS often never fires, so Sepete Ekle sits
+    in the left column. Reveal the sidebar. Do not pin it: on the reference
+    the card scrolls away with the page. Do not override 67%/33% `--width`
+    (that shrinks the intro video).
+    """
+    if "single-lp_course" not in html and "sticky-sidebar" not in html:
+        return html
+
+    html = html.replace(" elementor-invisible", "")
+    html = html.replace('class="elementor-invisible ', 'class="')
+    html = re.sub(
+        r'<style data-startkey-akademi-course-layout="1">.*?</style>',
+        "",
+        html,
+        flags=re.S,
+    )
+    html = re.sub(
+        r'<script data-startkey-akademi-sticky="1">.*?</script>',
+        "",
+        html,
+        flags=re.S,
+    )
+    css = (
+        '<style data-startkey-akademi-course-layout="1">'
+        "@media (min-width:993px){"
+        ".elementor-26315 .elementor-element-ce579b2.e-con,"
+        ".elementor-26315 .elementor-element-ce579b2 > .e-con-inner{"
+        "display:flex!important;flex-direction:row!important;"
+        "flex-wrap:nowrap!important;}"
+        ".elementor-26315 .elementor-element-ccd39ba,"
+        ".elementor-26315 .elementor-element-2496216{"
+        "visibility:visible!important;opacity:1!important;"
+        "transform:none!important;animation:none!important;}"
+        ".elementor-26315 .elementor-element-f237c2b,"
+        ".elementor-26315 .elementor-element-ccd39ba.theiaStickySidebar{"
+        "position:static!important;top:auto!important;left:auto!important;}"
+        ".elementor-26315 .elementor-hidden-desktop,"
+        ".elementor-element-649a84e.elementor-hidden-desktop{display:none!important;}"
+        "}"
+        "@media (max-width:992px){"
+        ".elementor-26315 .elementor-element-ce579b2.e-con,"
+        ".elementor-26315 .elementor-element-ce579b2 > .e-con-inner{"
+        "flex-direction:column!important;}"
+        "}"
+        "</style>"
+    )
+    return html.replace("</head>", css + "</head>")
+
+
+LP_AJAX_CACHE: dict[str, str] = {}
+
+
+def fetch_lp_ajax_fragment(html: str, id_url: str) -> str:
+    """LearnPress loads Yorumlar after paint via /lp-ajax-handle. Snapshot that HTML."""
+    nonce_m = re.search(r'"nonce":"([a-f0-9]+)"', html)
+    send_m = re.search(
+        rf'data-send="(\{{[^"]+{re.escape(id_url)}[^"]+\}})"',
+        html,
+    )
+    if not nonce_m or not send_m:
+        return ""
+    try:
+        send = json.loads(html_unescape_amp(send_m.group(1)).replace("&quot;", '"'))
+    except json.JSONDecodeError:
+        return ""
+    course_id = str((send.get("args") or {}).get("course_id") or "")
+    cache_key = f"{id_url}:{course_id}"
+    if cache_key in LP_AJAX_CACHE:
+        return LP_AJAX_CACHE[cache_key]
+
+    nonce = nonce_m.group(1)
+    payload = json.dumps(send, separators=(",", ":"))
+    boundary = "----StartkeyAkademiLpAjax"
+    body = (
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"nonce\"\r\n\r\n{nonce}\r\n"
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"lp-load-ajax\"\r\n\r\n"
+        "load_content_via_ajax\r\n"
+        f"--{boundary}\r\nContent-Disposition: form-data; name=\"data\"\r\n\r\n{payload}\r\n"
+        f"--{boundary}--\r\n"
+    ).encode()
+    request = urllib.request.Request(
+        f"{ORIGIN}/lp-ajax-handle?id_url={urllib.parse.quote(id_url)}",
+        data=body,
+        headers={
+            "User-Agent": UA,
+            "Content-Type": f"multipart/form-data; boundary={boundary}",
+            "Referer": f"{ORIGIN}/",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            data = json.loads(response.read().decode("utf-8", errors="replace"))
+    except (urllib.error.URLError, OSError, json.JSONDecodeError, UnicodeError) as error:
+        print(f"WARN lp-ajax {id_url} course={course_id}: {error}", file=sys.stderr)
+        return ""
+    if data.get("status") != "success":
+        print(
+            f"WARN lp-ajax {id_url} course={course_id}: {data.get('message') or data.get('status')}",
+            file=sys.stderr,
+        )
+        return ""
+    content = ((data.get("data") or {}).get("content") or "").strip()
+    if not content:
+        return ""
+    LP_AJAX_CACHE[cache_key] = content
+    print(f"lp-ajax {id_url} course={course_id} ({len(content)} bytes)")
+    return content
+
+
+def embed_course_reviews(html: str) -> str:
+    """Replace the LearnPress Yorumlar skeleton with the live AJAX fragment."""
+    if "lp-courses-rating-reviews-ajax" not in html:
+        return html
+    if "learnpress-course-review lp-rating-reviews-wrapper" in html:
+        return html
+    content = fetch_lp_ajax_fragment(html, "course-rating-reviews")
+    if not content:
+        return html
+    content = rewrite_text_urls(content)
+    html = html.replace(
+        'class="lp-courses-rating-reviews-ajax"><div class="lp-load-ajax-element">',
+        'class="lp-courses-rating-reviews-ajax"><div class="lp-load-ajax-element loaded">',
+        1,
+    )
+    html = re.sub(
+        r'<div class="loading-first">\s*<ul class="lp-skeleton-animation".*?</ul>\s*</div>',
+        "",
+        html,
+        count=1,
+        flags=re.S,
+    )
+
+    def replace_target(match: re.Match[str]) -> str:
+        return match.group(1) + content + match.group(2)
+
+    updated = re.sub(
+        r'(<div class="lp-target"[^>]*data-send="[^"]*course-rating-reviews[^"]*"[^>]*>)(</div>)',
+        replace_target,
+        html,
+        count=1,
+    )
+    return updated if updated != html else html
 
 
 def inject_elementor_chunks(html: str) -> str:

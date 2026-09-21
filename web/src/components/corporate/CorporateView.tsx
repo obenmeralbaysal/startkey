@@ -1,6 +1,7 @@
 import { ArticleDetail } from "@/components/corporate/ArticleDetail";
 import { ArticleList } from "@/components/corporate/ArticleList";
 import { ConsultantDetail } from "@/components/corporate/ConsultantDetail";
+import { ConsultantDetailDraft } from "@/components/corporate/ConsultantDetailDraft";
 import { ConsultantList } from "@/components/corporate/ConsultantList";
 import { ContactPage } from "@/components/corporate/ContactPage";
 import { FranchisePage } from "@/components/corporate/FranchisePage";
@@ -13,16 +14,19 @@ import { ChampionsPage, CmsPage } from "@/components/corporate/StaticPages";
 import { TrainingDetail } from "@/components/corporate/TrainingDetail";
 import { TrainingList } from "@/components/corporate/TrainingList";
 import type { CorporatePayload } from "@/lib/corporate";
+import { isClassicConsultantLayout } from "@/lib/consultant-layout";
 import type { Locale } from "@/lib/locales";
 
 export function CorporateView({
   data,
   shareUrl,
   locale,
+  layout,
 }: {
   data: CorporatePayload;
   shareUrl: string;
   locale: Locale;
+  layout?: string | string[];
 }) {
   if (data.kind === "contact") {
     return <ContactPage data={data} locale={locale} />;
@@ -73,7 +77,11 @@ export function CorporateView({
       inner = <ConsultantList data={data} />;
       break;
     case "consultant-detail":
-      inner = <ConsultantDetail data={data} locale={locale} />;
+      inner = isClassicConsultantLayout(layout) ? (
+        <ConsultantDetail data={data} locale={locale} />
+      ) : (
+        <ConsultantDetailDraft data={data} locale={locale} />
+      );
       break;
     default:
       inner = null;

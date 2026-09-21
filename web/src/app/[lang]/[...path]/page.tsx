@@ -90,5 +90,5 @@ export default async function CorporateCatchAll({
   const origin = await requestOrigin();
   const sharePath = "urlPath" in data && typeof data.urlPath === "string" ? data.urlPath : pathname;
 
-  return <CorporateView data={data} shareUrl={`${origin}${sharePath}`} locale={locale} />;
+  return <CorporateView data={data} shareUrl={`${origin}${sharePath}`} locale={locale} layout={query.layout} />;
 }

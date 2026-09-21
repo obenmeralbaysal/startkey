@@ -5,7 +5,7 @@ namespace App\Support;
 /**
  * Rewrites captured reference HTML so it can be stored and served locally: CDN
  * image hosts become `/media`, the live origin is stripped, and the project's
- * brand substitutions (ReOS → Reonix, provider logo → Sinap) are applied.
+ * brand substitutions (ReOS / Reonix → Portal, provider logo → Sinap) are applied.
  */
 class ReferenceHtml
 {
@@ -22,7 +22,7 @@ class ReferenceHtml
         $html = str_replace('/media//', '/media/', $html);
         $html = preg_replace('#\?width=[^"\'\s>]*#', '', $html) ?? $html;
 
-        $html = str_replace(['REOS CRM', 'ReOS CRM', 'ReOS'], 'Reonix', $html);
+        $html = str_replace(['REOS CRM', 'ReOS CRM', 'ReOS', 'Reonix'], 'Portal', $html);
         $html = preg_replace(
             '#<a href="https://re-os\.com"[^>]*>\s*<img[^>]*>\s*</a>#',
             '<span class="service-provider">Sinap</span>',

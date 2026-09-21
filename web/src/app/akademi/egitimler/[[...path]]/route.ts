@@ -1,4 +1,4 @@
-import { akademiPage } from "../../_html";
+import { akademiNotFound, akademiPage } from "../../_html";
 
 export const dynamic = "force-dynamic";
 
@@ -50,5 +50,5 @@ export async function GET(
     return akademiPage(`pages/egitimler/${parts[0]}.html`);
   }
 
-  return new Response("Not found", { status: 404 });
+  return akademiNotFound();
 }

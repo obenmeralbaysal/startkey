@@ -30,7 +30,7 @@ Bunlar tahmin değil; ana sayfada ölçüldü.
 | Metin | `web/src/content/*.json` referans HTML’den çıkarılır. AI çevirisi yasak. |
 | Asset | Runtime’da `startkey.com.tr` / CDN hotlink yok. Dosya `web/public` altındadır. |
 | CRM verisi | Reonix yoksa referans anlık görüntüsü + `docs/TECHNICAL_DEBT.md`. |
-| Marka | `ReOS` → `Reonix`, sağlayıcı logosu → `Sinap`. `homepage.ts` içindeki rewrite katmanı bunu yapar. |
+| Marka | `ReOS` / `Reonix` → `Portal`, sağlayıcı logosu → `Sinap`. `homepage.ts` içindeki rewrite katmanı bunu yapar. |
 | Tema | Referansın kendi `bundle-vendor.js` + `bundle-app.js` + jQuery sırası. Carousel, tab, accordion, select2, odometer buradan gelir. |
 | Viewport | Desktop `1440×900`, tablet `768×1024`, mobil `390×844`. |
 
@@ -170,7 +170,7 @@ Yeni sayfa için ayrı extractor yaz: `homepage.{lang}.json` formatını zorla k
 
 - `https://startkey.com.tr` → site-relative
 - CDN/ImageKit → `/media/...`
-- ReOS → Reonix, sağlayıcı img → Sinap
+- ReOS / Reonix → Portal, sağlayıcı img → Sinap
 
 ### Adım 4 — UI’ı mevcut iskelete tak
 
@@ -217,7 +217,7 @@ Her sayfa, her dil, her viewport. Tek screenshot yetmez.
 
 - [ ] Title, description, robots, og, canonical/hreflang referanstaki gibi; olmayan tag uydurulmadı
 - [ ] Görünen metin ilgili dil snapshot’ından; AI çevirisi yok
-- [ ] `ReOS` kalmamış, Reonix/Sinap kuralı uygulanmış
+- [ ] `ReOS` kalmamış, Portal/Sinap kuralı uygulanmış
 - [ ] Runtime HTML’de `startkey.com.tr` veya `cdnc.re-os.com` hotlink yok
 
 ### 4.3 Görsel / responsive

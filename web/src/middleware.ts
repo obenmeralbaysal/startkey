@@ -23,10 +23,20 @@ const RESERVED_SLUGS = new Set([
   "lib",
   "img",
   "akademi",
+  "portal",
   "locales",
   "_next",
   "favicon.ico",
+  "robots.txt",
+  "sitemap.xml",
+  "llms.txt",
 ]);
+
+function nextWithPathname(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", request.nextUrl.pathname);
+  return NextResponse.next({ request: { headers: requestHeaders } });
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -52,9 +62,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  return NextResponse.next();
+  return nextWithPathname(request);
 }
 
 export const config = {
-  matcher: ["/", "/(tr|en|de)/lookup/:path*", "/(tr|en|de)/Lookup/:path*", "/:slug"],
+  matcher: [
+    "/",
+    "/(tr|en|de)/lookup/:path*",
+    "/(tr|en|de)/Lookup/:path*",
+    "/(tr|en|de)/:path*",
+    "/:slug",
+  ],
 };

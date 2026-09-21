@@ -1,13 +1,15 @@
 /**
  * Brand rewrites required by the project definition: the reference website's CRM
- * and MLS provider references become the project's own brands.
+ * and MLS provider references become the project's own brands. Public CRM
+ * buttons show Portal (the local login at `/portal`).
  */
 const REFERENCE_ORIGIN = /https?:\/\/(?:www\.)?startkey\.com\.tr/g;
 
 const BRAND_REWRITES: [RegExp, string][] = [
-  [/REOS CRM/g, "Reonix"],
-  [/ReOS CRM/g, "Reonix"],
-  [/ReOS/g, "Reonix"],
+  [/REOS CRM/g, "Portal"],
+  [/ReOS CRM/g, "Portal"],
+  [/ReOS/g, "Portal"],
+  [/Reonix/g, "Portal"],
 ];
 
 /** The reference marks its provider with a remote logo image; the project shows the provider name. */

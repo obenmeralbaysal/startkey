@@ -12,3 +12,7 @@ web/public/media/property/
 # Large seed dumps; API still reads them from disk. Copy with rsync, not Git.
 api/database/data/portfolio-seed.json
 api/database/data/offices-seed.json
+
+# Offline media+DB archive (do not commit)
+startkey-offline-backup.tar.zst
+.backup-staging/

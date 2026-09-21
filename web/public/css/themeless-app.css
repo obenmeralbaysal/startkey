@@ -1,3 +1,236 @@
 ﻿.text-danger span {
     color: #dc3545 !important;
 }
+
+/* Figma-inspired consultant draft. Scoped so the classic template is untouched. */
+.consultant-draft {
+  padding-top: 60px;
+  padding-bottom: 80px;
+}
+
+.consultant-draft-photo {
+  margin-bottom: 0;
+}
+
+.consultant-draft-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.consultant-draft-year {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  padding-bottom: 0;
+}
+
+.consultant-draft-stats {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 72px;
+  margin: 0 0 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.consultant-draft-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  flex: 0 1 auto;
+}
+
+.consultant-draft-stat-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.02em;
+}
+
+.consultant-draft-stat-label::after {
+  content: ":";
+}
+
+.consultant-draft-stat-number {
+  font-size: 22px;
+  font-weight: 700;
+  color: #002172;
+  line-height: 1.15;
+  word-break: break-word;
+}
+
+.consultant-draft-stat-number-compact {
+  display: none;
+}
+
+.consultant-draft-club-logo {
+  display: block;
+  height: 40px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.consultant-draft-identity {
+  margin-bottom: 22px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.consultant-draft-name {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #111;
+  margin: 0 0 10px;
+}
+
+.consultant-draft-role {
+  display: block;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.consultant-draft-contact {
+  padding: 0 0 22px;
+  margin: 0 0 22px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.consultant-draft-contact li {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #111;
+}
+
+.consultant-draft-contact li:last-child {
+  margin-bottom: 0;
+}
+
+.consultant-draft-contact li b {
+  color: #111;
+  font-weight: 700;
+  margin-right: 0.35em;
+  font-size: 15px;
+}
+
+.consultant-draft-contact li a {
+  color: #111;
+}
+
+.consultant-draft-social {
+  display: flex;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+}
+
+.consultant-draft-social.social-profile.style1 li a {
+  width: 52px;
+  height: 52px;
+}
+
+.consultant-draft-social.social-profile.style1 li a i {
+  font-size: 22px;
+}
+
+.consultant-draft .agent-desc {
+  margin-top: 40px;
+}
+
+@media (max-width: 991px) {
+  .consultant-draft {
+    padding-top: 28px;
+    padding-bottom: 48px;
+  }
+
+  .consultant-draft-info {
+    text-align: left;
+  }
+
+  .consultant-draft-photo {
+    margin-bottom: 24px;
+  }
+
+  .consultant-draft-year {
+    font-size: 17px;
+    line-height: 1.35;
+    margin: 0 0 14px;
+    padding-bottom: 0;
+  }
+
+  .consultant-draft-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin: 0 0 20px;
+    padding-bottom: 14px;
+  }
+
+  .consultant-draft-stat {
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .consultant-draft-stat-label {
+    font-size: 13px;
+    letter-spacing: 0;
+  }
+
+  .consultant-draft-stat-number-full {
+    display: none;
+  }
+
+  .consultant-draft-stat-number-compact {
+    display: block;
+  }
+
+  .consultant-draft-stat-number {
+    font-size: 18px;
+  }
+
+  .consultant-draft-club-logo {
+    height: 32px;
+    max-width: 88px;
+    max-height: 32px;
+    margin-left: auto;
+    margin-right: auto;
+    object-position: center;
+  }
+
+  .consultant-draft-identity {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+  }
+
+  .consultant-draft-name {
+    font-size: 24px;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+
+  .consultant-draft-role {
+    font-size: 15px;
+  }
+
+  .consultant-draft-contact li {
+    font-size: 15px;
+    word-break: break-word;
+  }
+
+  .consultant-draft-social {
+    justify-content: center;
+    width: 100%;
+  }
+}

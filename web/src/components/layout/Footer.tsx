@@ -1,5 +1,6 @@
 import type { HomepageContent } from "@/content/types";
-import { config } from "@/lib/config";
+import { defaultLocale, isLocale } from "@/lib/locales";
+import { portalLoginHref } from "@/lib/portal";
 
 const WIDGET_COLUMN_CLASSES = [
   "col-xl-2 col-lg-6 col-md-6 col-sm-6",
@@ -8,6 +9,7 @@ const WIDGET_COLUMN_CLASSES = [
 
 export function Footer({ content }: { content: HomepageContent }) {
   const { footer } = content;
+  const locale = isLocale(content.lang) ? content.lang : defaultLocale;
 
   return (
     <footer className="footer-wrap style2 pt-100">
@@ -25,7 +27,7 @@ export function Footer({ content }: { content: HomepageContent }) {
                   dangerouslySetInnerHTML={{ __html: footer.descriptionHtml }}
                 />
                 <a
-                  href={config.reonixUrl || undefined}
+                  href={portalLoginHref(locale)}
                   className="btn style2"
                   target="_blank"
                   rel="noopener noreferrer"

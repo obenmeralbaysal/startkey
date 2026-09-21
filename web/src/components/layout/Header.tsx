@@ -1,7 +1,7 @@
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import type { HomepageContent, NavItem } from "@/content/types";
-import { config } from "@/lib/config";
 import type { Locale } from "@/lib/locales";
+import { portalLoginHref } from "@/lib/portal";
 
 const LOGO = "12eb7cb9-f028-4e57-9b14-f99fc92c2045";
 
@@ -102,7 +102,7 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
               </div>
               <div className="header-btn">
                 <a
-                  href={config.reonixUrl || undefined}
+                  href={portalLoginHref(locale)}
                   className="btn style2"
                   target="_blank"
                   rel="noopener noreferrer"

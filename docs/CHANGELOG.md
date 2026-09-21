@@ -1,3 +1,11 @@
+## [2026-09-21]
+
+- **[Frontend]**: Kurumsal ve Akademi `robots.txt`, `sitemap.xml` / `sitemap_index.xml`, `llms.txt` ve 404/500 hata sayfaları eklendi. Kurumsal 404 Fela `error-wrap` ile TR Akademi metnini kullanır; Akademi bilinmeyen yollar referanstaki `404-hata-2` belgesini HTTP 404 olarak döner.
+- **[Frontend]**: Header/footer CRM yazısı Portal oldu; tıklanınca ReOS giriş ekranının yerel kopyası (`/portal`, tr/en/az/ru) açılıyor.
+- **[Bugfix]**: Akademi eğitim detayında sağdaki Sepete Ekle kutusu referanstaki gibi kaydırınca sayfayla gidiyor (yapışmıyor). Sol kolon Elementor `%67` genişliğinde; tanıtım videosu daralmıyor.
+- **[Bugfix]**: Akademi eğitim detayında “Sepete Ekle” kutusu sağ kolona oturdu; 23 eğitim sayfası referanstan yeniden çekildi ve iki kolonlu yerleşim Elementor animasyonu olmadan da duruyor.
+- **[Frontend]**: Danışman detayı varsayılan olarak Figma taslağına yakın yeni şablonu açar (yıl istatistikleri, ortak sosyal ikonlar). Eski referans şablon `?layout=classic` ile durur. Üst bilgi (istatistik kartları, isim, iletişim çizgileri, sosyal ikonlar) web için sıkılaştırıldı; Hakkımda / Portföyler / Yorumlar orijinal markup’a alındı.
+
 ## [2026-09-19]
 
 - **[Infra]**: Web imajı `public/media` içermez; klasör runtime’da bağlanır. Satıver/NPM yanı için `docker-compose.behind-npm.yml` host portu açmaz.
