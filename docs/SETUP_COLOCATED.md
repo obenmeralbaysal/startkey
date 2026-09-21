@@ -272,11 +272,13 @@ Fotoğraf: [`MEDIA.md`](./MEDIA.md) §10. Boş medya = rsync bitmemiş, Satıver
 ```bash
 cd ~/startkey
 git pull
-docker compose up -d --build
-# overlay varsa: $SK up -d --build
+# overlay: ağı silmeye çalışma — NPM bağlı kalır
+$SK up -d --build
 ```
 
-`down -v` yok. Satıver/RH dizinine girip `compose` çalıştırma.
+`docker compose down` kullanma: named `startkey-network` NPM’e bağlıdır, `down` ağı silmeye çalışır ve bu hatayı verir. `down -v` yok. Satıver/RH dizinine girip `compose` çalıştırma.
+
+İlk kurulumda ağ yoksa bir kez: `docker network create startkey-network`
 
 ---
 

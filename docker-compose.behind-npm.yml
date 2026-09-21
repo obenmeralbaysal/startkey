@@ -17,3 +17,5 @@ services:
 networks:
   default:
     name: startkey-network
+    # NPM stays attached. Compose must not create/remove this network on up/down.
+    external: true

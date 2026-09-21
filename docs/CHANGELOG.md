@@ -1,5 +1,6 @@
 ## [2026-09-21]
 
+- **[Infra]**: NPM’in bağlı olduğu `startkey-network` overlay’de `external` oldu; `compose up/down` ağı silmeye çalışmaz.
 - **[Frontend]**: Kurumsal ve Akademi `robots.txt`, `sitemap.xml` / `sitemap_index.xml`, `llms.txt` ve 404/500 hata sayfaları eklendi. Kurumsal 404 Fela `error-wrap` ile TR Akademi metnini kullanır; Akademi bilinmeyen yollar referanstaki `404-hata-2` belgesini HTTP 404 olarak döner.
 - **[Frontend]**: Header/footer CRM yazısı Portal oldu; tıklanınca ReOS giriş ekranının yerel kopyası (`/portal`, tr/en/az/ru) açılıyor.
 - **[Bugfix]**: Akademi eğitim detayında sağdaki Sepete Ekle kutusu referanstaki gibi kaydırınca sayfayla gidiyor (yapışmıyor). Sol kolon Elementor `%67` genişliğinde; tanıtım videosu daralmıyor.
