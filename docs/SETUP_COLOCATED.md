@@ -270,10 +270,14 @@ Fotoğraf: [`MEDIA.md`](./MEDIA.md) §10. Boş medya = rsync bitmemiş, Satıver
 ## 10. Kod güncelleme (canlı StartKey)
 
 ```bash
+export SK='docker compose -f docker-compose.yml -f docker-compose.behind-npm.yml'
 cd ~/startkey
 git pull
-# overlay: ağı silmeye çalışma — NPM bağlı kalır
-$SK up -d --build
+# Yalnız web değiştiyse (bugünkü SEO/404 gibi):
+$SK build web && $SK up -d --no-deps web
+# API/PHP de değiştiyse (entrypoint gibi):
+# $SK up -d api
+# Seed dolu DB’de atlanır. down yok.
 ```
 
 `docker compose down` kullanma: named `startkey-network` NPM’e bağlıdır, `down` ağı silmeye çalışır ve bu hatayı verir. `down -v` yok. Satıver/RH dizinine girip `compose` çalıştırma.
@@ -282,7 +286,56 @@ $SK up -d --build
 
 ---
 
-## 11. 502 / “öteki site düştü” kontrolü
+## 11. Takılan güncelleme (Satıver / RH / fotoğraf bozulmadan)
+
+Kod dün çalışıyordu, `compose down` veya `up` ağı/API’yi karıştırdıysa. **Fotoğrafı yeniden `rsync` etme.** Volume ve `web/public/media` durur.
+
+Yasak: `~/sativer` / ResidenceHero compose, `docker compose down`, `down -v`, `docker network rm startkey-network`, `docker system prune`, `migrate:fresh`.
+
+```bash
+# 1) Öteki siteler ayakta mı? (yalnız bak)
+docker ps --format 'table {{.Names}}\t{{.Status}}' | grep -E 'sativer|residencehero|nginx-proxy-manager|startkey'
+
+# 2) Fotoğraf ve DB yerinde mi?
+du -sh ~/startkey/web/public/media/property
+docker compose -f docker-compose.yml -f docker-compose.behind-npm.yml exec -T postgres \
+  psql -U startkey -d startkey -tAc 'SELECT COUNT(*) FROM cms_listings'
+
+# 3) API seed’de mi, yoksa php-fpm hazır mı?
+docker compose -f docker-compose.yml -f docker-compose.behind-npm.yml logs --tail=30 api
+```
+
+`seeding reference data` görüyorsan bitmesini bekle (`[api] ready` veya `skipping seed`). `GET /index.php 200` varsa API zaten iş görür.
+
+```bash
+export SK='docker compose -f docker-compose.yml -f docker-compose.behind-npm.yml'
+cd ~/startkey
+git pull
+# .env içine FORCE_DB_SEED= ekle (boş). 1 yazma.
+
+# 4) API’yi recreate ETME. Nginx + web’i bağla.
+$SK up -d --no-deps nginx web
+
+# 5) Hepsi startkey-network’te mi? (NPM dahil)
+docker network inspect startkey-network --format '{{range .Containers}}{{.Name}} {{end}}'
+```
+
+`startkey-web-1` yoksa: `$SK up -d --no-deps web`. Ağda yoksa: `docker network connect startkey-network startkey-web-1` (NPM’i çıkarma).
+
+```bash
+# 6) Duman — üç site + bir fotoğraf
+$SK exec web wget -qO- http://127.0.0.1:3000/tr | head -c 80
+curl -sS -o /dev/null -w 'startkey %{http_code}\n' https://STARTKEY_DOMAIN/tr
+curl -sS -o /dev/null -w 'sativer  %{http_code}\n' https://SATIVER_DOMAIN/healthz
+curl -sS -o /dev/null -w 'rh       %{http_code}\n' https://RH_DOMAIN/
+curl -sS -o /dev/null -w 'media    %{http_code}\n' https://STARTKEY_DOMAIN/media/property/BIR_DOSYA.jpg
+```
+
+Sonraki güncellemeler: `git pull` + `$SK build web && $SK up -d --no-deps web`. API/PHP değişmediyse api’ye dokunma. `down` yok.
+
+---
+
+## 12. 502 / “öteki site düştü” kontrolü
 
 1. `docker ps` — `sativer-gateway`, RH, NPM, `startkey-web` hepsi `Up` mı?
 2. StartKey 8080 yayınlıyor mu? Yayınlıyorsa kapat (Satıver kapısı).
@@ -293,7 +346,7 @@ $SK up -d --build
 
 ---
 
-## 12. Kontrol listesi
+## 13. Kontrol listesi
 
 - [ ] Satıver ve RH StartKey’ten önce `200`
 - [ ] `~/startkey` ayrı klasör
