@@ -1,5 +1,6 @@
 ## [2026-09-29]
 
+- **[Frontend]**: Portal girişinden Google ve Office 365 butonları kaldırıldı.
 - **[Security]**: Portal ofis ve danışman uçları, oturum çerezi yoksa controller’a girmeden 401 döner. Giriş ve çıkış uçları açık kalır.
 - **[Bugfix]**: Header danışman başvuru yazısı tr/en/de içerikten gelir. Danışman formunda İngilizce ve Almanca captcha hatası ile “Office Assistant” etiketi düzeltildi.
 - **[Backend]**: Franchise sistemleri Reonix portal ucuna JSON istek ve JSON cevap ile bağlanır. Anahtar franchise ortamında kalır; Reonix yalnızca o anahtarın hash’i ile ağı tanır.

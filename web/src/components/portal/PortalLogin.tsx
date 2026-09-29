@@ -308,21 +308,6 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
                       </span>
                     </button>
                   </div>
-                  <div className="separator separator-content my-9">
-                    <span className="w-125px text-gray-500 fw-semibold fs-7">{copy.or}</span>
-                  </div>
-                  <div className="row g-3 mb-9">
-                    <div className="col-md-6" style={{ margin: 0 }}>
-                      <button type="button" className="btn btn-md">
-                        <img src="/portal/img/google_full.png" alt="Google Login" style={{ maxWidth: "10rem", height: "auto" }} />
-                      </button>
-                    </div>
-                    <div className="col-md-6" style={{ margin: 0 }}>
-                      <button type="button" className="btn btn-md" data-info="Office365 Login">
-                        <img src="/portal/img/office-365.png" alt="Office365 Login" style={{ maxWidth: "10rem", height: "auto" }} />
-                      </button>
-                    </div>
-                  </div>
                 </form>
               </div>
             </div>
