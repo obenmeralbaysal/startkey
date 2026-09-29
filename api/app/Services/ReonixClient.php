@@ -30,6 +30,7 @@ class ReonixClient
         }
 
         $request = Http::acceptJson()
+            ->asJson()
             ->timeout(15)
             ->withHeaders(['X-Portal-Key' => $key]);
         if ($token) {
