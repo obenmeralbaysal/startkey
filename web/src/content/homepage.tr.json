@@ -286,6 +286,10 @@
     ]
   },
   "headerButtons": {
+    "consultant": {
+      "label": "Danışman Başvuru",
+      "href": "/tr/danisman-basvuru"
+    },
     "franchise": {
       "label": "Franchise Başvuru",
       "href": "/tr/franchise-basvuru"

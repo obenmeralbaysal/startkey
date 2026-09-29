@@ -58,9 +58,7 @@ class FranchiseApplicationController extends Controller
                 'notes' => $request->input('notes') ?: null,
             ]);
         } catch (ReonixException $e) {
-            return response()->json(['message' => __('messages.portal.'.$e->error) === 'messages.portal.'.$e->error
-                ? __('messages.portal.unavailable')
-                : __('messages.portal.'.$e->error)], 422);
+            return response()->json(['message' => $this->message($e->error)], 422);
         }
 
         $record = FranchiseApplication::query()->create([
@@ -82,5 +80,13 @@ class FranchiseApplicationController extends Controller
         ]);
 
         return response()->json(['data' => ['id' => $record->id]], 201);
+    }
+
+    private function message(string $error): string
+    {
+        $key = 'messages.portal.'.$error;
+        $translated = __($key);
+
+        return $translated === $key ? __('messages.portal.unavailable') : $translated;
     }
 }

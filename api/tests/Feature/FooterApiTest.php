@@ -148,6 +148,7 @@ class FooterApiTest extends TestCase
             'email' => 'user5@example.com',
             'phone' => '+90 232 330 5330',
             'city_id' => 35,
+            'county_id' => 1,
             'locale' => 'tr',
         ])->assertStatus(429);
 

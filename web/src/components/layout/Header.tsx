@@ -5,16 +5,6 @@ import { portalLoginHref } from "@/lib/portal";
 
 const LOGO = "12eb7cb9-f028-4e57-9b14-f99fc92c2045";
 
-function consultantHref(locale: Locale): string {
-  if (locale === "en") {
-    return "/en/consultant-form";
-  }
-  if (locale === "de") {
-    return "/de/consultant-form";
-  }
-  return "/tr/danisman-basvuru";
-}
-
 function NavEntry({ item }: { item: NavItem }) {
   if (item.children.length === 0) {
     return (
@@ -102,8 +92,8 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
                 />
               </div>
               <div className="header-btn">
-                <a className="btn style2" style={{ padding: "14px 20px 14px" }} href={consultantHref(locale)}>
-                  Danışman Başvuru
+                <a className="btn style2" style={{ padding: "14px 20px 14px" }} href={headerButtons.consultant.href}>
+                  {headerButtons.consultant.label}
                 </a>
               </div>
               <div className="header-btn">
@@ -131,8 +121,8 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
         </nav>
 
         <div className="mobile-cta d-lg-none">
-          <a className="btn style2" href={consultantHref(locale)}>
-            Danışman Başvuru
+          <a className="btn style2" href={headerButtons.consultant.href}>
+            {headerButtons.consultant.label}
           </a>
           <a className="btn style1" href={headerButtons.franchise.href}>
             {headerButtons.franchise.label}

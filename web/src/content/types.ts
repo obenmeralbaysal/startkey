@@ -47,6 +47,7 @@ export interface HomepageContent {
     options: { code: string; label: string }[];
   };
   headerButtons: {
+    consultant: LinkContent;
     franchise: LinkContent;
     crm: LinkContent;
   };

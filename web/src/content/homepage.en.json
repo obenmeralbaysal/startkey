@@ -286,6 +286,10 @@
     ]
   },
   "headerButtons": {
+    "consultant": {
+      "label": "Consultant Application",
+      "href": "/en/consultant-form"
+    },
     "franchise": {
       "label": "Franchise Application",
       "href": "/en/franchise-form"

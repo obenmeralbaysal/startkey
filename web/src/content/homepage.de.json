@@ -286,6 +286,10 @@
     ]
   },
   "headerButtons": {
+    "consultant": {
+      "label": "Beraterbewerbung",
+      "href": "/de/consultant-form"
+    },
     "franchise": {
       "label": "Franchise -Anwendung",
       "href": "/de/franchise-form"

@@ -1,5 +1,7 @@
 ## [2026-09-29]
 
+- **[Security]**: Portal ofis ve danışman uçları, oturum çerezi yoksa controller’a girmeden 401 döner. Giriş ve çıkış uçları açık kalır.
+- **[Bugfix]**: Header danışman başvuru yazısı tr/en/de içerikten gelir. Danışman formunda İngilizce ve Almanca captcha hatası ile “Office Assistant” etiketi düzeltildi.
 - **[Backend]**: Franchise sistemleri Reonix portal ucuna JSON istek ve JSON cevap ile bağlanır. Anahtar franchise ortamında kalır; Reonix yalnızca o anahtarın hash’i ile ağı tanır.
 - **[Backend]**: Startkey Portal, Reonix’e yalnızca sunucudan bağlanır. Ofis başvurusu, danışman başvurusu, ofis açma, broker ve agent ekleme ile paket eşlemesi bu kanaldan yapılır. Tarayıcıya karşı uç adresi ve token dönmez.
 - **[Frontend]**: Portal girişi oturum açar. Admin ofis ve danışman başvurularını, owner broker ve agent eklemeyi görür. Header’a Danışman Başvuru eklendi.

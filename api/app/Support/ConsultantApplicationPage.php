@@ -80,7 +80,7 @@ class ConsultantApplicationPage
                 'metaTitle' => 'Consultant Application Form',
                 'home' => 'Home',
                 'submitLabel' => 'Send Application',
-                'captchaError' => 'Doğrulama zorunludur.',
+                'captchaError' => 'Verification is required.',
                 'placeholders' => [
                     'FirstName' => 'Name',
                     'LastName' => 'Surname',
@@ -90,7 +90,7 @@ class ConsultantApplicationPage
                 'positions' => [
                     ['value' => '2', 'label' => 'Real Estate Agent'],
                     ['value' => '4', 'label' => 'Office Manager'],
-                    ['value' => '5', 'label' => 'Office Asistant'],
+                    ['value' => '5', 'label' => 'Office Assistant'],
                 ],
                 'bodyHtml' => '',
             ],
@@ -100,7 +100,7 @@ class ConsultantApplicationPage
                 'metaTitle' => 'Beraterantragsformular',
                 'home' => 'Startseite',
                 'submitLabel' => 'Senden Sie die Bewerbung',
-                'captchaError' => 'Doğrulama zorunludur.',
+                'captchaError' => 'Verifizierung ist erforderlich.',
                 'placeholders' => [
                     'FirstName' => 'Name',
                     'LastName' => 'Familien-oder Nachname',
