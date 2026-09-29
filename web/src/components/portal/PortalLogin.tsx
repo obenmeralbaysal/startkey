@@ -9,6 +9,7 @@ import {
   PORTAL_LOGIN_LANGUAGES,
   type PortalLoginLang,
 } from "@/content/portal-login";
+import { PortalDesk, type PortalUser } from "@/components/portal/PortalDesk";
 
 function EnvelopeIcon() {
   return (
@@ -76,6 +77,7 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [user, setUser] = useState<PortalUser | null>(null);
   const langWrapRef = useRef<HTMLDivElement>(null);
   const emailId = useId();
   const passwordId = useId();
@@ -118,12 +120,33 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
     return ok;
   }
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting || !validate()) {
       return;
     }
     setSubmitting(true);
+    setPasswordError("");
+    try {
+      const response = await fetch("/api/v1/portal/session", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok || !body.data?.user) {
+        setPasswordError(body.message || copy.passwordRequired);
+        return;
+      }
+      setUser(body.data.user);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (user) {
+    return <PortalDesk user={user} onLogout={() => setUser(null)} />;
   }
 
   return (

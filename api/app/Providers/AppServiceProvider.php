@@ -40,6 +40,14 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($request->ip());
         });
 
+        RateLimiter::for('consultant-application', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
+
+        RateLimiter::for('portal-session', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+
         RateLimiter::for('listing-inquiry', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });

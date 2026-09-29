@@ -39,7 +39,7 @@ class FranchiseApplicationRequest extends FormRequest
             'email' => ['required', 'string', 'email:rfc', 'max:190'],
             'phone' => ['required', 'string', 'max:40'],
             'city_id' => ['required', 'integer'],
-            'county_id' => ['nullable', 'integer'],
+            'county_id' => ['required', 'integer'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'locale' => ['required', 'string', Rule::in(config('site.locales'))],
             'captcha_token' => ['nullable', 'string', 'max:5000'],

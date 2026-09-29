@@ -1,3 +1,8 @@
+## [2026-09-29]
+
+- **[Backend]**: Startkey Portal, Reonix’e yalnızca sunucudan bağlanır. Ofis başvurusu, danışman başvurusu, ofis açma, broker ve agent ekleme ile paket eşlemesi bu kanaldan yapılır. Tarayıcıya karşı uç adresi ve token dönmez.
+- **[Frontend]**: Portal girişi oturum açar. Admin ofis ve danışman başvurularını, owner broker ve agent eklemeyi görür. Header’a Danışman Başvuru eklendi.
+
 ## [2026-09-21]
 
 - **[Bugfix]**: Akademi `/akademi/egitimler` (ve sayfa 2–3 + kategori arşivleri) soldaki Filtrele formunu WordPress REST iskeleti yerine gömülü kategori/eğitmen listesiyle gösteriyor; eksik kapanış `div` eğitim ızgarasını sol kolona gömmüyordu.

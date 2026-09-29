@@ -222,6 +222,22 @@ export type CorporatePayload =
       alternates: Record<string, string>;
     }
   | {
+      kind: "consultant-application";
+      key: string;
+      heading: string;
+      urlPath: string;
+      formHeading: string;
+      placeholders: Record<string, string>;
+      required: Record<string, string>;
+      positions: { value: string; label: string }[];
+      submitLabel: string;
+      captchaError: string;
+      bodyHtml: string;
+      breadcrumb: CorporateBreadcrumb;
+      meta: CorporateMeta;
+      alternates: Record<string, string>;
+    }
+  | {
       kind: "franchise";
       key: string;
       heading: string;

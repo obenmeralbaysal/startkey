@@ -32,6 +32,10 @@ class CorporateResolver
         $path = $this->normalisePath($path);
         $pageIndex = max(1, $pageIndex);
 
+        if ($consultant = app(ConsultantApplicationPage::class)->payload($locale, $path)) {
+            return $consultant;
+        }
+
         if ($page = $this->cmsPage($locale, $path)) {
             return $page;
         }

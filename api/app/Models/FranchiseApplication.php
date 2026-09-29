@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class FranchiseApplication extends Model
 {
     protected $fillable = [
+        'external_id',
         'locale',
         'first_name',
         'last_name',

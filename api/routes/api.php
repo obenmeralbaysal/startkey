@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ConsultantApplicationController;
 use App\Http\Controllers\Api\V1\ConsultantCommentController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\CorporateController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Api\V1\HomepageController;
 use App\Http\Controllers\Api\V1\ListingInquiryController;
 use App\Http\Controllers\Api\V1\LookupController;
 use App\Http\Controllers\Api\V1\NewsletterController;
+use App\Http\Controllers\Api\V1\PortalSessionController;
 use App\Http\Controllers\Api\V1\TrainingApplicationController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +31,21 @@ Route::prefix('v1')->group(function () {
         ->whereNumber('externalId');
     Route::post('franchise/applications', [FranchiseApplicationController::class, 'store'])
         ->middleware('throttle:franchise-application');
+    Route::get('consultant-applications/offices', [ConsultantApplicationController::class, 'offices']);
+    Route::post('consultant-applications', [ConsultantApplicationController::class, 'store'])
+        ->middleware('throttle:consultant-application');
+
+    Route::post('portal/session', [PortalSessionController::class, 'store'])->middleware('throttle:portal-session');
+    Route::get('portal/session', [PortalSessionController::class, 'show']);
+    Route::delete('portal/session', [PortalSessionController::class, 'destroy']);
+    Route::get('portal/applications', [PortalSessionController::class, 'applications']);
+    Route::post('portal/applications/{id}/open-office', [PortalSessionController::class, 'openOffice'])->whereNumber('id');
+    Route::get('portal/packages', [PortalSessionController::class, 'packages']);
+    Route::put('portal/offices/{id}/package', [PortalSessionController::class, 'updatePackage'])->whereNumber('id');
+    Route::get('portal/consultant-applications', [PortalSessionController::class, 'consultantApplications']);
+    Route::post('portal/consultant-applications/{id}/accept', [PortalSessionController::class, 'acceptConsultant'])->whereNumber('id');
+    Route::post('portal/offices/{id}/brokers', [PortalSessionController::class, 'storeBroker'])->whereNumber('id');
+    Route::post('portal/offices/{id}/agents', [PortalSessionController::class, 'storeAgent'])->whereNumber('id');
     Route::post('listings/{externalId}/inquiries', [ListingInquiryController::class, 'store'])
         ->middleware('throttle:listing-inquiry')
         ->whereNumber('externalId');

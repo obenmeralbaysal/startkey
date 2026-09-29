@@ -22,21 +22,21 @@ Seed verisi Reonix'ten gelen canlı portföy, ofis, şehir ve lookup verileri il
 
 **Durum:** Açık
 
-### TD-002 — Portal girişi henüz gerçek kimlik doğrulamaya bağlı değil
+### TD-002 — Portal şifre sıfırlama ve sosyal giriş bağlı değil
 
 **Alan:** Header / Footer / Portal
 
 **Mevcut Durum:**
 
-Referans sitedeki ReOS CRM butonları artık **Portal** olarak gösterilir ve `/portal` (ReOS giriş ekranının yerel kopyası) açılır. Form, dil seçici ve şifre göster/gizle çalışır; gönderim, Google ve Office 365 gerçek CRM oturumu açmaz. “Şifremi Unuttum” yalnızca görsel bağlantıdır.
+Referans sitedeki ReOS CRM butonları **Portal** olarak gösterilir ve `/portal` açılır. E-posta ve şifre Startkey API üzerinden doğrulanır; oturum çerezi tarayıcıda kalır, karşı uçtaki token tarayıcıya dönmez. “Şifremi Unuttum”, Google ve Office 365 hâlâ gerçek oturum açmaz.
 
 **Geçici Olmasının Nedeni:**
 
-Portal / Reonix kimlik doğrulama backend’i henüz tanımlı değildir.
+Şifre sıfırlama ve sosyal giriş bu dilime alınmadı.
 
 **Gelecekteki Implementasyon:**
 
-Giriş, unutulan şifre, Google ve Office 365 nihai Portal / Reonix kimlik doğrulamasına bağlanacak.
+Şifremi unuttum, Google ve Office 365 aynı portal oturumuna bağlanacak.
 
 **Durum:** Açık
 
@@ -292,6 +292,24 @@ Canlı kurumsal sitede gerçek 404 ve gerçek llms.txt yok. Sitemap yolları Reo
 **Gelecekteki Implementasyon:**
 
 Sitemap yerel CMS / Reonix’ten üretilecek. EN/DE 404 metni referansta belirdiğinde alınacak. Akademi ayrıldığında kendi robots/sitemap/llms’i o uygulamaya taşınacak.
+
+**Durum:** Açık
+
+### TD-016 — Danışman başvuru sayfasının gövdesi referans belgesinin tamamı değil
+
+**Alan:** Frontend / Danışman başvuru
+
+**Mevcut Durum:**
+
+`/tr/danisman-basvuru`, `/en/consultant-form` ve `/de/consultant-form` form alanları, zorunlu metinler, pozisyonlar ve gönder düğmesi canlı sayfadan alındı. Ofis listesi canlıdaki 85 isim yerine portal ağındaki ofislerden gelir. TR gövdesi kısa bir özet; EN ve DE pazarlama gövdesi boş.
+
+**Geçici Olmasının Nedeni:**
+
+Başvuru akışı önce bağlandı. Sayfanın uzun tanıtım HTML’i ayrıca çekilmedi.
+
+**Gelecekteki Implementasyon:**
+
+Üç dilin tanıtım gövdesi canlı belgeden, franchise sayfasındaki gibi tam HTML olarak basılacak.
 
 **Durum:** Açık
 

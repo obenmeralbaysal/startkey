@@ -1,0 +1,199 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+import { Breadcrumb } from "@/components/corporate/Breadcrumb";
+import { publicFormStatus } from "@/content/public-form-status";
+import { config } from "@/lib/config";
+import type { CorporatePayload } from "@/lib/corporate";
+import type { Locale } from "@/lib/locales";
+
+type ConsultantData = Extract<CorporatePayload, { kind: "consultant-application" }>;
+
+export function ConsultantApplicationPage({ data, locale }: { data: ConsultantData; locale: Locale }) {
+  return (
+    <>
+      <Breadcrumb breadcrumb={data.breadcrumb} />
+      <div className="container">
+        <div className="section-title style2 text-center mb-40 mt-40">
+          <h2>{data.formHeading}</h2>
+        </div>
+        <div className="row">
+          <div className="col-lg-12">
+            <ConsultantForm data={data} locale={locale} />
+          </div>
+        </div>
+      </div>
+      {data.bodyHtml ? <div dangerouslySetInnerHTML={{ __html: data.bodyHtml }} /> : null}
+    </>
+  );
+}
+
+function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale }) {
+  const messages = publicFormStatus[locale].franchise;
+  const choose = "Seçiniz";
+  const [cities, setCities] = useState<{ id: string; text: string }[]>([]);
+  const [counties, setCounties] = useState<{ id: string; text: string }[]>([]);
+  const [offices, setOffices] = useState<{ id: number; name: string }[]>([]);
+  const [cityId, setCityId] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ kind: "success" | "error"; message: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    fetch(`/api/v1/lookups/cities?locale=${locale}`)
+      .then((response) => response.json())
+      .then((body) => setCities(body.items ?? []))
+      .catch(() => setCities([]));
+    fetch("/api/v1/consultant-applications/offices")
+      .then((response) => response.json())
+      .then((body) => setOffices(body.data ?? []))
+      .catch(() => setOffices([]));
+  }, [locale]);
+
+  useEffect(() => {
+    if (!cityId) {
+      setCounties([]);
+      return;
+    }
+    fetch(`/api/v1/lookups/counties?locale=${locale}&cityId=${encodeURIComponent(cityId)}`)
+      .then((response) => response.json())
+      .then((body) => setCounties((body.items ?? []).filter((item: { id: string }) => item.id !== "")))
+      .catch(() => setCounties([]));
+  }, [cityId, locale]);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const nextErrors: Record<string, string> = {};
+    for (const field of ["FirstName", "LastName", "Email", "Phone", "OfficeCityId", "OfficeId", "AppealTypeId"]) {
+      if (!String(formData.get(field) ?? "").trim()) {
+        nextErrors[field] = data.required[field] ?? "";
+      }
+    }
+    if (Object.keys(nextErrors).length > 0) {
+      setFieldErrors(nextErrors);
+      return;
+    }
+    if (config.recaptchaSiteKey && !(window.grecaptcha?.getResponse() ?? "")) {
+      setStatus({ kind: "error", message: data.captchaError });
+      return;
+    }
+
+    setSubmitting(true);
+    setStatus(null);
+    try {
+      const response = await fetch("/api/v1/consultant-applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          first_name: formData.get("FirstName"),
+          last_name: formData.get("LastName"),
+          email: formData.get("Email"),
+          phone: formData.get("Phone"),
+          city_id: Number(formData.get("OfficeCityId")),
+          county_id: formData.get("OfficeCountyId") ? Number(formData.get("OfficeCountyId")) : null,
+          office_id: Number(formData.get("OfficeId")),
+          position: Number(formData.get("AppealTypeId")),
+          notes: formData.get("Notes"),
+          locale,
+          captcha_token: formData.get("g-recaptcha-response") || null,
+        }),
+      });
+      if (response.status === 201) {
+        setStatus({ kind: "success", message: messages.success });
+        form.reset();
+        window.grecaptcha?.reset();
+        return;
+      }
+      const body = await response.json().catch(() => ({}));
+      setStatus({
+        kind: "error",
+        message: response.status === 429 ? messages.throttled : body.message || messages.failed,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form className="filter-widget" id="form" noValidate onSubmit={handleSubmit}>
+      {status ? <p className={status.kind === "success" ? "text-success" : "text-danger"}>{status.message}</p> : null}
+      <div className="row">
+        <Field id="FirstName" name="FirstName" placeholder={data.placeholders.FirstName} error={fieldErrors.FirstName} required={data.required.FirstName} />
+        <Field id="LastName" name="LastName" placeholder={data.placeholders.LastName} error={fieldErrors.LastName} required={data.required.LastName} />
+        <Field id="Email" name="Email" type="email" placeholder={data.placeholders.Email} error={fieldErrors.Email} required={data.required.Email} />
+        <Field id="Phone" name="Phone" type="tel" error={fieldErrors.Phone} required={data.required.Phone} />
+        <div className="form-group col-md-4">
+          <select
+            id="OfficeCityId"
+            name="OfficeCityId"
+            className="select2"
+            value={cityId}
+            onChange={(event) => setCityId(event.target.value)}
+          >
+            <option value="">{choose}</option>
+            {cities.filter((city) => city.id !== "").map((city) => (
+              <option key={city.id} value={city.id}>{city.text}</option>
+            ))}
+          </select>
+          <span className="text-danger">{fieldErrors.OfficeCityId}</span>
+        </div>
+        <div className="form-group col-md-4">
+          <select id="OfficeCountyId" name="OfficeCountyId" key={cityId} defaultValue="">
+            <option value="">{choose}</option>
+            {counties.map((county) => (
+              <option key={county.id} value={county.id}>{county.text}</option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group col-md-4">
+          <select id="OfficeId" name="OfficeId" className="select2" defaultValue="">
+            <option value="">{choose}</option>
+            {offices.map((office) => (
+              <option key={office.id} value={office.id}>{office.name}</option>
+            ))}
+          </select>
+          <span className="text-danger">{fieldErrors.OfficeId}</span>
+        </div>
+        <div className="form-group col-md-4">
+          <select id="AppealTypeId" name="AppealTypeId" className="select2" defaultValue="">
+            <option value="">{choose}</option>
+            {data.positions.map((position) => (
+              <option key={position.value} value={position.value}>{position.label}</option>
+            ))}
+          </select>
+          <span className="text-danger">{fieldErrors.AppealTypeId}</span>
+        </div>
+        <div className="form-group col-md-12">
+          <textarea id="Notes" name="Notes" rows={3} placeholder={data.placeholders.Notes} />
+        </div>
+      </div>
+      <button className="btn style1" type="submit" disabled={submitting}>{data.submitLabel}</button>
+    </form>
+  );
+}
+
+function Field({
+  id,
+  name,
+  placeholder,
+  error,
+  required,
+  type = "text",
+}: {
+  id: string;
+  name: string;
+  placeholder?: string;
+  error?: string;
+  required: string;
+  type?: string;
+}) {
+  return (
+    <div className="form-group col-md-4">
+      <input id={id} name={name} type={type} placeholder={placeholder} data-val-required={required} defaultValue="" />
+      <span className="text-danger">{error}</span>
+    </div>
+  );
+}

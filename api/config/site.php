@@ -164,6 +164,13 @@ return [
                 'de' => ['/de/kontakt', '/de/iletisim'],
             ],
         ],
+        'consultant_application' => [
+            'lists' => [
+                'tr' => ['/tr/danisman-basvuru'],
+                'en' => ['/en/consultant-form'],
+                'de' => ['/de/consultant-form'],
+            ],
+        ],
         'franchise' => [
             'lists' => [
                 'tr' => ['/tr/franchise-basvuru'],

@@ -3,6 +3,7 @@ import { ArticleList } from "@/components/corporate/ArticleList";
 import { ConsultantDetail } from "@/components/corporate/ConsultantDetail";
 import { ConsultantDetailDraft } from "@/components/corporate/ConsultantDetailDraft";
 import { ConsultantList } from "@/components/corporate/ConsultantList";
+import { ConsultantApplicationPage } from "@/components/corporate/ConsultantApplicationPage";
 import { ContactPage } from "@/components/corporate/ContactPage";
 import { FranchisePage } from "@/components/corporate/FranchisePage";
 import { OfficeDetail } from "@/components/corporate/OfficeDetail";
@@ -39,6 +40,9 @@ export function CorporateView({
       break;
     case "franchise":
       inner = <FranchisePage data={data} locale={locale} />;
+      break;
+    case "consultant-application":
+      inner = <ConsultantApplicationPage data={data} locale={locale} />;
       break;
     case "article-list":
       inner = <ArticleList data={data} />;
