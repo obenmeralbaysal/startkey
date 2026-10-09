@@ -9,128 +9,128 @@
     display: none;
   }
   .smt-15 {
-    margin-top: 15px !important;
+    margin-top: calc(15px * var(--sk-scale, 1)) !important;
   }
   .section-title.style2 span,
   .content-title.style2 span {
-    letter-spacing: 5px;
+    letter-spacing: calc(5px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap {
-    padding: 50px 0;
+    padding: calc(50px * var(--sk-scale, 1)) 0;
   }
   .breadcrumb-wrap .breadcrumb-title .breadcrumb-menu li {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap .breadcrumb-title .breadcrumb-menu li a {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap .breadcrumb-img img {
     display: none;
   }
   .page-nav li a {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-    line-height: 36px;
+    width: calc(36px * var(--sk-scale, 1));
+    height: calc(36px * var(--sk-scale, 1));
+    font-size: calc(16px * var(--sk-scale, 1));
+    line-height: calc(36px * var(--sk-scale, 1));
   }
   .page-nav li a i {
-    font-size: 13px;
-    line-height: 42px;
+    font-size: calc(13px * var(--sk-scale, 1));
+    line-height: calc(42px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-bg-one {
-    height: 530px;
+    height: calc(530px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider {
-    width: calc(100% - 10px);
+    width: calc(100% - calc(10px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav {
     left: 50%;
   }
   .hero-wrap.style2 .container-fluid .client-feedback {
-    right: 35px;
+    right: calc(35px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .container-fluid .client-feedback span {
     color: #fff;
   }
   .hero-wrap.style2 .hero-slide-item {
-    padding: 115px 0 120px;
+    padding: calc(115px * var(--sk-scale, 1)) 0 calc(120px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-slide-item .hero-content h1 {
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-slide-item .hero-content h1 span img {
-    bottom: 6px;
+    bottom: calc(6px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
     top: 45%;
     max-width: 100%;
-    padding: 0 14px;
+    padding: 0 calc(14px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content h1 {
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 10px;
+    padding: 0 calc(10px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two .hero-slide-item {
-    height: 740px;
+    height: calc(740px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 40px;
-    height: 40px;
+    width: calc(40px * var(--sk-scale, 1));
+    height: calc(40px * var(--sk-scale, 1));
     top: auto;
-    bottom: 45px;
+    bottom: calc(45px * var(--sk-scale, 1));
     transform: translateY(0);
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: calc(50% - 50px);
+    left: calc(50% - calc(50px * var(--sk-scale, 1)));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: calc(50% - 50px);
+    right: calc(50% - calc(50px * var(--sk-scale, 1)));
   }
   .search-property {
-    padding: 20px 20px 0;
-    margin: 50px 0 0;
+    padding: calc(20px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) 0;
+    margin: calc(50px * var(--sk-scale, 1)) 0 0;
   }
   .search-property .property-search-form .form-group {
     width: 100%;
     margin-right: 0;
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .search-property .property-search-form .form-group:last-child {
     width: 100%;
   }
   .about-wrap.style1 .about-img-wrap {
-    padding-bottom: 100px;
+    padding-bottom: calc(100px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-img-one {
-    width: calc(100% - 50px);
+    width: calc(100% - calc(50px * var(--sk-scale, 1)));
   }
   .about-wrap.style1 .about-img-wrap .about-img-two {
-    max-width: 220px;
+    max-width: calc(220px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-one {
-    left: 10px;
-    max-width: 95px;
+    left: calc(10px * var(--sk-scale, 1));
+    max-width: calc(95px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-two {
-    max-width: 80px;
+    max-width: calc(80px * var(--sk-scale, 1));
     right: 0px;
   }
   .counter-card-wrap .counter-card {
     width: 50%;
   }
   .counter-card-wrap .counter-card .counter-icon {
-    width: 40px;
-    height: 45px;
-    margin: 0 0 20px;
+    width: calc(40px * var(--sk-scale, 1));
+    height: calc(45px * var(--sk-scale, 1));
+    margin: 0 0 calc(20px * var(--sk-scale, 1));
     line-height: 1;
   }
   .counter-card-wrap .counter-card .counter-icon i {
-    font-size: 40px;
+    font-size: calc(40px * var(--sk-scale, 1));
     position: relative;
   }
   .counter-card-wrap .counter-card .counter-text {
@@ -138,94 +138,94 @@
     margin: 0;
   }
   .counter-card-wrap .counter-card .counter-text p {
-    margin: 10px 0 0;
+    margin: calc(10px * var(--sk-scale, 1)) 0 0;
   }
   .counter-card-wrap.style2 .counter-card .counter-card-shape {
-    max-width: 80px;
+    max-width: calc(80px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card .counter-text h2 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap.style2 .counter-card .counter-text h2 .target {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card .counter-text p {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style4 {
-    padding: 25px 20px 0;
+    padding: calc(25px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) 0;
   }
   .counter-card-wrap.style4 .counter-card {
-    padding-left: 10px;
+    padding-left: calc(10px * var(--sk-scale, 1));
   }
 }
 @media only screen and (min-width: 576px) and (max-width: 767px) {
   .container-fluid {
-    max-width: 540px;
-    padding: 0 15px;
+    max-width: calc(540px * var(--sk-scale, 1));
+    padding: 0 calc(15px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-bg-one {
-    height: 500px;
+    height: calc(500px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider {
-    width: calc(100% - 100px);
+    width: calc(100% - calc(100px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav {
-    left: calc(50% + 20px);
+    left: calc(50% + calc(20px * var(--sk-scale, 1)));
   }
   .hero-wrap.style2 .container-fluid {
-    max-width: 540px;
+    max-width: calc(540px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .container-fluid .client-feedback {
-    right: 35px;
+    right: calc(35px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .container-fluid .client-feedback span {
     color: #fff;
   }
   .hero-wrap.style2 .hero-slide-item {
-    padding: 130px 0 130px;
+    padding: calc(130px * var(--sk-scale, 1)) 0 calc(130px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content {
-    padding-left: 30px;
+    padding-left: calc(30px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content h1 {
-    font-size: 36px;
+    font-size: calc(36px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
     top: 45%;
-    max-width: 515px;
+    max-width: calc(515px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content h1 {
-    font-size: 34px;
+    font-size: calc(34px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 30px;
+    padding: 0 calc(30px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two .hero-slide-item {
-    height: 700px;
+    height: calc(700px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 50px;
-    height: 50px;
+    width: calc(50px * var(--sk-scale, 1));
+    height: calc(50px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -20px;
+    left: calc(-20px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -20px;
+    right: calc(-20px * var(--sk-scale, 1));
   }
   .search-property {
-    padding: 35px 35px 15px;
-    margin: -65px 20px 0;
+    padding: calc(35px * var(--sk-scale, 1)) calc(35px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1));
+    margin: calc(-65px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) 0;
   }
   .search-property .property-search-form .form-group {
-    width: calc(50% - 20px);
-    margin-right: 20px;
-    margin-bottom: 20px;
+    width: calc(50% - calc(20px * var(--sk-scale, 1)));
+    margin-right: calc(20px * var(--sk-scale, 1));
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .search-property .property-search-form .form-group:nth-child(2) {
     margin-right: 0;
@@ -235,70 +235,70 @@
     width: 50%;
   }
   .about-wrap.style1 .about-img-wrap .about-img-one {
-    width: calc(100% - 150px);
+    width: calc(100% - calc(150px * var(--sk-scale, 1)));
   }
   .about-wrap.style1 .about-img-wrap .about-img-two {
-    max-width: 320px;
+    max-width: calc(320px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-one {
-    left: 50px;
-    max-width: 145px;
+    left: calc(50px * var(--sk-scale, 1));
+    max-width: calc(145px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-two {
-    max-width: 140px;
+    max-width: calc(140px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card {
     width: 50%;
-    padding-left: 40px;
+    padding-left: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-icon {
-    width: 40px;
+    width: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-icon i {
-    font-size: 40px;
+    font-size: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text {
-    width: calc(100% - 60px);
+    width: calc(100% - calc(60px * var(--sk-scale, 1)));
   }
   .counter-card-wrap .counter-card .counter-text h2 {
-    font-size: 32px;
+    font-size: calc(32px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap .counter-card .counter-text h2 .target {
-    font-size: 32px;
+    font-size: calc(32px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text p {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 {
-    padding: 45px 45px 20px;
+    padding: calc(45px * var(--sk-scale, 1)) calc(45px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card {
     padding-left: 0;
   }
   .counter-card-wrap.style2 .counter-card .counter-card-shape {
-    max-width: 80px;
+    max-width: calc(80px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card .counter-text h2 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap.style2 .counter-card .counter-text h2 .target {
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card .counter-text p {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style4 {
-    padding: 40px 30px 25px;
+    padding: calc(40px * var(--sk-scale, 1)) calc(30px * var(--sk-scale, 1)) calc(25px * var(--sk-scale, 1));
   }
 }
 @media only screen and (max-width: 767px) {
   p, input, textarea {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .btn {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .sm-none {
     display: none !important;
@@ -307,118 +307,118 @@
     text-align: center !important;
   }
   .mb-50 {
-    margin-bottom: 30px !important;
+    margin-bottom: calc(30px * var(--sk-scale, 1)) !important;
   }
   .pt-100 {
-    padding-top: 50px;
+    padding-top: calc(50px * var(--sk-scale, 1));
   }
   .pb-50 {
     padding-bottom: 0px;
   }
   .pb-60 {
-    padding-bottom: 15px;
+    padding-bottom: calc(15px * var(--sk-scale, 1));
   }
   .pb-100 {
-    padding-bottom: 50px;
+    padding-bottom: calc(50px * var(--sk-scale, 1));
   }
   .mt-100 {
-    margin-top: 50px !important;
+    margin-top: calc(50px * var(--sk-scale, 1)) !important;
   }
   .mb-100 {
-    margin-bottom: 50px !important;
+    margin-bottom: calc(50px * var(--sk-scale, 1)) !important;
   }
   .mtb-100 {
-    margin-top: 50px !important;
-    margin-bottom: 50px !important;
+    margin-top: calc(50px * var(--sk-scale, 1)) !important;
+    margin-bottom: calc(50px * var(--sk-scale, 1)) !important;
   }
   .ptb-100 {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: calc(50px * var(--sk-scale, 1));
+    padding-bottom: calc(50px * var(--sk-scale, 1));
   }
   .pt-70 {
-    padding-top: 20px;
+    padding-top: calc(20px * var(--sk-scale, 1));
   }
   .pb-70 {
-    padding-bottom: 20px;
+    padding-bottom: calc(20px * var(--sk-scale, 1));
   }
   .pb-75 {
-    padding-bottom: 25px;
+    padding-bottom: calc(25px * var(--sk-scale, 1));
   }
   .pb-50 {
     padding-bottom: 0px;
   }
   .pt-75 {
-    padding-top: 25px;
+    padding-top: calc(25px * var(--sk-scale, 1));
   }
   .mb-40 {
-    margin-bottom: 25px !important;
+    margin-bottom: calc(25px * var(--sk-scale, 1)) !important;
   }
   .section-title.mb-50,
   .content-title.mb-50 {
-    margin-bottom: 30px !important;
+    margin-bottom: calc(30px * var(--sk-scale, 1)) !important;
   }
   .section-title.mb-40 {
-    margin-bottom: 20px !important;
+    margin-bottom: calc(20px * var(--sk-scale, 1)) !important;
   }
   .link, .btn {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .btn {
-    padding: 12px 25px 12px;
+    padding: calc(12px * var(--sk-scale, 1)) calc(25px * var(--sk-scale, 1)) calc(12px * var(--sk-scale, 1));
   }
   .content-wrapper {
-    margin-top: 63px;
+    margin-top: calc(63px * var(--sk-scale, 1));
   }
   .back-to-top {
-    font-size: 20px;
-    width: 35px;
-    height: 35px;
-    line-height: 32px;
-    right: 10px;
+    font-size: calc(20px * var(--sk-scale, 1));
+    width: calc(35px * var(--sk-scale, 1));
+    height: calc(35px * var(--sk-scale, 1));
+    line-height: calc(32px * var(--sk-scale, 1));
+    right: calc(10px * var(--sk-scale, 1));
   }
   .back-to-top i {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   .section-title.style2 span, .section-title.style3 span,
   .content-title.style2 span,
   .content-title.style3 span {
-    font-size: 12px;
+    font-size: calc(12px * var(--sk-scale, 1));
   }
   .section-title.style1 span,
   .content-title.style1 span {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .section-title h2,
   .content-title h2 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
     line-height: 1.3;
   }
   select, button {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap {
-    padding: 70px 0;
+    padding: calc(70px * var(--sk-scale, 1)) 0;
   }
   .breadcrumb-title h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
+    font-size: calc(24px * var(--sk-scale, 1));
+    margin-bottom: calc(10px * var(--sk-scale, 1));
   }
   .breadcrumb-title .breadcrumb-menu li {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .breadcrumb-title .breadcrumb-menu li:after {
-    font-size: 16px;
+    font-size: calc(16px * var(--sk-scale, 1));
     top: -1px;
   }
   .breadcrumb-title .breadcrumb-menu li a {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .owl-carousel .owl-nav button.owl-prev, .owl-carousel .owl-nav button.owl-next {
-    width: 40px;
-    height: 40px;
+    width: calc(40px * var(--sk-scale, 1));
+    height: calc(40px * var(--sk-scale, 1));
   }
   .owl-carousel .owl-nav button.owl-prev i, .owl-carousel .owl-nav button.owl-next i {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .adv-card .adv-info h3,
   .hw-card .hw-info h3,
@@ -428,51 +428,51 @@
   .contact-item .contact-info h3,
   .property-card .property-info h3,
   .blog-card .blog-info h3 {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap .hero-content h1 {
-    margin: 0 0 10px;
+    margin: 0 0 calc(10px * var(--sk-scale, 1));
   }
   .hero-wrap .hero-content p {
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content h1 {
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content form input {
-    height: 50px;
-    padding: 10px 94px 10px 40px;
+    height: calc(50px * var(--sk-scale, 1));
+    padding: calc(10px * var(--sk-scale, 1)) calc(94px * var(--sk-scale, 1)) calc(10px * var(--sk-scale, 1)) calc(40px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content form i {
-    top: 18px;
-    left: 15px;
-    font-size: 14px;
+    top: calc(18px * var(--sk-scale, 1));
+    left: calc(15px * var(--sk-scale, 1));
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content form button {
-    padding: 10px 20px;
-    font-size: 14px;
+    padding: calc(10px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .client-feedback {
-    left: 75px;
+    left: calc(75px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-bg-one {
-    width: calc(100% - 50px);
+    width: calc(100% - calc(50px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav button.owl-prev i, .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav button.owl-next i {
-    top: 6px;
+    top: calc(6px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .property-card.style1 .property-info {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-slide-item:after {
     background: rgba(1, 34, 115, 0.6);
   }
   .hero-wrap.style2 .hero-slide-item .hero-content h1 span img {
-    bottom: 6px;
+    bottom: calc(6px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content .property-search-form {
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: calc(5px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap {
     width: 100%;
@@ -484,314 +484,314 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
   .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap .form-group input, .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap .form-group select {
-    height: 54px;
+    height: calc(54px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content .property-search-form button {
     width: 100%;
-    border-radius: 0 0 5px 5px;
+    border-radius: 0 0 calc(5px * var(--sk-scale, 1)) calc(5px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev, .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    width: 45px;
-    height: 45px;
+    width: calc(45px * var(--sk-scale, 1));
+    height: calc(45px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev i, .hero-slider-two.owl-carousel .owl-nav button.owl-next i {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev {
-    left: calc(50% - 55px);
+    left: calc(50% - calc(55px * var(--sk-scale, 1)));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    right: calc(50% - 55px);
+    right: calc(50% - calc(55px * var(--sk-scale, 1)));
   }
   .about-wrap .about-content .content-title {
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .about-wrap .about-content .content-feature-list {
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .about-wrap.style2 .about-box .about-img-wrap {
-    height: 340px;
+    height: calc(340px * var(--sk-scale, 1));
   }
   .about-wrap.style2 .about-content {
-    padding: 0 20px 20px;
+    padding: 0 calc(20px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
   }
   .about-wrap.style3 .about-img-wrap .about-bg-2,
   .about-wrap.style3 .about-img-wrap .about-bg-3,
   .about-wrap.style3 .about-img-wrap .about-bg-4 {
-    height: 350px;
+    height: calc(350px * var(--sk-scale, 1));
   }
   .hw-card.style2 .hw-img {
-    margin-bottom: 45px;
+    margin-bottom: calc(45px * var(--sk-scale, 1));
   }
   .hw-card.style2 .hw-img .hw-shape-one {
-    max-width: 250px;
+    max-width: calc(250px * var(--sk-scale, 1));
     top: 45%;
   }
   .counter-card-wrap .counter-card .counter-icon {
-    width: 40px;
+    width: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-icon i {
-    font-size: 40px;
+    font-size: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text h2 {
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap .counter-card .counter-text h2 .target {
-    font-size: 28px;
-    top: 2px;
+    font-size: calc(28px * var(--sk-scale, 1));
+    top: calc(2px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text p {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 {
-    padding: 20px 20px 0;
-    margin-top: -50px;
+    padding: calc(20px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) 0;
+    margin-top: calc(-50px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style3 .counter-card {
     padding-left: 0;
   }
   .counter-card-wrap.style3 .counter-card .counter-icon i {
-    font-size: 70px;
+    font-size: calc(70px * var(--sk-scale, 1));
   }
   .hw-card .hw-img span {
-    right: 36px;
+    right: calc(36px * var(--sk-scale, 1));
   }
   .property-card .property-info {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .property-card .property-info .property-metainfo li {
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-scale, 1));
   }
   .property-card .property-info .property-metainfo li i {
-    font-size: 13px;
-    margin-right: 3px;
+    font-size: calc(13px * var(--sk-scale, 1));
+    margin-right: calc(3px * var(--sk-scale, 1));
   }
   .simple-card .simple-card-info {
-    padding: 20px 20px 18px;
+    padding: calc(20px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) calc(18px * var(--sk-scale, 1));
   }
   .property-slider-one {
-    margin: -10px 0;
+    margin: calc(-10px * var(--sk-scale, 1)) 0;
   }
   .property-slider-one .property-card {
-    margin: 10px 0;
+    margin: calc(10px * var(--sk-scale, 1)) 0;
   }
   .profuct-result {
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .property-slider-three.owl-carousel .owl-dots,
   .testimonial-slider-one.owl-carousel .owl-dots,
   .city-slider-one.owl-carousel .owl-dots,
   .city-slider-two.owl-carousel .owl-dots {
-    margin: 5px 0 10px;
+    margin: calc(5px * var(--sk-scale, 1)) 0 calc(10px * var(--sk-scale, 1));
   }
   .testimonial-slider-one,
   .testimonial-slider-two {
-    margin: -10px 0;
+    margin: calc(-10px * var(--sk-scale, 1)) 0;
   }
   .testimonial-slider-one .testimonial-card,
   .testimonial-slider-two .testimonial-card {
-    margin: 10px 0;
+    margin: calc(10px * var(--sk-scale, 1)) 0;
   }
   .agent-details-wrap {
     padding: 0;
     box-shadow: none;
-    margin-bottom: -25px;
+    margin-bottom: calc(-25px * var(--sk-scale, 1));
   }
   .agent-details-wrap .agent-info-wrap .agent-name {
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+    padding-bottom: calc(20px * var(--sk-scale, 1));
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .agent-details-wrap .agent-info-wrap .agent-name h2 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .agent-details-wrap .agent-info-wrap .agent-social span {
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: calc(15px * var(--sk-scale, 1));
     margin-right: 0;
   }
   .agent-details-wrap .agent-info-wrap .agent-desc h4 {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .testimonial-card {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-img {
-    width: 48px;
-    height: 48px;
+    width: calc(48px * var(--sk-scale, 1));
+    height: calc(48px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-info {
-    width: calc(100% - 108px);
-    margin-left: 15px;
+    width: calc(100% - calc(108px * var(--sk-scale, 1)));
+    margin-left: calc(15px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-info h5 {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-info span {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .ratings {
-    width: 45px;
-    font-size: 14px;
+    width: calc(45px * var(--sk-scale, 1));
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .testimonial-slider-two.owl-carousel .owl-nav {
-    margin: 15px 0px 0px 0;
+    margin: calc(15px * var(--sk-scale, 1)) 0px 0px 0;
   }
   .video-wrap.style1 .video-content {
-    padding: 40px 20px;
-    margin-top: 30px;
+    padding: calc(40px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
+    margin-top: calc(30px * var(--sk-scale, 1));
   }
   .video-wrap.style2 .video-content {
-    padding: 0 0 50px;
+    padding: 0 0 calc(50px * var(--sk-scale, 1));
   }
   .video-wrap.style3 .video-bg {
-    height: 350px;
+    height: calc(350px * var(--sk-scale, 1));
   }
   #thumbs {
-    margin: 15px 0 0;
+    margin: calc(15px * var(--sk-scale, 1)) 0 0;
   }
   .add-listing-wrap .add-listing-bg {
-    height: 300px;
+    height: calc(300px * var(--sk-scale, 1));
   }
   .add-listing-wrap .listing-content {
-    padding-right: 20px;
-    padding-left: 20px;
+    padding-right: calc(20px * var(--sk-scale, 1));
+    padding-left: calc(20px * var(--sk-scale, 1));
   }
   .testimonial-card .client-img {
-    width: 150px;
-    height: 150px;
+    width: calc(150px * var(--sk-scale, 1));
+    height: calc(150px * var(--sk-scale, 1));
   }
   .testimonial-card .quote-wrap {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .testimonial-card .quote-wrap .client-quote {
-    margin: 0 0 15px;
+    margin: 0 0 calc(15px * var(--sk-scale, 1));
   }
   .testimonial-card .quote-wrap .client-info-wrap .client-info h5 {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   .testimonial-card .quote-wrap .client-info-wrap .client-info span {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .testimonial-slider-one {
-    margin: -10px 0;
+    margin: calc(-10px * var(--sk-scale, 1)) 0;
   }
   .testimonial-slider-one .testimonial-card {
-    margin: 10px 0;
+    margin: calc(10px * var(--sk-scale, 1)) 0;
   }
   .accordion-item .accordion-header .accordion-button {
-    font-size: 16px;
-    padding: 20px 50px 15px 20px;
+    font-size: calc(16px * var(--sk-scale, 1));
+    padding: calc(20px * var(--sk-scale, 1)) calc(50px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
   }
   .newsletter-form .form-group {
     width: 100%;
     margin-right: 0;
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .newsletter-form .form-group:last-child {
     width: 100%;
     margin-bottom: 0;
   }
   .property-details .property-title {
-    margin: 0 0 10px;
+    margin: 0 0 calc(10px * var(--sk-scale, 1));
   }
   .property-details .property-title h2 {
-    font-size: 22px;
+    font-size: calc(22px * var(--sk-scale, 1));
   }
   .property-details .property-title .property-metainfo li {
-    font-size: 14px;
-    margin-right: 15px;
-    margin-bottom: 5px;
+    font-size: calc(14px * var(--sk-scale, 1));
+    margin-right: calc(15px * var(--sk-scale, 1));
+    margin-bottom: calc(5px * var(--sk-scale, 1));
   }
   .property-details .property-price {
     text-align: left;
-    margin: 0 0 20px;
+    margin: 0 0 calc(20px * var(--sk-scale, 1));
     top: 0;
   }
   .property-details .property-img {
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .property-details .property-img .property-status {
-    top: 20px;
-    left: 20px;
+    top: calc(20px * var(--sk-scale, 1));
+    left: calc(20px * var(--sk-scale, 1));
   }
   .property-details .property-desc {
-    margin-bottom: 15px;
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   .property-details .property-desc h4 {
-    font-size: 20px;
-    margin: 0 0 15px;
+    font-size: calc(20px * var(--sk-scale, 1));
+    margin: 0 0 calc(15px * var(--sk-scale, 1));
   }
   .property-details .property-desc .property-features li {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .property-details .property-desc .property-features li:last-child {
-    margin-bottom: 10px;
+    margin-bottom: calc(10px * var(--sk-scale, 1));
   }
   .property-details .property-desc .floor-plan {
-    padding: 20px;
-    margin: 20px 0 20px;
+    padding: calc(20px * var(--sk-scale, 1));
+    margin: calc(20px * var(--sk-scale, 1)) 0 calc(20px * var(--sk-scale, 1));
   }
   .property-details .property-desc .property-annuties li {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .property-details .property-desc .property-annuties li:last-child {
-    margin-bottom: 10px;
+    margin-bottom: calc(10px * var(--sk-scale, 1));
   }
   .agent-desc .review-form, .property-desc .review-form {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .login-bg {
-    height: 420px;
+    height: calc(420px * var(--sk-scale, 1));
   }
   .login-content h2 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .login-content {
-    padding: 20px 20px 18px;
+    padding: calc(20px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) calc(18px * var(--sk-scale, 1));
   }
   article h2, .terms-wrap h2,
   article h3, .terms-wrap h3 {
-    margin-bottom: 15px;
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   article p, .terms-wrap p {
-    margin-bottom: 15px;
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   article .content-feature-list, .service-desc .content-feature-list, .terms-wrap .content-feature-list, .project-desc .content-feature-list {
-    margin: 15px 0 15px;
+    margin: calc(15px * var(--sk-scale, 1)) 0 calc(15px * var(--sk-scale, 1));
   }
   article ol, .service-desc ol, .terms-wrap ol, .project-desc ol {
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: calc(15px * var(--sk-scale, 1));
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   article h1,
   .terms-wrap h1 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   article h2,
   .terms-wrap h2 {
-    font-size: 22px;
+    font-size: calc(22px * var(--sk-scale, 1));
   }
   article h3,
   .terms-wrap h3 {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   article h4,
   .terms-wrap h4 {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   article h5,
   .terms-wrap h5 {
-    font-size: 17px;
+    font-size: calc(17px * var(--sk-scale, 1));
   }
   article h6,
   .terms-wrap h6 {
-    font-size: 16px;
+    font-size: calc(16px * var(--sk-scale, 1));
   }
   article ol li,
   .terms-wrap ol li {
-    font-size: 14px;
-    margin-bottom: 10px;
+    font-size: calc(14px * var(--sk-scale, 1));
+    margin-bottom: calc(10px * var(--sk-scale, 1));
   }
   article ol li:last-child,
   .terms-wrap ol li:last-child {
@@ -799,217 +799,217 @@
   }
   article ul li,
   .terms-wrap ul li {
-    font-size: 14px;
-    margin-bottom: 10px;
+    font-size: calc(14px * var(--sk-scale, 1));
+    margin-bottom: calc(10px * var(--sk-scale, 1));
   }
   article ul li:last-child,
   .terms-wrap ul li:last-child {
     margin-bottom: 0;
   }
   .post-author .post-author-info h4 {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .wp-block-quote {
-    padding: 15px 20px 15px;
-    margin: 22px 0 22px;
+    padding: calc(15px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1));
+    margin: calc(22px * var(--sk-scale, 1)) 0 calc(22px * var(--sk-scale, 1));
   }
   .wp-block-quote .wp-quote-text {
-    width: calc(100% - 50px);
-    margin-left: 15px;
+    width: calc(100% - calc(50px * var(--sk-scale, 1)));
+    margin-left: calc(15px * var(--sk-scale, 1));
     text-align: center;
   }
   .wp-block-quote .wp-quote-icon {
-    width: 30px;
-    height: 30px;
+    width: calc(30px * var(--sk-scale, 1));
+    height: calc(30px * var(--sk-scale, 1));
   }
   .wp-block-quote .wp-quote-icon i {
-    font-size: 30px;
+    font-size: calc(30px * var(--sk-scale, 1));
   }
   .post-metainfo {
-    margin-bottom: 15px;
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   .post-metainfo li {
     margin-bottom: 0;
   }
   .post-img {
-    margin: 0 0 25px;
+    margin: 0 0 calc(25px * var(--sk-scale, 1));
   }
   .author-info-wrap .author-info h6 {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
   }
   .reply-btn {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .post-tag {
-    margin-bottom: 15px;
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   .post-tag ul li a {
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-scale, 1));
   }
   .post-author {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .post-author .post-author-img {
-    width: 130px;
-    height: 130px;
+    width: calc(130px * var(--sk-scale, 1));
+    height: calc(130px * var(--sk-scale, 1));
     border-radius: 50%;
   }
   .post-author .post-author-info {
     width: 100%;
     margin-left: 0;
-    margin-top: 20px;
+    margin-top: calc(20px * var(--sk-scale, 1));
   }
   .comment-item-wrap .comment-item {
-    padding-bottom: 15px;
-    margin-bottom: 15px;
+    padding-bottom: calc(15px * var(--sk-scale, 1));
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   .comment-item-wrap .comment-item.reply {
-    margin-left: 25px;
+    margin-left: calc(25px * var(--sk-scale, 1));
   }
   .comment-item-wrap .comment-item .comment-author-img {
-    width: 55px;
-    height: 55px;
+    width: calc(55px * var(--sk-scale, 1));
+    height: calc(55px * var(--sk-scale, 1));
   }
   .comment-item-wrap .comment-item .comment-author-wrap {
     width: 100%;
     margin-left: 0;
-    margin-top: 20px;
+    margin-top: calc(20px * var(--sk-scale, 1));
   }
   .comment-item-wrap .comment-item .comment-author-wrap .comment-author-name h5 {
-    font-size: 16px;
+    font-size: calc(16px * var(--sk-scale, 1));
     display: block;
   }
   .comment-item-wrap .comment-item .comment-author-wrap .comment-author-name .comment-date {
     display: block;
     margin-left: 0;
-    margin-top: 12px;
-    margin-bottom: 13px;
-    font-size: 14px;
+    margin-top: calc(12px * var(--sk-scale, 1));
+    margin-bottom: calc(13px * var(--sk-scale, 1));
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .comment-item-wrap .comment-item .comment-author-wrap .ratings {
-    margin-bottom: 10px;
+    margin-bottom: calc(10px * var(--sk-scale, 1));
   }
   .comment-item-wrap .comment-item .comment-author-wrap .comment-text {
-    margin-bottom: 8px;
+    margin-bottom: calc(8px * var(--sk-scale, 1));
   }
   #cmt-form .comment-form .form-group {
-    margin-bottom: 15px;
+    margin-bottom: calc(15px * var(--sk-scale, 1));
   }
   #cmt-form .comment-form .form-group label {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   #cmt-form .comment-form .form-group input {
-    height: 54px;
+    height: calc(54px * var(--sk-scale, 1));
   }
   #cmt-form .comment-form .btn.style1 {
-    margin-top: 20px;
+    margin-top: calc(20px * var(--sk-scale, 1));
   }
   .sidebar .sidebar-widget {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .sidebar .sidebar-widget h4 {
-    font-size: 18px;
-    margin: 0 0 20px;
-    padding-bottom: 15px;
+    font-size: calc(18px * var(--sk-scale, 1));
+    margin: 0 0 calc(20px * var(--sk-scale, 1));
+    padding-bottom: calc(15px * var(--sk-scale, 1));
   }
   .category-box ul li a {
-    font-size: 14px;
-    padding: 8px 10px 8px 0;
+    font-size: calc(14px * var(--sk-scale, 1));
+    padding: calc(8px * var(--sk-scale, 1)) calc(10px * var(--sk-scale, 1)) calc(8px * var(--sk-scale, 1)) 0;
   }
   .category-box ul li a i {
-    top: 18px;
+    top: calc(18px * var(--sk-scale, 1));
   }
   .tag-list ul li {
-    margin: 9px 6px 0px 0px;
+    margin: calc(9px * var(--sk-scale, 1)) calc(6px * var(--sk-scale, 1)) 0px 0px;
   }
   .contact-item {
-    margin: 35px 0 25px;
+    margin: calc(35px * var(--sk-scale, 1)) 0 calc(25px * var(--sk-scale, 1));
   }
   .contact-item .contact-icon {
-    width: 60px;
-    height: 60px;
-    margin: -60px auto 20px;
+    width: calc(60px * var(--sk-scale, 1));
+    height: calc(60px * var(--sk-scale, 1));
+    margin: calc(-60px * var(--sk-scale, 1)) auto calc(20px * var(--sk-scale, 1));
   }
   .contact-item .contact-icon i {
-    font-size: 30px;
+    font-size: calc(30px * var(--sk-scale, 1));
   }
   .contact-content .content-title {
-    margin-bottom: 20px;
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .error-content img {
-    max-width: 280px;
+    max-width: calc(280px * var(--sk-scale, 1));
   }
   .error-content p {
-    margin: 0 auto 20px;
-    max-width: 300px;
+    margin: 0 auto calc(20px * var(--sk-scale, 1));
+    max-width: calc(300px * var(--sk-scale, 1));
   }
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .container-fluid {
-    max-width: 720px;
-    padding-left: 15px;
-    padding-right: 15px;
+    max-width: calc(720px * var(--sk-scale, 1));
+    padding-left: calc(15px * var(--sk-scale, 1));
+    padding-right: calc(15px * var(--sk-scale, 1));
   }
   .pt-100 {
-    padding-top: 70px;
+    padding-top: calc(70px * var(--sk-scale, 1));
   }
   .pb-100 {
-    padding-bottom: 70px;
+    padding-bottom: calc(70px * var(--sk-scale, 1));
   }
   .mt-100 {
-    margin-top: 70px !important;
+    margin-top: calc(70px * var(--sk-scale, 1)) !important;
   }
   .mb-100 {
-    margin-bottom: 70px !important;
+    margin-bottom: calc(70px * var(--sk-scale, 1)) !important;
   }
   .mtb-100 {
-    margin-top: 70px !important;
-    margin-bottom: 70px !important;
+    margin-top: calc(70px * var(--sk-scale, 1)) !important;
+    margin-bottom: calc(70px * var(--sk-scale, 1)) !important;
   }
   .pb-50 {
-    padding-bottom: 20px;
+    padding-bottom: calc(20px * var(--sk-scale, 1));
   }
   .pb-60 {
-    padding-bottom: 35px;
+    padding-bottom: calc(35px * var(--sk-scale, 1));
   }
   .mt-100 {
-    margin-top: 70px !important;
+    margin-top: calc(70px * var(--sk-scale, 1)) !important;
   }
   .smb-25 {
-    margin-bottom: 25px;
+    margin-bottom: calc(25px * var(--sk-scale, 1));
   }
   .smb-70 {
-    margin-bottom: 70px !important;
+    margin-bottom: calc(70px * var(--sk-scale, 1)) !important;
   }
   .ptb-100 {
-    padding-top: 70px;
-    padding-bottom: 70px;
+    padding-top: calc(70px * var(--sk-scale, 1));
+    padding-bottom: calc(70px * var(--sk-scale, 1));
   }
   .pt-70 {
-    padding-top: 40px;
+    padding-top: calc(40px * var(--sk-scale, 1));
   }
   .pb-70 {
-    padding-bottom: 40px;
+    padding-bottom: calc(40px * var(--sk-scale, 1));
   }
   .pb-75 {
-    padding-bottom: 45px;
+    padding-bottom: calc(45px * var(--sk-scale, 1));
   }
   .pb-50 {
-    padding-bottom: 20px;
+    padding-bottom: calc(20px * var(--sk-scale, 1));
   }
   .pt-75 {
-    padding-top: 45px;
+    padding-top: calc(45px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap {
-    padding: 80px 0;
+    padding: calc(80px * var(--sk-scale, 1)) 0;
   }
   .breadcrumb-title h2,
   .section-title h2,
   .content-title h2 {
-    font-size: 35px;
+    font-size: calc(35px * var(--sk-scale, 1));
   }
   .content-wrapper {
-    margin-top: 63px;
+    margin-top: calc(63px * var(--sk-scale, 1));
   }
   .adv-card .adv-info h3,
   .hw-card .hw-info h3,
@@ -1019,60 +1019,60 @@
   .contact-item .contact-info h3,
   .property-card .property-info h3,
   .blog-card .blog-info h3 {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content h1 {
-    font-size: 48px;
+    font-size: calc(48px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .client-feedback {
-    left: 75px;
+    left: calc(75px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-bg-one {
-    width: calc(100% - 50px);
-    height: 600px;
+    width: calc(100% - calc(50px * var(--sk-scale, 1)));
+    height: calc(600px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider {
-    width: calc(100% - 100px);
+    width: calc(100% - calc(100px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav {
-    left: calc(50% + 50px);
+    left: calc(50% + calc(50px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .property-card.style1 .property-info {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .container-fluid {
-    max-width: 760px;
+    max-width: calc(760px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .container-fluid .client-feedback {
-    right: 35px;
+    right: calc(35px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-slide-item {
-    padding: 100px 0 140px;
+    padding: calc(100px * var(--sk-scale, 1)) 0 calc(140px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-slide-item:after {
     background: linear-gradient(90deg, rgba(1, 34, 115, 0.9) 10%, rgba(1, 34, 115, 0.02) 96%, rgba(1, 34, 115, 0.04) 77%);
   }
   .hero-wrap.style2 .hero-content {
-    padding-left: 30px;
+    padding-left: calc(30px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content h1 {
-    font-size: 38px;
+    font-size: calc(38px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
     top: 45%;
-    max-width: 695px;
+    max-width: calc(695px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content h1 {
-    font-size: 54px;
+    font-size: calc(54px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 60px;
+    padding: 0 calc(60px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap {
-    width: calc(100% - 175px);
-    margin-right: 22px;
+    width: calc(100% - calc(175px * var(--sk-scale, 1)));
+    margin-right: calc(22px * var(--sk-scale, 1));
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: calc(5px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap .form-group {
     width: 33.33%;
@@ -1080,10 +1080,10 @@
   }
   .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap .form-group input, .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap .form-group select {
     border: none;
-    height: 57px;
+    height: calc(57px * var(--sk-scale, 1));
     background-color: transparent;
     width: 100%;
-    padding: 15px 15px 10px 20px;
+    padding: calc(15px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1)) calc(10px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
     border-radius: 0;
   }
   .hero-wrap.style3 .hero-content .property-search-form .form-group-wrap .form-group input::-moz-placeholder {
@@ -1093,45 +1093,45 @@
     opacity: 1;
   }
   .hero-wrap.style3 .hero-content .property-search-form button {
-    width: 150px;
+    width: calc(150px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two .hero-slide-item {
-    height: 600px;
+    height: calc(600px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 50px;
-    height: 50px;
+    width: calc(50px * var(--sk-scale, 1));
+    height: calc(50px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -20px;
+    left: calc(-20px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -20px;
+    right: calc(-20px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev, .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    width: 45px;
-    height: 45px;
+    width: calc(45px * var(--sk-scale, 1));
+    height: calc(45px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev i, .hero-slider-two.owl-carousel .owl-nav button.owl-next i {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev {
-    left: calc(50% - 55px);
+    left: calc(50% - calc(55px * var(--sk-scale, 1)));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    right: calc(50% - 55px);
+    right: calc(50% - calc(55px * var(--sk-scale, 1)));
   }
   .search-property {
-    padding: 35px 35px 15px;
-    margin: -65px 20px 0;
+    padding: calc(35px * var(--sk-scale, 1)) calc(35px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1));
+    margin: calc(-65px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) 0;
   }
   .search-property .property-search-form .form-group {
-    width: calc(50% - 20px);
-    margin-right: 20px;
-    margin-bottom: 20px;
+    width: calc(50% - calc(20px * var(--sk-scale, 1)));
+    margin-right: calc(20px * var(--sk-scale, 1));
+    margin-bottom: calc(20px * var(--sk-scale, 1));
   }
   .search-property .property-search-form .form-group:nth-child(2) {
     margin-right: 0;
@@ -1141,145 +1141,145 @@
     width: 50%;
   }
   .about-wrap.style1 .about-img-wrap {
-    margin-bottom: 30px;
+    margin-bottom: calc(30px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-img-one {
-    width: calc(100% - 200px);
+    width: calc(100% - calc(200px * var(--sk-scale, 1)));
   }
   .about-wrap.style1 .about-img-wrap .about-img-two {
-    max-width: 400px;
+    max-width: calc(400px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-one {
-    left: 50px;
-    max-width: 145px;
+    left: calc(50px * var(--sk-scale, 1));
+    max-width: calc(145px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-two {
-    max-width: 140px;
+    max-width: calc(140px * var(--sk-scale, 1));
   }
   .about-wrap.style2 .about-box .about-img-wrap {
-    height: 550px;
+    height: calc(550px * var(--sk-scale, 1));
   }
   .about-wrap.style2 .about-content {
-    padding: 0 40px 40px;
+    padding: 0 calc(40px * var(--sk-scale, 1)) calc(40px * var(--sk-scale, 1));
   }
   .about-wrap.style3 .about-img-wrap .about-bg-2,
   .about-wrap.style3 .about-img-wrap .about-bg-3,
   .about-wrap.style3 .about-img-wrap .about-bg-4 {
-    height: 400px;
+    height: calc(400px * var(--sk-scale, 1));
   }
   .video-wrap .video-content {
-    padding: 40px;
+    padding: calc(40px * var(--sk-scale, 1));
   }
   .video-wrap.style2 .video-content {
-    padding: 0 0 70px;
+    padding: 0 0 calc(70px * var(--sk-scale, 1));
   }
   .add-listing-wrap .listing-content {
-    padding-right: 34px;
-    padding-left: 30px;
+    padding-right: calc(34px * var(--sk-scale, 1));
+    padding-left: calc(30px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card {
     width: 50%;
-    padding-left: 60px;
+    padding-left: calc(60px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-icon {
-    width: 40px;
+    width: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-icon i {
-    font-size: 40px;
+    font-size: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text {
-    width: calc(100% - 60px);
+    width: calc(100% - calc(60px * var(--sk-scale, 1)));
   }
   .counter-card-wrap .counter-card .counter-text h2 {
-    font-size: 32px;
+    font-size: calc(32px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap .counter-card .counter-text h2 .target {
-    font-size: 32px;
+    font-size: calc(32px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text p {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 {
-    padding: 45px 45px 20px;
-    margin-top: -70px;
+    padding: calc(45px * var(--sk-scale, 1)) calc(45px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
+    margin-top: calc(-70px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card {
     width: 25%;
     padding-left: 0;
   }
   .counter-card-wrap.style2 .counter-card .counter-card-shape {
-    max-width: 120px;
+    max-width: calc(120px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card .counter-text h2 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap.style2 .counter-card .counter-text h2 .target {
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style2 .counter-card .counter-text p {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style3 .counter-card {
     width: 25%;
     padding-left: 0;
   }
   .counter-card-wrap.style3 .counter-card .counter-text h2 {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap.style3 .counter-card .counter-text h2 .target {
-    font-size: 28px;
+    font-size: calc(28px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style3 .counter-card .counter-text p {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style3 .counter-card .counter-icon i {
-    font-size: 80px;
+    font-size: calc(80px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style4 {
-    padding: 40px 30px 25px;
+    padding: calc(40px * var(--sk-scale, 1)) calc(30px * var(--sk-scale, 1)) calc(25px * var(--sk-scale, 1));
   }
   .agent-details-wrap {
-    padding: 35px 35px 10px;
+    padding: calc(35px * var(--sk-scale, 1)) calc(35px * var(--sk-scale, 1)) calc(10px * var(--sk-scale, 1));
   }
   .property-card .property-info .property-metainfo li {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .property-details .property-title h2 {
-    font-size: 30px;
+    font-size: calc(30px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-img {
-    width: 48px;
-    height: 48px;
+    width: calc(48px * var(--sk-scale, 1));
+    height: calc(48px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-info {
-    width: calc(100% - 115px);
-    margin-left: 15px;
+    width: calc(100% - calc(115px * var(--sk-scale, 1)));
+    margin-left: calc(15px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-info h5 {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .client-info span {
-    font-size: 14px;
+    font-size: calc(14px * var(--sk-scale, 1));
   }
   .testimonial-card.style2 .client-info-wrap .ratings {
-    width: 52px;
+    width: calc(52px * var(--sk-scale, 1));
   }
   .testimonial-slider-two.owl-carousel .owl-nav {
-    margin: 25px 0px 0px 0;
+    margin: calc(25px * var(--sk-scale, 1)) 0px 0px 0;
   }
   .newsletter-form .form-group {
     width: calc(34% - 0px);
-    margin-right: 20px;
+    margin-right: calc(20px * var(--sk-scale, 1));
   }
   .newsletter-form .form-group:last-child {
     width: 26%;
   }
   #signUp .modal-dialog,
   #signIn .modal-dialog {
-    max-width: 720px;
+    max-width: calc(720px * var(--sk-scale, 1));
   }
 }
 @media only screen and (max-width: 991px) {
@@ -1290,34 +1290,34 @@
     display: none !important;
   }
   .mt-60 {
-    margin-top: 30px !important;
+    margin-top: calc(30px * var(--sk-scale, 1)) !important;
   }
   .md-center {
     text-align: center !important;
   }
   .hero-wrap {
-    margin-top: 65px;
+    margin-top: calc(65px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 {
-    padding: 50px 0 110px;
+    padding: calc(50px * var(--sk-scale, 1)) 0 calc(110px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content {
-    margin-bottom: 30px;
+    margin-bottom: calc(30px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content form {
     width: 100%;
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav {
-    bottom: -80px;
+    bottom: calc(-80px * var(--sk-scale, 1));
     transform: translateX(-50%);
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev, .hero-slider-two.owl-carousel .owl-nav button.owl-next {
     top: auto;
     transform: translateY(0);
-    bottom: 30px;
+    bottom: calc(30px * var(--sk-scale, 1));
   }
   .about-wrap .about-img-wrap {
-    margin-bottom: 30px;
+    margin-bottom: calc(30px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-shape-three {
     bottom: 0;
@@ -1327,14 +1327,14 @@
     display: none;
   }
   .faq-wrap .faq-img-wrap {
-    margin-bottom: 30px;
+    margin-bottom: calc(30px * var(--sk-scale, 1));
   }
   .faq-wrap .faq-img-wrap img {
     display: block;
     margin: 0 auto;
   }
   .agent-details-wrap .agent-img {
-    margin-bottom: 25px;
+    margin-bottom: calc(25px * var(--sk-scale, 1));
   }
   .add-listing-wrap .container-fluid {
     margin: 0;
@@ -1342,29 +1342,29 @@
     max-width: 100%;
   }
   .add-listing-wrap .listing-content {
-    padding-right: 26px;
+    padding-right: calc(26px * var(--sk-scale, 1));
   }
   .contact-content {
-    margin-bottom: 30px;
+    margin-bottom: calc(30px * var(--sk-scale, 1));
   }
 }
 @media only screen and (min-width: 992px) {
   #signUp .modal-dialog,
   #signIn .modal-dialog {
-    max-width: 900px;
+    max-width: calc(900px * var(--sk-scale, 1));
   }
 }
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
   .breadcrumb-title h2,
   .section-title h2,
   .content-title h2 {
-    font-size: 35px;
+    font-size: calc(35px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap {
-    padding: 80px 0;
+    padding: calc(80px * var(--sk-scale, 1)) 0;
   }
   .content-wrapper {
-    margin-top: 83px;
+    margin-top: calc(83px * var(--sk-scale, 1));
   }
   .adv-card .adv-info h3,
   .hw-card .hw-info h3,
@@ -1374,87 +1374,87 @@
   .contact-item .contact-info h3,
   .property-card .property-info h3,
   .blog-card .blog-info h3 {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 {
-    padding-bottom: 70px;
+    padding-bottom: calc(70px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-content h1 {
-    font-size: 48px;
+    font-size: calc(48px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .client-feedback {
-    left: 75px;
+    left: calc(75px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-bg-one {
-    width: calc(100% - 50px);
-    height: 600px;
+    width: calc(100% - calc(50px * var(--sk-scale, 1)));
+    height: calc(600px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider {
-    width: calc(100% - 100px);
+    width: calc(100% - calc(100px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav {
-    left: calc(100% - 960px + 123px);
+    left: calc(100% - calc(960px * var(--sk-scale, 1)) + calc(123px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .property-card.style1 .property-info {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .container-fluid {
-    max-width: 960px;
+    max-width: calc(960px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-slide-item {
-    padding: 110px 0 170px;
+    padding: calc(110px * var(--sk-scale, 1)) 0 calc(170px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content {
-    padding-left: 40px;
+    padding-left: calc(40px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content h1 {
-    font-size: 42px;
+    font-size: calc(42px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
-    max-width: 900px;
+    max-width: calc(900px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content h1 {
-    font-size: 54px;
+    font-size: calc(54px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 70px;
+    padding: 0 calc(70px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two .hero-slide-item {
-    height: 650px;
+    height: calc(650px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 50px;
-    height: 50px;
+    width: calc(50px * var(--sk-scale, 1));
+    height: calc(50px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -20px;
+    left: calc(-20px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -20px;
+    right: calc(-20px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev, .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    width: 50px;
-    height: 50px;
+    width: calc(50px * var(--sk-scale, 1));
+    height: calc(50px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev i, .hero-slider-two.owl-carousel .owl-nav button.owl-next i {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev {
-    left: 10px;
+    left: calc(10px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    right: 10px;
+    right: calc(10px * var(--sk-scale, 1));
   }
   .search-property {
-    padding: 40px;
-    margin: -65px 20px 0;
+    padding: calc(40px * var(--sk-scale, 1));
+    margin: calc(-65px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) 0;
   }
   .search-property .property-search-form .form-group {
-    width: calc(26% - 15px);
-    margin-right: 20px;
+    width: calc(26% - calc(15px * var(--sk-scale, 1)));
+    margin-right: calc(20px * var(--sk-scale, 1));
   }
   .search-property .property-search-form .form-group:last-child {
     width: 20%;
@@ -1464,59 +1464,59 @@
     right: 0;
   }
   .about-wrap.style1 .about-img-wrap .about-img-two {
-    max-width: 315px;
+    max-width: calc(315px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-one {
-    left: 20px;
-    max-width: 145px;
+    left: calc(20px * var(--sk-scale, 1));
+    max-width: calc(145px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-two {
-    max-width: 140px;
+    max-width: calc(140px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-icon {
-    width: 40px;
+    width: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-icon i {
-    font-size: 40px;
+    font-size: calc(40px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text {
-    width: calc(100% - 60px);
+    width: calc(100% - calc(60px * var(--sk-scale, 1)));
   }
   .counter-card-wrap .counter-card .counter-text h2 {
-    font-size: 32px;
+    font-size: calc(32px * var(--sk-scale, 1));
     letter-spacing: -1px;
   }
   .counter-card-wrap .counter-card .counter-text h2 .target {
-    font-size: 32px;
+    font-size: calc(32px * var(--sk-scale, 1));
   }
   .counter-card-wrap .counter-card .counter-text p {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style1 .counter-card:after, .counter-card-wrap.style4 .counter-card:after {
-    right: 20px;
-    height: 58px;
+    right: calc(20px * var(--sk-scale, 1));
+    height: calc(58px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style4 {
-    padding: 40px 30px 25px;
+    padding: calc(40px * var(--sk-scale, 1)) calc(30px * var(--sk-scale, 1)) calc(25px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style3 .counter-card .counter-icon i {
-    font-size: 80px;
+    font-size: calc(80px * var(--sk-scale, 1));
   }
   .hw-card .hw-img span {
-    right: 25px;
+    right: calc(25px * var(--sk-scale, 1));
   }
   .add-listing-wrap .listing-content {
-    padding-right: 26px;
+    padding-right: calc(26px * var(--sk-scale, 1));
   }
   .testimonial-slider-two.owl-carousel .owl-nav {
-    margin: 25px 0px 0px -5px;
+    margin: calc(25px * var(--sk-scale, 1)) 0px 0px calc(-5px * var(--sk-scale, 1));
   }
   .contact-item {
-    padding: 25px 20px;
+    padding: calc(25px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
   }
   .newsletter-form .form-group {
-    width: calc(37% - 7px);
-    margin-right: 25px;
+    width: calc(37% - calc(7px * var(--sk-scale, 1)));
+    margin-right: calc(25px * var(--sk-scale, 1));
   }
   .newsletter-form .form-group:last-child {
     width: 22%;
@@ -1524,10 +1524,10 @@
 }
 @media only screen and (max-width: 1199px) {
   .sidebar {
-    margin: 50px 0 0;
+    margin: calc(50px * var(--sk-scale, 1)) 0 0;
   }
   .property-details-wrap .sidebar {
-    margin-top: 25px;
+    margin-top: calc(25px * var(--sk-scale, 1));
   }
 }
 @media only screen and (min-width: 1200px) {
@@ -1535,209 +1535,209 @@
     display: none !important;
   }
   .content-title p {
-    padding-right: 25px;
+    padding-right: calc(25px * var(--sk-scale, 1));
   }
   #signUp .modal-dialog,
   #signIn .modal-dialog {
-    max-width: 1100px;
+    max-width: calc(1100px * var(--sk-scale, 1));
   }
 }
 @media only screen and (min-width: 1200px) and (max-width: 1280px) {
   .section-img.style2 {
-    right: 10px;
-    max-width: 60px;
+    right: calc(10px * var(--sk-scale, 1));
+    max-width: calc(60px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap .section-img {
-    max-width: 140px;
+    max-width: calc(140px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content {
-    padding-left: 40px;
+    padding-left: calc(40px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content h1 {
-    font-size: 54px !important;
+    font-size: calc(54px * var(--sk-scale, 1)) !important;
   }
   .hero-wrap.style3 .hero-content {
-    max-width: 1040px !important;
+    max-width: calc(1040px * var(--sk-scale, 1)) !important;
   }
   .hero-wrap.style3 .hero-slider-two.owl-carousel .owl-nav button.owl-prev, .hero-wrap.style3 .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    width: 50px;
-    height: 50px;
+    width: calc(50px * var(--sk-scale, 1));
+    height: calc(50px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two.owl-carousel .owl-nav button.owl-prev i, .hero-wrap.style3 .hero-slider-two.owl-carousel .owl-nav button.owl-next i {
-    font-size: 20px;
+    font-size: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two.owl-carousel .owl-nav button.owl-prev {
-    left: 15px;
+    left: calc(15px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    right: 15px;
+    right: calc(15px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 60px;
-    height: 60px;
+    width: calc(60px * var(--sk-scale, 1));
+    height: calc(60px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -25px;
+    left: calc(-25px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -25px;
+    right: calc(-25px * var(--sk-scale, 1));
   }
 }
 @media only screen and (min-width: 1200px) and (max-width: 1399px) {
   .breadcrumb-title h2,
   .section-title h2,
   .content-title h2 {
-    font-size: 40px;
+    font-size: calc(40px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 {
-    padding-bottom: 70px;
+    padding-bottom: calc(70px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .client-feedback {
-    left: 75px;
+    left: calc(75px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-bg-one {
-    width: calc(100% - 50px);
-    height: 700px;
+    width: calc(100% - calc(50px * var(--sk-scale, 1)));
+    height: calc(700px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider {
-    width: calc(100% - 10px);
+    width: calc(100% - calc(10px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav {
-    left: calc(100% - 1140px + 36px);
+    left: calc(100% - calc(1140px * var(--sk-scale, 1)) + calc(36px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .property-card.style1 .property-info {
-    padding: 20px;
+    padding: calc(20px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .container-fluid {
-    padding: 0 25px;
+    padding: 0 calc(25px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content h1 {
-    font-size: 60px;
+    font-size: calc(60px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
-    max-width: 1100px;
+    max-width: calc(1100px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content h1 {
-    font-size: 64px;
+    font-size: calc(64px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 90px;
+    padding: 0 calc(90px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two .hero-slide-item {
-    height: 700px;
+    height: calc(700px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 60px;
-    height: 60px;
+    width: calc(60px * var(--sk-scale, 1));
+    height: calc(60px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -25px;
+    left: calc(-25px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -25px;
+    right: calc(-25px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev, .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    width: 65px;
-    height: 65px;
+    width: calc(65px * var(--sk-scale, 1));
+    height: calc(65px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev i, .hero-slider-two.owl-carousel .owl-nav button.owl-next i {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev {
-    left: 20px;
+    left: calc(20px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    right: 20px;
+    right: calc(20px * var(--sk-scale, 1));
   }
   .about-wrap.style1 .about-img-wrap .about-shape-one {
-    left: 20px;
-    max-width: 145px;
+    left: calc(20px * var(--sk-scale, 1));
+    max-width: calc(145px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style1 .counter-card::after {
-    right: 25px;
+    right: calc(25px * var(--sk-scale, 1));
   }
   .add-listing-wrap .listing-content {
-    padding-right: 41px;
+    padding-right: calc(41px * var(--sk-scale, 1));
   }
   .counter-card-wrap.style4 {
-    padding: 40px 30px 25px;
+    padding: calc(40px * var(--sk-scale, 1)) calc(30px * var(--sk-scale, 1)) calc(25px * var(--sk-scale, 1));
   }
   .testimonial-slider-two.owl-carousel .owl-nav {
-    margin: 25px 0px 0px -50px;
+    margin: calc(25px * var(--sk-scale, 1)) 0px 0px calc(-50px * var(--sk-scale, 1));
   }
   .testimonial-wrap.style2 .container-fluid {
-    padding-left: calc((100% - 1520px) / 2 + 15px);
+    padding-left: calc((100% - calc(1520px * var(--sk-scale, 1))) / 2 + calc(15px * var(--sk-scale, 1)));
     padding-right: 0;
   }
 }
 @media only screen and (min-width: 1400px) and (max-width: 1599px) {
   .hero-wrap.style1 .hero-content h1 {
-    font-size: 66px;
+    font-size: calc(66px * var(--sk-scale, 1));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider {
-    width: calc(100% - 60px);
+    width: calc(100% - calc(60px * var(--sk-scale, 1)));
   }
   .hero-wrap.style1 .hero-img-wrap .hero-property-slider .owl-nav {
-    left: calc(100% - 1320px + 84px);
+    left: calc(100% - calc(1320px * var(--sk-scale, 1)) + calc(84px * var(--sk-scale, 1)));
   }
   .hero-wrap.style2 .container-fluid {
-    padding: 0 25px;
+    padding: 0 calc(25px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content {
-    padding-left: 50px;
+    padding-left: calc(50px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content h1 {
-    font-size: 60px;
+    font-size: calc(60px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
-    max-width: 1180px;
+    max-width: calc(1180px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content h1 {
-    font-size: 66px;
+    font-size: calc(66px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 70px;
+    padding: 0 calc(70px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-slider-two .hero-slide-item {
-    height: 750px;
+    height: calc(750px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 60px;
-    height: 60px;
+    width: calc(60px * var(--sk-scale, 1));
+    height: calc(60px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -25px;
+    left: calc(-25px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -25px;
+    right: calc(-25px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev, .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    width: 65px;
-    height: 65px;
+    width: calc(65px * var(--sk-scale, 1));
+    height: calc(65px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev i, .hero-slider-two.owl-carousel .owl-nav button.owl-next i {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-prev {
-    left: 25px;
+    left: calc(25px * var(--sk-scale, 1));
   }
   .hero-slider-two.owl-carousel .owl-nav button.owl-next {
-    right: 25px;
+    right: calc(25px * var(--sk-scale, 1));
   }
   .add-listing-wrap .listing-content {
-    padding-right: 52px;
+    padding-right: calc(52px * var(--sk-scale, 1));
   }
   .testimonial-wrap.style2 .container-fluid {
-    padding-left: calc((100% - 1520px) / 2 + 15px);
+    padding-left: calc((100% - calc(1520px * var(--sk-scale, 1))) / 2 + calc(15px * var(--sk-scale, 1)));
     padding-right: 0;
   }
 }
@@ -1745,82 +1745,82 @@
   .breadcrumb-title h2,
   .section-title h2,
   .content-title h2 {
-    font-size: 48px;
+    font-size: calc(48px * var(--sk-scale, 1));
   }
   .breadcrumb-wrap .container {
-    max-width: 1520px;
+    max-width: calc(1520px * var(--sk-scale, 1));
     margin: 0 auto;
   }
   .hero-wrap .container {
-    max-width: 1520px;
+    max-width: calc(1520px * var(--sk-scale, 1));
     margin: 0 auto;
   }
   .hero-wrap .hero-content h1 {
-    font-size: 74px;
+    font-size: calc(74px * var(--sk-scale, 1));
   }
   .hero-wrap .hero-property-slider .owl-nav {
-    left: calc(100% - 1520px + 125px);
+    left: calc(100% - calc(1520px * var(--sk-scale, 1)) + calc(125px * var(--sk-scale, 1)));
   }
   .hero-wrap.style2 .container-fluid {
-    padding: 0 25px;
+    padding: 0 calc(25px * var(--sk-scale, 1));
   }
   .hero-wrap.style2 .hero-content {
-    padding-left: 50px;
+    padding-left: calc(50px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
-    max-width: 1300px;
+    max-width: calc(1300px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 50px;
+    padding: 0 calc(50px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 60px;
-    height: 60px;
+    width: calc(60px * var(--sk-scale, 1));
+    height: calc(60px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -25px;
+    left: calc(-25px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -25px;
+    right: calc(-25px * var(--sk-scale, 1));
   }
   .add-listing-wrap .listing-content {
-    padding-right: 202px;
+    padding-right: calc(202px * var(--sk-scale, 1));
   }
   .testimonial-slider-two.owl-carousel .owl-nav {
-    margin: 25px 0px 0px -157px;
+    margin: calc(25px * var(--sk-scale, 1)) 0px 0px calc(-157px * var(--sk-scale, 1));
   }
   .testimonial-wrap.style2 .container-fluid {
-    padding-left: calc((100% - 1520px) / 2 + 15px);
+    padding-left: calc((100% - calc(1520px * var(--sk-scale, 1))) / 2 + calc(15px * var(--sk-scale, 1)));
     padding-right: 0;
   }
 }
 @media only screen and (min-width: 1920px) {
   .hero-wrap.style2 .container-fluid {
-    padding: 0 80px;
+    padding: 0 calc(80px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content {
-    max-width: 1500px;
+    max-width: calc(1500px * var(--sk-scale, 1));
   }
   .hero-wrap.style3 .hero-content p {
-    padding: 0 100px;
+    padding: 0 calc(100px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev, .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    width: 80px;
-    height: 80px;
+    width: calc(80px * var(--sk-scale, 1));
+    height: calc(80px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev i, .hero-slider-one.owl-carousel .owl-nav button.owl-next i {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-prev {
-    left: -45px;
+    left: calc(-45px * var(--sk-scale, 1));
   }
   .hero-slider-one.owl-carousel .owl-nav button.owl-next {
-    right: -45px;
+    right: calc(-45px * var(--sk-scale, 1));
   }
   .testimonial-slider-two.owl-carousel .owl-nav {
-    margin: 25px 0px 0px -170px;
+    margin: calc(25px * var(--sk-scale, 1)) 0px 0px calc(-170px * var(--sk-scale, 1));
   }
 }/*# sourceMappingURL=responsive.css.map */

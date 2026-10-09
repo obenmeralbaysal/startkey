@@ -22,6 +22,8 @@ const RESERVED_SLUGS = new Set([
   "css",
   "lib",
   "img",
+  // Reserved so /akademi is not rewritten as an office slug. The local academy
+  // snapshot was removed; a new design will take this path later.
   "akademi",
   "portal",
   "locales",

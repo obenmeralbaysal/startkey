@@ -9,6 +9,7 @@ import { publicFormStatus } from "@/content/public-form-status";
 import { config } from "@/lib/config";
 import type { CorporatePayload } from "@/lib/corporate";
 import type { Locale } from "@/lib/locales";
+import { scaled } from "@/lib/scale";
 
 type ConsultantDetailData = Extract<CorporatePayload, { kind: "consultant-detail" }>;
 
@@ -20,11 +21,11 @@ export function ConsultantDetail({ data, locale }: { data: ConsultantDetailData;
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <div className="container ptb-100">
-        <div className="agent-details-wrap">
-          <div className="row gx-5 align-items-center">
-            <div className="col-lg-6">
-              <div className="agent-img">
+      <div className="container [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
+        <div className="[box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] [padding:calc(50px_*_var(--sk-scale,_1))_calc(50px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))] max-md:[padding:0] max-md:[box-shadow:none] max-md:[margin-bottom:calc(-25px_*_var(--sk-scale,_1))] md:max-lg:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(10px_*_var(--sk-scale,_1))]">
+          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-center">
+            <div className="w-full lg:w-1/2">
+              <div className="[width:calc(70px_*_var(--sk-scale,_1))] [height:calc(70px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))] overflow-hidden relative max-lg:[margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
                 <a href={data.urlPath}>
                   <Picture width={574} height={574}>
                     {data.imageWebp ? <source srcSet={data.imageWebp} type="image/webp" /> : null}
@@ -33,13 +34,13 @@ export function ConsultantDetail({ data, locale }: { data: ConsultantDetailData;
                 </a>
               </div>
             </div>
-            <div className="col-lg-6">
-              <div className="agent-info-wrap">
-                <div className="agent-name">
+            <div className="w-full lg:w-1/2">
+              <div className="block">
+                <div className="[width:calc(100%_-_calc(85px_*_var(--sk-scale,_1)))] [margin-left:calc(15px_*_var(--sk-scale,_1))] [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(25px_*_var(--sk-scale,_1))] [border-bottom:1px_solid_rgba(0,_0,_0,_0.09)] max-md:[padding-bottom:calc(20px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
                   <h2>{data.name}</h2>
                   {data.role ? <span>{data.role}</span> : null}
                 </div>
-                <ul className="agent-info list-style">
+                <ul className="[padding:calc(22px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))_calc(22px_*_var(--sk-scale,_1))] text-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(25px_*_var(--sk-scale,_1))] [border-bottom:1px_solid_rgba(0,_0,_0,_0.09)] list-none">
                   {data.email ? (
                     <li>
                       <b>{data.contactLabels.email}</b> <a href={`mailto:${data.email}`}> {data.email}</a>
@@ -56,16 +57,16 @@ export function ConsultantDetail({ data, locale }: { data: ConsultantDetailData;
                     </li>
                   ) : null}
                 </ul>
-                <div className="agent-social">
-                  <ul className="social-profile list-style style1" />
+                <div className="flex flex-wrap items-center">
+                  <ul className="[margin:calc(20px_*_var(--sk-scale,_1))_0_calc(20px_*_var(--sk-scale,_1))] [margin-top:calc(25px_*_var(--sk-scale,_1))] text-right max-md:text-center list-none" />
                 </div>
               </div>
             </div>
-            <div className="col-lg-12">
-              <div className="agent-desc">
-                <ul className="nav nav-tabs agent-tablist" role="tablist">
+            <div className="w-full">
+              <div className="[margin-top:calc(25px_*_var(--sk-scale,_1))]">
+                <ul className="flex flex-wrap [padding-left:0] [margin-bottom:0] list-none [border:none] [margin-bottom:calc(30px_*_var(--sk-scale,_1))]" role="tablist">
                   {tabs.map((tab) => (
-                    <li className="nav-item" key={tab.id}>
+                    <li className="relative list-none" key={tab.id}>
                       <button
                         className={tab.id === activeId ? "nav-link active" : "nav-link"}
                         data-bs-toggle="tab"
@@ -78,15 +79,15 @@ export function ConsultantDetail({ data, locale }: { data: ConsultantDetailData;
                     </li>
                   ))}
                 </ul>
-                <div className="tab-content hw-tab-content">
+                <div className="w-full hw-tab-content">
                   <div className={activeId === "tab_1" ? "tab-pane fade show active" : "tab-pane fade"} id="tab_1" role="tabpanel">
-                    <div className="row justify-content-center" dangerouslySetInnerHTML={{ __html: data.bioHtml }} />
+                    <div className="flex flex-wrap justify-center" dangerouslySetInnerHTML={{ __html: data.bioHtml }} />
                   </div>
                   <div className={activeId === "tab_2" ? "tab-pane fade show active" : "tab-pane fade"} id="tab_2" role="tabpanel">
                     {data.listings.length > 0 ? (
                       <section className="property-slider-wrap td-cod">
                         <div className="container">
-                          <div className="property-slider-one homepage-featured-prop owl-carousel" id="propcarousel">
+                          <div className="homepage-featured-prop" data-carousel="cards">
                             {data.listings.map((item) => (
                               <ListingCard item={{ ...item, style: "style6" }} key={`consultant-listing-${item.externalId}`} />
                             ))}
@@ -95,15 +96,15 @@ export function ConsultantDetail({ data, locale }: { data: ConsultantDetailData;
                       </section>
                     ) : null}
                     {data.allListingsLabel ? (
-                      <div className="col-md-12" style={{ display: "flex", justifyContent: "center", marginTop: 30 }}>
-                        <a className="btn style2" target="_blank" href={data.allListingsHref}>
+                      <div className="w-full" style={{ display: "flex", justifyContent: "center", marginTop: scaled(30) }}>
+                        <a className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" target="_blank" href={data.allListingsHref}>
                           {data.allListingsLabel}
                         </a>
                       </div>
                     ) : null}
                   </div>
                   <div className={activeId === "tab_3" ? "tab-pane fade show active" : "tab-pane fade"} id="tab_3" role="tabpanel">
-                    {data.commentHeading ? <h4 style={{ marginTop: 15, marginBottom: 15 }}>{data.commentHeading}</h4> : null}
+                    {data.commentHeading ? <h4 style={{ marginTop: scaled(15), marginBottom: scaled(15) }}>{data.commentHeading}</h4> : null}
                     <ConsultantCommentForm data={data} locale={locale} />
                   </div>
                 </div>
@@ -182,31 +183,31 @@ function ConsultantCommentForm({ data, locale }: { data: ConsultantDetailData; l
   }
 
   return (
-    <form method="post" role="form" className="review-form mb-25" id="form" action={data.urlPath} onSubmit={handleSubmit}>
+    <form method="post" role="form" className="bg-neutral-50 [padding:calc(30px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))] max-md:[padding:calc(20px_*_var(--sk-scale,_1))] [margin-bottom:calc(25px_*_var(--sk-scale,_1))]" id="form" action={data.urlPath} onSubmit={handleSubmit}>
       <input type="hidden" id="Id" name="Id" value={data.externalId} readOnly />
       <input type="hidden" id="SeoUrl" name="SeoUrl" value={data.urlPath.split("/").pop() ?? ""} readOnly />
-      <div className="row">
-        <div className="col-md-6">
-          <div className="form-group">
+      <div className="flex flex-wrap">
+        <div className="w-full md:w-1/2">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <input className="" placeholder={placeholders.FirstName} type="text" id="FirstName" name="FirstName" defaultValue="" />
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="form-group">
+        <div className="w-full md:w-1/2">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <input className="" placeholder={placeholders.LastName} type="text" id="LastName" name="LastName" defaultValue="" />
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="form-group">
+        <div className="w-full md:w-1/2">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <input className="" placeholder={placeholders.Email} type="email" id="Email" name="Email" defaultValue="" />
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="form-group">
+        <div className="w-full md:w-1/2">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <input className="" type="tel" id="Phone" name="Phone" defaultValue="" />
           </div>
         </div>
-        <div className="form-group mb-3">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] [margin-bottom:calc(1rem_*_var(--sk-scale,_1))]">
           <label className="control-label">{data.ratingLabel}</label>
           <div className="rating">
             {[1, 2, 3, 4, 5].map((value) => (
@@ -218,27 +219,27 @@ function ConsultantCommentForm({ data, locale }: { data: ConsultantDetailData; l
           </div>
           <input type="hidden" id="star-rating" name="Star" value={rating} readOnly />
         </div>
-        <div className="col-lg-12">
-          <div className="form-group">
+        <div className="w-full">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <textarea className="" placeholder={placeholders.Comment} rows={3} id="Comment" name="Comment" defaultValue="" />
           </div>
         </div>
         {config.recaptchaSiteKey ? (
           <>
             <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-            <div className="form-group">
-              <div className="col-md-offset-2 col-md-10">
+            <div className="mb-[calc(15px*var(--sk-scale,1))]">
+              <div className="md:ml-1/6 w-full md:w-10/12">
                 <script src="https://www.google.com/recaptcha/api.js" async defer />
                 <div className="g-recaptcha" data-sitekey={config.recaptchaSiteKey} suppressHydrationWarning />
-                <span id="captchaError" className="text text-danger">
+                <span id="captchaError" className="text text-brand">
                   {captchaError}
                 </span>
               </div>
             </div>
           </>
         ) : null}
-        <div className="col-lg-12" style={{ textAlign: "center" }}>
-          <button type="submit" className="btn style2" disabled={submitting}>
+        <div className="w-full" style={{ textAlign: "center" }}>
+          <button type="submit" className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" disabled={submitting}>
             {data.form.submitLabel}
           </button>
         </div>

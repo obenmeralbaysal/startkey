@@ -97,45 +97,45 @@ export function Newsletter({
   }
 
   return (
-    <section className="newsletter-wrap ptb-100">
+    <section className="relative z-[1] [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
       <img
         src="/themes/fela/img/newsletter-shape-1.png"
         alt="Image"
-        className="newsletter-shape-one"
+        className="absolute [top:0] [left:0] [z-index:-1]"
       />
       <div className="container">
-        <div className="row">
-          <div className="col-xl-6 offset-xl-3 col-lg-8 offset-lg-2">
+        <div className="flex flex-wrap">
+          <div className="w-full xl:w-1/2 xl:ml-1/4 lg:w-2/3 lg:ml-1/6">
             <div
-              className="section-title style2 text-center mb-40"
+              className="relative [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))] text-center [margin-bottom:calc(40px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(25px_*_var(--sk-scale,_1))]"
               dangerouslySetInnerHTML={{ __html: content.titleHtml }}
             />
           </div>
         </div>
 
         <form
-          className="newsletter-form"
+          className="flex flex-wrap relative z-[1]"
           method="post"
           role="form"
           id="form"
           style={{ justifyContent: "center", alignItems: "center" }}
           onSubmit={handleSubmit}
         >
-          <div className="form-group">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <input placeholder={firstNamePlaceholder} type="text" id="FirstName" name="FirstName" />
-            <span className="text-danger" data-valmsg-for="FirstName">
+            <span className="text-brand" data-valmsg-for="FirstName">
               {fieldErrors.FirstName}
             </span>
           </div>
-          <div className="form-group">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <input placeholder={lastNamePlaceholder} type="text" id="LastName" name="LastName" />
-            <span className="text-danger" data-valmsg-for="LastName">
+            <span className="text-brand" data-valmsg-for="LastName">
               {fieldErrors.LastName}
             </span>
           </div>
-          <div className="form-group">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <input placeholder={emailPlaceholder} type="email" id="Email" name="Email" required />
-            <span className="text-danger" data-valmsg-for="Email">
+            <span className="text-brand" data-valmsg-for="Email">
               {fieldErrors.Email}
             </span>
           </div>
@@ -143,8 +143,8 @@ export function Newsletter({
           {config.recaptchaSiteKey ? (
             <>
               <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-              <div className="form-group">
-                <div className="col-md-offset-2 col-md-10">
+              <div className="mb-[calc(15px*var(--sk-scale,1))]">
+                <div className="md:ml-1/6 w-full md:w-10/12">
                   {/* Loaded from Google, as on the reference website: the widget cannot
                       be served locally. */}
                   <script src="https://www.google.com/recaptcha/api.js" async defer />
@@ -155,7 +155,7 @@ export function Newsletter({
                     data-sitekey={config.recaptchaSiteKey}
                     suppressHydrationWarning
                   />
-                  <span id="captchaError" className="text text-danger">
+                  <span id="captchaError" className="text text-brand">
                     {captchaError}
                   </span>
                 </div>
@@ -163,7 +163,7 @@ export function Newsletter({
             </>
           ) : null}
 
-          <div className="form-group last-newsletter">
+          <div className="mb-[calc(15px*var(--sk-scale,1))] max-[768px]:w-full max-[768px]:[margin-bottom:0] [margin-right:0] [width:20%]">
             <button className={content.submitClass} type="submit" disabled={submitting}>
               {content.submitLabel}
             </button>

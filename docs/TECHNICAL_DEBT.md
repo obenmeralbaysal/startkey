@@ -82,17 +82,17 @@ Referans sitedeki gerçek sonuç metinleri gözlemlendiğinde bu dosyalardaki di
 
 **Mevcut Durum:**
 
-Ofis ve danışman liste/detay şablonları eklendi (`/tr/ofisler`, `/1872`, `/tr/ofisler/{id}/{slug}`, `/tr/danismanlar`, `/tr/danismanlar/{id}/{slug}` ve EN/DE karşılıkları). Akademi alt sayfaları hâlâ yok (`TD-012`).
+Ofis ve danışman liste/detay şablonları eklendi (`/tr/ofisler`, `/1872`, `/tr/ofisler/{id}/{slug}`, `/tr/danismanlar`, `/tr/danismanlar/{id}/{slug}` ve EN/DE karşılıkları).
 
 İngilizce ve Almanca footer’da KVKK / Hizmet Sözleşmesi etiketleri referansta boştur; bu dillerde o linkler gösterilmez. KVKK’nın EN/DE URL’si canlı sitede ana sayfaya düşer; dil değiştirince aynı davranış korunur.
 
 **Geçici Olmasının Nedeni:**
 
-Ofis/danışman sayfa boşluğu kapandı. Kalan boşluk akademi alt yollarıdır.
+Ofis/danışman sayfa boşluğu kapandı.
 
 **Gelecekteki Implementasyon:**
 
-Akademi alt sayfaları `TD-012` kapsamında ele alınır.
+Bu kayıt ofis ve danışman sayfaları içindir. Akademi yeniden tasarımı `TD-012` kapsamındadır.
 
 **Durum:** Çözüldü
 
@@ -221,23 +221,21 @@ Aynı şablonlar değişmeden Reonix veya Superadmin’in yazacağı `cms_listin
 
 **Durum:** Açık
 
-### TD-012 — Startkey Akademi (startkeyakademi.net) ayrı site olarak henüz tamamlanmadı
+### TD-012 — Startkey Akademi yerel kopyası kaldırıldı, yeni tasarım yok
 
-**Alan:** Frontend / Akademi sitesi (`/akademi`)
+**Alan:** Frontend / Akademi
 
 **Mevcut Durum:**
 
-`startkey.com.tr/akademi` = `startkeyakademi.net/`. Bu bir WordPress kurulumu değildir; kurumsal site Next.js + Laravel’dir. Akademi, referans LMS’in (WordPress + LearnPress) public HTML anlık görüntüsüdür. Anasayfa, Akademi, Eğitimler (3 sayfa + 23 detay + kategori/term filtre sayfaları), giriş/kayıt, eğitmenler + profiller, 7 kategori, 3 blog yazısı + makale arşivi, sepet/ödeme/kontrol paneli, ders `egitim-erisimi` koruma ekranları, referanstaki `404-hata-2` sayfası (bilinmeyen `/akademi/...` yollarında HTTP 404 gövdesi) ve footer hukuki sayfalar LiteSpeed UCSS’siz belgelerden lokal asset’lerle sunulur. Kurumsal header/footer/tema kullanılmaz. Alt yollar `/akademi` altına map edilir. Referansta EN/DE yoktur; çeviri yazılmadı.
-
-Eğitimler sol “Filtrele” formu (ana arşiv, sayfa 2–3, 7 kategori ve `?term_id=` sayfaları) ve eğitim detayındaki “Yorumlar” puan özeti referanstan HTML olarak gömülüdür; WordPress REST’e gitmez. Yorumlar, çekim anında `lp-ajax-handle` yanıtından (`0.0` / boş liste) sayfaya yazılır; yeni yorum sonradan gelmez. Filtre Uygula, çekilmiş `?term_id=` sayfalarına gider; tek eğitmen seçimi ilgili `/akademi/egitmen/{slug}/` profiline gider. Yeni yorum yazma, giriş, sepet, ödeme, “Sepete Ekle”, iletişim/abone ve wishlist WordPress’e post etmez. Ders sayfaları referanstaki koruma metnini gösterir (“giriş yapın ya da kayıt olun”); gerçek video LMS oturumu olmadan açılmaz. Recaptcha / Cloudflare / gtag çıkarılmıştır. LiteSpeed gecikmeli JS DOMContentLoaded’da zorlanır. SSS nested-tabs chunk HTML içine gömülür. Eğitim detayında Elementor `elementor-invisible` animasyonu kaldırılır ve kit 26315 sağ kolon (Sepete Ekle) görünür tutulur; referanstaki gibi kaydırınca sayfayla gider, yapışmaz. Kolon genişlikleri Elementor `--width:67%/33%` değeridir. `mockup-home-300x300.webp` ve `learnpress/images/icons/ico-ai.svg` referansta HTML döndüğü için indirilmedi. `global.min.js` referansta 0 bayttır. Kurs tanıtım Vimeo’su startkeyakademi.net dışındaki host’ta 403 verebilir. Akademi daha sonra bu projeden ayrılacaktır.
+`/akademi` altındaki WordPress + LearnPress anlık görüntüsü, asset’leri, route’ları ve çekme script’leri silindi. Header’daki Çevrimiçi Eğitimler `https://startkeyakademi.net` adresini yeni sekmede açar. Kurumsal Seminerler / Eğitimler (`/tr/egitimlerimiz` ve EN/DE karşılıkları) duruyor.
 
 **Geçici Olmasının Nedeni:**
 
-LMS, ödeme ve hesap backend’i yok; public sayfalar anlık görüntü. Nihai hedef akademinin ayrı bir uygulamaya taşınmasıdır.
+Yerel kopya yeniden tasarlanacak. Yeni sayfa bu repoda henüz yok; canlı akademi sitesi menüden açılıyor.
 
 **Gelecekteki Implementasyon:**
 
-Aynı incele → asset → içerik döngüsü ile kalan alt sayfalar eklenecek; giriş/ödeme ve iletişim formu bağlanacak. Ayrılma sırasında `/akademi` ağacı, `web/public/akademi` asset’leri ve `scripts/fetch-akademi-net.py` birlikte taşınacak.
+Yeni Akademi tasarımı ayrıca yapılacak. O gelene kadar `/akademi` bu projede sayfa değil.
 
 **Durum:** Açık
 
@@ -283,15 +281,15 @@ Yıl istatistikleri ve kulüp Reonix veya Superadmin’den danışmana özel gel
 
 **Mevcut Durum:**
 
-`/robots.txt`, `/sitemap.xml`, `/llms.txt` ve `/akademi` altındaki eşdeğerleri (robots, `sitemap_index.xml` + çocuk urlset’ler, `llms.txt`) yerel origin ile üretilir. Kurumsal sitemap, canlı `startkey.com.tr/sitemap.xml` içindeki 274 yolun anlık kopyasıdır; veritabanından üretilmez. Canlı Startkey `/llms.txt` aslında ana sayfa HTML’idir; yerelde ana sayfa SSS ve nav metinlerinden gerçek bir `text/plain` llms dosyası yazıldı. Akademi `llms.txt` canlı metnin aynısıdır; URL’ler `/akademi/...` karşılıklarına çevrildi (`kurs-kategorisi` → `egitim-kategorisi`, `kurslar` → `egitimler`, `hakkimizda` → `akademi`). Akademi robots kuralları canlı Woo/WP şeklindedir (`add-to-cart`, `wp-admin`, wc-logs) ama `thim_elementor_kit` sitemap’i yoktur; index yalnızca gerçekten sunduğumuz sayfa/kurs/yazı/kategori yollarını listeler. Canlı Startkey bilinmeyen URL’yi 302 ile ana sayfaya alır; yerelde Fela `.error-wrap` 404 vardır. TR 404 cümlesi Akademi `404-hata-2` metnidir. Canlıda EN/DE 404 sayfası olmadığı için o dillerde gövde cümlesi yazılmadı (yalnızca `404` + Home/Startseite). 500 sayfaları referansta yok; tema iskeleti + `500` + ana sayfa linki.
+`/robots.txt`, `/sitemap.xml` ve `/llms.txt` yerel origin ile üretilir. Kurumsal sitemap, canlı `startkey.com.tr/sitemap.xml` içindeki 274 yolun anlık kopyasıdır; veritabanından üretilmez. Canlı Startkey `/llms.txt` aslında ana sayfa HTML’idir; yerelde ana sayfa SSS ve nav metinlerinden gerçek bir `text/plain` llms dosyası yazıldı. Canlı Startkey bilinmeyen URL’yi 302 ile ana sayfaya alır; yerelde Fela `.error-wrap` 404 vardır. TR 404 cümlesi eski Akademi `404-hata-2` metnidir. Canlıda EN/DE 404 sayfası olmadığı için o dillerde gövde cümlesi yazılmadı (yalnızca `404` + Home/Startseite). 500 sayfaları referansta yok; tema iskeleti + `500` + ana sayfa linki.
 
 **Geçici Olmasının Nedeni:**
 
-Canlı kurumsal sitede gerçek 404 ve gerçek llms.txt yok. Sitemap yolları Reonix/CMS’ten değil referans anlık görüntüsünden geliyor. Akademi hâlâ WP anlık görüntüsü; Rank Math’in ürettiği tüm WP yolları burada yok.
+Canlı kurumsal sitede gerçek 404 ve gerçek llms.txt yok. Sitemap yolları Reonix/CMS’ten değil referans anlık görüntüsünden geliyor.
 
 **Gelecekteki Implementasyon:**
 
-Sitemap yerel CMS / Reonix’ten üretilecek. EN/DE 404 metni referansta belirdiğinde alınacak. Akademi ayrıldığında kendi robots/sitemap/llms’i o uygulamaya taşınacak.
+Sitemap yerel CMS / Reonix’ten üretilecek. EN/DE 404 metni referansta belirdiğinde alınacak.
 
 **Durum:** Açık
 
@@ -310,6 +308,24 @@ Başvuru akışı önce bağlandı. Sayfanın uzun tanıtım HTML’i ayrıca ç
 **Gelecekteki Implementasyon:**
 
 Üç dilin tanıtım gövdesi canlı belgeden, franchise sayfasındaki gibi tam HTML olarak basılacak.
+
+**Durum:** Açık
+
+### TD-017 — %80 ölçek JS ve iframe ile verilen bazı ölçülere uygulanmıyor
+
+**Alan:** Frontend / Ölçek (`--sk-scale`)
+
+**Mevcut Durum:**
+
+768px ve üstünde CSS uzunlukları ve görsel `width`/`height` öznitelikleri %80’e iniyor. CSS dışından verilen şu ölçüler referans boyutunda kalıyor: Owl Carousel kart aralığı (`bundle-app.js` içindeki `margin: 20`) ve Google reCAPTCHA kutusu (304×78). Görsel öznitelik ölçüleri sabit listeden ölçekleniyor (`ThemeStyles.tsx`, `app/portal/layout.tsx`); listede olmayan yeni bir `width`/`height` değeri referans boyutunda kalır.
+
+**Geçici Olmasının Nedeni:**
+
+Bu ölçüler tema JS’i ve üçüncü taraf iframe ile veriliyor; tema JS’ini değiştirmek ölçek işinin kapsamı dışında tutuldu. React sayfalarının HTML’i istek anında işlenemediği için öznitelik ölçüleri listeyle eşleniyor.
+
+**Gelecekteki Implementasyon:**
+
+Carousel aralıkları tema JS’inde `--sk-scale`’e göre verilecek. Bileşenlere veya CMS içeriğine yeni görsel ölçüsü eklendiğinde liste güncellenecek; CSS `attr()` ile tip okuma tüm hedef tarayıcılarda desteklendiğinde liste kaldırılabilir.
 
 **Durum:** Açık
 

@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 import type { HomepageContent } from "@/content/types";
 import type { Locale } from "@/lib/locales";
 
@@ -23,9 +27,10 @@ export function HeroSearch({
   const [propertyButton, officeButton, consultantButton] = content.buttons;
   const [officeNamePlaceholder, firstNamePlaceholder, lastNamePlaceholder] = content.placeholders;
   const lookup = (path: string) => `/${locale}/${path}`;
+  const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <section className="hero-wrap">
+    <section className="[margin-top:calc(86px_*_var(--sk-scale,_1))] max-lg:[margin-top:calc(65px_*_var(--sk-scale,_1))]">
       <picture>
         <source
           type="image/webp"
@@ -51,16 +56,15 @@ export function HeroSearch({
       </picture>
 
       <div className="container">
-        <div className="search-property style1">
-          <ul className="nav nav-tabs agent-tablist homepage-bar-1" role="tablist">
+        <div className="bg-white [border-radius:calc(10px_*_var(--sk-scale,_1))] [padding:calc(35px_*_var(--sk-scale,_1))_calc(45px_*_var(--sk-scale,_1))_calc(45px_*_var(--sk-scale,_1))_calc(30px_*_var(--sk-scale,_1))] z-[1] relative [box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] [margin-top:calc(-85px_*_var(--sk-scale,_1))] max-sm:[padding:calc(20px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0] max-sm:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] sm:max-md:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(15px_*_var(--sk-scale,_1))] sm:max-md:[margin:calc(-65px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0] md:max-lg:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(15px_*_var(--sk-scale,_1))] md:max-lg:[margin:calc(-65px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0] lg:max-xl:[padding:calc(40px_*_var(--sk-scale,_1))] lg:max-xl:[margin:calc(-65px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0]">
+          <ul className="flex flex-wrap [padding-left:0] [margin-bottom:0] list-none [border:none] [margin-bottom:calc(30px_*_var(--sk-scale,_1))] max-[768px]:justify-center max-[370px]:[font-size:0.90em]" role="tablist">
             {content.tabs.map((tab, index) => (
-              <li className="nav-item" key={tab}>
+              <li className="relative list-none" key={tab}>
                 <button
-                  className={`nav-link${index === 0 ? " active" : ""}`}
-                  data-bs-toggle="tab"
-                  data-bs-target={`#tab_${index + 1}`}
+                  className={`relative block px-[calc(16px*var(--sk-scale,1))] py-[calc(10px*var(--sk-scale,1))] font-medium ${activeTab === index ? "text-brand" : "text-black"}`}
                   type="button"
                   role="tab"
+                  onClick={() => setActiveTab(index)}
                 >
                   {tab}
                 </button>
@@ -68,20 +72,20 @@ export function HeroSearch({
             ))}
           </ul>
 
-          <div className="tab-content hw-tab-content">
-            <div className="tab-pane fade show active" id="tab_1" role="tabpanel">
-              <form method="get" className="property-search-form row" action={propertyAction}>
-                <div className="col-xl-3 col-md-6 mb-15">
+          <div className="w-full hw-tab-content">
+            <div className={activeTab === 0 ? "block" : "hidden"} id="tab_1" role="tabpanel">
+              <form method="get" className="flex flex-wrap max-md:bg-white max-md:[border-radius:calc(5px_*_var(--sk-scale,_1))]" action={propertyAction}>
+                <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="select2"
+                    className=""
                     id="propertyType"
                     name="FilterDTO.AdTypeId"
                     bind-url={lookup("lookup/Adtypes")}
                   />
                 </div>
-                <div className="col-xl-3 col-md-6 mb-15">
+                <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="bind-select2"
+                    className=""
                     id="ProcessTypeId"
                     name="FilterDTO.ProcessTypeId"
                     bind-id="propertyType"
@@ -89,17 +93,17 @@ export function HeroSearch({
                     bind-url={lookup("lookup/ProcessTypes")}
                   />
                 </div>
-                <div className="col-xl-2 col-md-6 mb-15">
+                <div className="w-full xl:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="select2"
+                    className=""
                     id="propertyCountryId"
                     name="FilterDTO.CountryId"
                     bind-url={lookup("Lookup/EnteredCountries")}
                   />
                 </div>
-                <div className="col-xl-2 col-md-6 mb-15">
+                <div className="w-full xl:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="select2"
+                    className=""
                     id="propertyCityId"
                     name="FilterDTO.CityId"
                     bind-query="countryId"
@@ -107,35 +111,35 @@ export function HeroSearch({
                     bind-url={lookup("Lookup/EnteredCitiesByCountryId")}
                   />
                 </div>
-                <div className="col-lg-2 col-md-3 col-sm-12 mb-15" style={{ textAlign: "center" }}>
+                <div className="w-full lg:w-1/6 md:w-1/4 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]" style={{ textAlign: "center" }}>
                   <button
                     type="submit"
-                    className="btn style2 homepage-bar-btn"
+                    className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100 w-full max-[385px]:[margin-top:0px]"
                     style={{ display: "flex", justifyContent: "center" }}
                   >
                     {propertyButton}
-                    <i className="fa fa-search" />
+                    <i className="ri-search-line" />
                   </button>
                 </div>
               </form>
             </div>
 
-            <div className="tab-pane fade" id="tab_2" role="tabpanel">
-              <form method="get" className="property-search-form row" action={officeAction}>
-                <div className="col-lg-2 col-md-6 mb-15">
+            <div className={activeTab === 1 ? "block" : "hidden"} id="tab_2" role="tabpanel">
+              <form method="get" className="flex flex-wrap max-md:bg-white max-md:[border-radius:calc(5px_*_var(--sk-scale,_1))]" action={officeAction}>
+                <div className="w-full lg:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <input type="text" className="" name="SearchText" placeholder={officeNamePlaceholder} />
                 </div>
-                <div className=" col-lg-2 col-md-6 mb-15">
+                <div className="w-full lg:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="select2 slider-selection-height-"
+                    className="slider-selection-height-"
                     id="officeCountryId"
                     name="FilterDTO.CountryId"
                     bind-url={lookup("Lookup/EnteredOfficeCountries")}
                   />
                 </div>
-                <div className="col-lg-3 col-md-6 mb-15">
+                <div className="w-full lg:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="bind-select2 slider-selection-height-"
+                    className="slider-selection-height-"
                     id="officeCityId"
                     name="FilterDTO.CityId"
                     bind-id="officeCountryId"
@@ -143,9 +147,9 @@ export function HeroSearch({
                     bind-url={lookup("Lookup/EnteredOfficeCitiesByCountryId")}
                   />
                 </div>
-                <div className="col-lg-3 col-md-6 mb-15">
+                <div className="w-full lg:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="bind-select2 slider-selection-height-"
+                    className="slider-selection-height-"
                     id="officeCountyId"
                     name="FilterDTO.CountyId"
                     bind-id="officeCityId"
@@ -153,37 +157,37 @@ export function HeroSearch({
                     bind-url={lookup("lookup/Counties")}
                   />
                 </div>
-                <div className="col-lg-2 col-md-6 mb-15" style={{ textAlign: "center" }}>
+                <div className="w-full lg:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]" style={{ textAlign: "center" }}>
                   <button
                     type="submit"
-                    className="btn style2 homepage-bar-btn"
+                    className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100 w-full max-[385px]:[margin-top:0px]"
                     style={{ display: "flex", justifyContent: "center" }}
                   >
-                    {officeButton} <i className="fa fa-search" />
+                    {officeButton} <i className="ri-search-line" />
                   </button>
                 </div>
               </form>
             </div>
 
-            <div className="tab-pane fade" id="tab_3" role="tabpanel">
-              <form method="get" className="property-search-form row" action={consultantAction}>
-                <div className="col-xl-2 col-md-6 mb-15">
+            <div className={activeTab === 2 ? "block" : "hidden"} id="tab_3" role="tabpanel">
+              <form method="get" className="flex flex-wrap max-md:bg-white max-md:[border-radius:calc(5px_*_var(--sk-scale,_1))]" action={consultantAction}>
+                <div className="w-full xl:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <input type="text" className="" name="FilterDTO.Firstname" placeholder={firstNamePlaceholder} />
                 </div>
-                <div className="col-xl-2 col-md-6 mb-15">
+                <div className="w-full xl:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <input type="text" className="" name="FilterDTO.Lastname" placeholder={lastNamePlaceholder} />
                 </div>
-                <div className="col-xl-3 col-md-6 mb-15">
+                <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="select2"
+                    className=""
                     id="userCountryId"
                     name="FilterDTO.CountryId"
                     bind-url={lookup("Lookup/EnteredConsultantCountries")}
                   />
                 </div>
-                <div className="col-xl-3 col-md-6 mb-15">
+                <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <select
-                    className="bind-select2"
+                    className=""
                     id="userCityId"
                     name="FilterDTO.CityId"
                     bind-id="userCountryId"
@@ -191,13 +195,13 @@ export function HeroSearch({
                     bind-url={lookup("Lookup/EnteredConsultantCitiesByCountryId")}
                   />
                 </div>
-                <div className="col-lg-2 col-md-2 col-sm-12 mb-15" style={{ textAlign: "center" }}>
+                <div className="w-full lg:w-1/6 md:w-1/6 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]" style={{ textAlign: "center" }}>
                   <button
                     type="submit"
-                    className="btn style2 homepage-bar-btn"
+                    className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100 w-full max-[385px]:[margin-top:0px]"
                     style={{ justifyContent: "center", display: "flex" }}
                   >
-                    {consultantButton} <i className="fa fa-search" />
+                    {consultantButton} <i className="ri-search-line" />
                   </button>
                 </div>
               </form>

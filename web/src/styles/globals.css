@@ -1,0 +1,209 @@
+/*
+ * Public site styling. Tailwind utilities only — no preflight — so the browser
+ * defaults stay until each component sets its own. Lengths follow --sk-scale
+ * (desktop and tablet 80%, phone 100%), the same factor as the previous theme.
+ */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+:root {
+  --sk-scale: 1;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --sk-scale: 0.8;
+  }
+}
+
+@theme {
+  --font-sans: "Nunito Sans", sans-serif;
+  --font-heading: "Poppins", sans-serif;
+  --color-brand: #ec3323;
+  --color-navy: #002172;
+  --color-muted: #666666;
+  --color-ink: #212529;
+  --color-seminar: #cc0d0d;
+  --color-line: #f3f4f6;
+  --color-seashell: #fff6f4;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1400px;
+}
+
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: calc(12px * var(--sk-scale, 1));
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: calc(540px * var(--sk-scale, 1));
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: calc(720px * var(--sk-scale, 1));
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    max-width: calc(960px * var(--sk-scale, 1));
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: calc(1140px * var(--sk-scale, 1));
+  }
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: calc(1320px * var(--sk-scale, 1));
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: #fff;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: calc(16px * var(--sk-scale, 1));
+    line-height: 1.8;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    color: #000;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  p {
+    margin: 0 0 calc(15px * var(--sk-scale, 1));
+    color: var(--color-muted);
+    font-size: calc(16px * var(--sk-scale, 1));
+    line-height: 1.8;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.cms h2,
+.cms h3 {
+  margin-bottom: calc(12px * var(--sk-scale, 1));
+  font-family: var(--font-heading);
+  font-size: calc(40px * var(--sk-scale, 1));
+  font-weight: 700;
+}
+
+.cms p {
+  margin: calc(12px * var(--sk-scale, 1)) 0 0;
+}
+
+@keyframes sk-fade {
+  from {
+    opacity: 0;
+    transform: translateY(calc(16px * var(--sk-scale, 1)));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ripple {
+  70% {
+    box-shadow: 0 0 0 calc(20px * var(--sk-scale, 1)) rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-5px * var(--sk-scale, 1)));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes moveWatermark {
+  from {
+    left: -100%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@layer base {
+  select.sk-field,
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  textarea {
+    width: 100%;
+    min-height: calc(48px * var(--sk-scale, 1));
+    border: 1px solid #e5e5e5;
+    border-radius: calc(5px * var(--sk-scale, 1));
+    background: #fff;
+    padding: 0 calc(12px * var(--sk-scale, 1));
+  }
+}

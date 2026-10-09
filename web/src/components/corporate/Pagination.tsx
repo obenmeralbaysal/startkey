@@ -21,28 +21,28 @@ export function Pagination({
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   return (
-    <ul className="page-nav list-style mt-10">
-      <li className="page-item">
+    <ul className="text-center list-none [margin-top:calc(10px_*_var(--sk-scale,_1))]">
+      <li className="inline-block">
         <a className="" href={hrefFor(1)}>
           &laquo;
         </a>
       </li>
       {pages.map((page) =>
         page === pageIndex ? (
-          <li className="page-item" key={page}>
-            <a className=" active">
+          <li className="inline-block" key={page}>
+            <a className="">
               <span>{page}</span>
             </a>
           </li>
         ) : (
-          <li className="page-item" key={page}>
+          <li className="inline-block" key={page}>
             <a className="" href={hrefFor(page)}>
               {page}
             </a>
           </li>
         ),
       )}
-      <li className="page-item">
+      <li className="inline-block">
         <a className="" href={hrefFor(totalPages)}>
           &raquo;
         </a>

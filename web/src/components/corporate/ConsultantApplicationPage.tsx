@@ -15,16 +15,16 @@ export function ConsultantApplicationPage({ data, locale }: { data: ConsultantDa
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
       <div className="container">
-        <div className="section-title style2 text-center mb-40 mt-40">
+        <div className="relative [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))] text-center [margin-bottom:calc(40px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(25px_*_var(--sk-scale,_1))] [margin-top:calc(40px_*_var(--sk-scale,_1))]">
           <h2>{data.formHeading}</h2>
         </div>
-        <div className="row">
-          <div className="col-lg-12">
+        <div className="flex flex-wrap">
+          <div className="w-full">
             <ConsultantForm data={data} locale={locale} />
           </div>
         </div>
       </div>
-      {data.bodyHtml ? <div dangerouslySetInnerHTML={{ __html: data.bodyHtml }} /> : null}
+      {data.bodyHtml ? <div className="cms" dangerouslySetInnerHTML={{ __html: data.bodyHtml }} /> : null}
     </>
   );
 }
@@ -118,18 +118,18 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
   }
 
   return (
-    <form className="filter-widget" id="form" noValidate onSubmit={handleSubmit}>
+    <form className="block" id="form" noValidate onSubmit={handleSubmit}>
       {status ? <p className={status.kind === "success" ? "text-success" : "text-danger"}>{status.message}</p> : null}
-      <div className="row">
+      <div className="flex flex-wrap">
         <Field id="FirstName" name="FirstName" placeholder={data.placeholders.FirstName} error={fieldErrors.FirstName} required={data.required.FirstName} />
         <Field id="LastName" name="LastName" placeholder={data.placeholders.LastName} error={fieldErrors.LastName} required={data.required.LastName} />
         <Field id="Email" name="Email" type="email" placeholder={data.placeholders.Email} error={fieldErrors.Email} required={data.required.Email} />
         <Field id="Phone" name="Phone" type="tel" error={fieldErrors.Phone} required={data.required.Phone} />
-        <div className="form-group col-md-4">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
           <select
             id="OfficeCityId"
             name="OfficeCityId"
-            className="select2"
+            className=""
             value={cityId}
             onChange={(event) => setCityId(event.target.value)}
           >
@@ -138,9 +138,9 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
               <option key={city.id} value={city.id}>{city.text}</option>
             ))}
           </select>
-          <span className="text-danger">{fieldErrors.OfficeCityId}</span>
+          <span className="text-brand">{fieldErrors.OfficeCityId}</span>
         </div>
-        <div className="form-group col-md-4">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
           <select id="OfficeCountyId" name="OfficeCountyId" key={cityId} defaultValue="">
             <option value="">{choose}</option>
             {counties.map((county) => (
@@ -148,29 +148,29 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
             ))}
           </select>
         </div>
-        <div className="form-group col-md-4">
-          <select id="OfficeId" name="OfficeId" className="select2" defaultValue="">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
+          <select id="OfficeId" name="OfficeId" className="" defaultValue="">
             <option value="">{choose}</option>
             {offices.map((office) => (
               <option key={office.id} value={office.id}>{office.name}</option>
             ))}
           </select>
-          <span className="text-danger">{fieldErrors.OfficeId}</span>
+          <span className="text-brand">{fieldErrors.OfficeId}</span>
         </div>
-        <div className="form-group col-md-4">
-          <select id="AppealTypeId" name="AppealTypeId" className="select2" defaultValue="">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
+          <select id="AppealTypeId" name="AppealTypeId" className="" defaultValue="">
             <option value="">{choose}</option>
             {data.positions.map((position) => (
               <option key={position.value} value={position.value}>{position.label}</option>
             ))}
           </select>
-          <span className="text-danger">{fieldErrors.AppealTypeId}</span>
+          <span className="text-brand">{fieldErrors.AppealTypeId}</span>
         </div>
-        <div className="form-group col-md-12">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full">
           <textarea id="Notes" name="Notes" rows={3} placeholder={data.placeholders.Notes} />
         </div>
       </div>
-      <button className="btn style1" type="submit" disabled={submitting}>{data.submitLabel}</button>
+      <button className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-navy text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-brand before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-brand after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" type="submit" disabled={submitting}>{data.submitLabel}</button>
     </form>
   );
 }
@@ -191,9 +191,9 @@ function Field({
   type?: string;
 }) {
   return (
-    <div className="form-group col-md-4">
+    <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
       <input id={id} name={name} type={type} placeholder={placeholder} data-val-required={required} defaultValue="" />
-      <span className="text-danger">{error}</span>
+      <span className="text-brand">{error}</span>
     </div>
   );
 }

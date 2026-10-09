@@ -57,7 +57,7 @@ Bu ayrım artık repoda: `.dockerignore` medyayı imaja sokmaz; `docker-compose.
 **Gider (küçük, metin/kod):**
 
 * `web/src`, `api/app`, compose, Dockerfile
-* Küçük tema / font / akademi HTML asset’leri (`web/public/themes`, `web/public/akademi` onlarca MB — sorun değil)
+* Küçük tema / font asset’leri (`web/public/themes`)
 * `.env.example` (boş sırlar)
 
 **Gitmez:**

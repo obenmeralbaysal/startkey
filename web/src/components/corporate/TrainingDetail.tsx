@@ -7,6 +7,7 @@ import { publicFormStatus } from "@/content/public-form-status";
 import { config } from "@/lib/config";
 import type { CorporatePayload } from "@/lib/corporate";
 import type { Locale } from "@/lib/locales";
+import { scaled } from "@/lib/scale";
 
 type TrainingDetailData = Extract<CorporatePayload, { kind: "training-detail" }>;
 
@@ -20,16 +21,16 @@ export function TrainingDetail({
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <section className="property-details-wrap pt-100 pb-75">
+      <section className="block [padding-top:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] [padding-bottom:calc(75px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(25px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(45px_*_var(--sk-scale,_1))]">
         <div className="container">
-          <div className="row">
-            <div className="col-xl-8">
-              <div className="property-details">
-                <div className="row align-items-start">
-                  <div className="col-md-12">
-                    <div className="property-title">
+          <div className="flex flex-wrap">
+            <div className="w-full xl:w-2/3">
+              <div className="block">
+                <div className="flex flex-wrap items-start">
+                  <div className="w-full">
+                    <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] max-md:[margin:0_0_calc(10px_*_var(--sk-scale,_1))]">
                       <h2>{data.title}</h2>
-                      <ul className="property-metainfo list-style">
+                      <ul className="flex flex-wrap justify-between [border:none] bg-neutral-50 [box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.06)] list-none">
                         {data.dateValue ? (
                           <li>
                             <i className="flaticon-calendar"> {data.datePrefix} </i>
@@ -53,46 +54,46 @@ export function TrainingDetail({
                   </div>
                 </div>
                 {data.image ? (
-                  <div className="property-img">
+                  <div className="overflow-hidden relative [border-radius:calc(5px_*_var(--sk-scale,_1))] [margin-bottom:calc(30px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
                     <img src={data.image} alt="Image" />
                   </div>
                 ) : null}
-                <div className="property-desc">
+                <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))] last:[margin-bottom:0] max-md:[margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <h4>{data.locationHeading}</h4>
-                  <div className="row">
-                    <div className="col-md-12">
-                      <ul className="property-features list-style">
+                  <div className="flex flex-wrap">
+                    <div className="w-full">
+                      <ul className="list-none">
                         <li>
-                          <i className="flaticon-location" style={{ paddingRight: 7 }} />
+                          <i className="flaticon-location" style={{ paddingRight: scaled(7) }} />
                           {data.locationValue}
                         </li>
                       </ul>
                     </div>
                   </div>
                 </div>
-                <div className="property-desc">
+                <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))] last:[margin-bottom:0] max-md:[margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
                   <h4>{data.descriptionHeading}</h4>
-                  <div dangerouslySetInnerHTML={{ __html: data.descriptionHtml }} />
+                  <div className="cms" dangerouslySetInnerHTML={{ __html: data.descriptionHtml }} />
                 </div>
               </div>
             </div>
-            <div className="col-xl-4">
-              <div className="sidebar">
+            <div className="w-full xl:w-1/3">
+              <div className="max-xl:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] max-xl:[margin-top:calc(25px_*_var(--sk-scale,_1))]">
                 {data.hasApplicationForm ? (
-                  <div className="sidebar-widget">
+                  <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] relative z-[1] [padding:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0_0_calc(25px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] last:[margin:0] max-md:[padding:calc(20px_*_var(--sk-scale,_1))]">
                     <h4>{data.formHeading}</h4>
                     <TrainingApplicationForm data={data} locale={locale} />
                   </div>
                 ) : null}
                 {data.related.length > 0 ? (
-                  <div className="sidebar-widget">
+                  <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] relative z-[1] [padding:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0_0_calc(25px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] last:[margin:0] max-md:[padding:calc(20px_*_var(--sk-scale,_1))]">
                     <h4>{data.relatedHeading}</h4>
                     {data.related.map((item) => (
-                      <div className="property-thumb-item" key={`${item.externalId}-${item.urlPath}`}>
-                        <div className="property-thumb-img">
+                      <div className="flex flex-wrap items-center [margin:0_0_calc(15px_*_var(--sk-scale,_1))] last:[margin-bottom:0]" key={`${item.externalId}-${item.urlPath}`}>
+                        <div className="[width:calc(80px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))]">
                           <img src={item.image} alt="image" />
                         </div>
-                        <div className="property-thumb-info">
+                        <div className="[width:calc(100%_-_calc(95px_*_var(--sk-scale,_1)))] [margin-left:calc(15px_*_var(--sk-scale,_1))]">
                           <h6>
                             <a className="overlay-link" href={item.urlPath}>
                               {item.title}
@@ -194,9 +195,9 @@ function TrainingApplicationForm({
   }
 
   return (
-    <form method="post" id="form" className="filter-widget form" action={data.urlPath} onSubmit={handleSubmit}>
-      <div className="row">
-        <div className="form-group">
+    <form method="post" id="form" className="block form" action={data.urlPath} onSubmit={handleSubmit}>
+      <div className="flex flex-wrap">
+        <div className="mb-[calc(15px*var(--sk-scale,1))]">
           <input
             placeholder={data.form.placeholders.firstName}
             type="text"
@@ -204,11 +205,11 @@ function TrainingApplicationForm({
             name="FirstName"
             defaultValue=""
           />
-          <span className="text-danger field-validation-valid" data-valmsg-for="FirstName">
+          <span className="text-brand field-validation-valid" data-valmsg-for="FirstName">
             {fieldErrors.FirstName}
           </span>
         </div>
-        <div className="form-group">
+        <div className="mb-[calc(15px*var(--sk-scale,1))]">
           <input
             placeholder={data.form.placeholders.lastName}
             type="text"
@@ -216,11 +217,11 @@ function TrainingApplicationForm({
             name="LastName"
             defaultValue=""
           />
-          <span className="text-danger field-validation-valid" data-valmsg-for="LastName">
+          <span className="text-brand field-validation-valid" data-valmsg-for="LastName">
             {fieldErrors.LastName}
           </span>
         </div>
-        <div className="form-group">
+        <div className="mb-[calc(15px*var(--sk-scale,1))]">
           <input
             placeholder={data.form.placeholders.email}
             type="email"
@@ -228,44 +229,44 @@ function TrainingApplicationForm({
             name="Email"
             defaultValue=""
           />
-          <span className="text-danger field-validation-valid" data-valmsg-for="Email">
+          <span className="text-brand field-validation-valid" data-valmsg-for="Email">
             {fieldErrors.Email}
           </span>
         </div>
-        <div className="form-group">
+        <div className="mb-[calc(15px*var(--sk-scale,1))]">
           <input id="PhoneNew" className="intl-phone" type="tel" name="Phone" defaultValue="" />
-          <span className="text-danger field-validation-valid" data-valmsg-for="Phone">
+          <span className="text-brand field-validation-valid" data-valmsg-for="Phone">
             {fieldErrors.PhoneNew}
           </span>
         </div>
-        <div className="form-group">
-          <select className="select2 search-fields" id="GenderId" name="GenderId" defaultValue={data.form.genders[0]?.value}>
+        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+          <select className="search-fields" id="GenderId" name="GenderId" defaultValue={data.form.genders[0]?.value}>
             {data.form.genders.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
-          <span className="text-danger field-validation-valid" data-valmsg-for="GenderId">
+          <span className="text-brand field-validation-valid" data-valmsg-for="GenderId">
             {fieldErrors.GenderId}
           </span>
         </div>
         {config.recaptchaSiteKey ? (
           <>
             <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-            <div className="form-group">
-              <div className="col-md-offset-2 col-md-10">
+            <div className="mb-[calc(15px*var(--sk-scale,1))]">
+              <div className="md:ml-1/6 w-full md:w-10/12">
                 <script src="https://www.google.com/recaptcha/api.js" async defer />
                 <div className="g-recaptcha" data-sitekey={config.recaptchaSiteKey} suppressHydrationWarning />
-                <span id="captchaError" className="text text-danger">
+                <span id="captchaError" className="text text-brand">
                   {captchaError}
                 </span>
               </div>
             </div>
           </>
         ) : null}
-        <div className="form-group">
-          <button type="submit" className="btn style2" disabled={submitting}>
+        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+          <button type="submit" className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" disabled={submitting}>
             {data.form.submitLabel}
           </button>
         </div>

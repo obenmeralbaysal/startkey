@@ -25,18 +25,19 @@ export function SeminarBar({ content }: { content: HomepageContent["seminarBar"]
   }
 
   const className = [
-    "upcoming-seminars",
+    "relative w-full overflow-hidden bg-seminar text-center text-white transition-all",
+    "px-0 py-[calc(10px*var(--sk-scale,1))] text-[calc(18px*var(--sk-scale,1))] tracking-[calc(2px*var(--sk-scale,1))]",
     state === "hidden" ? "hidden" : "",
-    state === "visible" ? "visible" : "",
+    state === "visible" ? "top-0" : "top-[calc(-50px*var(--sk-scale,1))]",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
     <div id="upcomingSeminars" className={className}>
-      <a className="seminarText" href={content.href}>
+      <a className="[color:White] hover:[color:#e9dfdf]" href={content.href}>
         {` ${content.prefix} `} <span id="seminarCount">{content.count}</span> {content.suffix}
-        <div className="watermark" />
+        <div className="absolute [top:0] [left:-100%] [width:200%] h-full [background-image:url('/themes/fela/img/startkeylogosw.png')] [background-repeat:repeat] [background-size:contain] opacity-[0.12] [animation:moveWatermark_55s_linear_infinite]" />
       </a>
     </div>
   );

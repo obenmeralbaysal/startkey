@@ -466,21 +466,10 @@ def critical_css():
     return unique.pop()
 
 
-def keep_local_academy(data):
-    """The project serves startkeyakademi.net under /akademi. Live nav still points at the remote host."""
-    for item in data.get("nav") or []:
-        if "akademi.net" in (item.get("href") or ""):
-            item["href"] = "/akademi"
-        for child in item.get("children") or []:
-            if "akademi.net" in (child.get("href") or ""):
-                child["href"] = "/akademi"
-
-
 def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for lang in LANGS:
         data = extract(lang)
-        keep_local_academy(data)
         target = OUT_DIR / f"homepage.{lang}.json"
         target.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"wrote {target.relative_to(ROOT)}")

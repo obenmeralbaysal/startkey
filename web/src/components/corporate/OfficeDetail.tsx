@@ -3,6 +3,7 @@ import { DirectoryCard } from "@/components/corporate/DirectoryCard";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
 import type { CorporatePayload } from "@/lib/corporate";
+import { scaled } from "@/lib/scale";
 
 const HEADING_CSS = `
     .highlighted-heading {
@@ -22,23 +23,23 @@ export function OfficeDetail({ data }: { data: Extract<CorporatePayload, { kind:
     <>
       <style>{HEADING_CSS}</style>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <div className="container ptb-100">
-        <div className="agent-details-wrap">
-          <div className="row gx-5 align-items-center">
-            <div className="col-lg-6">
-              <div className="agent-img">
-                <Picture className="img-fluid" width={576} height={269}>
+      <div className="container [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
+        <div className="[box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] [padding:calc(50px_*_var(--sk-scale,_1))_calc(50px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))] max-md:[padding:0] max-md:[box-shadow:none] max-md:[margin-bottom:calc(-25px_*_var(--sk-scale,_1))] md:max-lg:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(10px_*_var(--sk-scale,_1))]">
+          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-center">
+            <div className="w-full lg:w-1/2">
+              <div className="[width:calc(70px_*_var(--sk-scale,_1))] [height:calc(70px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))] overflow-hidden relative max-lg:[margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
+                <Picture className="max-w-full h-auto" width={576} height={269}>
                   {data.imageWebp ? <source srcSet={data.imageWebp} type="image/webp" /> : null}
                   <img src={data.image} alt="OfficeLogo-photo" width={576} height={269} />
                 </Picture>
               </div>
             </div>
-            <div className="col-lg-6">
-              <div className="agent-info-wrap">
-                <div className="agent-name">
+            <div className="w-full lg:w-1/2">
+              <div className="block">
+                <div className="[width:calc(100%_-_calc(85px_*_var(--sk-scale,_1)))] [margin-left:calc(15px_*_var(--sk-scale,_1))] [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(25px_*_var(--sk-scale,_1))] [border-bottom:1px_solid_rgba(0,_0,_0,_0.09)] max-md:[padding-bottom:calc(20px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
                   <h2>{data.name}</h2>
                 </div>
-                <ul className="agent-info list-style">
+                <ul className="[padding:calc(22px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))_calc(22px_*_var(--sk-scale,_1))] text-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(25px_*_var(--sk-scale,_1))] [border-bottom:1px_solid_rgba(0,_0,_0,_0.09)] list-none">
                   {data.phoneHref ? (
                     <li>
                       <i className="ri-phone-line" /> <a href={data.phoneHref} target="_blank">{data.phoneLabel}</a>
@@ -54,8 +55,8 @@ export function OfficeDetail({ data }: { data: Extract<CorporatePayload, { kind:
                       <i className="flaticon-pin" /> {data.address}
                     </li>
                   ) : null}
-                  <div className="agent-social">
-                    <ul className="social-profile list-style style1">
+                  <div className="flex flex-wrap items-center">
+                    <ul className="[margin:calc(20px_*_var(--sk-scale,_1))_0_calc(20px_*_var(--sk-scale,_1))] [margin-top:calc(25px_*_var(--sk-scale,_1))] text-right max-md:text-center list-none">
                       {data.instagram ? (
                         <li>
                           <a href={data.instagram} target="_blank">
@@ -66,18 +67,18 @@ export function OfficeDetail({ data }: { data: Extract<CorporatePayload, { kind:
                     </ul>
                   </div>
                   {data.portfoliosLabel ? (
-                    <a className="btn style2" href={data.portfoliosHref}>
+                    <a className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" href={data.portfoliosHref}>
                       {data.portfoliosLabel}
                     </a>
                   ) : null}
                 </ul>
               </div>
             </div>
-            <div className="col-lg-12">
-              <div className="agent-desc">
-                <ul className="nav nav-tabs agent-tablist" role="tablist">
+            <div className="w-full">
+              <div className="[margin-top:calc(25px_*_var(--sk-scale,_1))]">
+                <ul className="flex flex-wrap [padding-left:0] [margin-bottom:0] list-none [border:none] [margin-bottom:calc(30px_*_var(--sk-scale,_1))]" role="tablist">
                   {tabs.map((tab, index) => (
-                    <li className="nav-item" key={tab.id}>
+                    <li className="relative list-none" key={tab.id}>
                       <button
                         className={index === 0 ? "nav-link active" : "nav-link"}
                         data-bs-toggle="tab"
@@ -90,15 +91,15 @@ export function OfficeDetail({ data }: { data: Extract<CorporatePayload, { kind:
                     </li>
                   ))}
                 </ul>
-                <div className="tab-content hw-tab-content">
-                  <div className="tab-pane fade show active" id="tab_1" role="tabpanel">
-                    <div className="row justify-content-center">
+                <div className="w-full hw-tab-content">
+                  <div className="hidden" id="tab_1" role="tabpanel">
+                    <div className="flex flex-wrap justify-center">
                       {data.teamGroups.map((group) => (
                         <div className="contents" key={group.heading}>
-                          {group.heading ? <h3 className="highlighted-heading mb-30">{group.heading}</h3> : null}
-                          <div className="row justify-content-center">
+                          {group.heading ? <h3 className="highlighted-heading [margin-bottom:calc(30px_*_var(--sk-scale,_1))]">{group.heading}</h3> : null}
+                          <div className="flex flex-wrap justify-center">
                             {group.members.map((member) => (
-                              <div className="col-xl-4 col-lg-4 col-md-4" key={member.externalId}>
+                              <div className="w-full xl:w-1/3 lg:w-1/3 md:w-1/3" key={member.externalId}>
                                 <DirectoryCard item={member} compact />
                               </div>
                             ))}
@@ -107,11 +108,11 @@ export function OfficeDetail({ data }: { data: Extract<CorporatePayload, { kind:
                       ))}
                     </div>
                   </div>
-                  <div className="tab-pane fade" id="tab_2" role="tabpanel">
+                  <div className="hidden" id="tab_2" role="tabpanel">
                     {data.listings.length > 0 ? (
                       <section className="property-slider-wrap td-cod">
                         <div className="container">
-                          <div className="property-slider-one homepage-featured-prop owl-carousel" id="propcarousel">
+                          <div className="homepage-featured-prop" data-carousel="cards">
                             {data.listings.map((item) => (
                               <ListingCard item={{ ...item, style: "style6" }} key={`office-listing-${item.externalId}`} />
                             ))}
@@ -120,9 +121,9 @@ export function OfficeDetail({ data }: { data: Extract<CorporatePayload, { kind:
                       </section>
                     ) : null}
                   </div>
-                  <div className="tab-pane fade" id="tab_3" role="tabpanel">
+                  <div className="hidden" id="tab_3" role="tabpanel">
                     {data.map.iframeSrc ? (
-                      <iframe src={data.map.iframeSrc} title={data.name} width="100%" height="420" style={{ border: 0 }} />
+                      <iframe src={data.map.iframeSrc} title={data.name} width="100%" height="420" style={{ border: 0, height: scaled(420) }} />
                     ) : null}
                   </div>
                 </div>

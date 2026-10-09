@@ -47,16 +47,16 @@ export function FranchisePage({ data, locale }: { data: FranchiseData; locale: L
       {data.widgetCss ? <style dangerouslySetInnerHTML={{ __html: data.widgetCss }} /> : null}
       <Breadcrumb breadcrumb={data.breadcrumb} />
       <div className="container">
-        <div className="section-title style2 text-center mb-40 mt-40">
+        <div className="relative [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))] text-center [margin-bottom:calc(40px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(25px_*_var(--sk-scale,_1))] [margin-top:calc(40px_*_var(--sk-scale,_1))]">
           <h2>{data.formHeading}</h2>
         </div>
-        <div className="row">
-          <div className="col-lg-12">
+        <div className="flex flex-wrap">
+          <div className="w-full">
             <FranchiseForm data={data} locale={locale} />
           </div>
         </div>
       </div>
-      <div dangerouslySetInnerHTML={{ __html: data.bodyHtml }} />
+      <div className="cms" dangerouslySetInnerHTML={{ __html: data.bodyHtml }} />
     </>
   );
 }
@@ -139,9 +139,9 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
   }
 
   return (
-    <form method="post" id="form" className="filter-widget" action={data.urlPath} onSubmit={handleSubmit}>
-      <div className="row">
-        <div className="col-md-4 form-group">
+    <form method="post" id="form" className="block" action={data.urlPath} onSubmit={handleSubmit}>
+      <div className="flex flex-wrap">
+        <div className="w-full md:w-1/3 mb-[calc(15px*var(--sk-scale,1))]">
           <input
             placeholder={data.placeholders.FirstName}
             type="text"
@@ -151,11 +151,11 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
             name="FirstName"
             defaultValue=""
           />
-          <span className="text-danger field-validation-valid" data-valmsg-for="FirstName" data-valmsg-replace="true">
+          <span className="text-brand field-validation-valid" data-valmsg-for="FirstName" data-valmsg-replace="true">
             {fieldErrors.FirstName}
           </span>
         </div>
-        <div className="form-group col-md-4">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
           <input
             className=""
             placeholder={data.placeholders.LastName}
@@ -166,11 +166,11 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
             name="LastName"
             defaultValue=""
           />
-          <span className="text-danger field-validation-valid" data-valmsg-for="LastName" data-valmsg-replace="true">
+          <span className="text-brand field-validation-valid" data-valmsg-for="LastName" data-valmsg-replace="true">
             {fieldErrors.LastName}
           </span>
         </div>
-        <div className="form-group col-md-4">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
           <input
             className=""
             placeholder={data.placeholders.Email}
@@ -181,11 +181,11 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
             name="Email"
             defaultValue=""
           />
-          <span className="text-danger field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true">
+          <span className="text-brand field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true">
             {fieldErrors.Email}
           </span>
         </div>
-        <div className="form-group col-md-4">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
           <input
             className=""
             type="tel"
@@ -195,13 +195,13 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
             name="Phone"
             defaultValue=""
           />
-          <span className="text-danger field-validation-valid" data-valmsg-for="Phone" data-valmsg-replace="true">
+          <span className="text-brand field-validation-valid" data-valmsg-for="Phone" data-valmsg-replace="true">
             {fieldErrors.Phone}
           </span>
         </div>
-        <div className="form-group col-md-4">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
           <select
-            className="select2"
+            className=""
             data-val="true"
             data-val-required={data.required.OpenOfficeCityId}
             id="OpenOfficeCityId"
@@ -215,16 +215,16 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
             ))}
           </select>
           <span
-            className="text-danger field-validation-valid"
+            className="text-brand field-validation-valid"
             data-valmsg-for="OpenOfficeCityId"
             data-valmsg-replace="true"
           >
             {fieldErrors.OpenOfficeCityId}
           </span>
         </div>
-        <div className="form-group col-md-4">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
           <select
-            className="bind-select2"
+            className=""
             bind-id="OpenOfficeCityId"
             bind-query="cityId"
             id="OpenOfficeCountyId"
@@ -234,37 +234,37 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
           >
           </select>
           <span
-            className="text-danger field-validation-valid"
+            className="text-brand field-validation-valid"
             data-valmsg-for="OpenOfficeCountyId"
             data-valmsg-replace="true"
           >
             {fieldErrors.OpenOfficeCountyId}
           </span>
         </div>
-        <div className="form-group col-md-12">
+        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full">
           <textarea className="" rows={2} placeholder={data.placeholders.Notes} id="Notes" name="Notes" defaultValue="" />
-          <span className="text-danger field-validation-valid" data-valmsg-for="Notes" data-valmsg-replace="true">
+          <span className="text-brand field-validation-valid" data-valmsg-for="Notes" data-valmsg-replace="true">
             {fieldErrors.Notes}
           </span>
         </div>
         {config.recaptchaSiteKey ? (
           <>
             <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-            <div className="form-group">
-              <div className="col-md-offset-2 col-md-10">
+            <div className="mb-[calc(15px*var(--sk-scale,1))]">
+              <div className="md:ml-1/6 w-full md:w-10/12">
                 <script src="https://www.google.com/recaptcha/api.js" async defer />
                 <div className="g-recaptcha" data-sitekey={config.recaptchaSiteKey} suppressHydrationWarning />
-                <span id="captchaError" className="text text-danger">
+                <span id="captchaError" className="text text-brand">
                   {captchaError}
                 </span>
               </div>
             </div>
           </>
         ) : null}
-        <div className="col-md-12">
-          <div className="form-group">
+        <div className="w-full">
+          <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <div className="send-btn text-center">
-              <button type="submit" className="btn style2 text-uppercase" disabled={submitting}>
+              <button type="submit" className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100 uppercase" disabled={submitting}>
                 {data.submitLabel}
               </button>
             </div>

@@ -7,8 +7,9 @@ import { Header } from "@/components/layout/Header";
 import { Preloader } from "@/components/layout/Preloader";
 import { SeminarBar } from "@/components/layout/SeminarBar";
 import { StructuredData } from "@/components/layout/StructuredData";
-import { ThemeScripts } from "@/components/layout/ThemeScripts";
+import { SiteBehaviors } from "@/components/layout/SiteBehaviors";
 import { ThemeStyles } from "@/components/layout/ThemeStyles";
+import "@/styles/globals.css";
 import { getHomepageContent } from "@/content/homepage";
 import { isLocale, locales, type Locale } from "@/lib/locales";
 
@@ -82,14 +83,14 @@ export default async function LocaleLayout({
       </head>
       <body>
         <SeminarBar content={content.seminarBar} />
-        <div className="page-wrapper">
+        <div className="min-h-screen">
           <Header content={content} locale={locale} />
           {children}
           <Footer content={content} />
         </div>
         <BackToTop />
         <Preloader />
-        <ThemeScripts />
+        <SiteBehaviors />
       </body>
     </html>
   );

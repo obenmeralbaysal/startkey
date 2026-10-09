@@ -224,6 +224,8 @@ Her sayfa, her dil, her viewport. Tek screenshot yetmez.
 
 Viewport seti: **1440**, **768**, **390**.
 
+Lokal site 768px ve üstünde bilinçli olarak referansın %80’i ölçüsündedir (`--sk-scale`, `web/src/lib/scale.ts`); 390’da referansla birebirdir. 1440 ve 768’de referansla piksel karşılaştırması yaparken sayfaya `:root{--sk-scale:1}` ekle.
+
 - [ ] Bölüm sırası referansla aynı
 - [ ] Hero/banner `srcset` + webp/jpg çifti doğru
 - [ ] Kart/görsel kırpma oranı kaymamış (yanlış CDN varyantı)
@@ -283,6 +285,7 @@ docker run --rm --network host \
 | `scripts/extract-reference-content.py` | Ana sayfa kopyasını JSON’a döker | Yeni sayfa için **yeni** extractor; selector’ları o HTML’den yaz |
 | `scripts/fetch-reference-lookups.py` | Arama dropdown AJAX’ı | Portföy/ofis filtreleri için kopyala, path’leri network tab’dan al |
 | `scripts/build-api-seed.py` | JSON içerik + lookup → `reference-seed.json` | Yeni CRM listesi varsa aynı birleştirme |
+| `scripts/scale-css.py` | CSS’teki px/rem uzunluklarını `calc(… * var(--sk-scale, 1))` yapar (tema/lib CSS, portal.css, critical CSS) | Referans CSS’i veya critical CSS’i yeniden çektikten ve elle yeni CSS uzunluğu yazdıktan sonra çalıştır; `--check` ölçeklenmemiş uzunluk kalırsa 1 döner |
 
 Doğru versiyon: snapshot tarihi + markup’taki URL. “En büyük görsel” veya “CDN kökü” doğru versiyon değildir.
 

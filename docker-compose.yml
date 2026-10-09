@@ -105,7 +105,6 @@ services:
     volumes:
       # Host copy is the source of truth. The image does not contain these files.
       - ./web/public/media:/app/public/media:ro
-      - ./web/public/akademi:/app/public/akademi:ro
     ports:
       - "${WEB_PORT:-3000}:3000"
     healthcheck:

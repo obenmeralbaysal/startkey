@@ -4,8 +4,8 @@
 
 /* Figma-inspired consultant draft. Scoped so the classic template is untouched. */
 .consultant-draft {
-  padding-top: 60px;
-  padding-bottom: 80px;
+  padding-top: calc(60px * var(--sk-scale, 1));
+  padding-bottom: calc(80px * var(--sk-scale, 1));
 }
 
 .consultant-draft-photo {
@@ -16,14 +16,14 @@
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: calc(4px * var(--sk-scale, 1));
 }
 
 .consultant-draft-year {
-  font-size: 20px;
+  font-size: calc(20px * var(--sk-scale, 1));
   font-weight: 700;
   color: #111;
-  margin: 0 0 16px;
+  margin: 0 0 calc(16px * var(--sk-scale, 1));
   padding-bottom: 0;
 }
 
@@ -32,9 +32,9 @@
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 72px;
-  margin: 0 0 22px;
-  padding-bottom: 18px;
+  gap: calc(72px * var(--sk-scale, 1));
+  margin: 0 0 calc(22px * var(--sk-scale, 1));
+  padding-bottom: calc(18px * var(--sk-scale, 1));
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
@@ -42,12 +42,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: calc(6px * var(--sk-scale, 1));
   flex: 0 1 auto;
 }
 
 .consultant-draft-stat-label {
-  font-size: 15px;
+  font-size: calc(15px * var(--sk-scale, 1));
   font-weight: 700;
   color: #111;
   letter-spacing: 0.02em;
@@ -58,7 +58,7 @@
 }
 
 .consultant-draft-stat-number {
-  font-size: 22px;
+  font-size: calc(22px * var(--sk-scale, 1));
   font-weight: 700;
   color: #002172;
   line-height: 1.15;
@@ -71,43 +71,43 @@
 
 .consultant-draft-club-logo {
   display: block;
-  height: 40px;
+  height: calc(40px * var(--sk-scale, 1));
   width: auto;
-  max-width: 120px;
+  max-width: calc(120px * var(--sk-scale, 1));
   object-fit: contain;
   object-position: left center;
 }
 
 .consultant-draft-identity {
-  margin-bottom: 22px;
-  padding-bottom: 22px;
+  margin-bottom: calc(22px * var(--sk-scale, 1));
+  padding-bottom: calc(22px * var(--sk-scale, 1));
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .consultant-draft-name {
-  font-size: 40px;
+  font-size: calc(40px * var(--sk-scale, 1));
   font-weight: 700;
   line-height: 1.15;
   color: #111;
-  margin: 0 0 10px;
+  margin: 0 0 calc(10px * var(--sk-scale, 1));
 }
 
 .consultant-draft-role {
   display: block;
-  font-size: 18px;
+  font-size: calc(18px * var(--sk-scale, 1));
   font-weight: 500;
   color: #333;
 }
 
 .consultant-draft-contact {
-  padding: 0 0 22px;
-  margin: 0 0 22px;
+  padding: 0 0 calc(22px * var(--sk-scale, 1));
+  margin: 0 0 calc(22px * var(--sk-scale, 1));
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .consultant-draft-contact li {
-  margin-bottom: 12px;
-  font-size: 16px;
+  margin-bottom: calc(12px * var(--sk-scale, 1));
+  font-size: calc(16px * var(--sk-scale, 1));
   color: #111;
 }
 
@@ -119,7 +119,7 @@
   color: #111;
   font-weight: 700;
   margin-right: 0.35em;
-  font-size: 15px;
+  font-size: calc(15px * var(--sk-scale, 1));
 }
 
 .consultant-draft-contact li a {
@@ -128,28 +128,28 @@
 
 .consultant-draft-social {
   display: flex;
-  gap: 12px;
+  gap: calc(12px * var(--sk-scale, 1));
   padding: 0;
   margin: 0;
 }
 
 .consultant-draft-social.social-profile.style1 li a {
-  width: 52px;
-  height: 52px;
+  width: calc(52px * var(--sk-scale, 1));
+  height: calc(52px * var(--sk-scale, 1));
 }
 
 .consultant-draft-social.social-profile.style1 li a i {
-  font-size: 22px;
+  font-size: calc(22px * var(--sk-scale, 1));
 }
 
 .consultant-draft .agent-desc {
-  margin-top: 40px;
+  margin-top: calc(40px * var(--sk-scale, 1));
 }
 
 @media (max-width: 991px) {
   .consultant-draft {
-    padding-top: 28px;
-    padding-bottom: 48px;
+    padding-top: calc(28px * var(--sk-scale, 1));
+    padding-bottom: calc(48px * var(--sk-scale, 1));
   }
 
   .consultant-draft-info {
@@ -157,34 +157,34 @@
   }
 
   .consultant-draft-photo {
-    margin-bottom: 24px;
+    margin-bottom: calc(24px * var(--sk-scale, 1));
   }
 
   .consultant-draft-year {
-    font-size: 17px;
+    font-size: calc(17px * var(--sk-scale, 1));
     line-height: 1.35;
-    margin: 0 0 14px;
+    margin: 0 0 calc(14px * var(--sk-scale, 1));
     padding-bottom: 0;
   }
 
   .consultant-draft-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: calc(12px * var(--sk-scale, 1));
     width: 100%;
-    margin: 0 0 20px;
-    padding-bottom: 14px;
+    margin: 0 0 calc(20px * var(--sk-scale, 1));
+    padding-bottom: calc(14px * var(--sk-scale, 1));
   }
 
   .consultant-draft-stat {
     align-items: center;
     text-align: center;
-    gap: 4px;
+    gap: calc(4px * var(--sk-scale, 1));
     min-width: 0;
   }
 
   .consultant-draft-stat-label {
-    font-size: 13px;
+    font-size: calc(13px * var(--sk-scale, 1));
     letter-spacing: 0;
   }
 
@@ -197,35 +197,35 @@
   }
 
   .consultant-draft-stat-number {
-    font-size: 18px;
+    font-size: calc(18px * var(--sk-scale, 1));
   }
 
   .consultant-draft-club-logo {
-    height: 32px;
-    max-width: 88px;
-    max-height: 32px;
+    height: calc(32px * var(--sk-scale, 1));
+    max-width: calc(88px * var(--sk-scale, 1));
+    max-height: calc(32px * var(--sk-scale, 1));
     margin-left: auto;
     margin-right: auto;
     object-position: center;
   }
 
   .consultant-draft-identity {
-    margin-bottom: 18px;
-    padding-bottom: 18px;
+    margin-bottom: calc(18px * var(--sk-scale, 1));
+    padding-bottom: calc(18px * var(--sk-scale, 1));
   }
 
   .consultant-draft-name {
-    font-size: 24px;
+    font-size: calc(24px * var(--sk-scale, 1));
     line-height: 1.25;
     word-break: break-word;
   }
 
   .consultant-draft-role {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
   }
 
   .consultant-draft-contact li {
-    font-size: 15px;
+    font-size: calc(15px * var(--sk-scale, 1));
     word-break: break-word;
   }
 

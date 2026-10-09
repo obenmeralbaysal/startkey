@@ -1,6 +1,18 @@
 import React from "react";
 
-import { criticalCss } from "@/content/critical-css";
+import { imageSizeCss, SCALE_CSS } from "@/lib/scale";
+
+// Image attribute sizes used by the components and the CMS content. An image whose size
+// only comes from its attributes keeps the reference size unless its value is listed.
+const IMAGE_WIDTHS = [
+  24, 25, 85, 100, 175, 178, 192, 220, 250, 260, 300, 320, 400, 412, 413, 414, 418, 420, 500,
+  530, 565, 574, 576, 600, 800, 944, 1500, 1920,
+];
+const IMAGE_HEIGHTS = [
+  24, 69, 70, 75, 78, 85, 86, 88, 92, 100, 108, 110, 121, 137, 138, 154, 156, 169, 194, 220,
+  269, 292, 300, 400, 414, 420, 478, 500, 565, 574, 629, 630, 750, 800, 944,
+];
+const SCALE_STYLE = SCALE_CSS + imageSizeCss(IMAGE_WIDTHS, IMAGE_HEIGHTS);
 
 /**
  * The reference website's stylesheets, in its order and with its loading strategy:
@@ -18,24 +30,12 @@ import { criticalCss } from "@/content/critical-css";
 type Strategy = "blocking" | "deferred-noscript" | "deferred";
 
 const STYLESHEETS: [href: string, strategy: Strategy][] = [
-  // The reference loads Roboto from Google Fonts with the preload strategy; the font
-  // and its stylesheet are served locally here.
-  ["/themes/fela/css/roboto.css", "deferred-noscript"],
-  ["/themes/fela/css/bootstrap.min.css", "deferred-noscript"],
-  ["/themes/fela/css/style.css", "blocking"],
-  ["/themes/fela/css/app.css", "blocking"],
-  ["/themes/fela/css/responsive.css", "blocking"],
+  [
+    "https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap",
+    "deferred",
+  ],
   ["/themes/fela/css/flaticon.css", "deferred"],
   ["/themes/fela/css/remixicon.css", "deferred"],
-  ["/themes/fela/css/owl.carousel.min.css", "deferred-noscript"],
-  ["/themes/fela/css/jquery-ui-min.css", "blocking"],
-  ["/themes/fela/css/odometer.min.css", "deferred"],
-  ["/themes/fela/css/aos.css", "deferred"],
-  ["/lib/bootstrap-datepicker/css/bootstrap-datepicker3.min.css", "deferred"],
-  ["/lib/intl-tel-input/css/intltelinput.css", "deferred"],
-  ["/lib/select2/css/select2.min.css", "deferred-noscript"],
-  ["/lib/fancybox-4/fancybox.css", "deferred"],
-  ["/css/themeless-app.css", "deferred"],
 ];
 
 /**
@@ -69,7 +69,7 @@ const PROMOTE_DEFERRED_STYLES = `
 export function ThemeStyles() {
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: criticalCss }} />
+      <style dangerouslySetInnerHTML={{ __html: SCALE_STYLE }} />
 
       {STYLESHEETS.map(([href, strategy]) => {
         if (strategy === "blocking") {

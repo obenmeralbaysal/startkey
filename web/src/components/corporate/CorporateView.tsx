@@ -93,5 +93,5 @@ export function CorporateView({
 
   // Inner pages sit in `.content-wrapper` (margin-top: 85px) so the fixed header
   // rests on the white body background at scroll 0 — the same stack as the reference.
-  return <div className="content-wrapper">{inner}</div>;
+  return <div className="mt-[calc(85px*var(--sk-scale,1))]">{inner}</div>;
 }

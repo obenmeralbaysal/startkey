@@ -1,6 +1,6 @@
 export function Preloader() {
   return (
-    <div className="preloader d-none" id="preloader">
+    <div className="preloader hidden" id="preloader">
       <div className="preloader-inner">
         <div className="spinner">
           <div className="dot1" />

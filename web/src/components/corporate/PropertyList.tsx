@@ -9,15 +9,15 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <section className="listing-wrap ptb-100">
+      <section className="listing-wrap [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
         <div className="container">
-          <div className="row gx-5">
-            <div className="col-xl-4" style={{ display: "flex", justifyContent: "center" }}>
-              <div className="sidebar" style={{ margin: 0 }}>
-                <button className="mobile-filter-btn btn style1 text-center" id="mobile-filter-btn">
+          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))]">
+            <div className="w-full xl:w-1/3" style={{ display: "flex", justifyContent: "center" }}>
+              <div className="max-xl:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] max-xl:[margin-top:calc(25px_*_var(--sk-scale,_1))]" style={{ margin: 0 }}>
+                <button className="hidden [margin-bottom:calc(10px_*_var(--sk-scale,_1))] max-[768px]:block relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-navy text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-brand before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-brand after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" id="mobile-filter-btn">
                   {data.filter.mobileOpenLabel}
                 </button>
-                <div className="sidebar-widget sidebar-filter" id="filter-widget">
+                <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] relative z-[1] [padding:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0_0_calc(25px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] last:[margin:0] max-md:[padding:calc(20px_*_var(--sk-scale,_1))] max-[768px]:hidden" id="filter-widget">
                   <h4>{data.filter.heading}</h4>
                   <FilterForm filter={data.filter} />
                 </div>
@@ -25,17 +25,17 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
             </div>
 
             {data.hasResults ? (
-              <div className="col-xl-8">
-                <div className="row align-items-center mb-25">
-                  <div className="col-md-8">
-                    <div className="profuct-result">
+              <div className="w-full xl:w-2/3">
+                <div className="flex flex-wrap items-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
+                  <div className="w-full md:w-2/3">
+                    <div className="max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
                       <p>
                         <i className="ri-building-2-fill" /> {data.foundLabel}
                       </p>
                     </div>
                   </div>
-                  <div className="col-md-4">
-                    <div className="filter-item-cat">
+                  <div className="w-full md:w-1/3">
+                    <div className="block">
                       <select className="select single-select" id="sorting-type-select" name="SortingType" defaultValue={sorting}>
                         {data.filter.sortOptions.map((option) => (
                           <option key={option.value} value={option.value}>
@@ -46,9 +46,9 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
                     </div>
                   </div>
                 </div>
-                <div className="row">
+                <div className="flex flex-wrap">
                   {data.items.map((item) => (
-                    <div className="col-lg-6 col-md-6" key={item.externalId}>
+                    <div className="w-full lg:w-1/2 md:w-1/2" key={item.externalId}>
                       <ListingCard item={item} />
                     </div>
                   ))}
@@ -74,10 +74,10 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
   const bind = filter.bindUrls;
 
   return (
-    <form method="get" role="form" id="prop-filter" className="filter-widget" action={filter.action}>
+    <form method="get" role="form" id="prop-filter" className="block" action={filter.action}>
       <input type="hidden" id="SortingType" name="SortingType" defaultValue={scalar(values["SortingType"])} />
 
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <input
           placeholder={filter.placeholders.keyword}
           type="text"
@@ -85,13 +85,13 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           name="FilterDTO.Keyword"
           defaultValue={scalar(values["FilterDTO.Keyword"])}
         />
-        <span className="text-danger field-validation-valid" data-valmsg-for="FilterDTO.Keyword" />
+        <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.Keyword" />
       </div>
 
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1">{labels.FilterDTO_AdTypeId}</label>
         <select
-          className=" select2"
+          className=""
           data-placeholder="Portföy Tipi"
           id="FilterDTO_AdTypeId"
           name="FilterDTO.AdTypeId"
@@ -103,13 +103,13 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
             </option>
           ))}
         </select>
-        <span className="text-danger field-validation-valid" data-valmsg-for="FilterDTO.AdTypeId" />
+        <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.AdTypeId" />
       </div>
 
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1">{labels.FilterDTO_ProcessTypeId}</label>
         <select
-          className=" bind-select2"
+          className=""
           data-placeholder="Portföy Durumu"
           bind-id="FilterDTO_AdTypeId"
           bind-query="adType"
@@ -120,12 +120,12 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         >
           {selectedOption(values["FilterDTO.ProcessTypeId"])}
         </select>
-        <span className="text-danger field-validation-valid" data-valmsg-for="FilterDTO.ProcessTypeId" />
+        <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.ProcessTypeId" />
       </div>
 
-      <div className="form-group">
-        <div className="row">
-          <div className="col-md-6 col-sm-12">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+        <div className="flex flex-wrap">
+          <div className="w-full md:w-1/2">
             <label id="search-text-1">{labels.FilterDTO_MinPrice}</label>
             <input
               placeholder={filter.placeholders.minPrice}
@@ -135,7 +135,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
               defaultValue={scalar(values["FilterDTO.MinPrice"])}
             />
           </div>
-          <div className="col-md-6 col-sm-12">
+          <div className="w-full md:w-1/2">
             <label id="search-text-1">{labels.FilterDTO_MaxPrice}</label>
             <input
               placeholder={filter.placeholders.maxPrice}
@@ -148,10 +148,10 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         </div>
       </div>
 
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1">{labels.FilterDTO_CurrencyId}</label>
         <select
-          className="bind-select2"
+          className=""
           data-placeholder="Para Birimi"
           id="FilterDTO_CurrencyId"
           name="FilterDTO.CurrencyId"
@@ -160,11 +160,11 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         >
           {selectedOption(values["FilterDTO.CurrencyId"])}
         </select>
-        <span className="text-danger field-validation-valid" data-valmsg-for="FilterDTO.CurrencyId" />
+        <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.CurrencyId" />
       </div>
 
-      <div className="form-group row">
-        <div className="col-md-6 col-sm-12">
+      <div className="mb-[calc(15px*var(--sk-scale,1))] flex flex-wrap">
+        <div className="w-full md:w-1/2">
           <label id="search-text-1">{labels.FilterDTO_MinCleanArea}</label>
           <input
             placeholder={filter.placeholders.minArea}
@@ -174,7 +174,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
             defaultValue={scalar(values["FilterDTO.MinCleanArea"])}
           />
         </div>
-        <div className="col-md-6 col-sm-12">
+        <div className="w-full md:w-1/2">
           <label id="search-text-1">{labels.FilterDTO_MaxCleanArea}</label>
           <input
             placeholder={filter.placeholders.maxArea}
@@ -186,12 +186,12 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         </div>
       </div>
 
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1" style={{ marginTop: "6%" }}>
           {labels.FilterDTO_CountryId}
         </label>
         <select
-          className="bind-select2"
+          className=""
           id="FilterDTO_CountryId"
           name="FilterDTO.CountryId"
           bind-url={bind.countries}
@@ -200,12 +200,12 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           {selectedOption(values["FilterDTO.CountryId"])}
         </select>
       </div>
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1" style={{ marginTop: "6%" }}>
           {labels.FilterDTO_CityId}
         </label>
         <select
-          className="bind-select2"
+          className=""
           bind-id="FilterDTO_CountryId"
           bind-query="countryId"
           id="FilterDTO_CityId"
@@ -216,10 +216,10 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           {selectedOption(values["FilterDTO.CityId"])}
         </select>
       </div>
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1">{labels.FilterDTO_CountyIds}</label>
         <select
-          className=" bind-select2"
+          className=""
           multiple
           bind-id="FilterDTO_CityId"
           bind-query="cityId"
@@ -235,10 +235,10 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           ))}
         </select>
       </div>
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1">{labels.FilterDTO_DistrictIds}</label>
         <select
-          className=" bind-select2"
+          className=""
           multiple
           bind-id="FilterDTO_CountyIds"
           bind-query="countyIds"
@@ -254,10 +254,10 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           ))}
         </select>
       </div>
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1">{labels.FilterDTO_OfficeId}</label>
         <select
-          className="bind-select2"
+          className=""
           id="FilterDTO_OfficeId"
           name="FilterDTO.OfficeId"
           bind-url={bind.offices}
@@ -266,10 +266,10 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           {selectedOption(values["FilterDTO.OfficeId"])}
         </select>
       </div>
-      <div className="form-group">
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
         <label id="search-text-1">{labels.FilterDTO_UserId}</label>
         <select
-          className=" bind-select2"
+          className=""
           bind-id="FilterDTO_OfficeId"
           bind-query="officeId"
           id="FilterDTO_UserId"
@@ -280,20 +280,20 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           {selectedOption(values["FilterDTO.UserId"])}
         </select>
       </div>
-      <div className="form-group" style={{ display: "none" }}>
+      <div className="mb-[calc(15px*var(--sk-scale,1))]" style={{ display: "none" }}>
         <label id="search-text-1">{labels.FilterDTO_HousePropertyTypeId}</label>
-        <select className=" select2" id="FilterDTO_HousePropertyTypeId" name="FilterDTO.HousePropertyTypeId" />
+        <select className="" id="FilterDTO_HousePropertyTypeId" name="FilterDTO.HousePropertyTypeId" />
       </div>
-      <div className="form-group " style={{ display: "none" }}>
+      <div className="mb-[calc(15px*var(--sk-scale,1))]" style={{ display: "none" }}>
         <label id="search-text-1-1">{labels.FilterDTO_CommercialPropertyTypeId}</label>
-        <select className=" select2" id="FilterDTO_CommercialPropertyTypeId" name="FilterDTO.CommercialPropertyTypeId" />
+        <select className="" id="FilterDTO_CommercialPropertyTypeId" name="FilterDTO.CommercialPropertyTypeId" />
       </div>
-      <div className="form-group" style={{ display: "none" }}>
+      <div className="mb-[calc(15px*var(--sk-scale,1))]" style={{ display: "none" }}>
         <label id="search-text-1-1">{labels.FilterDTO_LandPropertyTypeId}</label>
-        <select className=" select2" id="FilterDTO_LandPropertyTypeId" name="FilterDTO.LandPropertyTypeId" />
+        <select className="" id="FilterDTO_LandPropertyTypeId" name="FilterDTO.LandPropertyTypeId" />
       </div>
-      <div className="form-group">
-        <button className="btn style2 d-block w-100">{filter.submitLabel}</button>
+      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+        <button className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100 block w-full">{filter.submitLabel}</button>
       </div>
     </form>
   );
@@ -320,28 +320,28 @@ function ListingPagination({
   const numbered = Array.from({ length: end - start + 1 }, (_, index) => start + index);
 
   return (
-    <ul className="page-nav list-style mt-10">
-      <li className="page-item">
+    <ul className="text-center list-none [margin-top:calc(10px_*_var(--sk-scale,_1))]">
+      <li className="inline-block">
         <a className="" href={hrefFor(1)}>
           &laquo;
         </a>
       </li>
       {numbered.map((page) =>
         page === pageIndex ? (
-          <li className="page-item" key={page}>
-            <a className=" active">
+          <li className="inline-block" key={page}>
+            <a className="">
               <span>{page}</span>
             </a>
           </li>
         ) : (
-          <li className="page-item" key={page}>
+          <li className="inline-block" key={page}>
             <a className="" href={hrefFor(page)}>
               {page}
             </a>
           </li>
         ),
       )}
-      <li className="page-item">
+      <li className="inline-block">
         <a className="" href={hrefFor(totalPages)}>
           &raquo;
         </a>

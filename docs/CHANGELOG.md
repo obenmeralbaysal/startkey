@@ -1,3 +1,10 @@
+## [2026-10-09]
+
+- **[Frontend]**: Public sitenin Bootstrap ve Fela CSS’i kalktı. Görünüm Tailwind token’ları ve utility sınıflarıyla duruyor; menü, dil seçici, arama lookup’ları, carousel, lightbox ve sayaçlar React tarafında. Portal aynı kaldı.
+- **[Frontend]**: Yerel Startkey Akademi kopyası (`/akademi`, WordPress anlık görüntüsü, asset’ler ve çekme script’leri) kaldırıldı. Yeni tasarım ayrıca yapılacak. Header’daki Çevrimiçi Eğitimler `startkeyakademi.net` adresini açar. Kurumsal Seminerler / Eğitimler duruyor.
+- **[Frontend]**: Kurumsal site ve Portal masaüstü ve tablette (768px ve üstü) %20 küçültüldü. Tüm CSS uzunlukları ve görsel `width`/`height` ölçüleri `--sk-scale` (0.8) ile çarpılıyor; telefonlar referans ölçüsünde kalıyor. Tema, kütüphane ve portal CSS’i `scripts/scale-css.py` ile yeniden yazıldı.
+- **[Frontend]**: Header masaüstünde daha geniş satır ve sıkı aralıkla düzenlendi: menü etiketleri ve “+” işareti alt satıra geçmiyor, butonlar taşmıyor, logo sıkışmıyor (tr/en/de, 992px ve üstü; 992–1199px arasında header yazısı biraz daha küçük).
+
 ## [2026-09-29]
 
 - **[Frontend]**: Portal girişinden Google ve Office 365 butonları kaldırıldı.

@@ -20,7 +20,7 @@ export const criticalCss = `*, *::before, *::after {
             position: relative;
             width: 100%;
             overflow: hidden;
-            contain-intrinsic-size: 1440px 810px;
+            contain-intrinsic-size: calc(1440px * var(--sk-scale, 1)) calc(810px * var(--sk-scale, 1));
             content-visibility: auto;
 /*             background: url('https://ik.imagekit.io/startkey/tr:w-20,h-12,q-10,bl-10/micrositecontent/4c2b2fe3-903f-4016-abf3-ca3b247ca08f.jpg') center no-repeat;
  */        }
@@ -42,25 +42,25 @@ export const criticalCss = `*, *::before, *::after {
     #ProcessTypeId {
       display: block;
       width: 100%;
-      padding: 0.375rem 0.75rem;
-      font-size: 1rem;
+      padding: calc(0.375rem * var(--sk-scale, 1)) calc(0.75rem * var(--sk-scale, 1));
+      font-size: calc(1rem * var(--sk-scale, 1));
       line-height: 1.5;
       color: #495057;
       background-color: #fff;
       background-clip: padding-box;
       border: 1px solid #ced4da;
-      border-radius: 0.25rem;
+      border-radius: calc(0.25rem * var(--sk-scale, 1));
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
     }
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: calc(1rem * var(--sk-scale, 1));
     }
     .form-label {
       display: block;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
+      margin-bottom: calc(0.5rem * var(--sk-scale, 1));
+      font-size: calc(0.9rem * var(--sk-scale, 1));
       font-weight: 500;
     }
 
@@ -74,10 +74,10 @@ export const criticalCss = `*, *::before, *::after {
         }
 
         .select2-container .select2-selection--single {
-            padding: 15px !important;
+            padding: calc(15px * var(--sk-scale, 1)) !important;
             background-color: #f9f9f9 !important;
             border: none !important;
-            border-radius: 5px !important;
+            border-radius: calc(5px * var(--sk-scale, 1)) !important;
             height: auto !important;
         }
 
@@ -87,7 +87,7 @@ export const criticalCss = `*, *::before, *::after {
 
 
         .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 27px !important;
+            line-height: calc(27px * var(--sk-scale, 1)) !important;
         }
 
         .select2-container--default .select2-selection--single .select2-selection__arrow b {
@@ -95,15 +95,15 @@ export const criticalCss = `*, *::before, *::after {
         }
 
         .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 40px !important;
+            height: calc(40px * var(--sk-scale, 1)) !important;
             top: 1px;
         }
 
         .select2-container--default .select2-selection--multiple {
-            padding: 15px !important;
+            padding: calc(15px * var(--sk-scale, 1)) !important;
             background-color: #f9f9f9 !important;
             border: none !important;
-            border-radius: 5px !important;
+            border-radius: calc(5px * var(--sk-scale, 1)) !important;
             height: auto !important;
         }
 
@@ -112,7 +112,7 @@ export const criticalCss = `*, *::before, *::after {
             }
 
             .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-                line-height: 27px !important;
+                line-height: calc(27px * var(--sk-scale, 1)) !important;
             }
 
             .select2-container--default .select2-selection--multiple .select2-selection__arrow b {
@@ -120,7 +120,7 @@ export const criticalCss = `*, *::before, *::after {
             }
 
             .select2-container--default .select2-selection--multiple .select2-selection__arrow {
-                height: 40px !important;
+                height: calc(40px * var(--sk-scale, 1)) !important;
                 top: 1px;
             }
 

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { scaled } from "@/lib/scale";
+
 export type PortalOffice = { id: number; name: string; role: string | null };
 
 export type PortalUser = {
@@ -73,7 +75,7 @@ function AdminPanel() {
   }, []);
 
   return (
-    <section className="w-100 mt-10" style={{ maxWidth: 720 }}>
+    <section className="w-100 mt-10" style={{ maxWidth: scaled(720) }}>
       <h2>Ofis başvuruları</h2>
       {message ? <p>{message}</p> : null}
       {applications.map((row) => (

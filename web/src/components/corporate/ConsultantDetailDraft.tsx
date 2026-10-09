@@ -7,6 +7,7 @@ import { Picture } from "@/components/corporate/Picture";
 import { consultantDraftClubLogo, consultantDraftCopy, consultantDraftSocials } from "@/content/consultant-draft";
 import type { CorporatePayload } from "@/lib/corporate";
 import type { Locale } from "@/lib/locales";
+import { scaled } from "@/lib/scale";
 
 type ConsultantDetailData = Extract<CorporatePayload, { kind: "consultant-detail" }>;
 
@@ -20,8 +21,8 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
       <div className="container consultant-draft">
-        <div className="row gx-5 align-items-start">
-          <div className="col-lg-6">
+        <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-start">
+          <div className="w-full lg:w-1/2">
             <div className="consultant-draft-photo">
               <a href={data.urlPath}>
                 <Picture width={574} height={574}>
@@ -31,7 +32,7 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
               </a>
             </div>
           </div>
-          <div className="col-lg-6">
+          <div className="w-full lg:w-1/2">
             <div className="consultant-draft-info">
               <h3 className="consultant-draft-year">{copy.yearHeading}</h3>
               <div className="consultant-draft-stats">
@@ -53,7 +54,7 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
                 <h2 className="consultant-draft-name">{data.name}</h2>
                 {data.role ? <span className="consultant-draft-role">{data.role}</span> : null}
               </div>
-              <ul className="consultant-draft-contact list-style">
+              <ul className="consultant-draft-contact list-none">
                 {data.email ? (
                   <li>
                     <b>{data.contactLabels.email}</b>
@@ -75,7 +76,7 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
                   </li>
                 ) : null}
               </ul>
-              <ul className="social-profile list-style style1 consultant-draft-social">
+              <ul className="[margin:calc(20px_*_var(--sk-scale,_1))_0_calc(20px_*_var(--sk-scale,_1))] [margin-top:calc(25px_*_var(--sk-scale,_1))] text-right max-md:text-center list-none consultant-draft-social">
                 {consultantDraftSocials.map((item) => (
                   <li key={item.href}>
                     <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.label}>
@@ -86,11 +87,11 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
               </ul>
             </div>
           </div>
-          <div className="col-lg-12">
-            <div className="agent-desc">
-              <ul className="nav nav-tabs agent-tablist" role="tablist">
+          <div className="w-full">
+            <div className="[margin-top:calc(25px_*_var(--sk-scale,_1))]">
+              <ul className="flex flex-wrap [padding-left:0] [margin-bottom:0] list-none [border:none] [margin-bottom:calc(30px_*_var(--sk-scale,_1))]" role="tablist">
                 {tabs.map((tab) => (
-                  <li className="nav-item" key={tab.id}>
+                  <li className="relative list-none" key={tab.id}>
                     <button
                       className={tab.id === activeId ? "nav-link active" : "nav-link"}
                       data-bs-toggle="tab"
@@ -103,15 +104,15 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
                   </li>
                 ))}
               </ul>
-              <div className="tab-content hw-tab-content">
+              <div className="w-full hw-tab-content">
                 <div className={activeId === "tab_1" ? "tab-pane fade show active" : "tab-pane fade"} id="tab_1" role="tabpanel">
-                  <div className="row justify-content-center" dangerouslySetInnerHTML={{ __html: data.bioHtml }} />
+                  <div className="flex flex-wrap justify-center" dangerouslySetInnerHTML={{ __html: data.bioHtml }} />
                 </div>
                 <div className={activeId === "tab_2" ? "tab-pane fade show active" : "tab-pane fade"} id="tab_2" role="tabpanel">
                   {data.listings.length > 0 ? (
                     <section className="property-slider-wrap td-cod">
                       <div className="container">
-                        <div className="property-slider-one homepage-featured-prop owl-carousel" id="propcarousel">
+                        <div className="homepage-featured-prop" data-carousel="cards">
                           {data.listings.map((item) => (
                             <ListingCard item={{ ...item, style: "style6" }} key={`consultant-listing-${item.externalId}`} />
                           ))}
@@ -120,15 +121,15 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
                     </section>
                   ) : null}
                   {data.allListingsLabel ? (
-                    <div className="col-md-12" style={{ display: "flex", justifyContent: "center", marginTop: 30 }}>
-                      <a className="btn style2" target="_blank" href={data.allListingsHref}>
+                    <div className="w-full" style={{ display: "flex", justifyContent: "center", marginTop: scaled(30) }}>
+                      <a className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" target="_blank" href={data.allListingsHref}>
                         {data.allListingsLabel}
                       </a>
                     </div>
                   ) : null}
                 </div>
                 <div className={activeId === "tab_3" ? "tab-pane fade show active" : "tab-pane fade"} id="tab_3" role="tabpanel">
-                  {data.commentHeading ? <h4 style={{ marginTop: 15, marginBottom: 15 }}>{data.commentHeading}</h4> : null}
+                  {data.commentHeading ? <h4 style={{ marginTop: scaled(15), marginBottom: scaled(15) }}>{data.commentHeading}</h4> : null}
                   <ConsultantCommentForm data={data} locale={locale} />
                 </div>
               </div>
