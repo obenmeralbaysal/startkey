@@ -7,7 +7,6 @@ use App\Models\CmsListing;
 use App\Models\LookupItem;
 use App\Support\ReferenceHtml;
 use Illuminate\Database\Seeder;
-use RuntimeException;
 
 /**
  * Loads database/data/portfolio-seed.json produced by scripts/crawl-portfolio.py.
@@ -22,7 +21,9 @@ class PortfolioDataSeeder extends Seeder
         $path = database_path('data/portfolio-seed.json');
 
         if (! is_file($path)) {
-            throw new RuntimeException("Portfolio seed data not found at {$path}.");
+            $this->command?->warn("Portfolio seed skipped; {$path} is not on disk.");
+
+            return;
         }
 
         $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);

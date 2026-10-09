@@ -11,7 +11,6 @@ use App\Models\LookupItem;
 use App\Support\ReferenceHtml;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use RuntimeException;
 
 /**
  * Loads database/data/offices-seed.json produced by scripts/crawl-offices.py.
@@ -24,7 +23,9 @@ class OfficesDataSeeder extends Seeder
     {
         $path = database_path('data/offices-seed.json');
         if (! is_file($path)) {
-            throw new RuntimeException("Office seed data not found at {$path}.");
+            $this->command?->warn("Office seed skipped; {$path} is not on disk.");
+
+            return;
         }
 
         $payload = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);

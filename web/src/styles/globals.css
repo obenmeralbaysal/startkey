@@ -200,10 +200,11 @@
   input[type="tel"],
   textarea {
     width: 100%;
-    min-height: calc(48px * var(--sk-scale, 1));
-    border: 1px solid #e5e5e5;
+    min-height: calc(57px * var(--sk-scale, 1));
+    border: none;
     border-radius: calc(5px * var(--sk-scale, 1));
-    background: #fff;
-    padding: 0 calc(12px * var(--sk-scale, 1));
+    background: #f9f9f9;
+    padding: 0 calc(15px * var(--sk-scale, 1));
+    color: #666;
   }
 }

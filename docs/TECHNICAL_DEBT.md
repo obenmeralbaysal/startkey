@@ -209,7 +209,7 @@ Bu kayıt özellikle sonradan incelenecek: her form için referanstaki doldurma-
 
 **Mevcut Durum:**
 
-Liste ve detay şablonları `cms_listings` / `cms_listing_translations` satırlarını basar. Veri `api/database/data/portfolio-seed.json` içindeki referans anlık görüntüsüdür (çekim: 61 sayfa / 721 ilan, tr/en/de). Filtre ve sıralama bu satırlar üzerinde çalışır. Bazı CDN görselleri canlıda 404/500 verdiği için yerelde yoktur. 456346 canlı listede duruyor ancak detay URL’si ana sayfaya düşer; satır liste kartından tamamlandı.
+Liste ve detay şablonları `cms_listings` / `cms_listing_translations` satırlarını basar. Veri `api/database/data/portfolio-seed.json` içindeki referans anlık görüntüsüdür (çekim: 61 sayfa / 721 ilan, tr/en/de). Dosya Git’te değildir. Yoksa seeder API’yi düşürmez, ilan seed’ini atlar. Filtre ve sıralama bu satırlar üzerinde çalışır. Bazı CDN görselleri canlıda 404/500 verdiği için yerelde yoktur. 456346 canlı listede duruyor ancak detay URL’si ana sayfaya düşer; satır liste kartından tamamlandı.
 
 **Geçici Olmasının Nedeni:**
 
@@ -245,7 +245,7 @@ Yeni Akademi tasarımı ayrıca yapılacak. O gelene kadar `/akademi` bu projede
 
 **Mevcut Durum:**
 
-84 ofisin ve 1082 danışmanın tamamı `api/database/data/offices-seed.json` içinden üç dilde seed edilir. Ofis/danışman portföy karuselleri çekilmiş 721 ilan içindeki ID’leri gösterir. Danışman yorum formu canlı `/tr/Consultant/SendComment` yerine yerel `/api/v1/consultants/{id}/comments` yazar; moderasyon/CRM yok.
+84 ofisin ve 1082 danışmanın tamamı `api/database/data/offices-seed.json` içinden üç dilde seed edilir. Dosya Git’te değildir. Yoksa seeder API’yi düşürmez, ofis seed’ini atlar. Ofis/danışman portföy karuselleri çekilmiş 721 ilan içindeki ID’leri gösterir. Danışman yorum formu canlı `/tr/Consultant/SendComment` yerine yerel `/api/v1/consultants/{id}/comments` yazar; moderasyon/CRM yok.
 
 **Geçici Olmasının Nedeni:**
 

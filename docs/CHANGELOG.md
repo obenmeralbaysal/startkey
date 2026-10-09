@@ -1,5 +1,10 @@
 ## [2026-10-09]
 
+- **[UI]**: Public site Tailwind’de kalır. Ölçüler startkey.com.tr pikselinin `%80`’idir (`--sk-scale: 0.8`, 768px ve üstü). Telefon referans ölçüsündedir. Bootstrap ve Fela sayfa CSS’i kullanılmaz.
+- **[UI]**: Header menüsü artık tek satırda ve aralıklı. Dil seçici bayrak ve dil adıyla butonların solunda. Arama sekmeleri altı çizili metin, alanlar gri kutu.
+- **[Bugfix]**: Anasayfa 500’ü, API’nin eksik portföy/ofis seed dosyasında kapanmasından geliyordu. Dosya yoksa seed atlanır ve PHP ayağa kalkar. Docker diski dolu olduğu için Postgres de yazamıyordu; kullanılmayan build önbelleği temizlendi.
+- **[UI]**: Header dil seçici sağ uca alındı ve yalnızca bayrak olarak gösteriliyor.
+- **[Bugfix]**: Eğitim ve iki Almanca makale açıklamasındaki sohbet arayüzü işaretlemesi çıkarıldı. Metin yönü `text-left` ile kilitlenmiyor; aralıklar derlenmeyen `--sk-scale` sınıflarına bağlı değil. Sınıf dönüştürücü Bootstrap `text-start` / `text-end` sınıflarını artık fiziksel sola/sağa çevirmiyor.
 - **[Frontend]**: Public sitenin Bootstrap ve Fela CSS’i kalktı. Görünüm Tailwind token’ları ve utility sınıflarıyla duruyor; menü, dil seçici, arama lookup’ları, carousel, lightbox ve sayaçlar React tarafında. Portal aynı kaldı.
 - **[Frontend]**: Yerel Startkey Akademi kopyası (`/akademi`, WordPress anlık görüntüsü, asset’ler ve çekme script’leri) kaldırıldı. Yeni tasarım ayrıca yapılacak. Header’daki Çevrimiçi Eğitimler `startkeyakademi.net` adresini açar. Kurumsal Seminerler / Eğitimler duruyor.
 - **[Frontend]**: Kurumsal site ve Portal masaüstü ve tablette (768px ve üstü) %20 küçültüldü. Tüm CSS uzunlukları ve görsel `width`/`height` ölçüleri `--sk-scale` (0.8) ile çarpılıyor; telefonlar referans ölçüsünde kalıyor. Tema, kütüphane ve portal CSS’i `scripts/scale-css.py` ile yeniden yazıldı.
