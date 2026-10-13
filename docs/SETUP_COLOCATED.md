@@ -273,16 +273,14 @@ Fotoğraf: [`MEDIA.md`](./MEDIA.md) §10. Boş medya = rsync bitmemiş, Satıver
 
 ## 10. Kod güncelleme (canlı StartKey)
 
+Repo `startkey` kullanıcısına aittir. Root ile çekmek için bu dizin Git’e güvenli yazılır (`safe.directory`). Güncelleme:
+
 ```bash
-export SK='docker compose -f docker-compose.yml -f docker-compose.behind-npm.yml'
 cd ~/startkey
-git pull
-# Yalnız web değiştiyse (bugünkü SEO/404 gibi):
-$SK build web && $SK up -d --no-deps web
-# API/PHP de değiştiyse (entrypoint gibi):
-# $SK up -d api
-# Seed dolu DB’de atlanır. down yok.
+make deploy
 ```
+
+Sıra: `git pull --ff-only`, yeni dosyaların sahibi yine `startkey`, web imajı yeniden kurulur, web ayağa kalkar, API konteyneri yeniden başlar (migration çalışır; ilan varsa seed atlanır). `down` yok.
 
 `docker compose down` kullanma: named `startkey-network` NPM’e bağlıdır, `down` ağı silmeye çalışır ve bu hatayı verir. `down -v` yok. Satıver/RH dizinine girip `compose` çalıştırma.
 

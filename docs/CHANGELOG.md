@@ -1,5 +1,6 @@
 ## [2026-10-14]
 
+- **[Infra]**: Canlı güncelleme `make deploy` ile sırayla çekilir: git pull, web imajı, web ve API ayağa kalkar. Volume silinmez, `docker compose down` çalışmaz.
 - **[Security]**: İletişim, eğitim, franchise, danışman başvurusu, ilan iletişim ve danışman yorumu formları görünür reCAPTCHA kutusunu kaldırdı. Doğrulama, v3 anahtarları tanımlanınca görünmez skor ve forma özel action ile yapılır.
 
 ## [2026-10-11]
