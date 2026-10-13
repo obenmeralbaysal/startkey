@@ -12,7 +12,7 @@ deploy: pull web api
 pull:
 	git -C $(ROOT) -c safe.directory=$(ROOT) pull --ff-only
 	@if [ "$$(id -u)" -eq 0 ]; then \
-		find $(ROOT) -path $(ROOT)/web/public/media -prune -o -exec chown $(OWNER):$(OWNER) {} +; \
+		find "$(ROOT)" -path "$(ROOT)/web/public/media" -prune -o -exec chown --no-dereference "$(OWNER)":"$(OWNER)" {} +; \
 	fi
 
 web:
