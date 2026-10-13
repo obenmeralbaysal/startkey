@@ -606,7 +606,8 @@
     ],
     "submitLabel": "Bültene Kayıt Ol",
     "submitClass": "btn style2 disabled newslet-btn",
-    "captchaError": "Captcha boş bırakılamaz!"
+    "captchaError": "Captcha boş bırakılamaz!",
+    "captchaNoticeHtml": "Bu site reCAPTCHA ile korunmaktadır ve Google <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Gizlilik Politikası</a> ile <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Hizmet Şartları</a> geçerlidir."
   },
   "footer": {
     "descriptionHtml": "35 Ülke Tescili ile En Fazla Ülke Tesciline Sahip Türk Markasıdır. \"Türkiye'nin Gayrimenkul Markası\" Startkey her geçen gün büyüyen ve gelişen hizmet ağımız ile uluslararası marka tescillerimiz, yereldeki gücümüz kadar globaldeki hedeflerimizi de ifade ediyor.",

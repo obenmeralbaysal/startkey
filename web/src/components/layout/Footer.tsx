@@ -1,11 +1,10 @@
 import type { HomepageContent } from "@/content/types";
 import { defaultLocale, isLocale } from "@/lib/locales";
 import { portalLoginHref } from "@/lib/portal";
-import { scaled } from "@/lib/scale";
 
 const WIDGET_COLUMN_CLASSES = [
-  "col-xl-2 col-lg-6 col-md-6 col-sm-6",
-  "col-xl-3 col-lg-6 col-md-6 col-sm-6 ps-xl-5",
+  "w-full sm:w-1/2 lg:w-1/2 xl:w-1/6",
+  "w-full sm:w-1/2 lg:w-1/2 xl:w-1/4 xl:pl-[calc(3rem*var(--sk-scale,1))]",
 ];
 
 export function Footer({ content }: { content: HomepageContent }) {
@@ -13,7 +12,7 @@ export function Footer({ content }: { content: HomepageContent }) {
   const locale = isLocale(content.lang) ? content.lang : defaultLocale;
 
   return (
-    <footer className="bg-navy relative z-[1] [padding-top:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))]">
+    <footer className="sk-footer bg-navy relative z-[1] [padding-top:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))]">
       <img
         src="/themes/fela/img/footer-map.png"
         alt="Image"
@@ -40,10 +39,9 @@ export function Footer({ content }: { content: HomepageContent }) {
                 />
                 <a
                   href={portalLoginHref(locale)}
-                  className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100"
+                  className="sk-btn sk-btn-brand"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ padding: scaled("14px 20px 14px"), cursor: "pointer" }}
                 >
                   {footer.crmButton.label}
                 </a>
@@ -54,7 +52,7 @@ export function Footer({ content }: { content: HomepageContent }) {
               <div className={WIDGET_COLUMN_CLASSES[index] ?? WIDGET_COLUMN_CLASSES[0]} key={widget.title}>
                 <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
                   <h3 className="[font-size:calc(22px_*_var(--sk-scale,_1))] font-semibold [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(15px_*_var(--sk-scale,_1))] relative after:absolute after:[bottom:0] after:[left:0] after:content-[''] after:[width:calc(55px_*_var(--sk-scale,_1))] after:[height:calc(2px_*_var(--sk-scale,_1))] after:bg-white text-white max-md:[font-size:calc(18px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(15px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(10px_*_var(--sk-scale,_1))] md:max-lg:[font-size:calc(20px_*_var(--sk-scale,_1))] md:max-lg:[margin-bottom:calc(25px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(12px_*_var(--sk-scale,_1))] lg:max-xl:[font-size:calc(22px_*_var(--sk-scale,_1))] max-xl:[margin-bottom:calc(18px_*_var(--sk-scale,_1))] xl:[margin-top:calc(15px_*_var(--sk-scale,_1))]">{widget.title}</h3>
-                  <ul className="list-none">
+                  <ul className="sk-footer-menu list-none">
                     {widget.links.map((link, linkIndex) => (
                       <li key={linkIndex}>
                         <a href={link.href}>
@@ -79,7 +77,7 @@ export function Footer({ content }: { content: HomepageContent }) {
                   <div className="[height:calc(285px_*_var(--sk-scale,_1))] xl:[margin-top:calc(15px_*_var(--sk-scale,_1))]">
                     <iframe
                       src={footer.mapEmbedUrl}
-                      style={{ border: 0, pointerEvents: "none" }}
+                      style={{ border: 0, pointerEvents: "none", width: "100%", height: "100%" }}
                       allowFullScreen
                       loading="lazy"
                       referrerPolicy="no-referrer-when-downgrade"
@@ -94,16 +92,16 @@ export function Footer({ content }: { content: HomepageContent }) {
       </div>
 
       <div className="container">
-        <div className="[border-top:1px_solid_rgba(0,_0,_0,_0.1)] [padding:calc(15px_*_var(--sk-scale,_1))_0]">
+        <div className="[border-top:1px_solid_rgba(255,_255,_255,_0.2)] [padding:calc(15px_*_var(--sk-scale,_1))_0]">
           <div className="flex flex-wrap items-center">
             <div className="w-full md:w-1/2">
               <p
-                className="[color:rgba(255,_255,_255,_0.8)] text-left [margin:0] max-md:text-center max-md:[margin-bottom:calc(15px_*_var(--sk-scale,_1))]"
+                className="copyright text-left [margin:0] max-md:text-center max-md:[margin-bottom:calc(15px_*_var(--sk-scale,_1))]"
                 dangerouslySetInnerHTML={{ __html: footer.copyrightHtml }}
               />
             </div>
             <div className="w-full md:w-1/2">
-              <ul className="[margin:calc(20px_*_var(--sk-scale,_1))_0_calc(20px_*_var(--sk-scale,_1))] [margin-top:calc(25px_*_var(--sk-scale,_1))] text-right max-md:text-center list-none">
+              <ul className="sk-footer-social max-md:justify-center list-none">
                 {footer.social.map((item) => (
                   <li key={item.href}>
                     <a href={item.href} target="_blank" rel="noopener noreferrer">

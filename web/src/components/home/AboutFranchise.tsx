@@ -1,5 +1,4 @@
 import type { HomepageContent } from "@/content/types";
-import { scaled } from "@/lib/scale";
 
 const OFFICE_IMAGE = "7d54093e-fefd-40d1-a226-95178007049c";
 const HAPPY_OFFICES_IMAGE = "a002ca3e-fe04-46a9-a167-5a1aa7c33f4e";
@@ -25,25 +24,11 @@ export function AboutOwnOffice({ content }: { content: HomepageContent["about2"]
             alt="Image"
             className="absolute [bottom:0] [right:0] [z-index:-1] max-lg:[bottom:0] max-lg:[right:0] lg:max-xl:[bottom:0] lg:max-xl:[right:0]"
           />
-          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-center">
-            <div
-              className="w-full lg:w-1/2"
-              data-aos="fade-left"
-              data-aos-duration="1200"
-              data-aos-delay="200"
-            >
-              <div
-                className="[padding-right:calc(40px_*_var(--sk-scale,_1))] max-md:[padding:0_calc(20px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))] md:max-lg:[padding:0_calc(40px_*_var(--sk-scale,_1))_calc(40px_*_var(--sk-scale,_1))]"
-                style={{ padding: scaled(20) }}
-                dangerouslySetInnerHTML={{ __html: content.contentHtml }}
-              />
+          <div className="sk-gutter">
+            <div className="sk-col-6" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+              <div className="sk-about sk-about-copy" dangerouslySetInnerHTML={{ __html: content.contentHtml }} />
             </div>
-            <div
-              className="w-full lg:w-1/2"
-              data-aos="fade-right"
-              data-aos-duration="1200"
-              data-aos-delay="200"
-            >
+            <div className="sk-col-6" data-aos="fade-right" data-aos-duration="1200" data-aos-delay="200">
               <ContentImage id={OFFICE_IMAGE} alt="startkey-ülke-tescil" />
             </div>
           </div>
@@ -65,31 +50,17 @@ export function AboutWhyFranchise({ content }: { content: HomepageContent["about
             alt="Image"
             className="absolute [bottom:0] [right:0] [z-index:-1] max-lg:[bottom:0] max-lg:[right:0] lg:max-xl:[bottom:0] lg:max-xl:[right:0]"
           />
-          {/* The reference nests a second identical row here, which narrows the
-              columns by the gutter width once they stack below the md breakpoint. */}
-          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-center">
-            <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-center">
-              <div
-                className="w-full lg:w-1/2 order-2 md:order-1"
-                style={{ justifyContent: "center", display: "flex" }}
-                data-aos="fade-right"
-                data-aos-duration="1200"
-                data-aos-delay="200"
-              >
-                <ContentImage id={HAPPY_OFFICES_IMAGE} alt="startkey-mutlu-ofisler" />
-              </div>
-              <div
-                className="w-full lg:w-1/2 order-1 md:order-2"
-                data-aos="fade-left"
-                data-aos-duration="1200"
-                data-aos-delay="200"
-              >
-                <div
-                  className="[padding-right:calc(40px_*_var(--sk-scale,_1))] max-md:[padding:0_calc(20px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))] md:max-lg:[padding:0_calc(40px_*_var(--sk-scale,_1))_calc(40px_*_var(--sk-scale,_1))]"
-                  style={{ padding: scaled(20) }}
-                  dangerouslySetInnerHTML={{ __html: content.contentHtml }}
-                />
-              </div>
+          <div className="sk-gutter">
+            <div
+              className="sk-col-6 order-2 flex justify-center md:order-1"
+              data-aos="fade-right"
+              data-aos-duration="1200"
+              data-aos-delay="200"
+            >
+              <ContentImage id={HAPPY_OFFICES_IMAGE} alt="startkey-mutlu-ofisler" />
+            </div>
+            <div className="sk-col-6 order-1 md:order-2" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+              <div className="sk-about sk-about-copy" dangerouslySetInnerHTML={{ __html: content.contentHtml }} />
             </div>
           </div>
         </div>

@@ -8,13 +8,15 @@ use Illuminate\Support\Facades\Log;
 class CaptchaVerifier
 {
     /**
-     * Verifies a reCAPTCHA v2 token against Google. Verification is skipped when no
-     * secret is configured, which is the local development default; in that case the
-     * newsletter form is rendered without the widget as well.
+     * Verifies a reCAPTCHA v3 token against Google.
+     *
+     * Pass `$secret` to override the configured v3 secret. Verification is skipped
+     * when that secret is empty, which is the local development default. A score
+     * under the configured threshold, or an unexpected action, is rejected.
      */
-    public function verify(?string $token, ?string $ip): bool
+    public function verify(?string $token, ?string $ip, ?string $secret = null, ?string $expectedAction = null): bool
     {
-        $secret = (string) config('site.recaptcha_secret');
+        $secret ??= (string) config('site.recaptcha_v3_secret');
 
         if ($secret === '') {
             return true;
@@ -45,6 +47,26 @@ class CaptchaVerifier
             return false;
         }
 
-        return $response->json('success') === true;
+        $payload = $response->json();
+        if (! is_array($payload) || ($payload['success'] ?? false) !== true) {
+            return false;
+        }
+
+        if ($expectedAction !== null && ($payload['action'] ?? null) !== $expectedAction) {
+            Log::warning('Captcha action did not match.', ['action' => $payload['action'] ?? null]);
+
+            return false;
+        }
+
+        if (isset($payload['score']) && is_numeric($payload['score'])) {
+            $minimum = (float) config('site.recaptcha_v3_min_score', 0.5);
+            if ((float) $payload['score'] < $minimum) {
+                Log::warning('Captcha score was below the threshold.');
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }

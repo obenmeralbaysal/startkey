@@ -122,6 +122,7 @@ export interface HomepageContent {
     submitLabel: string;
     submitClass: string;
     captchaError: string;
+    captchaNoticeHtml: string;
   };
   footer: {
     descriptionHtml: string;

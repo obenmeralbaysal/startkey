@@ -1,6 +1,29 @@
+## [2026-10-14]
+
+- **[Security]**: İletişim, eğitim, franchise, danışman başvurusu, ilan iletişim ve danışman yorumu formları görünür reCAPTCHA kutusunu kaldırdı. Doğrulama, v3 anahtarları tanımlanınca görünmez skor ve forma özel action ile yapılır.
+
+## [2026-10-11]
+
+- **[Security]**: Ana sayfa bülten formu görünür reCAPTCHA v2 kutusunu kaldırdı. Doğrulama, v3 site ve secret anahtarı tanımlanınca görünmez reCAPTCHA v3 skoru ile yapılır.
+- **[UI]**: Ana sayfadaki portföy, ofis ve danışman arama alanları ile bülten girişleri arasına boşluk kondu.
+- **[UI]**: 1600px ve üstünde header container 1600px, arama container’ı 1520px. Referanstaki geniş satır. Diğer bölümler 1320px. Yazı, görsel ve buton ölçeği %80.
+- **[UI]**: Sayfa container’ı referans genişliğine döndü (masaüstünde 1320px). Yazı, görsel ve buton ölçeği 768px ve üstünde %80 kaldı.
+
+## [2026-10-10]
+
+- **[UI]**: Şehir başlığı kartların üstünde ortalandı. İlan kartında kiralık/satılık solda kırmızı, tür sağda lacivert; fiyat lacivert.
+- **[UI]**: SSS soruları kapalı açılıyor. Kapalıyken lacivert artı, açıkken kırmızı eksi görünüyor.
+- **[UI]**: Şehir kaydırıcısının altındaki noktalar referanstaki halka ve iç daire oldu. Aktif nokta kırmızı halka.
+- **[UI]**: Akademi video bandı ve bülten başlığı, adımlar başlığıyla aynı ortalanmış kolonda.
+- **[UI]**: “3 Adımda Gayrimenkul Uzmanı Olun” başlığı ortalandı. “Franchise Konusunda Merak Edilenler” solda, görselin yanında ve aynı başlık ölçüsünde.
+- **[UI]**: Hakkında fotoğrafı kolondan dar; alttaki fotoğraf köşeye biniyor, küp dönüyor ve yüzen şekil sağ üstte görünüyor. Bölümler soldan, sağdan veya aşağıdan kayarak geliyor.
+- **[UI]**: Hakkında bölümlerinin zemini referanstaki gri (`#f9f9f9`). Fotoğraf ve metin yan yana; köşe şekli görünür. Beyaz kartların iç boşluğu 20px.
+- **[UI]**: Anasayfa sayaçları ikon, kırmızı rakam, artı ve ayraçla referans sırasına alındı. İlanların altındaki bölümler (hakkında, ofis, adımlar, ilan bandı, video, şehirler, SSS, bülten) aynı yerleşim ve renklerle hizalandı.
+- **[UI]**: Footer metni lacivert zeminde yeniden beyaz; oklar kırmızı. Butonlar referanstaki iki yarım renk geçişini kullanıyor. Hero görseli sayfa genişliğinde. Menüdeki artı işaret etiketin yanında; üzerine gelince yazı kırmızı oluyor, alt çizgi uzuyor ve artı 180 derece dönüyor.
+
 ## [2026-10-09]
 
-- **[UI]**: Public site Tailwind’de kalır. Ölçüler startkey.com.tr pikselinin `%80`’idir (`--sk-scale: 0.8`, 768px ve üstü). Telefon referans ölçüsündedir. Bootstrap ve Fela sayfa CSS’i kullanılmaz.
+- **[UI]**: Header, startkey.com.tr ölçülerinden Tailwind ile kuruldu. 768px ve üstünde `%80` (`--sk-scale: 0.8`). Logo, menü, dil adı ve butonlar tek satırda.
 - **[UI]**: Header menüsü artık tek satırda ve aralıklı. Dil seçici bayrak ve dil adıyla butonların solunda. Arama sekmeleri altı çizili metin, alanlar gri kutu.
 - **[Bugfix]**: Anasayfa 500’ü, API’nin eksik portföy/ofis seed dosyasında kapanmasından geliyordu. Dosya yoksa seed atlanır ve PHP ayağa kalkar. Docker diski dolu olduğu için Postgres de yazamıyordu; kullanılmayan build önbelleği temizlendi.
 - **[UI]**: Header dil seçici sağ uca alındı ve yalnızca bayrak olarak gösteriliyor.

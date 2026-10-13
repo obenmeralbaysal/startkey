@@ -21,7 +21,7 @@ class ContactMessageController extends Controller
      */
     public function store(ContactMessageRequest $request): JsonResponse
     {
-        if (! $this->captcha->verify($request->input('captcha_token'), $request->ip())) {
+        if (! $this->captcha->verify($request->input('captcha_token'), $request->ip(), null, 'contact')) {
             $message = __('messages.captcha_failed');
 
             return response()->json([

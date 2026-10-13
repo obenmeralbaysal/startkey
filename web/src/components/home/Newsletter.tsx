@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { newsletterStatus } from "@/content/newsletter-status";
 import type { HomepageContent } from "@/content/types";
 import { config } from "@/lib/config";
 import type { Locale } from "@/lib/locales";
+import { executeRecaptchaV3, loadRecaptchaV3 } from "@/lib/recaptcha-v3";
 
 type FieldErrors = Partial<Record<"FirstName" | "LastName" | "Email", string>>;
 
@@ -23,21 +24,29 @@ export function Newsletter({
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [captchaError, setCaptchaError] = useState("");
 
+  useEffect(() => {
+    if (!config.recaptchaV3SiteKey) return;
+    void loadRecaptchaV3(config.recaptchaV3SiteKey).catch(() => undefined);
+  }, []);
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    // The reference website blocks the submit and shows this message next to the
-    // widget when the captcha has not been solved.
-    if (config.recaptchaSiteKey) {
-      const captchaResponse = window.grecaptcha?.getResponse() ?? "";
-      if (!captchaResponse) {
+    let captchaToken: string | null = null;
+    if (config.recaptchaV3SiteKey) {
+      try {
+        captchaToken = await executeRecaptchaV3(config.recaptchaV3SiteKey, "newsletter");
+      } catch {
+        setCaptchaError(content.captchaError);
+        return;
+      }
+      if (!captchaToken) {
         setCaptchaError(content.captchaError);
         return;
       }
       setCaptchaError("");
-      formData.set("g-recaptcha-response", captchaResponse);
     }
 
     setSubmitting(true);
@@ -53,14 +62,13 @@ export function Newsletter({
           last_name: formData.get("LastName"),
           email: formData.get("Email"),
           locale: formData.get("locale"),
-          captcha_token: formData.get("g-recaptcha-response") || null,
+          captcha_token: captchaToken,
         }),
       });
 
       if (response.status === 201) {
         setStatus({ kind: "success", message: messages.success });
         form.reset();
-        window.grecaptcha?.reset();
         return;
       }
 
@@ -104,67 +112,49 @@ export function Newsletter({
         className="absolute [top:0] [left:0] [z-index:-1]"
       />
       <div className="container">
-        <div className="flex flex-wrap">
-          <div className="w-full xl:w-1/2 xl:ml-1/4 lg:w-2/3 lg:ml-1/6">
+        <div className="sk-title-row">
+          <div className="sk-title-col">
             <div
-              className="relative [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))] text-center [margin-bottom:calc(40px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(25px_*_var(--sk-scale,_1))]"
+              className="sk-section-title is-center"
               dangerouslySetInnerHTML={{ __html: content.titleHtml }}
             />
           </div>
         </div>
 
         <form
-          className="flex flex-wrap relative z-[1]"
+          className="newsletter-form"
           method="post"
           role="form"
           id="form"
-          style={{ justifyContent: "center", alignItems: "center" }}
           onSubmit={handleSubmit}
         >
-          <div className="mb-[calc(15px*var(--sk-scale,1))]">
+          <div className="form-group">
             <input placeholder={firstNamePlaceholder} type="text" id="FirstName" name="FirstName" />
             <span className="text-brand" data-valmsg-for="FirstName">
               {fieldErrors.FirstName}
             </span>
           </div>
-          <div className="mb-[calc(15px*var(--sk-scale,1))]">
+          <div className="form-group">
             <input placeholder={lastNamePlaceholder} type="text" id="LastName" name="LastName" />
             <span className="text-brand" data-valmsg-for="LastName">
               {fieldErrors.LastName}
             </span>
           </div>
-          <div className="mb-[calc(15px*var(--sk-scale,1))]">
+          <div className="form-group">
             <input placeholder={emailPlaceholder} type="email" id="Email" name="Email" required />
             <span className="text-brand" data-valmsg-for="Email">
               {fieldErrors.Email}
             </span>
           </div>
 
-          {config.recaptchaSiteKey ? (
-            <>
-              <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-              <div className="mb-[calc(15px*var(--sk-scale,1))]">
-                <div className="md:ml-1/6 w-full md:w-10/12">
-                  {/* Loaded from Google, as on the reference website: the widget cannot
-                      be served locally. */}
-                  <script src="https://www.google.com/recaptcha/api.js" async defer />
-                  {/* Google fills this container in before hydration, so React must
-                      not diff its contents. */}
-                  <div
-                    className="g-recaptcha"
-                    data-sitekey={config.recaptchaSiteKey}
-                    suppressHydrationWarning
-                  />
-                  <span id="captchaError" className="text text-brand">
-                    {captchaError}
-                  </span>
-                </div>
-              </div>
-            </>
+          {captchaError ? (
+            <span id="captchaError" className="captcha-row text-brand">
+              {captchaError}
+            </span>
           ) : null}
 
-          <div className="mb-[calc(15px*var(--sk-scale,1))] max-[768px]:w-full max-[768px]:[margin-bottom:0] [margin-right:0] [width:20%]">
-            <button className={content.submitClass} type="submit" disabled={submitting}>
+          <div className="form-group">
+            <button className="sk-btn sk-btn-brand w-full" type="submit" disabled={submitting}>
               {content.submitLabel}
             </button>
           </div>
@@ -173,6 +163,10 @@ export function Newsletter({
               website a trailing hidden input keeps that rule off the submit button, and
               this field, which the request needs anyway, does the same here. */}
           <input type="hidden" name="locale" value={locale} />
+
+          {config.recaptchaV3SiteKey ? (
+            <p className="captcha-row" dangerouslySetInnerHTML={{ __html: content.captchaNoticeHtml }} />
+          ) : null}
         </form>
 
         {status ? (

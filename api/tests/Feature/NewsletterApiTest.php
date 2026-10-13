@@ -89,7 +89,7 @@ class NewsletterApiTest extends TestCase
 
     public function test_it_rejects_a_missing_captcha_when_a_secret_is_configured(): void
     {
-        config(['site.recaptcha_secret' => 'test-secret']);
+        config(['site.recaptcha_v3_secret' => 'test-secret']);
 
         $this->postJson('/api/v1/newsletter', $this->validPayload())
             ->assertStatus(422)
@@ -99,17 +99,46 @@ class NewsletterApiTest extends TestCase
     public function test_it_accepts_a_captcha_token_google_confirms(): void
     {
         config([
-            'site.recaptcha_secret' => 'test-secret',
+            'site.recaptcha_v3_secret' => 'test-secret',
+            'site.recaptcha_v3_min_score' => 0.5,
             'site.recaptcha_verify_url' => 'https://www.google.com/recaptcha/api/siteverify',
         ]);
 
         Http::fake([
-            'https://www.google.com/recaptcha/api/siteverify' => Http::response(['success' => true], 200),
+            'https://www.google.com/recaptcha/api/siteverify' => Http::response([
+                'success' => true,
+                'score' => 0.9,
+                'action' => 'newsletter',
+            ], 200),
         ]);
 
         $this->postJson('/api/v1/newsletter', $this->validPayload([
             'captcha_token' => 'valid-token',
         ]))->assertCreated();
+    }
+
+    public function test_it_rejects_a_low_score_or_unexpected_action(): void
+    {
+        config([
+            'site.recaptcha_v3_secret' => 'test-secret',
+            'site.recaptcha_v3_min_score' => 0.5,
+            'site.recaptcha_verify_url' => 'https://www.google.com/recaptcha/api/siteverify',
+        ]);
+
+        Http::fake([
+            'https://www.google.com/recaptcha/api/siteverify' => Http::sequence()
+                ->push(['success' => true, 'score' => 0.1, 'action' => 'newsletter'], 200)
+                ->push(['success' => true, 'score' => 0.9, 'action' => 'contact'], 200),
+        ]);
+
+        $this->postJson('/api/v1/newsletter', $this->validPayload([
+            'captcha_token' => 'low-score',
+        ]))->assertStatus(422)->assertJsonPath('errors.captcha_token.0', 'Doğrulama başarısız oldu.');
+
+        $this->postJson('/api/v1/newsletter', $this->validPayload([
+            'email' => 'other@example.com',
+            'captcha_token' => 'wrong-action',
+        ]))->assertStatus(422)->assertJsonPath('errors.captcha_token.0', 'Doğrulama başarısız oldu.');
     }
 
     public function test_it_throttles_repeated_submissions_from_the_same_client(): void

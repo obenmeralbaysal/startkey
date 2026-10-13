@@ -5,9 +5,10 @@ import { useState } from "react";
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
+import { CaptchaNotice } from "@/components/forms/CaptchaNotice";
 import { publicFormStatus } from "@/content/public-form-status";
-import { config } from "@/lib/config";
 import type { CorporatePayload, ListingAgentData } from "@/lib/corporate";
+import { executeRecaptchaV3Action } from "@/lib/recaptcha-v3";
 import type { Locale } from "@/lib/locales";
 import { scaled } from "@/lib/scale";
 
@@ -356,15 +357,14 @@ function ListingInquiryForm({ data, locale }: { data: ListingDetailData; locale:
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    if (config.recaptchaSiteKey) {
-      const captchaResponse = window.grecaptcha?.getResponse() ?? "";
-      if (!captchaResponse) {
-        setCaptchaError(data.form.captchaError);
-        return;
-      }
-      setCaptchaError("");
-      formData.set("g-recaptcha-response", captchaResponse);
+    let captchaToken: string | null = null;
+    try {
+      captchaToken = await executeRecaptchaV3Action("listing");
+    } catch {
+      setCaptchaError(data.form.captchaError);
+      return;
     }
+    setCaptchaError("");
 
     setSubmitting(true);
     setStatus(null);
@@ -380,14 +380,13 @@ function ListingInquiryForm({ data, locale }: { data: ListingDetailData; locale:
           phone: formData.get("Phone"),
           message: formData.get("Message"),
           locale,
-          captcha_token: formData.get("g-recaptcha-response") || null,
+          captcha_token: captchaToken,
         }),
       });
 
       if (response.status === 201) {
         setStatus({ kind: "success", message: messages.success });
         form.reset();
-        window.grecaptcha?.reset();
         return;
       }
       if (response.status === 422) {
@@ -445,20 +444,12 @@ function ListingInquiryForm({ data, locale }: { data: ListingDetailData; locale:
             />
           </div>
         </div>
-        {config.recaptchaSiteKey ? (
-          <>
-            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-            <div className="mb-[calc(15px*var(--sk-scale,1))]">
-              <div className="md:ml-1/6 w-full md:w-10/12">
-                <script src="https://www.google.com/recaptcha/api.js" async defer />
-                <div className="g-recaptcha" data-sitekey={config.recaptchaSiteKey} suppressHydrationWarning />
-                <span id="captchaError" className="text text-brand">
-                  {captchaError}
-                </span>
-              </div>
-            </div>
-          </>
+        {captchaError ? (
+          <span id="captchaError" className="text text-brand">
+            {captchaError}
+          </span>
         ) : null}
+        <CaptchaNotice locale={locale} />
         <div className="w-full" style={{ textAlign: "center" }}>
           <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <button type="submit" className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" disabled={submitting}>

@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
+import { CaptchaNotice } from "@/components/forms/CaptchaNotice";
 import { publicFormStatus } from "@/content/public-form-status";
-import { config } from "@/lib/config";
 import type { CorporatePayload } from "@/lib/corporate";
+import { executeRecaptchaV3Action } from "@/lib/recaptcha-v3";
 import type { Locale } from "@/lib/locales";
 
 type FranchiseData = Extract<CorporatePayload, { kind: "franchise" }>;
@@ -73,15 +74,14 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    if (config.recaptchaSiteKey) {
-      const captchaResponse = window.grecaptcha?.getResponse() ?? "";
-      if (!captchaResponse) {
-        setCaptchaError(data.captchaError);
-        return;
-      }
-      setCaptchaError("");
-      formData.set("g-recaptcha-response", captchaResponse);
+    let captchaToken: string | null = null;
+    try {
+      captchaToken = await executeRecaptchaV3Action("franchise");
+    } catch {
+      setCaptchaError(data.captchaError);
+      return;
     }
+    setCaptchaError("");
 
     const nextErrors: Record<string, string> = {};
     for (const [field, message] of Object.entries(data.required)) {
@@ -112,14 +112,13 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
           county_id: formData.get("OpenOfficeCountyId") ? Number(formData.get("OpenOfficeCountyId")) : null,
           notes: formData.get("Notes"),
           locale,
-          captcha_token: formData.get("g-recaptcha-response") || null,
+          captcha_token: captchaToken,
         }),
       });
 
       if (response.status === 201) {
         setStatus({ kind: "success", message: messages.success });
         form.reset();
-        window.grecaptcha?.reset();
         return;
       }
       if (response.status === 422) {
@@ -140,7 +139,7 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
 
   return (
     <form method="post" id="form" className="block" action={data.urlPath} onSubmit={handleSubmit}>
-      <div className="flex flex-wrap">
+      <div className="sk-form-row flex flex-wrap">
         <div className="w-full md:w-1/3 mb-[calc(15px*var(--sk-scale,1))]">
           <input
             placeholder={data.placeholders.FirstName}
@@ -247,20 +246,12 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
             {fieldErrors.Notes}
           </span>
         </div>
-        {config.recaptchaSiteKey ? (
-          <>
-            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-            <div className="mb-[calc(15px*var(--sk-scale,1))]">
-              <div className="md:ml-1/6 w-full md:w-10/12">
-                <script src="https://www.google.com/recaptcha/api.js" async defer />
-                <div className="g-recaptcha" data-sitekey={config.recaptchaSiteKey} suppressHydrationWarning />
-                <span id="captchaError" className="text text-brand">
-                  {captchaError}
-                </span>
-              </div>
-            </div>
-          </>
+        {captchaError ? (
+          <span id="captchaError" className="text text-brand">
+            {captchaError}
+          </span>
         ) : null}
+        <CaptchaNotice locale={locale} />
         <div className="w-full">
           <div className="mb-[calc(15px*var(--sk-scale,1))]">
             <div className="send-btn text-center">

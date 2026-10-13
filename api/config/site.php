@@ -67,15 +67,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Newsletter captcha
+    | Public form captcha
     |--------------------------------------------------------------------------
     |
-    | Google reCAPTCHA v2 secret used to verify the newsletter form. When empty
-    | the verification step is skipped, which is the local development default.
+    | Invisible reCAPTCHA v3 for every public form. When the secret is empty the
+    | verification step is skipped, which is the local development default.
+    | `recaptcha_v3_min_score` is the lowest Google score (0–1) that is accepted.
+    |
+    | `recaptcha_secret` remains so an existing v2 secret in the environment does
+    | not become an undefined variable. Public forms do not read it.
     |
     */
 
     'recaptcha_secret' => env('RECAPTCHA_SECRET_KEY', ''),
+
+    'recaptcha_v3_secret' => env('RECAPTCHA_V3_SECRET_KEY', ''),
+
+    'recaptcha_v3_min_score' => env('RECAPTCHA_V3_MIN_SCORE', 0.5),
 
     'recaptcha_verify_url' => env(
         'RECAPTCHA_VERIFY_URL',

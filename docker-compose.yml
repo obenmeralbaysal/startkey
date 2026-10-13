@@ -61,6 +61,8 @@ services:
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
       RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY:-}
+      RECAPTCHA_V3_SECRET_KEY: ${RECAPTCHA_V3_SECRET_KEY:-}
+      RECAPTCHA_V3_MIN_SCORE: ${RECAPTCHA_V3_MIN_SCORE:-0.5}
       REONIX_BASE_URL: ${REONIX_BASE_URL:-}
       REONIX_PORTAL_KEY: ${REONIX_PORTAL_KEY:-}
       REONIX_NETWORK_SLUG: ${REONIX_NETWORK_SLUG:-startkey}
@@ -94,14 +96,14 @@ services:
       dockerfile: docker/web/Dockerfile
       args:
         NEXT_PUBLIC_REONIX_URL: ${NEXT_PUBLIC_REONIX_URL:-}
-        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}
+        NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY:-}
     depends_on:
       nginx:
         condition: service_started
     environment:
       API_BASE_URL: http://nginx
       NEXT_PUBLIC_REONIX_URL: ${NEXT_PUBLIC_REONIX_URL:-}
-      NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}
+      NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY:-}
     volumes:
       # Host copy is the source of truth. The image does not contain these files.
       - ./web/public/media:/app/public/media:ro

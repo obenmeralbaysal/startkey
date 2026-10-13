@@ -3,6 +3,8 @@
  * They are attached to `window` by external scripts, not imported.
  */
 interface ReCaptcha {
+  ready(callback: () => void): void;
+  execute(siteKey: string, options: { action: string }): Promise<string>;
   getResponse(widgetId?: number): string;
   reset(widgetId?: number): void;
 }

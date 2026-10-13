@@ -72,7 +72,7 @@ function bindCarousel(node: HTMLElement, mode: "cards" | "single") {
     });
   };
   const dots = document.createElement("div");
-  dots.className = "mt-[calc(16px*var(--sk-scale,1))] flex justify-center gap-[calc(8px*var(--sk-scale,1))]";
+  dots.className = "sk-dots";
   const renderDots = () => {
     dots.replaceChildren();
     const count = mode === "single" ? 1 : perView();
@@ -80,7 +80,8 @@ function bindCarousel(node: HTMLElement, mode: "cards" | "single") {
     for (let page = 0; page < pages; page += 1) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = `h-[calc(10px*var(--sk-scale,1))] w-[calc(10px*var(--sk-scale,1))] rounded-full ${page === index ? "bg-brand" : "bg-neutral-300"}`;
+      button.className = page === index ? "is-active" : "";
+      button.append(document.createElement("span"));
       button.addEventListener("click", () => {
         index = page;
         apply();
@@ -163,7 +164,12 @@ function bindMotion() {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       const target = entry.target as HTMLElement;
-      target.style.animation = "sk-fade 700ms ease both";
+      const motion = target.dataset.aos;
+      const name =
+        motion === "fade-left" ? "sk-fade-left" : motion === "fade-right" ? "sk-fade-right" : "sk-fade-up";
+      const duration = Number(target.dataset.aosDuration || "700");
+      const delay = Number(target.dataset.aosDelay || "0");
+      target.style.animation = `${name} ${duration}ms ease ${delay}ms both`;
       observer.unobserve(target);
     });
   });
@@ -186,6 +192,29 @@ function bindMotion() {
       counter.disconnect();
     });
     counter.observe(node);
+  });
+}
+
+function bindFaq() {
+  document.querySelectorAll<HTMLButtonElement>(".sk-faq-item button[data-bs-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.getAttribute("data-bs-target");
+      if (!target) return;
+      const panel = document.querySelector<HTMLElement>(target);
+      if (!panel) return;
+      const open = panel.classList.contains("show");
+      document.querySelectorAll<HTMLElement>(".sk-faq-item .collapse").forEach((node) => {
+        node.classList.remove("show");
+        const control = document.querySelector<HTMLButtonElement>(`[data-bs-target="#${node.id}"]`);
+        control?.classList.add("collapsed");
+        control?.setAttribute("aria-expanded", "false");
+      });
+      if (!open) {
+        panel.classList.add("show");
+        button.classList.remove("collapsed");
+        button.setAttribute("aria-expanded", "true");
+      }
+    });
   });
 }
 
@@ -213,6 +242,7 @@ export function SiteBehaviors() {
     document.querySelectorAll<HTMLElement>("[data-carousel='single']").forEach((node) => bindCarousel(node, "single"));
     bindLightbox();
     bindMotion();
+    bindFaq();
     bindBackToTop();
   }, []);
 

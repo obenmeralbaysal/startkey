@@ -40,21 +40,21 @@ Referans sitedeki ReOS CRM butonları **Portal** olarak gösterilir ve `/portal`
 
 **Durum:** Açık
 
-### TD-003 — Bülten reCAPTCHA sunucu doğrulaması atlanıyor
+### TD-003 — Public form reCAPTCHA sunucu doğrulaması atlanıyor
 
 **Alan:** Bülten formu / İletişim formu / Eğitim ön başvuru formu / Franchise başvuru formu / İlan detay iletişim formu
 
 **Mevcut Durum:**
 
-Formlar, referans sitede kullanılan genel reCAPTCHA v2 site key ile widget’ı gösterir. `RECAPTCHA_SECRET_KEY` boş olduğu için API, Google’a sunucu tarafı doğrulama göndermez; widget istemci tarafında çözülmeden gönderimi engeller ve endpoint hız sınırına dayanır. Aynı site key ve aynı atlama davranışı bülten, İletişim, eğitim ön başvuru, Franchise başvuru ve ilan detay iletişim formlarında kullanılır.
+Public formlar görünür reCAPTCHA kutusu göstermez. `NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY` ve `RECAPTCHA_V3_SECRET_KEY` doluysa gönderimde görünmez reCAPTCHA v3 token’ı alınır ve API Google skorunu ile action adını doğrular. Bu anahtarlar boşken captcha yoktur; API doğrulamayı atlar ve hız sınırına dayanır. Eski v2 site key ve secret okunmaz.
 
 **Geçici Olmasının Nedeni:**
 
-Referans sitenin gizli anahtarı projeye kopyalanamaz. Kendi anahtar çifti henüz tanımlanmamıştır.
+Referans sitenin gizli anahtarı projeye kopyalanamaz. Projenin kendi v3 anahtar çifti henüz tanımlanmamıştır.
 
 **Gelecekteki Implementasyon:**
 
-Projenin kendi reCAPTCHA site ve secret anahtarları `.env` / `.env.example` içine yazılacak; API Google doğrulamasını zorunlu kılacaktır.
+Projenin kendi reCAPTCHA v3 site ve secret anahtarları `.env` / `.env.example` içine yazılacak; API Google doğrulamasını zorunlu kılacaktır.
 
 **Durum:** Açık
 

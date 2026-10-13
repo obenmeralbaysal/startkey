@@ -23,7 +23,12 @@ class NewsletterController extends Controller
      */
     public function store(NewsletterSubscriptionRequest $request): JsonResponse
     {
-        if (! $this->captcha->verify($request->input('captcha_token'), $request->ip())) {
+        if (! $this->captcha->verify(
+            $request->input('captcha_token'),
+            $request->ip(),
+            (string) config('site.recaptcha_v3_secret'),
+            'newsletter',
+        )) {
             $message = __('messages.captcha_failed');
 
             return response()->json([

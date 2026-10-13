@@ -31,7 +31,7 @@ class TrainingApplicationController extends Controller
             return response()->json(['message' => 'Not Found'], 404);
         }
 
-        if (! $this->captcha->verify($request->input('captcha_token'), $request->ip())) {
+        if (! $this->captcha->verify($request->input('captcha_token'), $request->ip(), null, 'training')) {
             $message = __('messages.captcha_failed');
 
             return response()->json([

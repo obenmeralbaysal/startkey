@@ -28,7 +28,7 @@ class ConsultantCommentController extends Controller
             throw new NotFoundHttpException;
         }
 
-        if (! $this->captcha->verify($request->input('captcha_token'), $request->ip())) {
+        if (! $this->captcha->verify($request->input('captcha_token'), $request->ip(), null, 'comment')) {
             $message = __('messages.captcha_failed');
 
             return response()->json([

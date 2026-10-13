@@ -8,6 +8,6 @@ export const config = {
   /** Reonix CRM entry point. Empty until the Reonix integration is defined. */
   reonixUrl: process.env.NEXT_PUBLIC_REONIX_URL ?? "",
 
-  /** Google reCAPTCHA v2 site key for the newsletter form. Empty disables the widget. */
-  recaptchaSiteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "",
+  /** Invisible reCAPTCHA v3 site key for public forms. Empty skips the check. */
+  recaptchaV3SiteKey: process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY ?? "",
 } as const;

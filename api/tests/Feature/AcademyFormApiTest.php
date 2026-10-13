@@ -113,7 +113,7 @@ class AcademyFormApiTest extends TestCase
 
     public function test_it_rejects_a_missing_captcha_when_a_secret_is_configured(): void
     {
-        config(['site.recaptcha_secret' => 'test-secret']);
+        config(['site.recaptcha_v3_secret' => 'test-secret']);
 
         $this->postJson('/api/v1/contact', [
             'name' => 'Ayşe',

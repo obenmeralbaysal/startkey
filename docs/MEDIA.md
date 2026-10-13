@@ -186,7 +186,7 @@ sunucu: docker compose build web && docker compose up -d
 
 `public/media` mount ise yeni imaj boş media getirmez; eski klasör bağlanır.
 
-`.env` içindeki `NEXT_PUBLIC_*` (Reonix URL, reCAPTCHA site key) **build anında** Next bundle’a girer. Bunları değiştirince web’i yeniden build et.
+`.env` içindeki `NEXT_PUBLIC_*` (Reonix URL, reCAPTCHA v3 site key) **build anında** Next bundle’a girer. Bunları değiştirince web’i yeniden build et.
 
 ---
 

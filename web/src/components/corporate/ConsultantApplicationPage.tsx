@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
+import { CaptchaNotice } from "@/components/forms/CaptchaNotice";
 import { publicFormStatus } from "@/content/public-form-status";
-import { config } from "@/lib/config";
 import type { CorporatePayload } from "@/lib/corporate";
+import { executeRecaptchaV3Action } from "@/lib/recaptcha-v3";
 import type { Locale } from "@/lib/locales";
 
 type ConsultantData = Extract<CorporatePayload, { kind: "consultant-application" }>;
@@ -39,6 +40,7 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ kind: "success" | "error"; message: string } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [captchaError, setCaptchaError] = useState("");
 
   useEffect(() => {
     fetch(`/api/v1/lookups/cities?locale=${locale}`)
@@ -76,10 +78,14 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
       setFieldErrors(nextErrors);
       return;
     }
-    if (config.recaptchaSiteKey && !(window.grecaptcha?.getResponse() ?? "")) {
-      setStatus({ kind: "error", message: data.captchaError });
+    let captchaToken: string | null = null;
+    try {
+      captchaToken = await executeRecaptchaV3Action("consultant");
+    } catch {
+      setCaptchaError(data.captchaError);
       return;
     }
+    setCaptchaError("");
 
     setSubmitting(true);
     setStatus(null);
@@ -98,13 +104,12 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
           position: Number(formData.get("AppealTypeId")),
           notes: formData.get("Notes"),
           locale,
-          captcha_token: formData.get("g-recaptcha-response") || null,
+          captcha_token: captchaToken,
         }),
       });
       if (response.status === 201) {
         setStatus({ kind: "success", message: messages.success });
         form.reset();
-        window.grecaptcha?.reset();
         return;
       }
       const body = await response.json().catch(() => ({}));
@@ -120,7 +125,7 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
   return (
     <form className="block" id="form" noValidate onSubmit={handleSubmit}>
       {status ? <p className={status.kind === "success" ? "text-success" : "text-danger"}>{status.message}</p> : null}
-      <div className="flex flex-wrap">
+      <div className="sk-form-row flex flex-wrap">
         <Field id="FirstName" name="FirstName" placeholder={data.placeholders.FirstName} error={fieldErrors.FirstName} required={data.required.FirstName} />
         <Field id="LastName" name="LastName" placeholder={data.placeholders.LastName} error={fieldErrors.LastName} required={data.required.LastName} />
         <Field id="Email" name="Email" type="email" placeholder={data.placeholders.Email} error={fieldErrors.Email} required={data.required.Email} />
@@ -170,6 +175,12 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
           <textarea id="Notes" name="Notes" rows={3} placeholder={data.placeholders.Notes} />
         </div>
       </div>
+      {captchaError ? (
+        <span id="captchaError" className="text text-brand">
+          {captchaError}
+        </span>
+      ) : null}
+      <CaptchaNotice locale={locale} />
       <button className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-navy text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-brand before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-brand after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" type="submit" disabled={submitting}>{data.submitLabel}</button>
     </form>
   );

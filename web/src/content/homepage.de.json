@@ -606,7 +606,8 @@
     ],
     "submitLabel": "Abonnieren Sie den Newsletter",
     "submitClass": "btn style2 disabled newslet-btn",
-    "captchaError": "Captcha boş bırakılamaz!"
+    "captchaError": "Captcha boş bırakılamaz!",
+    "captchaNoticeHtml": "Diese Website ist durch reCAPTCHA geschützt und es gelten die <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Datenschutzerklärung</a> und die <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Nutzungsbedingungen</a> von Google."
   },
   "footer": {
     "descriptionHtml": "Startkey ist eine Immobilien-Franchisemarke mit Sitz in Izmir. Startkey, eines der führenden Unternehmen im Immobiliensektor, ist mit 35 Länderregistrierungen die türkische Marke mit der höchsten Anzahl von Länderregistrierungen. Startkey, die „Immobilienmarke der Türkei“, bringt mit ihrem ständig wachsenden und sich entwickelnden Dienstleistungsnetz ihre globalen Ziele sowie ihre internationalen Markenregistrierungen und ihre lokale Stärke zum Ausdruck.",
