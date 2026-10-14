@@ -693,6 +693,8 @@ function ClosingForm({ id, portfolio, onDone }: { id: string; portfolio: OfficeR
   const [files, setFiles] = useState<Record<number, File | null>>({});
   const [result, setResult] = useState("success");
   const [coop, setCoop] = useState("none");
+  const [demandPick, setDemandPick] = useState("");
+  const demandDetail = useData(coop === "internal" && demandPick ? `demands/${demandPick}` : "");
   if (!portfolio || status === "closed") {
     return null;
   }
@@ -709,6 +711,8 @@ function ClosingForm({ id, portfolio, onDone }: { id: string; portfolio: OfficeR
 
   const requirementData = one(requirements.data);
   const rules = Array.isArray(requirementData?.rules) ? requirementData.rules.filter(isRecord) : [];
+  const demandRecord = one(demandDetail.data);
+  const agreements = Array.isArray(demandRecord?.showing_agreements) ? demandRecord.showing_agreements.filter(isRecord) : [];
 
   return (
     <form className="glass-stack" onSubmit={(event) => {
@@ -733,6 +737,7 @@ function ClosingForm({ id, portfolio, onDone }: { id: string; portfolio: OfficeR
         const price = Number(form.get("closing_price"));
         const commission = Number(form.get("closing_commission"));
         const demandId = Number(form.get("demand_id") || 0);
+        const showingId = Number(form.get("showing_agreement_id") || 0);
         const closing = {
           buyer_id: buyerId,
           closing_price: price,
@@ -743,6 +748,7 @@ function ClosingForm({ id, portfolio, onDone }: { id: string; portfolio: OfficeR
           demand_id: demandId || null,
           demand_commission: demandId ? Number(form.get("demand_commission") || commission) : null,
           coop_mode: coop,
+          showing_agreement_id: coop === "internal" && showingId ? showingId : null,
           external_agency_broker: coop === "external" ? form.get("external_agency_broker") : null,
           external_agency_license: coop === "external" ? form.get("external_agency_license") : null,
           external_coop_split_percent: coop === "external" ? Number(form.get("external_coop_split_percent") || 0) : null,
@@ -805,12 +811,24 @@ function ClosingForm({ id, portfolio, onDone }: { id: string; portfolio: OfficeR
           <input name="closing_commission" type="number" min="0" step="0.01" placeholder="Hizmet bedeli" required />
           <select name="invoice_issued" defaultValue="0"><option value="0">Fatura yok</option><option value="1">Fatura var</option></select>
           {rent ? <input name="deposit_amount" type="number" min="0" step="0.01" placeholder="Depozito" required /> : null}
-          <select name="demand_id" defaultValue=""><option value="">Talep</option>{rows(demands.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["title", "name"])}</option>)}</select>
+          <select name="demand_id" value={demandPick} required={coop === "internal"} onChange={(event) => setDemandPick(event.target.value)}><option value="">Talep</option>{rows(demands.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["title", "name"])}</option>)}</select>
           <input name="demand_commission" type="number" min="0" step="0.01" placeholder="Talep hizmet bedeli" />
           <select value={coop} onChange={(event) => setCoop(event.target.value)}>
             <option value="none">İşbirliği yok</option>
+            <option value="internal">İç ofis</option>
             <option value="external">Dış ofis</option>
           </select>
+          {coop === "internal" ? (
+            <select name="showing_agreement_id" defaultValue="">
+              <option value="">{agreements.length > 0 ? "Gösterim sözleşmesi" : "Bu talepte gösterim sözleşmesi yok"}</option>
+              {agreements.map((row) => {
+                const portfolioTitle = isRecord(row.portfolio) ? text(row.portfolio, ["title"]) : "";
+                const when = typeof row.executed_at === "string" ? row.executed_at.slice(0, 10) : "";
+                const label = [portfolioTitle, when].filter((part) => part !== "").join(" · ");
+                return <option key={String(row.id)} value={String(row.id)}>{label || String(row.id)}</option>;
+              })}
+            </select>
+          ) : null}
           {coop === "external" ? (
             <>
               <input name="external_agency_broker" placeholder="Dış ofis yetkilisi" required />
