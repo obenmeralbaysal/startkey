@@ -151,6 +151,159 @@ function PortfolioList() {
   );
 }
 
+function startDictation(onText: (text: string) => void): boolean {
+  const host = window as unknown as {
+    SpeechRecognition?: new () => { lang: string; start: () => void; onresult: ((event: { results: ArrayLike<{ 0: { transcript: string } }> }) => void) | null };
+    webkitSpeechRecognition?: new () => { lang: string; start: () => void; onresult: ((event: { results: ArrayLike<{ 0: { transcript: string } }> }) => void) | null };
+  };
+  const Recognition = host.SpeechRecognition ?? host.webkitSpeechRecognition;
+  if (!Recognition) {
+    return false;
+  }
+  const recognition = new Recognition();
+  recognition.lang = "tr-TR";
+  recognition.onresult = (event) => {
+    const parts: string[] = [];
+    for (let index = 0; index < event.results.length; index += 1) {
+      parts.push(event.results[index][0].transcript);
+    }
+    onText(parts.join(" "));
+  };
+  recognition.start();
+  return true;
+}
+
+function VoiceDraft({ kind }: { kind: "portfolio" | "demand" }) {
+  const { officeId, notice } = useOffice();
+  const [transcript, setTranscript] = useState("");
+  const [draft, setDraft] = useState<OfficeRecord | null>(null);
+  const resolved = draft && isRecord(draft.resolved) ? draft.resolved : null;
+
+  async function createFromDraft() {
+    if (!resolved) {
+      return;
+    }
+    if (kind === "portfolio") {
+      const contactId = Number(resolved.contact_id);
+      const categoryId = Number(resolved.category_id);
+      const cityId = Number(resolved.city_id);
+      const districtId = Number(resolved.district_id);
+      const neighborhoodId = Number(resolved.neighborhood_id);
+      const price = Number(resolved.price);
+      if (!contactId || !categoryId || !cityId || !districtId || !neighborhoodId || !price) {
+        notice("Taslak hazır. Eksik alanları formdan tamamlayın.");
+        return;
+      }
+      const payload = await officeCall("portfolios/quick", officeId, {
+        method: "POST",
+        body: {
+          contact_id: contactId,
+          category_id: categoryId,
+          city_id: cityId,
+          district_id: districtId,
+          neighborhood_id: neighborhoodId,
+          price,
+          type: resolved.type === "rent" ? "rent" : "sale",
+          title: resolved.title || null,
+          attributes: isRecord(resolved.attributes) ? resolved.attributes : {},
+        },
+      });
+      const id = one(payload)?.id;
+      window.location.href = id ? `/portal/office/portfolios/${id}` : "/portal/office/portfolios";
+      return;
+    }
+    const locations = Array.isArray(resolved.locations) ? resolved.locations.filter(isRecord) : [];
+    const cityId = Number(locations[0]?.city_id ?? 0);
+    const categories = Array.isArray(resolved.category_ids) ? resolved.category_ids : [];
+    const categoryId = Number(categories[0] ?? 0);
+    const contactId = Number(resolved.contact_id);
+    if (!contactId || !categoryId || !cityId) {
+      notice("Taslak hazır. Eksik alanları formdan tamamlayın.");
+      return;
+    }
+    await officeCall("demands", officeId, {
+      method: "POST",
+      body: {
+        contact_id: contactId,
+        category_id: categoryId,
+        type: resolved.portfolio_type === "rent" ? "rent" : "sale",
+        min_price: resolved.min_price ? Number(resolved.min_price) : null,
+        max_price: resolved.max_price ? Number(resolved.max_price) : null,
+        locations: [{ city_id: cityId }],
+        notes: resolved.notes || null,
+      },
+    });
+    window.location.href = "/portal/office/demands";
+  }
+
+  return (
+    <section className="glass-card">
+      <h3>Sesli taslak</h3>
+      <textarea value={transcript} placeholder="Konuşma metni" onChange={(event) => setTranscript(event.target.value)} />
+      <div className="glass-actions">
+        <button className="glass-btn-lite" type="button" onClick={() => { if (!startDictation(setTranscript)) notice("Bu tarayıcı konuşmayı metne çeviremiyor. Metni yazabilirsiniz."); }}>Konuş</button>
+        <button className="glass-btn-lite" type="button" onClick={() => {
+          officeCall(kind === "portfolio" ? "portfolios/voice-draft" : "demands/voice-draft", officeId, { method: "POST", body: { transcript } })
+            .then((payload) => { setDraft(one(payload)); notice("Taslak hazır."); })
+            .catch((error: Error) => notice(`Hata: ${error.message}`));
+        }}>Çözümle</button>
+        {draft ? <button className="glass-btn" type="button" onClick={() => createFromDraft().catch((error: Error) => notice(`Hata: ${error.message}`))}>Taslağı kaydet</button> : null}
+      </div>
+      <RecordView value={draft} />
+    </section>
+  );
+}
+
+function ChunkedMedia({ id, onDone }: { id: string; onDone: () => void }) {
+  const { officeId, notice } = useOffice();
+  const [progress, setProgress] = useState("");
+
+  async function send(file: File) {
+    const fileType = file.type.startsWith("video/") ? "video" : "image";
+    const max = fileType === "video" ? 200 * 1024 * 1024 : 10 * 1024 * 1024;
+    if (file.size > max) {
+      notice(fileType === "video" ? "Video 200 MB sınırını aşıyor." : "Görsel 10 MB sınırını aşıyor.");
+      return;
+    }
+    const uploadId = crypto.randomUUID();
+    const chunkSize = 2 * 1024 * 1024;
+    const total = Math.max(1, Math.ceil(file.size / chunkSize));
+    for (let index = 0; index < total; index += 1) {
+      const form = new FormData();
+      form.append("file", file.slice(index * chunkSize, (index + 1) * chunkSize), file.name);
+      form.append("upload_id", uploadId);
+      form.append("chunk_index", String(index));
+      form.append("total_chunks", String(total));
+      form.append("file_name", file.name);
+      form.append("file_type", fileType);
+      setProgress(`${index + 1}/${total}`);
+      await officeCall(`portfolios/${id}/media/upload-chunk`, officeId, { method: "POST", form });
+    }
+    await officeCall(`portfolios/${id}/media/finalize-upload`, officeId, {
+      method: "POST",
+      body: { upload_id: uploadId, total_chunks: total, file_name: file.name, file_type: fileType, total_size: file.size },
+    });
+    setProgress("");
+    notice("Dosya eklendi.");
+    onDone();
+  }
+
+  return (
+    <form className="glass-stack" onSubmit={(event) => {
+      event.preventDefault();
+      const file = event.currentTarget.elements.namedItem("file");
+      if (!(file instanceof HTMLInputElement) || !file.files?.[0]) {
+        return;
+      }
+      send(file.files[0]).catch((error: Error) => { setProgress(""); notice(`Hata: ${error.message}`); });
+    }}>
+      <h3>Büyük dosya</h3>
+      <input name="file" type="file" accept="image/*,video/mp4,video/webm" required />
+      <button className="glass-btn-lite" type="submit">{progress ? `Yükleniyor ${progress}` : "Parça parça yükle"}</button>
+    </form>
+  );
+}
+
 function PortfolioForm() {
   const { officeId, notice } = useOffice();
   const contacts = useData("contacts?limit=100");
@@ -161,6 +314,8 @@ function PortfolioForm() {
   const districts = useData(city ? `locations/districts?city_id=${city}` : "locations/districts?city_id=0");
   const neighborhoods = useData(district ? `locations/neighborhoods?district_id=${district}` : "locations/neighborhoods?district_id=0");
   return (
+    <>
+    <VoiceDraft kind="portfolio" />
     <Form
       title="Yeni portföy"
       onSubmit={async (form) => {
@@ -191,6 +346,7 @@ function PortfolioForm() {
       <select name="district_id" required value={district} onChange={(event) => setDistrict(event.target.value)}><option value="">İlçe</option>{rows(districts.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
       <select name="neighborhood_id" required defaultValue=""><option value="">Mahalle</option>{rows(neighborhoods.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
     </Form>
+    </>
   );
 }
 
@@ -514,6 +670,7 @@ function PortfolioDetail({ id }: { id: string }) {
         <input name="files[]" type="file" accept="image/*,video/mp4,application/pdf" required />
         <button className="glass-btn-lite" type="submit">Dosya yükle</button>
       </form>
+      <ChunkedMedia id={id} onDone={() => item.reload()} />
       {canVerify(office) ? (
         <Form title="Geri çevir" onSubmit={async (form) => { await act(`portfolios/${id}/reject`, { rejection_reason: form.get("rejection_reason") }); }}>
           <textarea name="rejection_reason" minLength={5} placeholder="Gerekçe" required />
@@ -556,6 +713,8 @@ function DemandForm() {
   const categories = useData("categories");
   const cities = useData("locations/cities");
   return (
+    <>
+    <VoiceDraft kind="demand" />
     <Form
       title="Yeni talep"
       onSubmit={async (form) => {
@@ -584,6 +743,7 @@ function DemandForm() {
       <input name="max_price" type="number" placeholder="Üst fiyat" />
       <textarea name="notes" placeholder="Not" />
     </Form>
+    </>
   );
 }
 
@@ -790,6 +950,8 @@ function MatchmakingForm() {
 function BadgeForm() {
   const { officeId, notice } = useOffice();
   const list = useData("badges");
+  const activityTypes = useData("activity-types");
+  const [metric, setMetric] = useState("closings");
   return (
     <section className="glass-card">
       <h2>Rozetler</h2>
@@ -800,7 +962,8 @@ function BadgeForm() {
           body: {
             title: form.get("title"),
             description: form.get("description") || null,
-            metric: form.get("metric"),
+            metric,
+            activity_type_id: metric === "calendar_activity" ? Number(form.get("activity_type_id")) : null,
             threshold: Number(form.get("threshold")),
             period: form.get("period"),
           },
@@ -810,13 +973,20 @@ function BadgeForm() {
       }}>
         <input name="title" placeholder="Başlık" required />
         <input name="description" placeholder="Açıklama" />
-        <select name="metric" defaultValue="closings">
+        <select name="metric" value={metric} onChange={(event) => setMetric(event.target.value)}>
           <option value="active_portfolios">Açık portföy</option>
           <option value="total_portfolios">Tüm portföy</option>
           <option value="contacts">Kişi</option>
           <option value="showings">Gösterim</option>
           <option value="closings">Kapanış</option>
+          <option value="calendar_activity">Takvim</option>
         </select>
+        {metric === "calendar_activity" ? (
+          <select name="activity_type_id" required defaultValue="">
+            <option value="">Etkinlik türü</option>
+            {rows(activityTypes.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}
+          </select>
+        ) : null}
         <input name="threshold" type="number" min={1} placeholder="Eşik" required />
         <select name="period" defaultValue="monthly"><option value="monthly">Aylık</option><option value="quarterly">Üç aylık</option><option value="yearly">Yıllık</option></select>
       </Form>
@@ -827,6 +997,7 @@ function BadgeForm() {
 function CommissionForm() {
   const { officeId, notice } = useOffice();
   const current = useData("commission-policy");
+  const [tiers, setTiers] = useState<Array<{ threshold: string; rate: string }>>([]);
   return (
     <section className="glass-card">
       <h2>Hizmet bedeli</h2>
@@ -841,12 +1012,24 @@ function CommissionForm() {
             base_rate_percentage: Number(form.get("base_rate_percentage")),
             listing_scope: form.get("listing_scope"),
             requires_approval: form.get("requires_approval") === "1",
-            tiers: [],
+            tiers: tiers.flatMap((tier) => {
+              const threshold = Number(tier.threshold);
+              const rate = Number(tier.rate);
+              return threshold > 0 ? [{ threshold_amount: threshold, rate_percentage: rate }] : [];
+            }),
           },
         });
         notice("Hizmet bedeli kaydedildi.");
         current.reload();
       }}>
+        {tiers.map((tier, index) => (
+          <div key={index} className="glass-actions">
+            <input value={tier.threshold} type="number" min="0.01" step="0.01" placeholder="Eşik tutar" onChange={(event) => setTiers((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, threshold: event.target.value } : item))} />
+            <input value={tier.rate} type="number" min="0" max="100" step="0.01" placeholder="Dilim oranı" onChange={(event) => setTiers((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, rate: event.target.value } : item))} />
+            <button className="glass-btn-lite" type="button" onClick={() => setTiers((current) => current.filter((_, itemIndex) => itemIndex !== index))}>Sil</button>
+          </div>
+        ))}
+        <button className="glass-btn-lite" type="button" onClick={() => setTiers((current) => [...current, { threshold: "", rate: "" }])}>Dilim ekle</button>
         <select name="period_unit" defaultValue="monthly"><option value="monthly">Aylık</option><option value="yearly">Yıllık</option></select>
         <select name="period_anchor" defaultValue="calendar"><option value="calendar">Takvim</option><option value="anniversary">Yıldönümü</option></select>
         <input name="starts_on" type="date" required />

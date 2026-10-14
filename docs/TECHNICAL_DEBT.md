@@ -333,15 +333,15 @@ Bu ölçüler tema JS’i ve üçüncü taraf iframe ile veriliyor; tema JS’in
 
 **Mevcut Durum:**
 
-Broker, agent ve ofis yöneticisi `/portal` içinde ofis işini ve ayar yazma formlarını Reonix’e kaydeder. Eşleşme, rozet, hizmet bedeli, hakediş oranı, abonelik ve fatura görüntüleme bu formlardadır. Parçalı büyük video ve sesli taslak portalda yoktur.
+Broker, agent ve ofis yöneticisi `/portal` içinde ofis işini Reonix’e kaydeder. Parçalı büyük dosya, sesli portföy ve talep taslağı, hizmet bedeli dilimi ve takvim rozeti de bu kabuktadır.
 
 **Geçici Olmasının Nedeni:**
 
-Parçalı büyük video ve sesli taslak ilk tura sığmadı. Bu işler StartKey tablosuna yazılmaz.
+Bu işler ilk turda portal kabuğuna bağlanmamıştı.
 
 **Gelecekteki Implementasyon:**
 
-Aynı izin listeli vekil üzerinden parçalı video ve sesli taslak da portal kabuğuna bağlanacak.
+Aynı izin listeli vekil üzerinden bağlandı.
 
-**Durum:** Açık
+**Durum:** Çözüldü
 
