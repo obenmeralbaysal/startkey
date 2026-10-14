@@ -805,7 +805,7 @@ class CorporateResolver
 
         $list = CmsListPage::query()->where('type', 'listing')->where('locale', $locale)->first();
         if ($list === null) {
-            return null;
+            return $this->emptyListingList($locale, $path, $filters);
         }
 
         $perPage = max(1, $list->per_page);
@@ -872,6 +872,7 @@ class CorporateResolver
                 'values' => $this->listingFilterValues($filters),
             ],
             'foundLabel' => str_replace('{count}', (string) $total, (string) ($sidebar['foundTemplate'] ?? '{count}')),
+            'emptyLabel' => $this->catalogueEmptyLabel('listings', $locale),
             'items' => $items,
             'hasResults' => $total > 0,
             'pagination' => [
@@ -1364,9 +1365,168 @@ class CorporateResolver
 
     private function officeEmptyLabel(string $locale): string
     {
-        $label = __('messages.offices.empty', [], $locale);
+        return $this->catalogueEmptyLabel('offices', $locale);
+    }
 
-        return $label === 'messages.offices.empty' ? 'Henüz eklenmiş ofis yok.' : $label;
+    private function catalogueEmptyLabel(string $group, string $locale): string
+    {
+        $key = 'messages.'.$group.'.empty';
+        $label = __($key, [], $locale);
+
+        return $label === $key ? 'Henüz eklenmiş kayıt yok.' : $label;
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function emptyListingList(string $locale, string $path, array $filters): array
+    {
+        $canonical = $this->cataloguePath('listings', $locale, $path);
+        $heading = match ($locale) {
+            'en' => 'Our Portfolios',
+            'de' => 'Unsere Portfolios',
+            default => 'Portföylerimiz',
+        };
+
+        return [
+            'kind' => 'listing-list',
+            'heading' => $heading,
+            'breadcrumb' => ['heading' => $heading, 'trail' => []],
+            'meta' => ['title' => $heading],
+            'filter' => [
+                'action' => $canonical,
+                'heading' => match ($locale) {
+                    'en' => 'Search portfolio',
+                    'de' => 'Portfolio suchen',
+                    default => 'Portföy Ara',
+                },
+                'mobileOpenLabel' => match ($locale) {
+                    'en' => 'Open filter',
+                    'de' => 'Filter öffnen',
+                    default => 'Portföy Filtresini Aç',
+                },
+                'submitLabel' => match ($locale) {
+                    'en' => 'Search',
+                    'de' => 'Suchen',
+                    default => 'Ara',
+                },
+                'labels' => [],
+                'placeholders' => [],
+                'adTypes' => [],
+                'sortOptions' => [],
+                'bindUrls' => [],
+                'values' => $this->listingFilterValues($filters),
+            ],
+            'foundLabel' => '',
+            'emptyLabel' => $this->catalogueEmptyLabel('listings', $locale),
+            'items' => [],
+            'hasResults' => false,
+            'pagination' => [
+                'pageIndex' => 1,
+                'perPage' => 12,
+                'total' => 0,
+                'totalPages' => 1,
+                'basePath' => $canonical,
+                'searchQuery' => $this->listingQueryString($filters),
+            ],
+            'alternates' => $this->catalogueAlternates('listings'),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function emptyConsultantList(string $locale, string $path, array $filters): array
+    {
+        $canonical = $this->cataloguePath('consultants', $locale, $path);
+        $heading = match ($locale) {
+            'en' => 'Our Professionals',
+            'de' => 'Unsere Fachleute',
+            default => 'Profesyonellerimiz',
+        };
+        $keys = ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId'];
+        $values = [];
+        foreach ($keys as $key) {
+            $values[$key] = $this->filterScalar($filters, $key) ?? '';
+        }
+
+        return [
+            'kind' => 'consultant-list',
+            'heading' => $heading,
+            'breadcrumb' => ['heading' => $heading, 'trail' => []],
+            'meta' => ['title' => $heading],
+            'filter' => [
+                'action' => $canonical,
+                'searchHeading' => match ($locale) {
+                    'en' => 'Search consultant:',
+                    'de' => 'Berater suchen:',
+                    default => 'Danışman Ara :',
+                },
+                'searchPlaceholder' => '',
+                'submitLabel' => match ($locale) {
+                    'en' => 'Search',
+                    'de' => 'Suchen',
+                    default => 'Ara',
+                },
+                'placeholders' => [
+                    'firstName' => match ($locale) {
+                        'en' => 'First name',
+                        'de' => 'Vorname',
+                        default => 'Ad',
+                    },
+                    'lastName' => match ($locale) {
+                        'en' => 'Last name',
+                        'de' => 'Nachname',
+                        default => 'Soyad',
+                    },
+                ],
+                'bindUrls' => [
+                    'offices' => '/'.$locale.'/Lookup/GetAllOffices',
+                    'cities' => '/'.$locale.'/Lookup/Cities',
+                ],
+                'values' => $values,
+                'selectedLabels' => $this->selectedFilterLabels($values, $locale),
+            ],
+            'foundLabel' => '',
+            'emptyLabel' => $this->catalogueEmptyLabel('consultants', $locale),
+            'items' => [],
+            'hasResults' => false,
+            'pagination' => [
+                'pageIndex' => 1,
+                'perPage' => 15,
+                'total' => 0,
+                'totalPages' => 1,
+                'basePath' => $canonical,
+                'searchQuery' => $this->simpleQueryString($values),
+            ],
+            'alternates' => $this->catalogueAlternates('consultants'),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function catalogueAlternates(string $section): array
+    {
+        $lists = config('site.corporate.'.$section.'.lists', []);
+        $alternates = [];
+        foreach ($lists as $code => $paths) {
+            if (is_array($paths) && isset($paths[0]) && is_string($paths[0])) {
+                $alternates[$code] = $paths[0];
+            }
+        }
+
+        return $alternates;
+    }
+
+    private function cataloguePath(string $section, string $locale, string $path): string
+    {
+        $lists = config('site.corporate.'.$section.'.lists', []);
+        $paths = $lists[$locale] ?? null;
+
+        return is_array($paths) && isset($paths[0]) && is_string($paths[0]) ? $paths[0] : $path;
     }
 
     private function consultantList(string $locale, string $path, int $pageIndex, array $filters): ?array
@@ -1377,7 +1537,7 @@ class CorporateResolver
 
         $list = CmsListPage::query()->where('type', 'consultant')->where('locale', $locale)->first();
         if ($list === null) {
-            return null;
+            return $this->emptyConsultantList($locale, $path, $filters);
         }
 
         $perPage = max(1, $list->per_page);
@@ -1411,7 +1571,7 @@ class CorporateResolver
 
         $query->orderBy('list_rank')->orderBy('id');
 
-        return $this->pagedCardList(
+        $payload = $this->pagedCardList(
             $query,
             $list,
             $locale,
@@ -1423,6 +1583,9 @@ class CorporateResolver
             fn (CmsConsultant $consultant) => $this->consultantCardPayload($consultant, $locale, $consultant->translations->first()),
             ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId'],
         );
+        $payload['emptyLabel'] = $this->catalogueEmptyLabel('consultants', $locale);
+
+        return $payload;
     }
 
     /**

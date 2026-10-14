@@ -7,6 +7,12 @@ return [
     'offices' => [
         'empty' => 'Henüz eklenmiş ofis yok.',
     ],
+    'listings' => [
+        'empty' => 'Henüz eklenmiş portföy yok.',
+    ],
+    'consultants' => [
+        'empty' => 'Henüz eklenmiş danışman yok.',
+    ],
     'portal' => [
         'unavailable' => 'İşlem şu anda tamamlanamadı. Lütfen yeniden deneyin.',
         'forbidden' => 'Bu işlem için yetkiniz yok.',

@@ -60,7 +60,11 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
                   searchQuery={data.pagination.searchQuery}
                 />
               </div>
-            ) : null}
+            ) : (
+              <div className="w-full xl:w-2/3">
+                <p className="text-center">{data.emptyLabel}</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

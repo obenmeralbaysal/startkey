@@ -7,6 +7,12 @@ return [
     'offices' => [
         'empty' => 'Es wurden noch keine Büros hinzugefügt.',
     ],
+    'listings' => [
+        'empty' => 'Es wurden noch keine Portfolios hinzugefügt.',
+    ],
+    'consultants' => [
+        'empty' => 'Es wurden noch keine Berater hinzugefügt.',
+    ],
     'portal' => [
         'unavailable' => 'Der Vorgang konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.',
         'forbidden' => 'Sie dürfen diesen Vorgang nicht ausführen.',

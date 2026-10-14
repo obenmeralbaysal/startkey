@@ -7,6 +7,12 @@ return [
     'offices' => [
         'empty' => 'No offices have been added yet.',
     ],
+    'listings' => [
+        'empty' => 'No portfolios have been added yet.',
+    ],
+    'consultants' => [
+        'empty' => 'No consultants have been added yet.',
+    ],
     'portal' => [
         'unavailable' => 'The request could not be completed. Please try again.',
         'forbidden' => 'You are not allowed to do this.',

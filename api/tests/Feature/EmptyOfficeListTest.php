@@ -22,6 +22,18 @@ class EmptyOfficeListTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.emptyLabel', 'No offices have been added yet.');
 
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy')
+            ->assertOk()
+            ->assertJsonPath('data.kind', 'listing-list')
+            ->assertJsonPath('data.hasResults', false)
+            ->assertJsonPath('data.emptyLabel', 'Henüz eklenmiş portföy yok.');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
+            ->assertOk()
+            ->assertJsonPath('data.kind', 'consultant-list')
+            ->assertJsonPath('data.hasResults', false)
+            ->assertJsonPath('data.emptyLabel', 'Henüz eklenmiş danışman yok.');
+
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/boyle-bir-sayfa-yok')
             ->assertNotFound();
     }

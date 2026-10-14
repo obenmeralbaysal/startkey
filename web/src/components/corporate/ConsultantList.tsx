@@ -35,7 +35,9 @@ export function ConsultantList({ data }: { data: Extract<CorporatePayload, { kin
                 searchQuery={data.pagination.searchQuery}
               />
             </>
-          ) : null}
+          ) : (
+            <p className="text-center">{data.emptyLabel}</p>
+          )}
         </div>
       </section>
     </>

@@ -262,6 +262,7 @@ export type CorporatePayload =
       meta: CorporateMeta;
       filter: ListingFilterData;
       foundLabel: string;
+      emptyLabel?: string;
       items: ListingCardData[];
       hasResults: boolean;
       pagination: {
@@ -351,6 +352,7 @@ export type CorporatePayload =
       meta: CorporateMeta;
       filter: DirectoryFilterData;
       foundLabel: string;
+      emptyLabel?: string;
       items: DirectoryCardData[];
       hasResults: boolean;
       pagination: DirectoryPagination;
