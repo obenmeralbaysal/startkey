@@ -9,7 +9,10 @@ use App\Http\Controllers\Api\V1\HomepageController;
 use App\Http\Controllers\Api\V1\ListingInquiryController;
 use App\Http\Controllers\Api\V1\LookupController;
 use App\Http\Controllers\Api\V1\NewsletterController;
+use App\Http\Controllers\Api\V1\OfficeProxyController;
+use App\Http\Controllers\Api\V1\PortalMediaController;
 use App\Http\Controllers\Api\V1\PortalSessionController;
+use App\Http\Controllers\Api\V1\PublicPortalController;
 use App\Http\Controllers\Api\V1\TrainingApplicationController;
 use App\Http\Middleware\AuthenticatePortalSession;
 use Illuminate\Support\Facades\Route;
@@ -48,7 +51,12 @@ Route::prefix('v1')->group(function () {
         Route::post('portal/consultant-applications/{id}/accept', [PortalSessionController::class, 'acceptConsultant'])->whereNumber('id');
         Route::post('portal/offices/{id}/brokers', [PortalSessionController::class, 'storeBroker'])->whereNumber('id');
         Route::post('portal/offices/{id}/agents', [PortalSessionController::class, 'storeAgent'])->whereNumber('id');
+        Route::match(['get', 'post', 'put', 'patch', 'delete'], 'portal/office/{path}', OfficeProxyController::class)->where('path', '.*');
+        Route::get('portal/media/{path}', PortalMediaController::class)->where('path', '.*');
     });
+    Route::match(['get', 'post'], 'portal/public/{path}', PublicPortalController::class)
+        ->where('path', '.*')
+        ->middleware('throttle:60,1');
     Route::post('listings/{externalId}/inquiries', [ListingInquiryController::class, 'store'])
         ->middleware('throttle:listing-inquiry')
         ->whereNumber('externalId');

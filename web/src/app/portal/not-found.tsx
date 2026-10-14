@@ -7,11 +7,13 @@ export const metadata: Metadata = {
 
 export default function PortalNotFound() {
   return (
-    <main style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
-      <div style={{ textAlign: "center" }}>
-        <h1>404</h1>
-        <Link href="/portal">Giriş</Link>
-      </div>
+    <main className="glass-login">
+      <section className="glass-panel">
+        <h1>Sayfa yok</h1>
+        <Link className="glass-btn" href="/portal">
+          Giriş
+        </Link>
+      </section>
     </main>
   );
 }

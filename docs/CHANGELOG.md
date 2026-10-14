@@ -1,5 +1,8 @@
 ## [2026-10-14]
 
+- **[Architecture]**: StartKey portalı Reonix’i göstermez. Broker, agent ve ofis yöneticisinin ofis işi Reonix’te kalır ve portal üzerinden, sunucudaki izin listeli vekille yönetilir. CMS ve genel iletişim formu StartKey veritabanında kalır.
+- **[UI]**: `/portal` giriş, masa ve ofis ekranları sade cam görünüme alındı. Public site referans yerleşiminde kaldı.
+
 - **[Infra]**: Canlı güncelleme `make deploy` ile sırayla çekilir: git pull, web imajı, web ve API ayağa kalkar. Volume silinmez, `docker compose down` çalışmaz.
 - **[Security]**: İletişim, eğitim, franchise, danışman başvurusu, ilan iletişim ve danışman yorumu formları görünür reCAPTCHA kutusunu kaldırdı. Doğrulama, v3 anahtarları tanımlanınca görünmez skor ve forma özel action ile yapılır.
 

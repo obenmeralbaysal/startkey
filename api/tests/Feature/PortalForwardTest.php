@@ -67,7 +67,8 @@ class PortalForwardTest extends TestCase
         $cookie = $login->getCookie('startkey_portal', false);
         $this->assertNotNull($cookie);
 
-        $this->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
             ->getJson('/api/v1/portal/applications')
             ->assertOk()
             ->assertJsonPath('data.user.first_name', 'Ada');

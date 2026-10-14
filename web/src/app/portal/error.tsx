@@ -4,11 +4,14 @@ import Link from "next/link";
 
 export default function PortalError() {
   return (
-    <main style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
-      <div style={{ textAlign: "center" }}>
-        <h1>500</h1>
-        <Link href="/portal">Giriş</Link>
-      </div>
+    <main className="glass-login">
+      <section className="glass-panel">
+        <h1>Bir sorun oluştu</h1>
+        <p className="glass-muted">Sayfa yenilenince işlem yeniden denenebilir.</p>
+        <Link className="glass-btn" href="/portal">
+          Giriş
+        </Link>
+      </section>
     </main>
   );
 }

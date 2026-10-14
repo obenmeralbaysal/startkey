@@ -1,8 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import { scaled } from "@/lib/scale";
 
 export type PortalOffice = { id: number; name: string; role: string | null };
 
@@ -42,23 +41,34 @@ export function PortalDesk({ user, onLogout }: { user: PortalUser; onLogout: () 
   const isAdmin = user.is_admin;
 
   return (
-    <div className="d-flex flex-column flex-root" id="kt_app_root">
-      <div className="d-flex flex-column flex-center p-10">
-        <img alt="Logo" src="/portal/img/startkey_logo.png" width={220} />
-        <h1 className="mt-6">Startkey Portal</h1>
-        <p>
-          {user.first_name} {user.last_name}
-        </p>
-        <button className="btn btn-light" type="button" onClick={() => logout(onLogout)}>
-          Çıkış
-        </button>
+    <main className="glass-page">
+      <div className="glass-shell">
+        <img className="glass-logo" alt="Logo" src="/portal/img/startkey_logo.png" />
+        <div className="glass-top">
+          <div>
+            <h1>StartKey Portal</h1>
+            <p className="glass-muted">
+              {user.first_name} {user.last_name}
+            </p>
+          </div>
+          <div className="glass-actions">
+            {user.offices.length > 0 ? (
+              <Link className="glass-btn-lite" href="/portal/office">
+                Ofis
+              </Link>
+            ) : null}
+            <button className="glass-btn-lite" type="button" onClick={() => logout(onLogout)}>
+              Çıkış
+            </button>
+          </div>
+        </div>
         {isAdmin ? <AdminPanel /> : null}
         {ownerOffices.map((office) => (
           <OwnerPanel key={office.id} office={office} />
         ))}
-        {!isAdmin && ownerOffices.length === 0 ? <p>Bu hesap için yönetim ekranı yok.</p> : null}
+        {!isAdmin && user.offices.length === 0 ? <p>Bu hesap için ofis kaydı yok.</p> : null}
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -75,7 +85,7 @@ function AdminPanel() {
   }, []);
 
   return (
-    <section className="w-100 mt-10" style={{ maxWidth: scaled(720) }}>
+    <section className="glass-card">
       <h2>Ofis başvuruları</h2>
       {message ? <p>{message}</p> : null}
       {applications.map((row) => (
@@ -103,7 +113,7 @@ function AdminPanel() {
               </option>
             ))}
           </select>
-          <button className="btn btn-primary" type="submit">
+          <button className="glass-btn-lite" type="submit">
             Ofis aç
           </button>
         </form>
@@ -114,7 +124,7 @@ function AdminPanel() {
           {row.first_name} {row.last_name} — {row.office_name} — {positionLabel(row.position)} — {row.status}
           {row.status === "new" ? (
             <button
-              className="btn btn-primary ms-3"
+              className="glass-btn-lite"
               type="button"
               onClick={() =>
                 portalSend(`/api/v1/portal/consultant-applications/${row.id}/accept`, {}).then((body) =>
@@ -153,7 +163,7 @@ function PackageForm({ packages, onDone }: { packages: PackageOption[]; onDone: 
           </option>
         ))}
       </select>
-      <button className="btn btn-primary" type="submit">
+      <button className="glass-btn-lite" type="submit">
         Paketi yaz
       </button>
     </form>
@@ -175,7 +185,7 @@ function OwnerPanel({ office }: { office: PortalOffice }) {
   }
 
   return (
-    <section>
+    <section className="glass-card">
       <h2>{office.name}</h2>
       {message ? <p>{message}</p> : null}
       <MemberForm title="Broker ekle" onSubmit={(event) => add("brokers", event)} />
@@ -192,7 +202,7 @@ function MemberForm({ title, onSubmit }: { title: string; onSubmit: (event: Reac
       <input name="last_name" placeholder="Soyad" required />
       <input name="email" type="email" placeholder="E-posta" required />
       <input name="phone" placeholder="Telefon" />
-      <button className="btn btn-primary" type="submit">
+      <button className="glass-btn-lite" type="submit">
         Ekle
       </button>
     </form>

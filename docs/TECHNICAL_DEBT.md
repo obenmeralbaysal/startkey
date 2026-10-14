@@ -14,7 +14,7 @@ Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
 **Geçici Olmasının Nedeni:**
 
-Nihai veri kaynağı Reonix olacaktır. Reonix entegrasyon mimarisi henüz netleşmemiştir.
+Nihai veri kaynağı Reonix’tir. Public sayfa yerel okuma kopyası gösterebilir. Superadmin portföy iş kaydı yazmaz.
 
 **Gelecekteki Implementasyon:**
 
@@ -110,7 +110,7 @@ Türkçe listelerde İngilizce/Almanca karşılığı olmayan az sayıda kayıt 
 
 **Geçici Olmasının Nedeni:**
 
-Nihai yazma arayüzü Superadmin paneli ve ileride Reonix/CMS entegrasyonudur. Referans sitenin private backend'i kopyalanamaz.
+Nihai yazma arayüzü Superadmin panelidir. CMS StartKey veritabanında kalır.
 
 **Gelecekteki Implementasyon:**
 
@@ -128,7 +128,7 @@ Başarı, doğrulama, hız sınırı ve genel hata metinleri `web/src/content/pu
 
 **Geçici Olmasının Nedeni:**
 
-Referans sitenin gerçek post-submit metinleri public olarak kaydedilemedi. Reonix/mail entegrasyonu henüz yok.
+Referans sitenin gerçek post-submit metinleri public olarak kaydedilemedi. İletişim, bülten, eğitim başvurusu ve danışman yorumu StartKey veritabanında kalır. Franchise ve danışman başvurusu Reonix’e gider. İlan talebi Reonix’e aittir ve hâlâ `listing_inquiries` tablosuna yazılır.
 
 **Gelecekteki Implementasyon:**
 
@@ -146,7 +146,7 @@ Seminer/eğitim kartları, detay metinleri ve İletişim sayfası `api/database/
 
 **Geçici Olmasının Nedeni:**
 
-Nihai yazma arayüzü Superadmin paneli ve ileride Reonix/CMS entegrasyonudur. Referans sitenin private backend’i kopyalanamaz.
+Nihai yazma arayüzü Superadmin panelidir. CMS StartKey veritabanında kalır.
 
 **Gelecekteki Implementasyon:**
 
@@ -166,7 +166,7 @@ KVKK yalnızca Türkçe olarak mevcuttur; canlı sitede EN/DE karşılığı ana
 
 **Geçici Olmasının Nedeni:**
 
-Nihai yazma arayüzü Superadmin paneli ve ileride Reonix/CMS entegrasyonudur. Referans sitenin private backend’i kopyalanamaz.
+Nihai yazma arayüzü Superadmin panelidir. CMS StartKey veritabanında kalır.
 
 **Gelecekteki Implementasyon:**
 
@@ -191,7 +191,7 @@ Kapsam:
 * İlan detay iletişim formu (`TD-007`)
 * Danışman yorum formu (`TD-013`)
 
-Gönderimler şu an yalnızca yerel tablolara yazılır (`newsletter_subscribers`, `contact_messages`, `training_applications`, `franchise_applications`, `listing_inquiries`, `consultant_comments`). Referans sitedeki e-posta, CRM veya teşekkür sayfası davranışı kopyalanmadı.
+Gönderimler şu an yerel tablolara da yazılır (`newsletter_subscribers`, `contact_messages`, `training_applications`, `franchise_applications`, `listing_inquiries`, `consultant_comments`). Franchise ve danışman başvurusu ayrıca Reonix’e gider. İletişim, bülten, eğitim başvurusu ve danışman yorumu StartKey veritabanında kalır. İlan talebi Reonix’e aittir ve hâlâ yerel tablodadır.
 
 **Geçici Olmasının Nedeni:**
 
@@ -213,11 +213,11 @@ Liste ve detay şablonları `cms_listings` / `cms_listing_translations` satırla
 
 **Geçici Olmasının Nedeni:**
 
-Nihai veri kaynağı Reonix / Superadmin olacaktır. Seed, canlı listenin anlık kopyasıdır; yeni ilanlar otomatik gelmez.
+Nihai veri kaynağı Reonix’tir. Seed, canlı listenin anlık kopyasıdır; yeni ilanlar otomatik gelmez. Superadmin ilan iş kaydı yazmaz.
 
 **Gelecekteki Implementasyon:**
 
-Aynı şablonlar değişmeden Reonix veya Superadmin’in yazacağı `cms_listings` satırlarını gösterecektir. Seed dosyası yalnızca ilk doldurma / felaket kurtarma kaynağı olarak kalır.
+Aynı şablonlar Reonix’ten gelen okuma kopyasını gösterecektir. Seed dosyası yalnızca ilk doldurma kaynağı olarak kalır.
 
 **Durum:** Açık
 
@@ -249,11 +249,11 @@ Yeni Akademi tasarımı ayrıca yapılacak. O gelene kadar `/akademi` bu projede
 
 **Geçici Olmasının Nedeni:**
 
-Nihai veri kaynağı Reonix olacaktır. Seed, canlı listenin anlık kopyasıdır; yeni ofis/danışman otomatik gelmez.
+Nihai veri kaynağı Reonix’tir. Seed, canlı listenin anlık kopyasıdır; yeni ofis veya danışman otomatik gelmez.
 
 **Gelecekteki Implementasyon:**
 
-Aynı `cms_offices` / `cms_consultants` tabloları Reonix veya Superadmin ile doldurulacak; şablonlar değişmeden tam detay ve gerçek portföyleri gösterecektir.
+Aynı `cms_offices` / `cms_consultants` tabloları Reonix’ten gelen okuma kopyasıyla dolacaktır. Superadmin bu kayıtların iş sistemi değildir.
 
 **Durum:** Açık
 
@@ -271,7 +271,7 @@ Ciro, işlem ve kulüp Reonix’ten kişiye özel gelmiyor. Kulübün iş anlam�
 
 **Gelecekteki Implementasyon:**
 
-Yıl istatistikleri ve kulüp Reonix veya Superadmin’den danışmana özel gelecek. Sosyal ikonlar danışmanın kendi hesaplarına bağlanacak. `layout=classic` geçişi, eski şablon artık gerekmeyince kalkacak.
+Yıl istatistikleri ve kulüp Reonix’ten, StartKey portalı üzerinden danışmana özel gelecek. Sosyal ikonlar danışmanın kendi hesaplarına bağlanacak. `layout=classic` geçişi, eski şablon artık gerekmeyince kalkacak.
 
 **Durum:** Açık
 
@@ -285,11 +285,11 @@ Yıl istatistikleri ve kulüp Reonix veya Superadmin’den danışmana özel gel
 
 **Geçici Olmasının Nedeni:**
 
-Canlı kurumsal sitede gerçek 404 ve gerçek llms.txt yok. Sitemap yolları Reonix/CMS’ten değil referans anlık görüntüsünden geliyor.
+Canlı kurumsal sitede gerçek 404 ve gerçek llms.txt yok. Sitemap yolları yerel CMS’ten değil referans anlık görüntüsünden geliyor.
 
 **Gelecekteki Implementasyon:**
 
-Sitemap yerel CMS / Reonix’ten üretilecek. EN/DE 404 metni referansta belirdiğinde alınacak.
+Sitemap yerel CMS’ten üretilecek. EN/DE 404 metni referansta belirdiğinde alınacak.
 
 **Durum:** Açık
 
@@ -317,7 +317,7 @@ Başvuru akışı önce bağlandı. Sayfanın uzun tanıtım HTML’i ayrıca ç
 
 **Mevcut Durum:**
 
-768px ve üstünde CSS uzunlukları ve görsel `width`/`height` öznitelikleri %80’e iniyor. CSS dışından verilen şu ölçüler referans boyutunda kalıyor: Owl Carousel kart aralığı (`bundle-app.js` içindeki `margin: 20`) ve Google reCAPTCHA kutusu (304×78). Görsel öznitelik ölçüleri sabit listeden ölçekleniyor (`ThemeStyles.tsx`, `app/portal/layout.tsx`); listede olmayan yeni bir `width`/`height` değeri referans boyutunda kalır.
+768px ve üstünde public sitede CSS uzunlukları ve görsel `width`/`height` öznitelikleri %80’e iniyor. CSS dışından verilen şu ölçüler referans boyutunda kalıyor: Owl Carousel kart aralığı (`bundle-app.js` içindeki `margin: 20`) ve Google reCAPTCHA kutusu (304×78). `/portal` bu ölçeği kullanmaz.
 
 **Geçici Olmasının Nedeni:**
 
@@ -325,7 +325,23 @@ Bu ölçüler tema JS’i ve üçüncü taraf iframe ile veriliyor; tema JS’in
 
 **Gelecekteki Implementasyon:**
 
-Carousel aralıkları tema JS’inde `--sk-scale`’e göre verilecek. Bileşenlere veya CMS içeriğine yeni görsel ölçüsü eklendiğinde liste güncellenecek; CSS `attr()` ile tip okuma tüm hedef tarayıcılarda desteklendiğinde liste kaldırılabilir.
+**Durum:** Açık
+
+### TD-018 — Büyük video parçası ve sesli taslak portal ekranında yok
+
+**Alan:** Portal / Portföy ve talep
+
+**Mevcut Durum:**
+
+Broker, agent ve ofis yöneticisi `/portal` içinde özet, kişi, portföy, talep, eşleşme, takvim, hakediş onayı, rapor, işbirliği, kira radarı, Sahibinden okuma, ekip, ofis, nöbet, WhatsApp ve e-posta işini yapar. Kayıt Reonix’te kalır. Eşleşme ağırlığı, rozet, hizmet bedeli, hakediş oranı, abonelik ve fatura ekranları kaydı gösterir; her alt alanın ayrı yazma formu yoktur.
+
+**Geçici Olmasının Nedeni:**
+
+Parçalı büyük video, sesli taslak ve bu ayar ekranlarının tam yazma formları ilk tura sığmadı. Bu işler StartKey tablosuna yazılmaz.
+
+**Gelecekteki Implementasyon:**
+
+Aynı izin listeli vekil üzerinden eksik yazma formları, parçalı video ve sesli taslak da portal kabuğuna bağlanacak.
 
 **Durum:** Açık
 

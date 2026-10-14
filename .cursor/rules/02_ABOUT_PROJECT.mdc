@@ -291,11 +291,7 @@ Geçici veriler hiçbir zaman nihai business data gibi değerlendirilmemelidir.
 
 # 10. Portföy ve Ofis Bölümleri
 
-Aşağıdaki gibi CRM kaynaklı bölümler ileride Reonix üzerinden gerçek veriler ile beslenecektir:
-
-* Portföyler
-* Ofisler
-* Diğer CRM kaynaklı public veriler
+Portföy, ofis ve danışman kayıtlarının kaynağı Reonix’tir. Public sayfa bu kayıtların yerel okuma kopyasını gösterebilir. Superadmin bu kayıtların iş sistemi değildir.
 
 İlk website yeniden oluşturma aşamasında tüm gerçek portföylerin veya tüm gerçek ofislerin içeri aktarılması gerekli değildir.
 
@@ -316,28 +312,23 @@ Gerekli olduğu durumda sınırlı dummy data kullanılabilir.
 
 Dummy data kullanımı `01_TECHNICAL_DEBT.mdc` içerisinde kayıt altına alınmalıdır.
 
-Nihai veri kaynağı Reonix olacaktır.
-
 ---
 
 # 11. Reonix Entegrasyonu
 
-Reonix ilerleyen aşamada bu projeye entegre edilecektir.
+StartKey franchise merkezidir. Reonix altyapıdır. Merkez ve franchise ofisleri yalnızca StartKey sitesi ile `/portal` üzerinden çalışır. Reonix ekranı, adı, adresi, e-postası ve oturumu tarayıcıya çıkmaz.
 
-Reonix'in nihai entegrasyon mimarisi henüz kesinleşmemiştir.
+Çağrı StartKey API sunucusundan yapılır. Franchise uçları portal anahtarı ile `/api/v1/integrations/portal/` yoluna gider. Ofis işi, oturumda duran token ile Reonix’in kullanıcı API’sine izin listeli vekille gider. Tarayıcı yolu serbestçe seçemez. `/admin` ve Reonix süper admin HQ yolları kapalıdır. Yetki Reonix’te kalır.
 
-Bu nedenle AI şu anda Reonix'in kesin olarak:
+Reonix’te duran operasyon orada kalır: talep, portföy, eşleşme, onay, Sahibinden, kapatma, hakediş ve ofis işi. StartKey bu işler için ikinci bir tablo açmaz.
 
-* Uygulamanın içine gömülü
-* API üzerinden bağlı
-* Ayrı bir servis
-* Başka bir integration layer üzerinden bağlı
+Broker Reonix `owner` rolüdür. Agent `agent` rolüdür. Ofis yöneticisi `office_manager` rolüdür; şubesi varsa yalnız kendi şubesi. `manager` aynı ofis yöneticisi ekranlarını kullanır. Portal, rolün göremeyeceği işlemi göstermez.
 
-olduğunu varsaymamalıdır.
+Süper admin paneli ve Reonix pazarlama sitesi bu portala kopyalanmaz.
 
-Nihai mimari gereksinimler netleştiğinde ayrıca belgelenecektir.
+Kurumsal CMS, genel iletişim formu, bülten, eğitim başvurusu ve danışman yorumu StartKey veritabanında kalır. İlan talebi iletişim formu değildir; kaynağı Reonix’tir.
 
-Reonix hakkındaki bu belirsizlik public website'in yeniden oluşturulmasını gereksiz şekilde engellememelidir.
+`/portal` görüntüsü sade ve parlaktır: gri zemin, bulanık beyaz panel, geniş köşe, koyu hap düğme, StartKey logosu. Public site bu dilden muaftır ve referans yerleşiminde kalır.
 
 ---
 
@@ -350,13 +341,16 @@ Referans website üzerinde aşağıdaki gibi marka veya servis sağlayıcı refe
 * CRM / MLS servis sağlayıcı referansları
 * Diğer üçüncü taraf markalar
 
-Proje kapsamında gerekli değişiklikler:
+Proje kapsamında kullanıcıya görünen karşılıklar:
 
 | Referans                                         | Proje Karşılığı |
 | ------------------------------------------------ | --------------- |
-| `ReOS CRM`                                       | `Reonix`       |
-| `ReOS`                                           | `Reonix`       |
+| `ReOS CRM`                                       | `Portal`        |
+| `ReOS`                                           | `Portal`        |
+| `Reonix`                                         | `Portal`        |
 | Belirlenen diğer üçüncü taraf marka referansları | `Sinap`         |
+
+`Reonix` yalnızca sunucu kodu ve yapılandırmada kalır.
 
 Bu değişiklikler bilinçli proje gereksinimleridir.
 
@@ -440,11 +434,7 @@ Laravel / PHP Backend
 Future Reonix Integration
 ```
 
-API sınırları ve servis sınırları Reonix entegrasyonu netleştiğinde değişebilir.
-
-Bu mimari mevcut proje yönünü ifade eder.
-
-Nihai Reonix entegrasyon spesifikasyonu olarak değerlendirilmemelidir.
+Ofis işi StartKey API üzerinden Reonix’e gider. Ayrıntı bölüm 11’dedir.
 
 ---
 
