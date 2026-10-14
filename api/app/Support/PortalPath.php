@@ -52,6 +52,7 @@ final class PortalPath
         'locations',
         'logout',
         'magic-links',
+        'matchmaking-weights',
         'matches',
         'me',
         'neighborhoods',

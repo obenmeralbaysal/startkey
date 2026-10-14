@@ -208,14 +208,8 @@ function PortfolioDetail({ id }: { id: string }) {
       <h2>Portföy</h2>
       <RecordView value={item.data} />
       <div className="glass-actions">
-        {canVerify(office) ? (
-          <>
-            <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/approve`)}>Onayla</button>
-            <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/reject`, { reason: "Eksik bilgi" })}>Geri çevir</button>
-          </>
-        ) : null}
+        {canVerify(office) ? <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/approve`)}>Onayla</button> : null}
         <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/generate-showcase-link`)}>Vitrin bağlantısı</button>
-        <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/close`, { result: "success" })}>Kapat</button>
         {canDeleteRecords(role) ? <button className="glass-btn-danger" type="button" onClick={() => officeCall(`portfolios/${id}`, officeId, { method: "DELETE" }).then(() => { window.location.href = "/portal/office/portfolios"; }).catch((error: Error) => notice(`Hata: ${error.message}`))}>Sil</button> : null}
       </div>
       <form className="glass-stack" onSubmit={(event) => {
@@ -234,6 +228,25 @@ function PortfolioDetail({ id }: { id: string }) {
         <input name="files[]" type="file" accept="image/*,video/mp4,application/pdf" required />
         <button className="glass-btn-lite" type="submit">Dosya yükle</button>
       </form>
+      {canVerify(office) ? (
+        <Form title="Geri çevir" onSubmit={async (form) => { await act(`portfolios/${id}/reject`, { rejection_reason: form.get("rejection_reason") }); }}>
+          <textarea name="rejection_reason" minLength={5} placeholder="Gerekçe" required />
+        </Form>
+      ) : null}
+      <Form title="Kapat" onSubmit={async (form) => {
+        const result = String(form.get("result") || "success");
+        await act(`portfolios/${id}/close`, {
+          result,
+          closing_price: form.get("closing_price") ? Number(form.get("closing_price")) : null,
+          note: form.get("note") || null,
+          cancellation_reason: result === "failure" ? form.get("cancellation_reason") : null,
+        });
+      }}>
+        <select name="result" defaultValue="success"><option value="success">Başarılı</option><option value="failure">Başarısız</option></select>
+        <input name="closing_price" type="number" min="0" step="0.01" placeholder="Kapanış fiyatı" />
+        <textarea name="note" placeholder="Not" />
+        <textarea name="cancellation_reason" minLength={20} placeholder="İptal gerekçesi, başarısız kapanışta en az 20 karakter" />
+      </Form>
     </section>
   );
 }
@@ -346,6 +359,41 @@ function Earnings() {
         </article>
       ))}
       {canManageRates(role) ? <a className="glass-link" href="/portal/office/settings/rates">Oranlar</a> : null}
+      {canApproveEarnings(role) ? (
+        <Form title="Hakediş kaydı" onSubmit={async (form) => {
+          await officeCall("earnings", officeId, {
+            method: "POST",
+            body: {
+              user_id: Number(form.get("user_id")),
+              type: form.get("type"),
+              category: form.get("category"),
+              gross_amount: Number(form.get("gross_amount")),
+              description: form.get("description") || null,
+              period: form.get("period") || null,
+            },
+          });
+          notice("Hakediş kaydedildi.");
+          list.reload();
+        }}>
+          <input name="user_id" type="number" placeholder="Kullanıcı no" required />
+          <select name="type" defaultValue="accrual"><option value="accrual">Tahakkuk</option><option value="payment">Ödeme</option><option value="advance">Avans</option><option value="adjustment">Düzeltme</option></select>
+          <select name="category" defaultValue="sale"><option value="sale">Satış</option><option value="demand">Talep</option><option value="bonus">Prim</option><option value="other">Diğer</option></select>
+          <input name="gross_amount" type="number" min="0.01" step="0.01" placeholder="Tutar" required />
+          <input name="period" placeholder="Dönem YYYY-AA" />
+          <input name="description" placeholder="Açıklama" />
+        </Form>
+      ) : null}
+      <Form title="Mutabakat" onSubmit={async (form) => {
+        await officeCall("earnings/reconciliations", officeId, {
+          method: "POST",
+          body: { user_id: Number(form.get("user_id")), period: form.get("period") },
+        });
+        notice("Mutabakat açıldı.");
+        list.reload();
+      }}>
+        <input name="user_id" type="number" placeholder="Kullanıcı no" required />
+        <input name="period" placeholder="Dönem YYYY-AA" required />
+      </Form>
     </section>
   );
 }
@@ -408,6 +456,185 @@ function Sahibinden() {
   );
 }
 
+function MatchmakingForm() {
+  const { officeId, notice } = useOffice();
+  const current = useData("office/matchmaking-weights");
+  return (
+    <section className="glass-card">
+      <h2>Eşleşme</h2>
+      <RecordView value={current.data} />
+      <Form title="Skor" onSubmit={async (form) => {
+        await officeCall("office/matchmaking-weights", officeId, {
+          method: "POST",
+          body: {
+            min_match_score: Number(form.get("min_match_score")),
+            price_weight: Number(form.get("price_weight")),
+            size_weight: Number(form.get("size_weight")),
+            weights: [],
+          },
+        });
+        notice("Eşleşme kaydedildi.");
+        current.reload();
+      }}>
+        <input name="min_match_score" type="number" min={0} max={100} placeholder="En düşük skor" required />
+        <input name="price_weight" type="number" min={0} max={100} placeholder="Fiyat ağırlığı" required />
+        <input name="size_weight" type="number" min={0} max={100} placeholder="Metrekare ağırlığı" required />
+      </Form>
+      <Form title="Özellik ağırlığı" onSubmit={async (form) => {
+        const weight = String(form.get("match_weight") ?? "");
+        await officeCall("office/matchmaking-weights", officeId, {
+          method: "POST",
+          body: {
+            weights: [{
+              attribute_definition_id: Number(form.get("attribute_definition_id")),
+              match_weight: weight === "" ? null : Number(weight),
+            }],
+          },
+        });
+        notice("Ağırlık kaydedildi.");
+        current.reload();
+      }}>
+        <input name="attribute_definition_id" type="number" placeholder="Özellik no" required />
+        <input name="match_weight" type="number" min={0} max={100} placeholder="Ağırlık, boşsa varsayılan" />
+      </Form>
+    </section>
+  );
+}
+
+function BadgeForm() {
+  const { officeId, notice } = useOffice();
+  const list = useData("badges");
+  return (
+    <section className="glass-card">
+      <h2>Rozetler</h2>
+      <RecordTable rows={rows(list.data)} />
+      <Form title="Rozet" onSubmit={async (form) => {
+        await officeCall("badges", officeId, {
+          method: "POST",
+          body: {
+            title: form.get("title"),
+            description: form.get("description") || null,
+            metric: form.get("metric"),
+            threshold: Number(form.get("threshold")),
+            period: form.get("period"),
+          },
+        });
+        notice("Rozet kaydedildi.");
+        list.reload();
+      }}>
+        <input name="title" placeholder="Başlık" required />
+        <input name="description" placeholder="Açıklama" />
+        <select name="metric" defaultValue="closings">
+          <option value="active_portfolios">Açık portföy</option>
+          <option value="total_portfolios">Tüm portföy</option>
+          <option value="contacts">Kişi</option>
+          <option value="showings">Gösterim</option>
+          <option value="closings">Kapanış</option>
+        </select>
+        <input name="threshold" type="number" min={1} placeholder="Eşik" required />
+        <select name="period" defaultValue="monthly"><option value="monthly">Aylık</option><option value="quarterly">Üç aylık</option><option value="yearly">Yıllık</option></select>
+      </Form>
+    </section>
+  );
+}
+
+function CommissionForm() {
+  const { officeId, notice } = useOffice();
+  const current = useData("commission-policy");
+  return (
+    <section className="glass-card">
+      <h2>Hizmet bedeli</h2>
+      <RecordView value={current.data} />
+      <Form title="Kural" onSubmit={async (form) => {
+        await officeCall("commission-policy", officeId, {
+          method: "PUT",
+          body: {
+            period_unit: form.get("period_unit"),
+            period_anchor: form.get("period_anchor"),
+            starts_on: form.get("starts_on"),
+            base_rate_percentage: Number(form.get("base_rate_percentage")),
+            listing_scope: form.get("listing_scope"),
+            requires_approval: form.get("requires_approval") === "1",
+            tiers: [],
+          },
+        });
+        notice("Hizmet bedeli kaydedildi.");
+        current.reload();
+      }}>
+        <select name="period_unit" defaultValue="monthly"><option value="monthly">Aylık</option><option value="yearly">Yıllık</option></select>
+        <select name="period_anchor" defaultValue="calendar"><option value="calendar">Takvim</option><option value="anniversary">Yıldönümü</option></select>
+        <input name="starts_on" type="date" required />
+        <input name="base_rate_percentage" type="number" min={0} max={100} step="0.01" placeholder="Oran" required />
+        <select name="listing_scope" defaultValue="all"><option value="all">Tümü</option><option value="sale">Satılık</option><option value="rent">Kiralık</option></select>
+        <select name="requires_approval" defaultValue="0"><option value="0">Onaysız</option><option value="1">Onaylı</option></select>
+      </Form>
+    </section>
+  );
+}
+
+function RateForm() {
+  const { officeId, notice } = useOffice();
+  const list = useData("earning-rates");
+  return (
+    <section className="glass-card">
+      <h2>Hakediş oranları</h2>
+      <RecordTable rows={rows(list.data)} />
+      <Form title="Oran" onSubmit={async (form) => {
+        await officeCall("earning-rates", officeId, {
+          method: "POST",
+          body: {
+            user_id: Number(form.get("user_id")),
+            rate_type: form.get("rate_type"),
+            rate_percentage: Number(form.get("rate_percentage")),
+            effective_from: form.get("effective_from"),
+            effective_to: form.get("effective_to") || null,
+          },
+        });
+        notice("Oran kaydedildi.");
+        list.reload();
+      }}>
+        <input name="user_id" type="number" placeholder="Kullanıcı no" required />
+        <select name="rate_type" defaultValue="sale"><option value="sale">Satış</option><option value="demand">Talep</option></select>
+        <input name="rate_percentage" type="number" min={0} max={100} step="0.01" placeholder="Oran" required />
+        <input name="effective_from" type="date" required />
+        <input name="effective_to" type="date" />
+      </Form>
+    </section>
+  );
+}
+
+function SubscriptionForm() {
+  const { officeId, notice } = useOffice();
+  const current = useData("office/subscription");
+  return (
+    <section className="glass-card">
+      <h2>Abonelik</h2>
+      <RecordView value={current.data} />
+      <Form title="Paket" onSubmit={async (form) => {
+        await officeCall("office/subscription/upgrade", officeId, {
+          method: "POST",
+          body: { package_id: Number(form.get("package_id")), billing_interval: form.get("billing_interval") },
+        });
+        notice("Abonelik isteği kaydedildi.");
+        current.reload();
+      }}>
+        <input name="package_id" type="number" placeholder="Paket no" required />
+        <select name="billing_interval" defaultValue="month"><option value="month">Aylık</option><option value="year">Yıllık</option></select>
+      </Form>
+    </section>
+  );
+}
+
+function BillingForm() {
+  const current = useData("hq/office/billing");
+  return (
+    <section className="glass-card">
+      <h2>Faturalar</h2>
+      <RecordView value={current.data} />
+    </section>
+  );
+}
+
 function SimpleList({ title, path }: { title: string; path: string }) {
   const list = useData(path);
   const data = rows(list.data);
@@ -427,14 +654,14 @@ function Settings({ page }: { page?: string }) {
   if (page === "duty" && canManageDuty(role)) return <DutyForm />;
   if (page === "team" && canManageTeam(role)) return <Team />;
   if (page === "office" && isManager(role)) return <OfficeForm />;
-  if (page === "matchmaking" && canManageMatchmaking(role, office)) return <SimpleList title="Eşleşme kuralları" path="office/matchmaking-weights" />;
-  if (page === "badges" && canManageBadges(role)) return <SimpleList title="Rozetler" path="badges" />;
-  if (page === "commission" && canManageCommission(role)) return <SimpleList title="Hizmet bedeli" path="commission-policy" />;
-  if (page === "rates" && canManageRates(role)) return <SimpleList title="Hakediş oranları" path="earning-rates" />;
-  if (page === "subscription" && isManager(role)) return <SimpleList title="Abonelik" path="office/subscription" />;
+  if (page === "matchmaking" && canManageMatchmaking(role, office)) return <MatchmakingForm />;
+  if (page === "badges" && canManageBadges(role)) return <BadgeForm />;
+  if (page === "commission" && canManageCommission(role)) return <CommissionForm />;
+  if (page === "rates" && canManageRates(role)) return <RateForm />;
+  if (page === "subscription" && isManager(role)) return <SubscriptionForm />;
   if (page === "whatsapp" && isManager(role)) return <WhatsappForm />;
   if (page === "email" && isManager(role)) return <EmailForm />;
-  if (page === "billing" && isManager(role)) return <SimpleList title="Faturalar" path="hq/office/billing" />;
+  if (page === "billing" && isManager(role)) return <BillingForm />;
   if (page === "sellers" && isManager(role)) return <Sellers />;
   const links = [
     ["profile", "Profil"],

@@ -1,5 +1,6 @@
 ## [2026-10-14]
 
+- **[Backend]**: Portal bağlantısı varken ofis, portföy ve danışman sayfaları Reonix katalogundan okunur. İlan formu Reonix’te kişi ve talep açar. Eşleşme, rozet, hizmet bedeli, hakediş, abonelik ve kapanış formları portaldan yazılır.
 - **[Bugfix]**: Ofis, portföy ve danışman listelerinde kayıt yokken sayfa 404 yerine boş liste uyarısı gösteriyor.
 
 - **[Architecture]**: StartKey portalı Reonix’i göstermez. Broker, agent ve ofis yöneticisinin ofis işi Reonix’te kalır ve portal üzerinden, sunucudaki izin listeli vekille yönetilir. CMS ve genel iletişim formu StartKey veritabanında kalır.

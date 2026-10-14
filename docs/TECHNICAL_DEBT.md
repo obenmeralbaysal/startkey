@@ -128,7 +128,7 @@ Başarı, doğrulama, hız sınırı ve genel hata metinleri `web/src/content/pu
 
 **Geçici Olmasının Nedeni:**
 
-Referans sitenin gerçek post-submit metinleri public olarak kaydedilemedi. İletişim, bülten, eğitim başvurusu ve danışman yorumu StartKey veritabanında kalır. Franchise ve danışman başvurusu Reonix’e gider. İlan talebi Reonix’e aittir ve hâlâ `listing_inquiries` tablosuna yazılır.
+Referans sitenin gerçek post-submit metinleri public olarak kaydedilemedi. İletişim, bülten, eğitim başvurusu ve danışman yorumu StartKey veritabanında kalır. Franchise ve danışman başvurusu Reonix’e gider. Portal bağlantısı varken ilan talebi Reonix’te kişi ve talep olur; yerel `listing_inquiries` satırı yazılmaz. Bağlantı yoksa yerel satır kalır.
 
 **Gelecekteki Implementasyon:**
 
@@ -191,7 +191,7 @@ Kapsam:
 * İlan detay iletişim formu (`TD-007`)
 * Danışman yorum formu (`TD-013`)
 
-Gönderimler şu an yerel tablolara da yazılır (`newsletter_subscribers`, `contact_messages`, `training_applications`, `franchise_applications`, `listing_inquiries`, `consultant_comments`). Franchise ve danışman başvurusu ayrıca Reonix’e gider. İletişim, bülten, eğitim başvurusu ve danışman yorumu StartKey veritabanında kalır. İlan talebi Reonix’e aittir ve hâlâ yerel tablodadır.
+Gönderimler şu an yerel tablolara da yazılır (`newsletter_subscribers`, `contact_messages`, `training_applications`, `franchise_applications`, `consultant_comments`). Franchise ve danışman başvurusu ayrıca Reonix’e gider. İletişim, bülten, eğitim başvurusu ve danışman yorumu StartKey veritabanında kalır. Portal bağlantısı varken ilan talebi yalnızca Reonix’e gider.
 
 **Geçici Olmasının Nedeni:**
 
@@ -209,7 +209,7 @@ Bu kayıt özellikle sonradan incelenecek: her form için referanstaki doldurma-
 
 **Mevcut Durum:**
 
-Liste ve detay şablonları `cms_listings` / `cms_listing_translations` satırlarını basar. Veri `api/database/data/portfolio-seed.json` içindeki referans anlık görüntüsüdür (çekim: 61 sayfa / 721 ilan, tr/en/de). Dosya Git’te değildir. Yoksa seeder API’yi düşürmez, ilan seed’ini atlar. Filtre ve sıralama bu satırlar üzerinde çalışır. Bazı CDN görselleri canlıda 404/500 verdiği için yerelde yoktur. 456346 canlı listede duruyor ancak detay URL’si ana sayfaya düşer; satır liste kartından tamamlandı.
+Portal bağlantısı varken `/tr/portfoy` ve ilan detayı Reonix’te listelenmiş portföyleri basar. Bağlantı yoksa şablon `cms_listings` satırlarını basar. Ana sayfa kartları hâlâ `portfolio-seed.json` anlık görüntüsündedir. Katalog fotoğrafı yoksa yerel boş işaret kullanılır.
 
 **Geçici Olmasının Nedeni:**
 
@@ -245,7 +245,7 @@ Yeni Akademi tasarımı ayrıca yapılacak. O gelene kadar `/akademi` bu projede
 
 **Mevcut Durum:**
 
-84 ofisin ve 1082 danışmanın tamamı `api/database/data/offices-seed.json` içinden üç dilde seed edilir. Dosya Git’te değildir. Yoksa seeder API’yi düşürmez, ofis seed’ini atlar. Ofis/danışman portföy karuselleri çekilmiş 721 ilan içindeki ID’leri gösterir. Danışman yorum formu canlı `/tr/Consultant/SendComment` yerine yerel `/api/v1/consultants/{id}/comments` yazar; moderasyon/CRM yok.
+Portal bağlantısı varken ofis ve danışman listesi ile detayı Reonix kayıtlarını basar. Bağlantı yoksa `offices-seed.json` anlık görüntüsü kullanılır. Danışman yorum formu yerel `consultant_comments` tablosuna yazar. Katalog fotoğrafı yoksa yerel boş işaret kullanılır.
 
 **Geçici Olmasının Nedeni:**
 
@@ -333,15 +333,15 @@ Bu ölçüler tema JS’i ve üçüncü taraf iframe ile veriliyor; tema JS’in
 
 **Mevcut Durum:**
 
-Broker, agent ve ofis yöneticisi `/portal` içinde özet, kişi, portföy, talep, eşleşme, takvim, hakediş onayı, rapor, işbirliği, kira radarı, Sahibinden okuma, ekip, ofis, nöbet, WhatsApp ve e-posta işini yapar. Kayıt Reonix’te kalır. Eşleşme ağırlığı, rozet, hizmet bedeli, hakediş oranı, abonelik ve fatura ekranları kaydı gösterir; her alt alanın ayrı yazma formu yoktur.
+Broker, agent ve ofis yöneticisi `/portal` içinde ofis işini ve ayar yazma formlarını Reonix’e kaydeder. Eşleşme, rozet, hizmet bedeli, hakediş oranı, abonelik ve fatura görüntüleme bu formlardadır. Parçalı büyük video ve sesli taslak portalda yoktur.
 
 **Geçici Olmasının Nedeni:**
 
-Parçalı büyük video, sesli taslak ve bu ayar ekranlarının tam yazma formları ilk tura sığmadı. Bu işler StartKey tablosuna yazılmaz.
+Parçalı büyük video ve sesli taslak ilk tura sığmadı. Bu işler StartKey tablosuna yazılmaz.
 
 **Gelecekteki Implementasyon:**
 
-Aynı izin listeli vekil üzerinden eksik yazma formları, parçalı video ve sesli taslak da portal kabuğuna bağlanacak.
+Aynı izin listeli vekil üzerinden parçalı video ve sesli taslak da portal kabuğuna bağlanacak.
 
 **Durum:** Açık
 

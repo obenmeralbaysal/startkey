@@ -19,6 +19,7 @@ use App\Models\CmsPersonTranslation;
 use App\Models\CmsTraining;
 use App\Models\CmsTrainingTranslation;
 use App\Models\LookupItem;
+use App\Services\ReonixCatalogue;
 
 /**
  * Maps a public URL to the shared Kurumsal template payload. Superadmin-created
@@ -767,6 +768,10 @@ class CorporateResolver
 
     private function listingByPath(string $locale, string $path): ?array
     {
+        if (app(ReonixCatalogue::class)->configured()) {
+            return null;
+        }
+
         $translation = CmsListingTranslation::query()
             ->where('url_path', $path)
             ->with('listing')
@@ -786,6 +791,9 @@ class CorporateResolver
             if ($id === null) {
                 continue;
             }
+            if (app(ReonixCatalogue::class)->configured()) {
+                return app(ReonixCatalogue::class)->listingDetail($locale, $id);
+            }
             $listing = CmsListing::query()->published()->where('external_id', $id)->first();
             if ($listing === null) {
                 continue;
@@ -801,6 +809,11 @@ class CorporateResolver
     {
         if (! $this->pathMatches($path, config('site.corporate.listings.lists.'.$locale, []))) {
             return null;
+        }
+
+        $remote = app(ReonixCatalogue::class)->collection('portfolios');
+        if (is_array($remote)) {
+            return $this->remoteListingList($locale, $path, $pageIndex, $filters, $remote);
         }
 
         $list = CmsListPage::query()->where('type', 'listing')->where('locale', $locale)->first();
@@ -1166,6 +1179,12 @@ class CorporateResolver
 
     private function officeByPath(string $locale, string $path): ?array
     {
+        $prefix = preg_replace('#/\{id\}/\{slug\}$#', '', (string) config('site.corporate.offices.detail.'.$locale, ''));
+        $remoteId = $prefix ? $this->idAfterPrefix($path, $prefix) : null;
+        if ($remoteId !== null && app(ReonixCatalogue::class)->configured()) {
+            return app(ReonixCatalogue::class)->officeDetail($locale, $remoteId);
+        }
+
         $translation = CmsOfficeTranslation::query()
             ->where(function ($query) use ($path) {
                 $query->where('url_path', $path)->orWhere('short_path', $path);
@@ -1220,6 +1239,12 @@ class CorporateResolver
 
     private function consultantByPath(string $locale, string $path): ?array
     {
+        $prefix = preg_replace('#/\{id\}/\{slug\}$#', '', (string) config('site.corporate.consultants.detail.'.$locale, ''));
+        $remoteId = $prefix ? $this->idAfterPrefix($path, $prefix) : null;
+        if ($remoteId !== null && app(ReonixCatalogue::class)->configured()) {
+            return app(ReonixCatalogue::class)->consultantDetail($locale, $remoteId);
+        }
+
         $translation = CmsConsultantTranslation::query()
             ->where('url_path', $path)
             ->with('consultant')
@@ -1246,6 +1271,11 @@ class CorporateResolver
     {
         if (! $this->pathMatches($path, config('site.corporate.offices.lists.'.$locale, []))) {
             return null;
+        }
+
+        $remote = app(ReonixCatalogue::class)->collection('offices');
+        if (is_array($remote)) {
+            return $this->remoteOfficeList($locale, $path, $pageIndex, $filters, $remote);
         }
 
         $list = CmsListPage::query()->where('type', 'office')->where('locale', $locale)->first();
@@ -1285,6 +1315,98 @@ class CorporateResolver
             ['SearchText', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'],
         );
         $payload['emptyLabel'] = $this->officeEmptyLabel($locale);
+
+        return $payload;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rows
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function remoteOfficeList(string $locale, string $path, int $pageIndex, array $filters, array $rows): array
+    {
+        $search = mb_strtolower(trim((string) ($this->filterScalar($filters, 'SearchText') ?? '')));
+        $items = [];
+        foreach ($rows as $row) {
+            $name = mb_strtolower((string) ($row['name'] ?? ''));
+            if ($search !== '' && ! str_contains($name, $search)) {
+                continue;
+            }
+            $items[] = app(ReonixCatalogue::class)->officeCard($row, $locale);
+        }
+        $payload = $this->emptyOfficeList($locale, $path, $filters);
+
+        return $this->pageRemote($payload, $items, $pageIndex, 18, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rows
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function remoteListingList(string $locale, string $path, int $pageIndex, array $filters, array $rows): array
+    {
+        $search = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Keyword') ?? $this->filterScalar($filters, 'SearchText') ?? '')));
+        $items = [];
+        foreach ($rows as $row) {
+            $title = mb_strtolower((string) ($row['title'] ?? ''));
+            if ($search !== '' && ! str_contains($title, $search)) {
+                continue;
+            }
+            $items[] = app(ReonixCatalogue::class)->listingCard($row, $locale);
+        }
+        $payload = $this->emptyListingList($locale, $path, $filters);
+
+        return $this->pageRemote($payload, $items, $pageIndex, 12, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rows
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function remoteConsultantList(string $locale, string $path, int $pageIndex, array $filters, array $rows): array
+    {
+        $first = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Firstname') ?? '')));
+        $last = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Lastname') ?? '')));
+        $items = [];
+        foreach ($rows as $row) {
+            $name = mb_strtolower((string) ($row['name'] ?? ''));
+            if ($first !== '' && ! str_contains($name, $first)) {
+                continue;
+            }
+            if ($last !== '' && ! str_contains($name, $last)) {
+                continue;
+            }
+            $items[] = app(ReonixCatalogue::class)->consultantCard($row, $locale);
+        }
+        $payload = $this->emptyConsultantList($locale, $path, $filters);
+
+        return $this->pageRemote($payload, $items, $pageIndex, 18, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @param  list<array<string, mixed>>  $items
+     * @return array<string, mixed>
+     */
+    private function pageRemote(array $payload, array $items, int $pageIndex, int $perPage, string $basePath, string $searchQuery): array
+    {
+        $total = count($items);
+        $totalPages = max(1, (int) ceil($total / $perPage));
+        $pageIndex = min(max(1, $pageIndex), $totalPages);
+        $payload['items'] = array_values(array_slice($items, ($pageIndex - 1) * $perPage, $perPage));
+        $payload['hasResults'] = $total > 0;
+        $payload['foundLabel'] = (string) $total;
+        $payload['pagination'] = [
+            'pageIndex' => $pageIndex,
+            'perPage' => $perPage,
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'basePath' => $basePath,
+            'searchQuery' => $searchQuery,
+        ];
 
         return $payload;
     }
@@ -1533,6 +1655,11 @@ class CorporateResolver
     {
         if (! $this->pathMatches($path, config('site.corporate.consultants.lists.'.$locale, []))) {
             return null;
+        }
+
+        $remote = app(ReonixCatalogue::class)->collection('consultants');
+        if (is_array($remote)) {
+            return $this->remoteConsultantList($locale, $path, $pageIndex, $filters, $remote);
         }
 
         $list = CmsListPage::query()->where('type', 'consultant')->where('locale', $locale)->first();
