@@ -1,5 +1,6 @@
 ## [2026-10-14]
 
+- **[UI]**: Portal kapanışı alıcı, hizmet bedeli, evrak ve onay adımını Reonix’e gönderir.
 - **[UI]**: Portalda büyük dosya parça parça yüklenir. Sesli taslak, hizmet bedeli dilimi ve takvim rozeti kaydedilir.
 - **[UI]**: Public ofis, danışman ve portföy kartları, kayıtta fotoğraf varsa onu StartKey üzerinden gösterir.
 - **[UI]**: Portal portföyünde aktife alma, zorunlu özellikler, evrak ve EİDS alanları doldurulabiliyor.

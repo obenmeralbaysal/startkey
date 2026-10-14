@@ -676,21 +676,179 @@ function PortfolioDetail({ id }: { id: string }) {
           <textarea name="rejection_reason" minLength={5} placeholder="Gerekçe" required />
         </Form>
       ) : null}
-      <Form title="Kapat" onSubmit={async (form) => {
-        const result = String(form.get("result") || "success");
-        await act(`portfolios/${id}/close`, {
-          result,
-          closing_price: form.get("closing_price") ? Number(form.get("closing_price")) : null,
-          note: form.get("note") || null,
-          cancellation_reason: result === "failure" ? form.get("cancellation_reason") : null,
-        });
-      }}>
-        <select name="result" defaultValue="success"><option value="success">Başarılı</option><option value="failure">Başarısız</option></select>
-        <input name="closing_price" type="number" min="0" step="0.01" placeholder="Kapanış fiyatı" />
-        <textarea name="note" placeholder="Not" />
-        <textarea name="cancellation_reason" minLength={20} placeholder="İptal gerekçesi, başarısız kapanışta en az 20 karakter" />
-      </Form>
+      <ClosingForm id={id} portfolio={one(item.data)} onDone={() => item.reload()} />
     </section>
+  );
+}
+
+function ClosingForm({ id, portfolio, onDone }: { id: string; portfolio: OfficeRecord | null; onDone: () => void }) {
+  const { officeId, office, notice } = useOffice();
+  const status = String(portfolio?.status ?? "");
+  const rent = String(portfolio?.type ?? "") === "rent";
+  const stage = rent ? "close_rent" : "close_sale";
+  const contacts = useData(status === "closed" || !portfolio ? "" : "contacts?limit=100");
+  const demands = useData(status === "closed" || !portfolio ? "" : `portfolios/${id}/closable-demands`);
+  const requirements = useData(status === "closed" || !portfolio ? "" : `portfolios/${id}/compliance-requirements?stage=${stage}`);
+  const [values, setValues] = useState<Record<number, string>>({});
+  const [files, setFiles] = useState<Record<number, File | null>>({});
+  const [result, setResult] = useState("success");
+  const [coop, setCoop] = useState("none");
+  if (!portfolio || status === "closed") {
+    return null;
+  }
+  if (status === "pending_closing_approval") {
+    const canFinalize = Boolean(office?.can_verify_closings) || roleOf(office) === "owner";
+    return (
+      <section className="glass-card">
+        <h3>Kapanış onayı</h3>
+        <p className="glass-muted">Evraklar kontrol bekliyor.</p>
+        {canFinalize ? <button className="glass-btn" type="button" onClick={() => officeCall(`portfolios/${id}/finalize-closing`, officeId, { method: "POST", body: {} }).then((payload) => { notice(typeof payload.message === "string" ? payload.message : "Kapanış onaylandı."); onDone(); }).catch((error: Error) => notice(`Hata: ${error.message}`))}>Kapanışı onayla</button> : null}
+      </section>
+    );
+  }
+
+  const requirementData = one(requirements.data);
+  const rules = Array.isArray(requirementData?.rules) ? requirementData.rules.filter(isRecord) : [];
+
+  return (
+    <form className="glass-stack" onSubmit={(event) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const send = async () => {
+        if (result === "failure") {
+          await officeCall(`portfolios/${id}/close`, officeId, {
+            method: "POST",
+            body: {
+              result: "failure",
+              cancellation_reason: form.get("cancellation_reason"),
+              closed_at: form.get("closed_at") || null,
+              note: form.get("note") || null,
+            },
+          });
+          notice("Portföy kapatıldı.");
+          onDone();
+          return;
+        }
+        const buyerId = Number(form.get("buyer_id"));
+        const price = Number(form.get("closing_price"));
+        const commission = Number(form.get("closing_commission"));
+        const demandId = Number(form.get("demand_id") || 0);
+        const closing = {
+          buyer_id: buyerId,
+          closing_price: price,
+          closing_commission: commission,
+          invoice_issued: form.get("invoice_issued") === "1",
+          closed_at: form.get("closed_at"),
+          deposit_amount: rent ? Number(form.get("deposit_amount") || 0) : null,
+          demand_id: demandId || null,
+          demand_commission: demandId ? Number(form.get("demand_commission") || commission) : null,
+          coop_mode: coop,
+          external_agency_broker: coop === "external" ? form.get("external_agency_broker") : null,
+          external_agency_license: coop === "external" ? form.get("external_agency_license") : null,
+          external_coop_split_percent: coop === "external" ? Number(form.get("external_coop_split_percent") || 0) : null,
+        };
+        if (rules.length === 0) {
+          await officeCall(`portfolios/${id}/close`, officeId, {
+            method: "POST",
+            body: { result: "success", ...closing, note: form.get("note") || null },
+          });
+          notice("Portföy kapatıldı.");
+          onDone();
+          return;
+        }
+        const items: Record<string, { value?: string }> = {};
+        const documents = new FormData();
+        documents.append("stage", stage);
+        for (const [key, value] of Object.entries(closing)) {
+          if (value === null || value === undefined) {
+            continue;
+          }
+          documents.append(key, typeof value === "boolean" ? (value ? "1" : "0") : String(value));
+        }
+        let filesAttached = false;
+        for (const row of rules) {
+          const rule = isRecord(row.rule) ? row.rule : null;
+          if (!rule || rule.is_required !== true) {
+            continue;
+          }
+          const ruleId = Number(rule.id);
+          const textValue = values[ruleId] ?? "";
+          const file = files[ruleId];
+          if (textValue !== "") {
+            items[String(ruleId)] = { value: textValue };
+            documents.append(`items[${ruleId}][value]`, textValue);
+          }
+          if (file) {
+            documents.append(`items[${ruleId}][file]`, file);
+            filesAttached = true;
+          }
+        }
+        const payload = filesAttached
+          ? await officeCall(`portfolios/${id}/compliance-submit`, officeId, { method: "POST", form: documents })
+          : await officeCall(`portfolios/${id}/compliance-submit`, officeId, { method: "POST", body: { stage, items, ...closing } });
+        notice(typeof payload.message === "string" ? payload.message : "Kapanış gönderildi.");
+        onDone();
+      };
+      send().catch((error: Error) => notice(`Hata: ${error.message}`));
+    }}>
+      <h3>Kapanış</h3>
+      <select value={result} onChange={(event) => setResult(event.target.value)}>
+        <option value="success">{rent ? "Kiralandı" : "Satıldı"}</option>
+        <option value="failure">Başarısız</option>
+      </select>
+      {result === "failure" ? (
+        <textarea name="cancellation_reason" minLength={20} placeholder="İptal gerekçesi, en az 20 karakter" required />
+      ) : (
+        <>
+          <select name="buyer_id" required defaultValue=""><option value="">Alıcı</option>{rows(contacts.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["first_name"])}</option>)}</select>
+          <input name="closing_price" type="number" min="0" step="0.01" placeholder="Kapanış fiyatı" required />
+          <input name="closing_commission" type="number" min="0" step="0.01" placeholder="Hizmet bedeli" required />
+          <select name="invoice_issued" defaultValue="0"><option value="0">Fatura yok</option><option value="1">Fatura var</option></select>
+          {rent ? <input name="deposit_amount" type="number" min="0" step="0.01" placeholder="Depozito" required /> : null}
+          <select name="demand_id" defaultValue=""><option value="">Talep</option>{rows(demands.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["title", "name"])}</option>)}</select>
+          <input name="demand_commission" type="number" min="0" step="0.01" placeholder="Talep hizmet bedeli" />
+          <select value={coop} onChange={(event) => setCoop(event.target.value)}>
+            <option value="none">İşbirliği yok</option>
+            <option value="external">Dış ofis</option>
+          </select>
+          {coop === "external" ? (
+            <>
+              <input name="external_agency_broker" placeholder="Dış ofis yetkilisi" required />
+              <input name="external_agency_license" placeholder="Yetki belge no" required />
+              <input name="external_coop_split_percent" type="number" min="0" max="100" step="0.01" placeholder="Paylaşım oranı" required />
+            </>
+          ) : null}
+          {rules.map((row) => {
+            const rule = isRecord(row.rule) ? row.rule : null;
+            if (!rule || rule.is_required !== true) {
+              return null;
+            }
+            const ruleId = Number(rule.id);
+            const inputType = String(rule.input_type ?? "text");
+            if (inputType === "file") {
+              return (
+                <label key={ruleId}>
+                  {String(rule.label ?? "Evrak")}
+                  <input type="file" accept="image/*,application/pdf" onChange={(event) => setFiles((current) => ({ ...current, [ruleId]: event.target.files?.[0] ?? null }))} />
+                </label>
+              );
+            }
+            return (
+              <input
+                key={ruleId}
+                type={inputType === "date" ? "date" : inputType === "number" ? "number" : "text"}
+                placeholder={String(rule.label ?? "Evrak")}
+                value={values[ruleId] ?? ""}
+                onChange={(event) => setValues((current) => ({ ...current, [ruleId]: event.target.value }))}
+              />
+            );
+          })}
+        </>
+      )}
+      <input name="closed_at" type="date" required />
+      <textarea name="note" placeholder="Not" />
+      <button className="glass-btn" type="submit">Kapanışı gönder</button>
+    </form>
   );
 }
 
