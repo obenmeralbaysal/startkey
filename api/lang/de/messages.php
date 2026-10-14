@@ -4,6 +4,9 @@ return [
     'unsupported_locale' => 'Nicht unterstützte Sprache.',
     'unknown_lookup' => 'Unbekannter Lookup-Endpunkt.',
     'captcha_failed' => 'Die Captcha-Prüfung ist fehlgeschlagen.',
+    'offices' => [
+        'empty' => 'Es wurden noch keine Büros hinzugefügt.',
+    ],
     'portal' => [
         'unavailable' => 'Der Vorgang konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.',
         'forbidden' => 'Sie dürfen diesen Vorgang nicht ausführen.',

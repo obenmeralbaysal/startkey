@@ -4,6 +4,9 @@ return [
     'unsupported_locale' => 'Desteklenmeyen dil.',
     'unknown_lookup' => 'Bilinmeyen lookup uç noktası.',
     'captcha_failed' => 'Doğrulama başarısız oldu.',
+    'offices' => [
+        'empty' => 'Henüz eklenmiş ofis yok.',
+    ],
     'portal' => [
         'unavailable' => 'İşlem şu anda tamamlanamadı. Lütfen yeniden deneyin.',
         'forbidden' => 'Bu işlem için yetkiniz yok.',

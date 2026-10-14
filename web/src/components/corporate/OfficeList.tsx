@@ -35,7 +35,9 @@ export function OfficeList({ data }: { data: Extract<CorporatePayload, { kind: "
                 searchQuery={data.pagination.searchQuery}
               />
             </>
-          ) : null}
+          ) : (
+            <p className="text-center">{data.emptyLabel}</p>
+          )}
         </div>
       </section>
     </>

@@ -315,6 +315,7 @@ export type CorporatePayload =
       meta: CorporateMeta;
       filter: DirectoryFilterData;
       foundLabel: string;
+      emptyLabel?: string;
       items: DirectoryCardData[];
       hasResults: boolean;
       pagination: DirectoryPagination;

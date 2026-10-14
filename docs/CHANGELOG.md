@@ -1,5 +1,7 @@
 ## [2026-10-14]
 
+- **[Bugfix]**: Ofis listesinde kayıt yokken sayfa 404 yerine boş liste uyarısı gösteriyor.
+
 - **[Architecture]**: StartKey portalı Reonix’i göstermez. Broker, agent ve ofis yöneticisinin ofis işi Reonix’te kalır ve portal üzerinden, sunucudaki izin listeli vekille yönetilir. CMS ve genel iletişim formu StartKey veritabanında kalır.
 - **[UI]**: `/portal` giriş, masa ve ofis ekranları sade cam görünüme alındı. Public site referans yerleşiminde kaldı.
 

@@ -4,6 +4,9 @@ return [
     'unsupported_locale' => 'Unsupported locale.',
     'unknown_lookup' => 'Unknown lookup endpoint.',
     'captcha_failed' => 'Captcha verification failed.',
+    'offices' => [
+        'empty' => 'No offices have been added yet.',
+    ],
     'portal' => [
         'unavailable' => 'The request could not be completed. Please try again.',
         'forbidden' => 'You are not allowed to do this.',

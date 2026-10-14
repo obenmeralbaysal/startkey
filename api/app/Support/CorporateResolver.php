@@ -1249,7 +1249,7 @@ class CorporateResolver
 
         $list = CmsListPage::query()->where('type', 'office')->where('locale', $locale)->first();
         if ($list === null) {
-            return null;
+            return $this->emptyOfficeList($locale, $path, $filters);
         }
 
         $perPage = max(1, $list->per_page);
@@ -1271,7 +1271,7 @@ class CorporateResolver
 
         $query->orderBy('list_rank')->orderBy('id');
 
-        return $this->pagedCardList(
+        $payload = $this->pagedCardList(
             $query,
             $list,
             $locale,
@@ -1283,6 +1283,90 @@ class CorporateResolver
             fn (CmsOffice $office) => $this->officeCardPayload($office, $locale, $office->translations->first()),
             ['SearchText', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'],
         );
+        $payload['emptyLabel'] = $this->officeEmptyLabel($locale);
+
+        return $payload;
+    }
+
+    /**
+     * A known office list URL stays a page when the catalogue has not been loaded.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function emptyOfficeList(string $locale, string $path, array $filters): array
+    {
+        $lists = config('site.corporate.offices.lists', []);
+        $canonical = is_array($lists[$locale] ?? null) ? ($lists[$locale][0] ?? $path) : $path;
+        $heading = match ($locale) {
+            'en' => 'Our Offices',
+            'de' => 'Unsere Büros',
+            default => 'Ofislerimiz',
+        };
+        $keys = ['SearchText', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'];
+        $values = [];
+        foreach ($keys as $key) {
+            $values[$key] = $this->filterScalar($filters, $key) ?? '';
+        }
+        $alternates = [];
+        foreach ($lists as $code => $paths) {
+            if (is_array($paths) && isset($paths[0]) && is_string($paths[0])) {
+                $alternates[$code] = $paths[0];
+            }
+        }
+
+        return [
+            'kind' => 'office-list',
+            'heading' => $heading,
+            'breadcrumb' => ['heading' => $heading, 'trail' => []],
+            'meta' => ['title' => $heading],
+            'filter' => [
+                'action' => $canonical,
+                'searchHeading' => match ($locale) {
+                    'en' => 'Search office:',
+                    'de' => 'Büro suchen:',
+                    default => 'Ofis Ara :',
+                },
+                'searchPlaceholder' => match ($locale) {
+                    'en' => 'Office name',
+                    'de' => 'Büroname',
+                    default => 'Ofis Adı',
+                },
+                'submitLabel' => match ($locale) {
+                    'en' => 'Search',
+                    'de' => 'Suchen',
+                    default => 'Ara',
+                },
+                'placeholders' => [],
+                'bindUrls' => [
+                    'countries' => '/'.$locale.'/Lookup/EnteredOfficeCountries',
+                    'cities' => '/'.$locale.'/Lookup/EnteredOfficeCitiesByCountryId',
+                    'counties' => '/'.$locale.'/Lookup/Counties',
+                ],
+                'values' => $values,
+                'selectedLabels' => $this->selectedFilterLabels($values, $locale),
+            ],
+            'foundLabel' => '',
+            'emptyLabel' => $this->officeEmptyLabel($locale),
+            'items' => [],
+            'hasResults' => false,
+            'pagination' => [
+                'pageIndex' => 1,
+                'perPage' => 18,
+                'total' => 0,
+                'totalPages' => 1,
+                'basePath' => $canonical,
+                'searchQuery' => $this->simpleQueryString($values),
+            ],
+            'alternates' => $alternates,
+        ];
+    }
+
+    private function officeEmptyLabel(string $locale): string
+    {
+        $label = __('messages.offices.empty', [], $locale);
+
+        return $label === 'messages.offices.empty' ? 'Henüz eklenmiş ofis yok.' : $label;
     }
 
     private function consultantList(string $locale, string $path, int $pageIndex, array $filters): ?array
