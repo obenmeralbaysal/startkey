@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\CatalogueMediaController;
 use App\Http\Controllers\Api\V1\ConsultantApplicationController;
 use App\Http\Controllers\Api\V1\ConsultantCommentController;
 use App\Http\Controllers\Api\V1\ContactMessageController;
@@ -21,6 +22,11 @@ Route::prefix('v1')->group(function () {
     Route::get('homepage', HomepageController::class);
 
     Route::get('corporate', [CorporateController::class, 'show']);
+    Route::get('catalogue/media/{kind}/{id}/{index?}', CatalogueMediaController::class)
+        ->whereNumber('id')
+        ->where('kind', 'offices|consultants|portfolios')
+        ->where('index', '[0-9]+')
+        ->middleware('throttle:120,1');
     Route::get('corporate/alternate', [CorporateController::class, 'alternate']);
 
     Route::get('lookups/{endpoint}', LookupController::class);

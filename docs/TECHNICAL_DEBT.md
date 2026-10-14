@@ -209,7 +209,7 @@ Bu kayıt özellikle sonradan incelenecek: her form için referanstaki doldurma-
 
 **Mevcut Durum:**
 
-Portal bağlantısı varken `/tr/portfoy` ve ilan detayı Reonix’te listelenmiş portföyleri basar. Bağlantı yoksa şablon `cms_listings` satırlarını basar. Ana sayfa kartları hâlâ `portfolio-seed.json` anlık görüntüsündedir. Katalog fotoğrafı yoksa yerel boş işaret kullanılır.
+Portal bağlantısı varken `/tr/portfoy` ve ilan detayı Reonix’te listelenmiş portföyleri basar. Bağlantı yoksa şablon `cms_listings` satırlarını basar. Ana sayfa kartları hâlâ `portfolio-seed.json` anlık görüntüsündedir. Fotoğrafı olan kayıt StartKey üzerinden gösterilir. Fotoğrafı olmayan kayıtta yerel boş işaret kalır.
 
 **Geçici Olmasının Nedeni:**
 
@@ -245,7 +245,7 @@ Yeni Akademi tasarımı ayrıca yapılacak. O gelene kadar `/akademi` bu projede
 
 **Mevcut Durum:**
 
-Portal bağlantısı varken ofis ve danışman listesi ile detayı Reonix kayıtlarını basar. Bağlantı yoksa `offices-seed.json` anlık görüntüsü kullanılır. Danışman yorum formu yerel `consultant_comments` tablosuna yazar. Katalog fotoğrafı yoksa yerel boş işaret kullanılır.
+Portal bağlantısı varken ofis ve danışman listesi ile detayı Reonix kayıtlarını basar. Bağlantı yoksa `offices-seed.json` anlık görüntüsü kullanılır. Danışman yorum formu yerel `consultant_comments` tablosuna yazar. Fotoğrafı olan kayıt StartKey üzerinden gösterilir. Fotoğrafı olmayan kayıtta yerel boş işaret kalır.
 
 **Geçici Olmasının Nedeni:**
 

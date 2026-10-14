@@ -177,7 +177,7 @@ class ReonixCatalogue
             'urlPath' => $card['urlPath'],
             'title' => $card['title'],
             'price' => $card['price'],
-            'gallery' => [],
+            'gallery' => $this->gallery($row),
             'locationLinks' => $card['location'] !== '' ? [['href' => null, 'label' => $card['location']]] : [],
             'specs' => [],
             'descriptionHeading' => '',
@@ -195,9 +195,9 @@ class ReonixCatalogue
             'agent' => [
                 'name' => (string) ($agent['name'] ?? ''),
                 'href' => $agentId > 0 ? $this->detailPath('consultants', $locale, $agentId, (string) ($agent['name'] ?? '')) : '',
-                'image' => '/img/catalogue-mark.svg',
-                'imageWebp' => '',
-                'officeName' => (string) ($office['name'] ?? ''),
+            'image' => $this->catalogueImage('consultants', $agent),
+            'imageWebp' => '',
+            'officeName' => (string) ($office['name'] ?? ''),
                 'officeHref' => $officeId > 0 ? $this->detailPath('offices', $locale, $officeId, (string) ($office['name'] ?? '')) : '',
                 'phones' => isset($agent['phone']) && $agent['phone'] !== '' ? [[
                     'href' => 'tel:'.preg_replace('/\D+/', '', (string) $agent['phone']),
@@ -236,7 +236,7 @@ class ReonixCatalogue
             'externalId' => $id,
             'urlPath' => $this->detailPath('offices', $locale, $id, $name),
             'name' => $name,
-            'image' => '/img/catalogue-mark.svg',
+            'image' => $this->catalogueImage('offices', $row),
             'imageWebp' => '',
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',
             'phoneLabel' => $phone,
@@ -258,7 +258,7 @@ class ReonixCatalogue
             'urlPath' => $this->detailPath('consultants', $locale, $id, $name),
             'name' => $name,
             'role' => (string) ($row['role'] ?? ''),
-            'image' => '/img/catalogue-mark.svg',
+            'image' => $this->catalogueImage('consultants', $row),
             'imageWebp' => '',
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',
             'phoneLabel' => $phone,
@@ -280,7 +280,7 @@ class ReonixCatalogue
         return [
             'externalId' => $id,
             'urlPath' => $prefix.'/'.$id.'/'.$slug,
-            'image' => '/img/catalogue-mark.svg',
+            'image' => $this->catalogueImage('portfolios', $row),
             'imageWebp' => '',
             'processType' => $this->processLabel((string) ($row['type'] ?? ''), $locale),
             'adSubType' => '',
@@ -372,6 +372,43 @@ class ReonixCatalogue
         }
 
         return number_format((float) $price, 0, ',', '.').($currency !== '' ? ' '.$currency : '');
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function catalogueImage(string $kind, array $row): string
+    {
+        $id = (int) ($row['id'] ?? 0);
+        $count = array_key_exists('image_count', $row)
+            ? (int) $row['image_count']
+            : (! empty($row['has_image']) ? 1 : 0);
+        if ($id < 1 || $count < 1) {
+            return '/img/catalogue-mark.svg';
+        }
+
+        return '/api/v1/catalogue/media/'.$kind.'/'.$id;
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return list<array{original: string, image: string, imageWebp: string, thumb: string, caption: string}>
+     */
+    private function gallery(array $row): array
+    {
+        $id = (int) ($row['id'] ?? 0);
+        $count = min(12, max(0, (int) ($row['image_count'] ?? 0)));
+        $slides = [];
+        for ($index = 0; $index < $count; $index++) {
+            $url = '/api/v1/catalogue/media/portfolios/'.$id.'/'.$index;
+            $slides[] = [
+                'original' => $url,
+                'image' => $url,
+                'imageWebp' => '',
+                'thumb' => $url,
+                'caption' => '',
+            ];
+        }
+
+        return $slides;
     }
 
     /** @return array<string, string> */

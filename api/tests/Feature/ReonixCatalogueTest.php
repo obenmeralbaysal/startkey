@@ -54,7 +54,8 @@ class ReonixCatalogueTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.hasResults', true)
             ->assertJsonPath('data.items.0.name', 'Kadikoy')
-            ->assertJsonPath('data.items.0.urlPath', '/tr/ofisler/7/kadikoy');
+            ->assertJsonPath('data.items.0.urlPath', '/tr/ofisler/7/kadikoy')
+            ->assertJsonPath('data.items.0.image', '/img/catalogue-mark.svg');
 
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy')
             ->assertOk()
@@ -91,5 +92,16 @@ class ReonixCatalogueTest extends TestCase
         ])->assertNotFound();
 
         $this->assertDatabaseCount('listing_inquiries', 0);
+    }
+
+    public function test_a_catalogue_photo_is_served_from_this_site(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/media/offices/7/0' => Http::response('png', 200, ['Content-Type' => 'image/png']),
+        ]);
+
+        $this->get('/api/v1/catalogue/media/offices/7')
+            ->assertOk()
+            ->assertHeader('content-type', 'image/png');
     }
 }
