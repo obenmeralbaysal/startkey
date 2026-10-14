@@ -17,7 +17,7 @@ import {
   isManager,
   roleOf,
 } from "@/components/portal/office/access";
-import { officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
+import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
 import { RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 
 export function OfficeWork({ parts }: { parts: string[] }) {
@@ -42,6 +42,9 @@ function useData(path: string) {
   const [data, setData] = useState<unknown>(null);
   const [version, setVersion] = useState(0);
   useEffect(() => {
+    if (path === "") {
+      return;
+    }
     let cancelled = false;
     officeCall(path, officeId)
       .then((payload) => {
@@ -191,6 +194,287 @@ function PortfolioForm() {
   );
 }
 
+function requiredAtActive(definition: OfficeRecord, type: string): boolean {
+  const sale = Array.isArray(definition.required_stages_sale) ? definition.required_stages_sale.map(String) : [];
+  const rent = Array.isArray(definition.required_stages_rent) ? definition.required_stages_rent.map(String) : [];
+  if (sale.length > 0 || rent.length > 0) {
+    return (type === "rent" ? rent : sale).includes("active");
+  }
+  const stages = Array.isArray(definition.required_stages) ? definition.required_stages.map(String) : [];
+  if (stages.length > 0) {
+    return stages.includes("active");
+  }
+  return definition.is_required === true;
+}
+
+function choiceList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map(String).filter((item) => item !== "");
+  }
+  if (typeof value !== "string" || value === "") {
+    return [];
+  }
+  if (value.startsWith("[")) {
+    try {
+      const parsed = JSON.parse(value) as unknown;
+      if (Array.isArray(parsed)) {
+        return parsed.map(String);
+      }
+    } catch {
+      return [];
+    }
+  }
+  return value.split(";").map((item) => item.trim()).filter((item) => item !== "");
+}
+
+function storedAttribute(portfolio: OfficeRecord, definitionId: number): string {
+  if (!Array.isArray(portfolio.attributes)) {
+    return "";
+  }
+  for (const attribute of portfolio.attributes) {
+    if (isRecord(attribute) && Number(attribute.definition_id) === definitionId && attribute.value != null) {
+      return String(attribute.value);
+    }
+  }
+  return "";
+}
+
+function isRecord(value: unknown): value is OfficeRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function PortfolioCompletion({ id, portfolio, onSaved }: { id: string; portfolio: OfficeRecord | null; onSaved: () => void }) {
+  const { officeId, notice } = useOffice();
+  const status = String(portfolio?.status ?? "");
+  const type = String(portfolio?.type ?? "sale");
+  const categoryId = Number(portfolio?.category_id ?? 0);
+  const definitions = useData(categoryId > 0 ? `categories/${categoryId}/attributes?type=${type}` : "");
+  const requirements = useData(`portfolios/${id}/compliance-requirements?stage=activate`);
+  const [values, setValues] = useState<Record<number, string>>({});
+  const [files, setFiles] = useState<Record<number, File | null>>({});
+
+  const definitionRows = rows(definitions.data).filter((definition) => {
+    const scope = String(definition.scope ?? "property");
+    const owner = definition.office_id;
+    const listingType = definition.listing_type;
+    if (scope === "complex") {
+      return false;
+    }
+    if (owner != null && owner !== "" && Number(owner) !== officeId) {
+      return false;
+    }
+    if (listingType != null && listingType !== "" && listingType !== type) {
+      return false;
+    }
+    if (!requiredAtActive(definition, type)) {
+      return false;
+    }
+    if (definition.parent_id) {
+      const parentValue = values[Number(definition.parent_id)] ?? "";
+      return parentValue !== "" && parentValue === String(definition.show_when_value ?? "");
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (!portfolio) {
+      return;
+    }
+    const requirementData = one(requirements.data);
+    const loadedRules = Array.isArray(requirementData?.rules) ? requirementData.rules.filter(isRecord) : [];
+    setValues((current) => {
+      const next = { ...current };
+      for (const definition of rows(definitions.data)) {
+        const definitionId = Number(definition.id);
+        if (!next[definitionId]) {
+          const stored = storedAttribute(portfolio, definitionId);
+          if (stored !== "") {
+            next[definitionId] = stored;
+          }
+        }
+      }
+      for (const row of loadedRules) {
+        const rule = isRecord(row.rule) ? row.rule : null;
+        const item = isRecord(row.item) ? row.item : null;
+        if (!rule || !item || typeof item.submitted_value !== "string" || item.submitted_value === "") {
+          continue;
+        }
+        const key = -Number(rule.id);
+        if (!next[key]) {
+          next[key] = item.submitted_value;
+        }
+      }
+      return next;
+    });
+  }, [portfolio, definitions.data, requirements.data]);
+
+  const requirementData = one(requirements.data);
+  const rules = Array.isArray(requirementData?.rules) ? requirementData.rules.filter(isRecord) : [];
+  const missing = isRecord(portfolio?.completeness) && Array.isArray(portfolio.completeness.missing_labels)
+    ? portfolio.completeness.missing_labels.filter((label): label is string => typeof label === "string")
+    : [];
+  const listed = portfolio?.is_listed === true || portfolio?.is_listed === 1;
+  if (!portfolio || status === "closed" || status === "pending_closing_approval" || (status === "active" && listed && missing.length === 0)) {
+    return null;
+  }
+
+  async function saveFields(form: FormData) {
+    const attributes = definitionRows.flatMap((definition) => {
+      const definitionId = Number(definition.id);
+      const value = values[definitionId] ?? "";
+      return value === "" ? [] : [{ definition_id: definitionId, value }];
+    });
+    if (attributes.length > 0) {
+      await officeCall("portfolio-attributes", officeId, {
+        method: "POST",
+        body: { portfolio_id: Number(id), attributes },
+      });
+    }
+    const eidsCode = String(form.get("eids_code") ?? "");
+    const eidsExpiry = String(form.get("eids_expires_at") ?? "");
+    if (eidsCode !== "" || eidsExpiry !== "") {
+      await officeCall(`portfolios/${id}`, officeId, {
+        method: "PUT",
+        body: {
+          ...(eidsCode !== "" ? { eids_code: eidsCode } : {}),
+          ...(eidsExpiry !== "" ? { eids_expires_at: eidsExpiry } : {}),
+        },
+      });
+    }
+  }
+
+  async function submitCompliance() {
+    const items: Record<string, { value?: string }> = {};
+    const documents = new FormData();
+    documents.append("stage", "activate");
+    let filesAttached = false;
+    for (const row of rules) {
+      const rule = isRecord(row.rule) ? row.rule : null;
+      if (!rule) {
+        continue;
+      }
+      const ruleId = Number(rule.id);
+      const value = values[-ruleId] ?? "";
+      const file = files[ruleId];
+      if (value === "" && !file) {
+        continue;
+      }
+      if (value !== "") {
+        items[String(ruleId)] = { value };
+        documents.append(`items[${ruleId}][value]`, value);
+      }
+      if (file) {
+        documents.append(`items[${ruleId}][file]`, file);
+        filesAttached = true;
+      }
+    }
+    if (Object.keys(items).length === 0 && !filesAttached) {
+      return false;
+    }
+    const payload = filesAttached
+      ? await officeCall(`portfolios/${id}/compliance-submit`, officeId, { method: "POST", form: documents })
+      : await officeCall(`portfolios/${id}/compliance-submit`, officeId, { method: "POST", body: { stage: "activate", items } });
+    notice(typeof payload.message === "string" ? payload.message : "Evraklar kaydedildi.");
+    return true;
+  }
+
+  return (
+    <form className="glass-stack" onSubmit={(event) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const publish = event.nativeEvent.submitter?.getAttribute("name") === "publish";
+      saveFields(form).then(async () => {
+        if (!publish) {
+          notice("Alanlar kaydedildi.");
+          onSaved();
+          return;
+        }
+        if (status === "active") {
+          await officeCall(`portfolios/${id}`, officeId, { method: "PUT", body: { is_listed: true } });
+          notice("İlan yayına alındı.");
+          onSaved();
+          return;
+        }
+        try {
+          const payload = await officeCall(`portfolios/${id}/status`, officeId, { method: "POST", body: { status: "active" } });
+          notice(typeof payload.message === "string" ? payload.message : "Portföy aktife alındı.");
+        } catch (error) {
+          const onlyDocuments = error instanceof OfficeError && error.kinds.length > 0 && error.kinds.every((kind) => kind.startsWith("dynamic_rule_"));
+          if (!onlyDocuments || !(await submitCompliance())) {
+            throw error;
+          }
+        }
+        onSaved();
+      }).catch((error: Error) => notice(`Hata: ${error.message}`));
+    }}>
+      <h3>Yayın için eksikler</h3>
+      {missing.length > 0 ? <p className="glass-muted">{missing.join(", ")}</p> : null}
+      {definitionRows.map((definition) => {
+        const definitionId = Number(definition.id);
+        const inputType = String(definition.input_type ?? definition.type ?? "text");
+        const choices = choiceList(definition.options);
+        const value = values[definitionId] ?? "";
+        if (inputType === "select" && choices.length > 0) {
+          return (
+            <select key={definitionId} value={value} onChange={(event) => setValues((current) => ({ ...current, [definitionId]: event.target.value }))}>
+              <option value="">{String(definition.label ?? "Alan")}</option>
+              {choices.map((choice) => <option key={choice} value={choice}>{choice}</option>)}
+            </select>
+          );
+        }
+        if (inputType === "boolean" || inputType === "checkbox") {
+          return (
+            <label key={definitionId}>
+              <input type="checkbox" checked={value === "1"} onChange={(event) => setValues((current) => ({ ...current, [definitionId]: event.target.checked ? "1" : "" }))} />
+              {String(definition.label ?? "Alan")}
+            </label>
+          );
+        }
+        return (
+          <input
+            key={definitionId}
+            type={inputType === "number" ? "number" : "text"}
+            placeholder={String(definition.label ?? "Alan")}
+            value={value}
+            onChange={(event) => setValues((current) => ({ ...current, [definitionId]: event.target.value }))}
+          />
+        );
+      })}
+      {rules.map((row) => {
+        const rule = isRecord(row.rule) ? row.rule : null;
+        if (!rule || rule.is_required !== true) {
+          return null;
+        }
+        const ruleId = Number(rule.id);
+        const inputType = String(rule.input_type ?? "text");
+        if (inputType === "file") {
+          return (
+            <label key={ruleId}>
+              {String(rule.label ?? "Evrak")}
+              <input type="file" accept="image/*,application/pdf" onChange={(event) => setFiles((current) => ({ ...current, [ruleId]: event.target.files?.[0] ?? null }))} />
+            </label>
+          );
+        }
+        return (
+          <input
+            key={ruleId}
+            type={inputType === "date" ? "date" : inputType === "number" ? "number" : "text"}
+            placeholder={String(rule.label ?? "Evrak")}
+            value={values[-ruleId] ?? ""}
+            onChange={(event) => setValues((current) => ({ ...current, [-ruleId]: event.target.value }))}
+          />
+        );
+      })}
+      <input name="eids_code" placeholder="EİDS yetki kodu" defaultValue={typeof portfolio.eids_code === "string" ? portfolio.eids_code : ""} />
+      <input name="eids_expires_at" type="date" defaultValue={typeof portfolio.eids_expires_at === "string" ? portfolio.eids_expires_at.slice(0, 10) : ""} />
+      <div className="glass-actions">
+        <button className="glass-btn-lite" type="submit">Kaydet</button>
+        <button className="glass-btn" name="publish" type="submit">{status === "active" ? "Sitede yayınla" : "Aktife al"}</button>
+      </div>
+    </form>
+  );
+}
+
 function PortfolioDetail({ id }: { id: string }) {
   const { officeId, office, notice } = useOffice();
   const item = useData(`portfolios/${id}`);
@@ -208,6 +492,7 @@ function PortfolioDetail({ id }: { id: string }) {
     <section className="glass-card">
       <h2>Portföy</h2>
       <RecordView value={item.data} />
+      <PortfolioCompletion id={id} portfolio={one(item.data)} onSaved={() => item.reload()} />
       <div className="glass-actions">
         {canVerify(office) ? <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/approve`)}>Onayla</button> : null}
         <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/generate-showcase-link`)}>Vitrin bağlantısı</button>

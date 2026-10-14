@@ -1,8 +1,13 @@
 export type OfficeRecord = Record<string, unknown>;
 
 export class OfficeError extends Error {
-  constructor(message: string) {
+  labels: string[];
+  kinds: string[];
+
+  constructor(message: string, labels: string[] = [], kinds: string[] = []) {
     super(message);
+    this.labels = labels;
+    this.kinds = kinds;
   }
 }
 
@@ -30,7 +35,7 @@ export async function officeCall(
   });
   const payload = (await response.json().catch(() => ({}))) as OfficeRecord;
   if (!response.ok) {
-    throw new OfficeError(errorText(payload));
+    throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload));
   }
   return payload;
 }
@@ -48,9 +53,22 @@ export async function publicCall(path: string, init?: { method?: string; body?: 
   return payload;
 }
 
+function missingItems(payload: OfficeRecord): OfficeRecord[] {
+  return Array.isArray(payload.missing) ? payload.missing.filter(isRecord) : [];
+}
+
+function missingLabels(payload: OfficeRecord): string[] {
+  return missingItems(payload).flatMap((item) => (typeof item.label === "string" ? [item.label] : []));
+}
+
+function missingKinds(payload: OfficeRecord): string[] {
+  return missingItems(payload).flatMap((item) => (typeof item.kind === "string" ? [item.kind] : []));
+}
+
 export function errorText(payload: OfficeRecord): string {
+  const labels = missingLabels(payload);
   if (typeof payload.message === "string" && payload.message) {
-    return payload.message;
+    return labels.length > 0 ? `${payload.message} ${labels.join(", ")}` : payload.message;
   }
   const errors = payload.errors;
   if (errors && typeof errors === "object") {

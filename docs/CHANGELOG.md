@@ -1,5 +1,6 @@
 ## [2026-10-14]
 
+- **[UI]**: Portal portföyünde aktife alma, zorunlu özellikler, evrak ve EİDS alanları doldurulabiliyor.
 - **[Backend]**: Portal bağlantısı varken ofis, portföy ve danışman sayfaları Reonix katalogundan okunur. İlan formu Reonix’te kişi ve talep açar. Eşleşme, rozet, hizmet bedeli, hakediş, abonelik ve kapanış formları portaldan yazılır.
 - **[Bugfix]**: Ofis, portföy ve danışman listelerinde kayıt yokken sayfa 404 yerine boş liste uyarısı gösteriyor.
 
