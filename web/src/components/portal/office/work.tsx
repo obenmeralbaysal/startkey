@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 
 import {
@@ -82,7 +83,7 @@ function ContactList() {
     <section className="glass-card">
       <div className="glass-top">
         <h2>Kişiler</h2>
-        <a className="glass-btn-lite" href="/portal/office/contacts/new">Yeni kişi</a>
+        <Link className="glass-btn-lite" href="/portal/office/contacts/new">Yeni kişi</Link>
       </div>
       <RecordTable rows={rows(list.data)} href={(row) => `/portal/office/contacts/${row.id}`} />
     </section>
@@ -140,7 +141,7 @@ function PortfolioList() {
     <section className="glass-card">
       <div className="glass-top">
         <h2>Portföy</h2>
-        <a className="glass-btn-lite" href="/portal/office/portfolios/new">Yeni portföy</a>
+        <Link className="glass-btn-lite" href="/portal/office/portfolios/new">Yeni portföy</Link>
       </div>
       <RecordTable rows={rows(list.data)} href={(row) => `/portal/office/portfolios/${row.id}`} />
     </section>
@@ -218,7 +219,7 @@ function PortfolioDetail({ id }: { id: string }) {
         act(`portfolios/${id}/import/sahibinden/apply`, { url: form.get("url") });
       }}>
         <input name="url" placeholder="Sahibinden ilan adresi" required />
-        <button className="glass-btn-lite" type="submit">Sahibinden'den doldur</button>
+        <button className="glass-btn-lite" type="submit">Sahibinden üzerinden doldur</button>
       </form>
       <form onSubmit={(event) => {
         event.preventDefault();
@@ -257,7 +258,7 @@ function DemandList() {
     <section className="glass-card">
       <div className="glass-top">
         <h2>Talepler</h2>
-        <a className="glass-btn-lite" href="/portal/office/demands/new">Yeni talep</a>
+        <Link className="glass-btn-lite" href="/portal/office/demands/new">Yeni talep</Link>
       </div>
       <RecordTable rows={rows(list.data)} href={(row) => `/portal/office/demands/${row.id}`} />
     </section>
@@ -358,7 +359,7 @@ function Earnings() {
           ) : null}
         </article>
       ))}
-      {canManageRates(role) ? <a className="glass-link" href="/portal/office/settings/rates">Oranlar</a> : null}
+      {canManageRates(role) ? <Link className="glass-link" href="/portal/office/settings/rates">Oranlar</Link> : null}
       {canApproveEarnings(role) ? (
         <Form title="Hakediş kaydı" onSubmit={async (form) => {
           await officeCall("earnings", officeId, {
@@ -677,7 +678,7 @@ function Settings({ page }: { page?: string }) {
   return (
     <section className="glass-grid">
       {links.map(([slug, label]) => (
-        <a key={slug} className="glass-card" href={`/portal/office/settings/${slug}`}>{label}</a>
+        <Link key={slug} className="glass-card" href={`/portal/office/settings/${slug}`}>{label}</Link>
       ))}
     </section>
   );

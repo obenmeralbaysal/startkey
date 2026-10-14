@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { isRecord, officeCall, type OfficeRecord } from "@/components/portal/office/api";
@@ -94,7 +95,7 @@ export function OfficeApp({ parts }: { parts: string[] }) {
     return (
       <main className="glass-shell">
         <p>Bu hesap bir ofise bağlı değil.</p>
-        {isAdmin ? <a href="/portal">Franchise masası</a> : null}
+        {isAdmin ? <Link href="/portal">Franchise masası</Link> : null}
       </main>
     );
   }
@@ -112,7 +113,7 @@ export function OfficeApp({ parts }: { parts: string[] }) {
                 ))}
               </select>
             ) : <span>{officeLabel(office)}</span>}
-            {isAdmin ? <a className="glass-btn-lite" href="/portal">Franchise</a> : null}
+            {isAdmin ? <Link className="glass-btn-lite" href="/portal">Franchise</Link> : null}
             <button className="glass-btn-lite" type="button" onClick={logout}>Çıkış</button>
           </div>
         </div>
@@ -120,7 +121,7 @@ export function OfficeApp({ parts }: { parts: string[] }) {
           {links.map(([slug, label]) => {
             const href = slug ? `/portal/office/${slug}` : "/portal/office";
             const current = (parts[0] ?? "") === slug;
-            return <a key={slug || "home"} href={href} aria-current={current ? "page" : undefined}>{label}</a>;
+            return <Link key={slug || "home"} href={href} aria-current={current ? "page" : undefined}>{label}</Link>;
           })}
         </nav>
         {message ? <p className={message.startsWith("Hata") ? "glass-error" : "glass-muted"}>{message}</p> : null}
