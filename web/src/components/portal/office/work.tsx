@@ -18,12 +18,13 @@ import {
   roleOf,
 } from "@/components/portal/office/access";
 import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
+import { OfficeDashboard } from "@/components/portal/office/dashboard";
 import { ConfirmButton, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 import { Icon } from "@/components/portal/shell";
 
 export function OfficeWork({ parts }: { parts: string[] }) {
   const [head, id] = parts;
-  if (!head) return <Home />;
+  if (!head) return <OfficeDashboard />;
   if (head === "contacts") return id === "new" ? <ContactForm /> : id ? <ContactDetail id={id} /> : <ContactList />;
   if (head === "portfolios") return id === "new" ? <PortfolioForm /> : id ? <PortfolioDetail id={id} /> : <PortfolioList />;
   if (head === "demands") return id === "new" ? <DemandForm /> : id ? <DemandDetail id={id} /> : <DemandList />;
@@ -60,28 +61,6 @@ function useData(path: string) {
     };
   }, [path, officeId, notice, version]);
   return { data, reload: () => setVersion((value) => value + 1) };
-}
-
-function Home() {
-  const stats = useData("dashboard/stats");
-  const pending = useData("dashboard/pending-approvals");
-  const duty = useData("duty-roster/today");
-  return (
-    <div className="glass-grid">
-      <section className="glass-card">
-        <h2>Özet</h2>
-        <RecordView value={stats.data} />
-      </section>
-      <section className="glass-card">
-        <h2>Onay bekleyenler</h2>
-        <RecordView value={pending.data} />
-      </section>
-      <section className="glass-card">
-        <h2>Bugünün nöbeti</h2>
-        <RecordView value={duty.data} />
-      </section>
-    </div>
-  );
 }
 
 function ContactList() {

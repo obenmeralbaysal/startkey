@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { DeskStats } from "@/components/portal/DeskStats";
 import { FranchiseDesk } from "@/components/portal/FranchiseDesk";
 import { EmptyState, Skeleton } from "@/components/portal/office/ui";
 import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
@@ -62,6 +63,7 @@ function DeskScreen({ user, onLogout }: { user: PortalUser; onLogout: () => void
   const anchors: Array<[string, string, IconName]> = [
     ...(isAdmin
       ? ([
+          ["#panel", "Panel", "chart"],
           ["#ofisler", "Ofisler", "grid"],
           ["#basvurular", "Başvurular", "inbox"],
           ["#danisman", "Danışmanlar", "people"],
@@ -131,6 +133,7 @@ function AdminPanel() {
 
   return (
     <>
+    <DeskStats />
     <FranchiseDesk />
     <section className="glass-card" id="basvurular">
       <h2>Ofis başvuruları</h2>

@@ -145,6 +145,50 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.foundLabel', '3 Office Found');
     }
 
+    public function test_portal_detail_pages_use_the_reference_labels(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices/7' => Http::response(['data' => [
+                'office' => ['id' => 7, 'name' => 'Akın', 'phone' => '2322023310', 'address' => 'İzmir / Karşıyaka / Fikri Altay'],
+                'consultants' => [
+                    ['id' => 1, 'name' => 'Meral Akın', 'role' => 'owner', 'phone' => '5010071971', 'email' => 'meral@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                    ['id' => 2, 'name' => 'Berrin Coşkun', 'role' => 'agent', 'phone' => '', 'email' => 'berrin@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                ],
+                'portfolios' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants/1' => Http::response(['data' => [
+                'consultant' => ['id' => 1, 'name' => 'Meral Akın', 'role' => 'owner', 'phone' => '5010071971', 'email' => 'meral@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                'portfolios' => [],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler/7/akin')
+            ->assertOk()
+            ->assertJsonPath('data.breadcrumb.trail.1.label', 'Ofislerimiz')
+            ->assertJsonPath('data.breadcrumb.trail.2.label', 'Akın')
+            ->assertJsonPath('data.meta.title', 'Startkey Türkiye | Akın')
+            ->assertJsonPath('data.phoneLabel', '+90 (232) 202-3310')
+            ->assertJsonPath('data.tabs.0.label', 'Ekibimiz')
+            ->assertJsonPath('data.tabs.2.label', 'Konum')
+            ->assertJsonPath('data.portfoliosLabel', 'Akın Tüm Portföyleri')
+            ->assertJsonPath('data.teamGroups.0.heading', 'BROKER/OWNER')
+            ->assertJsonPath('data.teamGroups.0.members.0.role', 'Broker/Owner')
+            ->assertJsonPath('data.teamGroups.1.heading', 'PROFESYONELLER')
+            ->assertJsonPath('data.teamGroups.1.members.0.role', 'Gayrimenkul Danışmanı')
+            ->assertJsonPath('data.emptyListingsLabel', 'Henüz İlan Girilmemiş. Tüm İlanlarımızı Görmek İçin Butona Tıklayınız')
+            ->assertJsonPath('data.map.query', 'İzmir / Karşıyaka / Fikri Altay');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar/1/meral-akin')
+            ->assertOk()
+            ->assertJsonPath('data.breadcrumb.trail.1.label', 'Danışmanlarımız')
+            ->assertJsonPath('data.tabs.1.label', 'Portföyler')
+            ->assertJsonPath('data.contactLabels.office', 'Startkey:')
+            ->assertJsonPath('data.role', 'Broker/Owner')
+            ->assertJsonPath('data.commentHeading', 'Meral Akın için Yorum Ekle')
+            ->assertJsonPath('data.form.submitLabel', 'Yorumu Gönder')
+            ->assertJsonPath('data.mineListingsLabel', 'Tüm Portföylerim');
+    }
+
     public function test_a_listing_inquiry_is_sent_to_the_portal(): void
     {
         Http::fake([

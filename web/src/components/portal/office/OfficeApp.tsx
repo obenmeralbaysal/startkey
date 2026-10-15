@@ -148,7 +148,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
   }));
 
   return (
-    <OfficeProvider value={{ officeId, office, isAdmin, notice, reload: () => undefined }}>
+    <OfficeProvider value={{ officeId, office, isAdmin, firstName: userName.first, notice, reload: () => undefined }}>
       <AppShell
         links={shellLinks}
         homeHref="/portal/office"

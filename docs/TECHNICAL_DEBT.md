@@ -263,7 +263,7 @@ Aynı `cms_offices` / `cms_consultants` tabloları Reonix’ten gelen okuma kopy
 
 **Mevcut Durum:**
 
-Danışman detayının varsayılan görünümü Figma taslağına yakın yeni şablondur (`ConsultantDetailDraft`). `2025 Yılı:`, ciro etiketi `Ciro (TL)` + mock `186.400.000` (mobilde `186,4 Mn`) ve işlem yalnızca sayı (`64`) her danışmanda aynıdır; frontend’de sabittir, veritabanına yazılmaz. Kulüp altında gerçek kulüp alanı yerine navbar’daki renkli Startkey PNG logosu durur. Facebook / X / Instagram ikonları Startkey kurumsal hesaplarına gider. Hakkımda / Portföyler / Yorumlar alt blokları orijinal şablon markup’ını kullanır. Eski referans şablon `ConsultantDetail.tsx` ve seed değişmeden `?layout=classic` ile açılır. Yeni etiketlerin EN/DE karşılıkları referanstan alınmamıştır; düz karşılıklardır.
+Public danışman sayfası referans şablondur (`ConsultantDetail`). Figma taslağı (`ConsultantDetailDraft`) aynı adreste `?layout=draft` ile durur. Taslaktaki `2025 Yılı:`, ciro etiketi `Ciro (TL)` + mock `186.400.000` (mobilde `186,4 Mn`) ve işlem sayısı `64` her danışmanda aynıdır; frontend’de sabittir. Kulüp görseli ve sosyal ikonlar hâlâ ortak placeholder’dır.
 
 **Geçici Olmasının Nedeni:**
 

@@ -11,6 +11,7 @@ export type OfficeState = {
   officeId: number;
   office: OfficeMembership;
   isAdmin: boolean;
+  firstName: string;
   notice: (message: string) => void;
   reload: () => void;
 };

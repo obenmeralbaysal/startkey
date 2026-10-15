@@ -2,6 +2,7 @@
 
 - **[UI]**: `/portal` Apple tarzı cam tasarıma geçti. Masaüstünde yan menü, tablette ikon şeridi, telefonda yüzen alt sekme çubuğu ve “Diğer” sayfası var. Bildirimler üstte kısa süreli kart olarak çıkar, yüklenirken iskelet görünür. Kişi, portföy ve talep silme onay ister. Tüm şifre alanlarında göster/gizle düğmesi var. API çağrıları, yetkiler ve adresler değişmedi.
 - **[UI]**: Reonix’ten gelen ofis listesi referans sayfa kabuğunu kullanır: “Anasayfa / Ofislerimiz” yolu, “Startkey Türkiye | Ofislerimiz” başlığı, “{n} Ofis Bulundu” sayısı ve kartta “Şehir / İlçe” konumu. Liste sayfası tohumlanmamış olsa da bu metinler TR/EN/DE için gelir; ofisler Türkçe alfabe sırasıyla, telefonlar “+90 (232) 812-1872” biçiminde gösterilir.
+- **[UI]**: Ofis detay ve danışman detay sayfaları referans yerleşime alındı: iletişim bloğu, sekmeler, ekip grupları, boş ilan metni, harita ve yorum formu. Public danışman sayfası referans şablonu açar; Figma taslağı `?layout=draft` ile durur.
 - **[UI]**: Sayfa başlığı şeridi referans breadcrumb ile eşitlendi: beyaz başlık, “Anasayfa / Ofislerimiz” yolu ve “/” ayracı.
 - **[UI]**: Ofis kartı, arama çubuğu ve sayfalama referans stile getirildi: kartlar arası boşluk, tam genişlik logo, lacivert ofis adı, yuvarlak sosyal düğmeler, tek satır arama çubuğu ve yuvarlak sayfa düğmeleri.
 - **[Backend]**: Public ofis ve danışman kataloğu Reonix’e bir kerelik yazılır. Ofis adı danışmanı düşer, aynı broker tek kişi olur, yayınlanan yorum Reonix kullanıcısında kalır ve public danışman sayfasında görünür.

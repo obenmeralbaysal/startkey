@@ -165,7 +165,7 @@ class ReonixCatalogue
                     'de' => 'Über mich',
                     default => 'Hakkımda',
                 }],
-                ['id' => 'tab_2', 'label' => 'Portföyler'],
+                ['id' => 'tab_2', 'label' => $locale === 'tr' ? 'Portföyler' : 'Portfolios'],
                 ['id' => 'tab_3', 'label' => match ($locale) {
                     'en' => 'Comments',
                     'de' => 'Kommentare',
@@ -314,6 +314,94 @@ class ReonixCatalogue
             'location' => $this->cardLocation((string) ($row['address'] ?? '')),
             'variant' => 'office',
         ];
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $consultants
+     * @return list<array{heading: string, members: list<array<string, mixed>>}>
+     */
+    private function teamGroups(array $consultants, string $locale): array
+    {
+        $buckets = ['broker' => [], 'professional' => []];
+        foreach ($consultants as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+            $role = (string) ($row['role'] ?? '');
+            $key = $role === 'agent' ? 'professional' : 'broker';
+            $buckets[$key][] = $this->consultantCard($row, $locale);
+        }
+
+        $headings = [
+            'broker' => match ($locale) {
+                'de' => 'MAKLER/EIGENTÜMER',
+                default => 'BROKER/OWNER',
+            },
+            'professional' => match ($locale) {
+                'en' => 'PROFESSIONALS',
+                'de' => 'UNSERE PROFIS',
+                default => 'PROFESYONELLER',
+            },
+        ];
+        $groups = [];
+        foreach (['broker', 'professional'] as $key) {
+            if ($buckets[$key] === []) {
+                continue;
+            }
+            $groups[] = ['heading' => $headings[$key], 'members' => $buckets[$key]];
+        }
+
+        return $groups;
+    }
+
+    private function roleLabel(string $role): string
+    {
+        return match ($role) {
+            'owner', 'office_manager', 'manager' => 'Broker/Owner',
+            'agent' => 'Gayrimenkul Danışmanı',
+            default => $role,
+        };
+    }
+
+    private function emptyListingsLabel(string $locale): string
+    {
+        return match ($locale) {
+            'en' => 'No Advertisement Has Been Posted Yet. Click the Button to See All Our Advertisements',
+            'de' => 'Es wurde noch keine Werbung gepostet. Klicken Sie auf die Schaltfläche, um alle unsere Anzeigen anzuzeigen',
+            default => 'Henüz İlan Girilmemiş. Tüm İlanlarımızı Görmek İçin Butona Tıklayınız',
+        };
+    }
+
+    private function seeAllLabel(string $locale): string
+    {
+        return match ($locale) {
+            'en' => 'See All Portfolios',
+            'de' => 'Alle Portfolios anzeigen',
+            default => 'Tüm Portföyleri Gör',
+        };
+    }
+
+    private function homePath(string $locale): string
+    {
+        return $locale === 'tr' ? '/' : '/'.$locale;
+    }
+
+    private function homeLabel(string $locale): string
+    {
+        return match ($locale) {
+            'en' => 'Home',
+            'de' => 'Startseite',
+            default => 'Anasayfa',
+        };
+    }
+
+    private function officeListLabel(string $locale): string
+    {
+        return match ($locale) {
+            'en' => 'Our Offices',
+            'de' => 'Unsere buros',
+            default => 'Ofislerimiz',
+        };
     }
 
     /** Formats bare digits like the reference ("+90 (232) 812-1872"); ten digits are a Turkish number. */
