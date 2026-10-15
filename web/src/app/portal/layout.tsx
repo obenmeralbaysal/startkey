@@ -11,7 +11,9 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="tr">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#f5f5f7" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className="glass-page">{children}</body>
     </html>

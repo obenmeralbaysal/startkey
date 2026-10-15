@@ -8,6 +8,7 @@ import {
   PORTAL_LOGIN_COPY,
   type PortalLoginLang,
 } from "@/content/portal-login";
+import { PasswordInput } from "@/components/portal/office/ui";
 
 export function PortalPassword({
   lang,
@@ -60,31 +61,31 @@ export function PortalPassword({
   }
 
   return (
-    <main className="glass-shell">
-      <section className="glass-card glass-login">
+    <main className="glass-login">
+      <section className="glass-panel">
         <img className="glass-logo" alt="Logo" src="/portal/img/startkey_logo.png" />
         <h1>{copy.forgotPassword}</h1>
         <form noValidate onSubmit={onSubmit}>
           {mode === "forgot" ? (
             <label className="glass-field">
               <span>{copy.emailPlaceholder}</span>
-              <input className="glass-input" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+              <input className="glass-input" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} aria-invalid={error ? true : undefined} value={email} onChange={(event) => setEmail(event.target.value)} required />
             </label>
           ) : (
             <>
               <label className="glass-field">
                 <span>{copy.passwordPlaceholder}</span>
-                <input className="glass-input" type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+                <PasswordInput className="glass-input" autoComplete="new-password" aria-invalid={error ? true : undefined} value={password} onChange={(event) => setPassword(event.target.value)} required />
               </label>
               <label className="glass-field">
                 <span>{copy.passwordPlaceholder}</span>
-                <input className="glass-input" type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} required />
+                <PasswordInput className="glass-input" autoComplete="new-password" aria-invalid={error ? true : undefined} value={confirmation} onChange={(event) => setConfirmation(event.target.value)} required />
               </label>
             </>
           )}
-          {error ? <p className="glass-error">{error}</p> : null}
-          {message ? <p className="glass-muted">{message}</p> : null}
-          <button className="glass-btn" type="submit" disabled={pending || (mode === "reset" && token === "")}>
+          {error ? <p className="glass-error" role="alert">{error}</p> : null}
+          {message ? <p className="glass-notice" role="status">{message}</p> : null}
+          <button className="glass-btn" type="submit" disabled={pending || (mode === "reset" && token === "")} aria-busy={pending}>
             {pending ? copy.submitProgress : copy.forgotPassword}
           </button>
         </form>

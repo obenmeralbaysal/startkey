@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FranchiseDesk } from "@/components/portal/FranchiseDesk";
+import { EmptyState, Skeleton } from "@/components/portal/office/ui";
+import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
 
 export type PortalOffice = { id: number; name: string; role: string | null };
 
@@ -38,46 +40,88 @@ type ConsultantRow = {
 type PackageOption = { code: string; name: string };
 
 export function PortalDesk({ user, onLogout }: { user: PortalUser; onLogout: () => void }) {
+  return (
+    <ToastProvider>
+      <DeskScreen user={user} onLogout={onLogout} />
+    </ToastProvider>
+  );
+}
+
+function DeskScreen({ user, onLogout }: { user: PortalUser; onLogout: () => void }) {
   const ownerOffices = user.offices.filter((office) => office.role === "owner");
   const isAdmin = user.is_admin;
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    const sync = () => setHash(window.location.hash);
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+
+  const anchors: Array<[string, string, IconName]> = [
+    ...(isAdmin
+      ? ([
+          ["#ofisler", "Ofisler", "grid"],
+          ["#basvurular", "Başvurular", "inbox"],
+          ["#danisman", "Danışmanlar", "people"],
+          ["#paket", "Paket", "tag"],
+        ] as Array<[string, string, IconName]>)
+      : []),
+    ...ownerOffices.map((office): [string, string, IconName] => [`#ofis-${office.id}`, office.name, "building"]),
+  ];
+  const active = anchors.some(([href]) => href === hash) ? hash : anchors[0]?.[0] ?? "";
+  const links: ShellLink[] = [
+    ...anchors.map(([href, label, icon]) => ({ href, label, icon, current: href === active })),
+    ...(user.offices.length > 0 ? [{ href: "/portal/office", label: "Ofis", icon: "home" as IconName, current: false }] : []),
+  ];
 
   return (
-    <main className="glass-page">
-      <div className="glass-shell">
-        <img className="glass-logo" alt="Logo" src="/portal/img/startkey_logo.png" />
-        <div className="glass-top">
-          <div>
-            <h1>StartKey Portal</h1>
-            <p className="glass-muted">
-              {user.first_name} {user.last_name}
-            </p>
+    <AppShell
+      links={links}
+      homeHref="/portal"
+      footer={
+        <div className="glass-side-group">
+          <div className="glass-who">
+            <span className="glass-avatar">{initials(user.first_name, user.last_name)}</span>
+            <span>
+              <strong>{user.first_name} {user.last_name}</strong>
+              <small>{user.email}</small>
+            </span>
           </div>
-          <div className="glass-actions">
-            {user.offices.length > 0 ? (
-              <Link className="glass-btn-lite" href="/portal/office">
-                Ofis
-              </Link>
-            ) : null}
-            <button className="glass-btn-lite" type="button" onClick={() => logout(onLogout)}>
-              Çıkış
-            </button>
-          </div>
+          <button className="glass-nav-item" type="button" onClick={() => logout(onLogout)}>
+            <Icon name="logout" />
+            <span>Çıkış</span>
+          </button>
         </div>
+      }
+    >
+      <div className="glass-view">
         {isAdmin ? <AdminPanel /> : null}
         {ownerOffices.map((office) => (
           <OwnerPanel key={office.id} office={office} />
         ))}
-        {!isAdmin && user.offices.length === 0 ? <p>Bu hesap için ofis kaydı yok.</p> : null}
+        {!isAdmin && user.offices.length === 0 ? (
+          <section className="glass-card">
+            <EmptyState message="Bu hesap için ofis kaydı yok." />
+          </section>
+        ) : null}
+        {!isAdmin && ownerOffices.length === 0 && user.offices.length > 0 ? (
+          <section className="glass-card">
+            <EmptyState message="StartKey Portal" />
+            <Link className="glass-btn" href="/portal/office">Ofis</Link>
+          </section>
+        ) : null}
       </div>
-    </main>
+    </AppShell>
   );
 }
 
 function AdminPanel() {
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [consultants, setConsultants] = useState<ConsultantRow[]>([]);
+  const [applications, setApplications] = useState<Application[] | null>(null);
+  const [consultants, setConsultants] = useState<ConsultantRow[] | null>(null);
   const [packages, setPackages] = useState<PackageOption[]>([]);
-  const [message, setMessage] = useState("");
+  const toast = useToast();
 
   useEffect(() => {
     portalGet<Application[]>("/api/v1/portal/applications").then(setApplications);
@@ -88,60 +132,71 @@ function AdminPanel() {
   return (
     <>
     <FranchiseDesk />
-    <section className="glass-card">
+    <section className="glass-card" id="basvurular">
       <h2>Ofis başvuruları</h2>
-      {message ? <p>{message}</p> : null}
-      {applications.map((row) => (
+      {applications === null ? <Skeleton /> : applications.length === 0 ? <EmptyState /> : null}
+      {(applications ?? []).map((row) => (
         <form
           key={row.id}
-          className="mb-6"
+          className="glass-item"
           onSubmit={(event) => {
             event.preventDefault();
             const form = new FormData(event.currentTarget);
             portalSend(`/api/v1/portal/applications/${row.id}/open-office`, {
               office_name: form.get("office_name"),
               package: form.get("package") || null,
-            }).then((body) => setMessage(body.message || "Ofis açıldı."));
+            }).then((body) => toast(body.message || "Ofis açıldı."));
           }}
         >
           <p>
-            {row.applicant_name} — {row.city} / {row.district} — {row.status}
+            <strong>{row.applicant_name}</strong>
+            <span className="glass-muted"> · {row.city} / {row.district}</span>
           </p>
-          <input name="office_name" placeholder="Ofis adı" required />
-          <select name="package" defaultValue="">
-            <option value="">Varsayılan paket</option>
-            {packages.map((item) => (
-              <option key={item.code} value={item.code}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-          <button className="glass-btn-lite" type="submit">
-            Ofis aç
-          </button>
+          <span className="glass-pill">{row.status}</span>
+          <div className="glass-fields">
+            <input name="office_name" placeholder="Ofis adı" required />
+            <select name="package" defaultValue="">
+              <option value="">Varsayılan paket</option>
+              {packages.map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            <button className="glass-btn-lite" type="submit">
+              Ofis aç
+            </button>
+          </div>
         </form>
       ))}
+    </section>
+    <section className="glass-card" id="danisman">
       <h2>Danışman başvuruları</h2>
-      {consultants.map((row) => (
-        <p key={row.id}>
-          {row.first_name} {row.last_name} — {row.office_name} — {positionLabel(row.position)} — {row.status}
+      {consultants === null ? <Skeleton /> : consultants.length === 0 ? <EmptyState /> : null}
+      {(consultants ?? []).map((row) => (
+        <div key={row.id} className="glass-item">
+          <p>
+            <strong>{row.first_name} {row.last_name}</strong>
+            <span className="glass-muted"> · {row.office_name} · {positionLabel(row.position)}</span>
+          </p>
+          <span className="glass-pill">{row.status}</span>
           {row.status === "new" ? (
             <button
               className="glass-btn-lite"
               type="button"
               onClick={() =>
                 portalSend(`/api/v1/portal/consultant-applications/${row.id}/accept`, {}).then((body) =>
-                  setMessage(body.message || "Başvuru kabul edildi."),
+                  toast(body.message || "Başvuru kabul edildi."),
                 )
               }
             >
               Kabul et
             </button>
           ) : null}
-        </p>
+        </div>
       ))}
-      <PackageForm packages={packages} onDone={setMessage} />
     </section>
+    <PackageForm packages={packages} onDone={toast} />
     </>
   );
 }
@@ -149,6 +204,8 @@ function AdminPanel() {
 function PackageForm({ packages, onDone }: { packages: PackageOption[]; onDone: (message: string) => void }) {
   return (
     <form
+      id="paket"
+      className="glass-card glass-form"
       onSubmit={(event) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
@@ -157,8 +214,8 @@ function PackageForm({ packages, onDone }: { packages: PackageOption[]; onDone: 
         );
       }}
     >
-      <h2>Paket</h2>
-      <input name="office_id" placeholder="Ofis no" required />
+      <h3>Paket</h3>
+      <input name="office_id" placeholder="Ofis no" inputMode="numeric" required />
       <select name="package" required defaultValue="">
         <option value="">Paket</option>
         {packages.map((item) => (
@@ -167,7 +224,7 @@ function PackageForm({ packages, onDone }: { packages: PackageOption[]; onDone: 
           </option>
         ))}
       </select>
-      <button className="glass-btn-lite" type="submit">
+      <button className="glass-btn" type="submit">
         Paketi yaz
       </button>
     </form>
@@ -175,7 +232,7 @@ function PackageForm({ packages, onDone }: { packages: PackageOption[]; onDone: 
 }
 
 function OwnerPanel({ office }: { office: PortalOffice }) {
-  const [message, setMessage] = useState("");
+  const toast = useToast();
 
   function add(kind: "brokers" | "agents", event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -187,17 +244,16 @@ function OwnerPanel({ office }: { office: PortalOffice }) {
       phone: form.get("phone"),
     }).then((body) => {
       if (body.data?.attached) {
-        setMessage("Mevcut kişi bu ofise bağlandı. Portala aynı hesapla girip ofis değiştirebilir.");
+        toast("Mevcut kişi bu ofise bağlandı. Portala aynı hesapla girip ofis değiştirebilir.");
         return;
       }
-      setMessage(body.message || "Kaydedildi.");
+      toast(body.message || "Kaydedildi.");
     });
   }
 
   return (
-    <section className="glass-card">
+    <section className="glass-card" id={`ofis-${office.id}`}>
       <h2>{office.name}</h2>
-      {message ? <p>{message}</p> : null}
       <MemberForm title="Broker ekle" onSubmit={(event) => add("brokers", event)} />
       <MemberForm title="Agent ekle" onSubmit={(event) => add("agents", event)} />
     </section>
@@ -206,13 +262,13 @@ function OwnerPanel({ office }: { office: PortalOffice }) {
 
 function MemberForm({ title, onSubmit }: { title: string; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
   return (
-    <form onSubmit={onSubmit}>
+    <form className="glass-form" onSubmit={onSubmit}>
       <h3>{title}</h3>
-      <input name="first_name" placeholder="Ad" required />
-      <input name="last_name" placeholder="Soyad" required />
-      <input name="email" type="email" placeholder="E-posta" required />
-      <input name="phone" placeholder="Telefon" />
-      <button className="glass-btn-lite" type="submit">
+      <input name="first_name" placeholder="Ad" autoComplete="given-name" required />
+      <input name="last_name" placeholder="Soyad" autoComplete="family-name" required />
+      <input name="email" type="email" inputMode="email" placeholder="E-posta" autoComplete="email" required />
+      <input name="phone" type="tel" inputMode="tel" placeholder="Telefon" autoComplete="tel" />
+      <button className="glass-btn" type="submit">
         Ekle
       </button>
     </form>

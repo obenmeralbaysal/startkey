@@ -18,7 +18,8 @@ import {
   roleOf,
 } from "@/components/portal/office/access";
 import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
-import { RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
+import { ConfirmButton, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
+import { Icon } from "@/components/portal/shell";
 
 export function OfficeWork({ parts }: { parts: string[] }) {
   const [head, id] = parts;
@@ -39,7 +40,7 @@ export function OfficeWork({ parts }: { parts: string[] }) {
 
 function useData(path: string) {
   const { officeId, notice } = useOffice();
-  const [data, setData] = useState<unknown>(null);
+  const [data, setData] = useState<unknown>(undefined);
   const [version, setVersion] = useState(0);
   useEffect(() => {
     if (path === "") {
@@ -50,7 +51,10 @@ function useData(path: string) {
       .then((payload) => {
         if (!cancelled) setData(payload);
       })
-      .catch((error: Error) => notice(`Hata: ${error.message}`));
+      .catch((error: Error) => {
+        if (!cancelled) setData((current: unknown) => (current === undefined ? null : current));
+        notice(`Hata: ${error.message}`);
+      });
     return () => {
       cancelled = true;
     };
@@ -84,11 +88,11 @@ function ContactList() {
   const list = useData("contacts");
   return (
     <section className="glass-card">
-      <div className="glass-top">
+      <div className="glass-head">
         <h2>Kişiler</h2>
-        <Link className="glass-btn-lite" href="/portal/office/contacts/new">Yeni kişi</Link>
+        <Link className="glass-btn-lite" href="/portal/office/contacts/new"><Icon name="plus" />Yeni kişi</Link>
       </div>
-      <RecordTable rows={rows(list.data)} href={(row) => `/portal/office/contacts/${row.id}`} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} href={(row) => `/portal/office/contacts/${row.id}`} />
     </section>
   );
 }
@@ -129,9 +133,7 @@ function ContactDetail({ id }: { id: string }) {
           İlan toplama bağlantısı
         </button>
         {canDeleteRecords(role) ? (
-          <button className="glass-btn-danger" type="button" onClick={() => officeCall(`contacts/${id}`, officeId, { method: "DELETE" }).then(() => { window.location.href = "/portal/office/contacts"; }).catch((error: Error) => notice(`Hata: ${error.message}`))}>
-            Sil
-          </button>
+          <ConfirmButton label="Sil" message="Kişi kalıcı olarak silinir." onConfirm={() => officeCall(`contacts/${id}`, officeId, { method: "DELETE" }).then(() => { window.location.href = "/portal/office/contacts"; }).catch((error: Error) => notice(`Hata: ${error.message}`))} />
         ) : null}
       </div>
     </section>
@@ -142,11 +144,11 @@ function PortfolioList() {
   const list = useData("portfolios");
   return (
     <section className="glass-card">
-      <div className="glass-top">
+      <div className="glass-head">
         <h2>Portföy</h2>
-        <Link className="glass-btn-lite" href="/portal/office/portfolios/new">Yeni portföy</Link>
+        <Link className="glass-btn-lite" href="/portal/office/portfolios/new"><Icon name="plus" />Yeni portföy</Link>
       </div>
-      <RecordTable rows={rows(list.data)} href={(row) => `/portal/office/portfolios/${row.id}`} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} href={(row) => `/portal/office/portfolios/${row.id}`} />
     </section>
   );
 }
@@ -289,7 +291,7 @@ function ChunkedMedia({ id, onDone }: { id: string; onDone: () => void }) {
   }
 
   return (
-    <form className="glass-stack" onSubmit={(event) => {
+    <form className="glass-form" onSubmit={(event) => {
       event.preventDefault();
       const file = event.currentTarget.elements.namedItem("file");
       if (!(file instanceof HTMLInputElement) || !file.files?.[0]) {
@@ -535,7 +537,7 @@ function PortfolioCompletion({ id, portfolio, onSaved }: { id: string; portfolio
   }
 
   return (
-    <form className="glass-stack" onSubmit={(event) => {
+    <form className="glass-form" onSubmit={(event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
       const publish = event.nativeEvent.submitter?.getAttribute("name") === "publish";
@@ -652,9 +654,9 @@ function PortfolioDetail({ id }: { id: string }) {
       <div className="glass-actions">
         {canVerify(office) ? <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/approve`)}>Onayla</button> : null}
         <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/generate-showcase-link`)}>Vitrin bağlantısı</button>
-        {canDeleteRecords(role) ? <button className="glass-btn-danger" type="button" onClick={() => officeCall(`portfolios/${id}`, officeId, { method: "DELETE" }).then(() => { window.location.href = "/portal/office/portfolios"; }).catch((error: Error) => notice(`Hata: ${error.message}`))}>Sil</button> : null}
+        {canDeleteRecords(role) ? <ConfirmButton label="Sil" message="Portföy kalıcı olarak silinir." onConfirm={() => officeCall(`portfolios/${id}`, officeId, { method: "DELETE" }).then(() => { window.location.href = "/portal/office/portfolios"; }).catch((error: Error) => notice(`Hata: ${error.message}`))} /> : null}
       </div>
-      <form className="glass-stack" onSubmit={(event) => {
+      <form className="glass-form" onSubmit={(event) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         act(`portfolios/${id}/import/sahibinden/apply`, { url: form.get("url") });
@@ -715,7 +717,7 @@ function ClosingForm({ id, portfolio, onDone }: { id: string; portfolio: OfficeR
   const agreements = Array.isArray(demandRecord?.showing_agreements) ? demandRecord.showing_agreements.filter(isRecord) : [];
 
   return (
-    <form className="glass-stack" onSubmit={(event) => {
+    <form className="glass-form" onSubmit={(event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
       const send = async () => {
@@ -874,11 +876,11 @@ function DemandList() {
   const list = useData("demands");
   return (
     <section className="glass-card">
-      <div className="glass-top">
+      <div className="glass-head">
         <h2>Talepler</h2>
-        <Link className="glass-btn-lite" href="/portal/office/demands/new">Yeni talep</Link>
+        <Link className="glass-btn-lite" href="/portal/office/demands/new"><Icon name="plus" />Yeni talep</Link>
       </div>
-      <RecordTable rows={rows(list.data)} href={(row) => `/portal/office/demands/${row.id}`} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} href={(row) => `/portal/office/demands/${row.id}`} />
     </section>
   );
 }
@@ -950,7 +952,7 @@ function DemandDetail({ id }: { id: string }) {
       <RecordView value={item.data} />
       <div className="glass-actions">
         <button className="glass-btn-lite" type="button" onClick={() => officeCall(`demands/${id}/close-external`, officeId, { method: "POST", body: { result: "success" } }).then(() => item.reload()).catch((error: Error) => notice(`Hata: ${error.message}`))}>Kapat</button>
-        {canDeleteRecords(roleOf(office)) ? <button className="glass-btn-danger" type="button" onClick={() => officeCall(`demands/${id}`, officeId, { method: "DELETE" }).then(() => { window.location.href = "/portal/office/demands"; }).catch((error: Error) => notice(`Hata: ${error.message}`))}>Sil</button> : null}
+        {canDeleteRecords(roleOf(office)) ? <ConfirmButton label="Sil" message="Talep kalıcı olarak silinir." onConfirm={() => officeCall(`demands/${id}`, officeId, { method: "DELETE" }).then(() => { window.location.href = "/portal/office/demands"; }).catch((error: Error) => notice(`Hata: ${error.message}`))} /> : null}
       </div>
     </section>
   );
@@ -962,7 +964,7 @@ function Calendar() {
   return (
     <section className="glass-card">
       <h2>Takvim</h2>
-      <RecordTable rows={rows(list.data)} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} />
       <Form
         title="Randevu"
         onSubmit={async (form) => {
@@ -1070,7 +1072,7 @@ function Lease() {
   return (
     <section className="glass-card">
       <h2>Kira radarı</h2>
-      <RecordTable rows={rows(list.data)} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} />
     </section>
   );
 }
@@ -1149,7 +1151,7 @@ function BadgeForm() {
   return (
     <section className="glass-card">
       <h2>Rozetler</h2>
-      <RecordTable rows={rows(list.data)} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} />
       <Form title="Rozet" onSubmit={async (form) => {
         await officeCall("badges", officeId, {
           method: "POST",
@@ -1241,7 +1243,7 @@ function RateForm() {
   return (
     <section className="glass-card">
       <h2>Hakediş oranları</h2>
-      <RecordTable rows={rows(list.data)} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} />
       <Form title="Oran" onSubmit={async (form) => {
         await officeCall("earning-rates", officeId, {
           method: "POST",
@@ -1377,7 +1379,7 @@ function ProfileForm() {
       <input name="first_name" placeholder="Ad" required />
       <input name="last_name" placeholder="Soyad" required />
       <input name="phone" placeholder="Telefon" />
-      <input name="password" type="password" placeholder="Yeni şifre" autoComplete="new-password" />
+      <PasswordInput name="password" placeholder="Yeni şifre" autoComplete="new-password" />
       <label>
         <input type="checkbox" checked={matchNetwork} onChange={(event) => setMatchNetwork(event.target.checked)} />
         Yeni taleplerim diğer StartKey portföyleri ile eşleşsin
@@ -1413,7 +1415,7 @@ function Team() {
   return (
     <section className="glass-card">
       <h2>Ekip</h2>
-      <RecordTable rows={rows(team.data)} />
+      <RecordTable rows={rows(team.data)} loading={team.data === undefined} />
       <Form title="Üye ekle" onSubmit={async (form) => {
         await officeCall("team", officeId, { method: "POST", body: { first_name: form.get("first_name"), last_name: form.get("last_name"), email: form.get("email"), phone: form.get("phone") || null, role_id: Number(form.get("role_id")) } });
         notice("Üye eklendi.");
@@ -1496,7 +1498,7 @@ function EmailForm() {
         <input name="port" type="number" placeholder="Kapı" required />
         <select name="encryption" defaultValue="ssl"><option value="ssl">SSL</option><option value="tls">TLS</option><option value="none">Yok</option></select>
         <input name="username" placeholder="Kullanıcı" required />
-        <input name="password" type="password" placeholder="Şifre" autoComplete="new-password" />
+        <PasswordInput name="password" placeholder="Şifre" autoComplete="new-password" />
       </Form>
     </section>
   );
@@ -1508,7 +1510,7 @@ function Sellers() {
   return (
     <section className="glass-card">
       <h2>Sahibinden satıcıları</h2>
-      <RecordTable rows={rows(list.data)} />
+      <RecordTable rows={rows(list.data)} loading={list.data === undefined} />
       <form onSubmit={(event) => { event.preventDefault(); officeCall(`offices/${officeId}/sahibinden-sellers/sync`, officeId, { method: "POST", body: {} }).then(() => list.reload()); }}>
         <button className="glass-btn-lite" type="submit">Satıcıları yenile</button>
       </form>
@@ -1520,7 +1522,7 @@ function Form({ title, onSubmit, children }: { title: string; onSubmit: (form: F
   const { notice } = useOffice();
   const [pending, setPending] = useState(false);
   return (
-    <form className="glass-stack" onSubmit={(event) => {
+    <form className="glass-form" onSubmit={(event) => {
       event.preventDefault();
       if (pending) return;
       setPending(true);
@@ -1528,7 +1530,7 @@ function Form({ title, onSubmit, children }: { title: string; onSubmit: (form: F
     }}>
       <h3>{title}</h3>
       {children}
-      <button className="glass-btn" type="submit" disabled={pending}>{pending ? "Kaydediliyor" : "Kaydet"}</button>
+      <button className="glass-btn" type="submit" disabled={pending} aria-busy={pending}>{pending ? "Kaydediliyor" : "Kaydet"}</button>
     </form>
   );
 }

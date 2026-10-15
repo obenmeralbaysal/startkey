@@ -2,6 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
+import { EmptyState, Skeleton } from "@/components/portal/office/ui";
+import { useToast } from "@/components/portal/shell";
+
 type LimitCell = { used: number; limit: number };
 
 type DeskPortfolio = { id: number; title: string; held: boolean };
@@ -50,8 +53,8 @@ const PRESENCES: Array<[Presence, string]> = [
 const CURRENCIES = ["TRY", "USD", "EUR", "GBP", "AZN"];
 
 export function FranchiseDesk() {
-  const [offices, setOffices] = useState<DeskOffice[]>([]);
-  const [message, setMessage] = useState("");
+  const [offices, setOffices] = useState<DeskOffice[] | null>(null);
+  const toast = useToast();
 
   function reload() {
     portalGet<DeskOffice[]>("/api/v1/portal/desk/offices").then(setOffices);
@@ -69,18 +72,17 @@ export function FranchiseDesk() {
       body: JSON.stringify(payload),
     });
     const body = await response.json().catch(() => ({}));
-    setMessage(body.message || (response.ok ? "Kaydedildi." : "İşlem tamamlanamadı."));
+    toast(body.message || (response.ok ? "Kaydedildi." : "İşlem tamamlanamadı."), response.ok ? "info" : "error");
     if (response.ok) reload();
   }
 
-  const current = offices.filter((office) => office.presence !== "archived");
-  const archived = offices.filter((office) => office.presence === "archived");
+  const current = (offices ?? []).filter((office) => office.presence !== "archived");
+  const archived = (offices ?? []).filter((office) => office.presence === "archived");
 
   return (
-    <section className="glass-card">
+    <section className="glass-card" id="ofisler">
       <h2>Ofisler</h2>
-      {message ? <p>{message}</p> : null}
-      {current.length === 0 ? <p>Kayıtlı ofis yok.</p> : null}
+      {offices === null ? <Skeleton /> : current.length === 0 ? <EmptyState message="Kayıtlı ofis yok." /> : null}
       {current.map((office) => (
         <OfficeCard key={office.id} office={office} send={send} />
       ))}
@@ -100,114 +102,169 @@ function OfficeCard({
   send: (url: string, payload: unknown, method?: string) => void;
 }) {
   return (
-    <article>
-      <h3>
-        {office.name} — {presenceLabel(office.presence)}
-      </h3>
-      <p>{presenceText(office.presence)}</p>
-      <p>
-        Danışman {office.consultant_count} · Bakiye {money(office.balance)} · Portföy {limitText(office.limits.portfolios)} ·
-        Danışman limiti {limitText(office.limits.users)}
-      </p>
-      <label>
-        Durum
-        <select
-          value={office.presence}
-          onChange={(event) =>
-            send(`/api/v1/portal/offices/${office.id}/presence`, { presence: event.target.value }, "PUT")
-          }
-        >
-          {PRESENCES.map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Portföy para birimi
-        <select
-          value={office.currency || "TRY"}
-          onChange={(event) =>
-            send(`/api/v1/portal/offices/${office.id}/currency`, { currency: event.target.value }, "PUT")
-          }
-        >
-          {CURRENCIES.map((code) => (
-            <option key={code} value={code}>
-              {code}
-            </option>
-          ))}
-        </select>
-      </label>
-      <p>Yeni portföyler bu para birimiyle açılır. Mevcut portföyler ve StartKey faturaları aynı kalır.</p>
-      <h4>StartKey sitesindeki portföyler</h4>
-      {office.portfolios.length === 0 ? <p>Sitede portföy yok.</p> : null}
-      {office.portfolios.map((portfolio) => (
-        <p key={portfolio.id}>
-          {portfolio.title}
-          {portfolio.held ? " — siteden kaldırıldı" : ""}
-          <button
-            className="glass-btn-lite"
-            type="button"
-            onClick={() => send(`/api/v1/portal/portfolios/${portfolio.id}/catalogue`, { held: !portfolio.held })}
+    <article className="glass-card">
+      <div className="glass-card-head">
+        <h3>{office.name}</h3>
+        <span className="glass-pill" data-tone={office.presence}>{presenceLabel(office.presence)}</span>
+      </div>
+      <p className="glass-muted">{presenceText(office.presence)}</p>
+      <div className="glass-stats">
+        <div className="glass-stat">
+          <small>Danışman</small>
+          <strong>{office.consultant_count}</strong>
+        </div>
+        <div className="glass-stat">
+          <small>Bakiye</small>
+          <strong>{money(office.balance)}</strong>
+        </div>
+        <div className="glass-stat">
+          <small>Portföy</small>
+          <strong>{limitText(office.limits.portfolios)}</strong>
+          <Meter cell={office.limits.portfolios} />
+        </div>
+        <div className="glass-stat">
+          <small>Danışman limiti</small>
+          <strong>{limitText(office.limits.users)}</strong>
+          <Meter cell={office.limits.users} />
+        </div>
+      </div>
+      <div className="glass-fields">
+        <label>
+          Durum
+          <select
+            value={office.presence}
+            onChange={(event) =>
+              send(`/api/v1/portal/offices/${office.id}/presence`, { presence: event.target.value }, "PUT")
+            }
           >
-            {portfolio.held ? "Kaldırmayı geri al" : "Siteden kaldır"}
+            {PRESENCES.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Portföy para birimi
+          <select
+            value={office.currency || "TRY"}
+            onChange={(event) =>
+              send(`/api/v1/portal/offices/${office.id}/currency`, { currency: event.target.value }, "PUT")
+            }
+          >
+            {CURRENCIES.map((code) => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <p className="glass-muted">Yeni portföyler bu para birimiyle açılır. Mevcut portföyler ve StartKey faturaları aynı kalır.</p>
+      <div className="glass-section">
+        <h4>StartKey sitesindeki portföyler</h4>
+        {office.portfolios.length === 0 ? <p className="glass-muted">Sitede portföy yok.</p> : null}
+        {office.portfolios.map((portfolio) => (
+          <div key={portfolio.id} className="glass-item">
+            <p>
+              {portfolio.title}
+              {portfolio.held ? <span className="glass-muted"> — siteden kaldırıldı</span> : null}
+            </p>
+            <button
+              className="glass-btn-lite"
+              type="button"
+              onClick={() => send(`/api/v1/portal/portfolios/${portfolio.id}/catalogue`, { held: !portfolio.held })}
+            >
+              {portfolio.held ? "Kaldırmayı geri al" : "Siteden kaldır"}
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="glass-section">
+        <h4>StartKey ödemeleri</h4>
+        {office.invoices.map((invoice) => (
+          <form
+            key={invoice.id}
+            className="glass-item"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const amount = new FormData(event.currentTarget).get("amount");
+              send(`/api/v1/portal/invoices/${invoice.id}/payments`, { amount });
+            }}
+          >
+            <p>
+              <strong>{invoice.invoice_no}</strong> — {invoice.description}
+              <br />
+              <span className="glass-muted">
+                {money(invoice.outstanding)} / {money(invoice.total)}
+                {invoice.due_at ? ` — vade ${invoice.due_at}` : ""}
+              </span>
+            </p>
+            <span className="glass-pill" data-tone={invoiceTone(invoice.status)}>{statusLabel(invoice.status)}</span>
+            {invoice.outstanding > 0 ? (
+              <div className="glass-fields">
+                <input name="amount" type="number" inputMode="decimal" min="0.01" step="0.01" placeholder="Tahsil edilen" required />
+                <button className="glass-btn-lite" type="submit">
+                  Ödemeyi kaydet
+                </button>
+              </div>
+            ) : null}
+          </form>
+        ))}
+        <form className="glass-fields" onSubmit={(event) => submitInvoice(event, office.id, send)}>
+          <input name="description" placeholder="Fatura açıklaması" required />
+          <input name="amount" type="number" inputMode="decimal" min="0.01" step="0.01" placeholder="Tutar, KDV hariç" required />
+          <button className="glass-btn-lite" type="submit">
+            Fatura kes
           </button>
-        </p>
-      ))}
-      <h4>StartKey ödemeleri</h4>
-      {office.invoices.map((invoice) => (
-        <form
-          key={invoice.id}
-          onSubmit={(event) => {
-            event.preventDefault();
-            const amount = new FormData(event.currentTarget).get("amount");
-            send(`/api/v1/portal/invoices/${invoice.id}/payments`, { amount });
-          }}
-        >
-          <p>
-            {invoice.invoice_no} — {invoice.description} — {statusLabel(invoice.status)} — {money(invoice.outstanding)} / {money(invoice.total)}
-            {invoice.due_at ? ` — vade ${invoice.due_at}` : ""}
-          </p>
-          {invoice.outstanding > 0 ? (
-            <>
-              <input name="amount" type="number" min="0.01" step="0.01" placeholder="Tahsil edilen" required />
-              <button className="glass-btn-lite" type="submit">
-                Ödemeyi kaydet
-              </button>
-            </>
-          ) : null}
         </form>
-      ))}
-      <form onSubmit={(event) => submitInvoice(event, office.id, send)}>
-        <input name="description" placeholder="Fatura açıklaması" required />
-        <input name="amount" type="number" min="0.01" step="0.01" placeholder="Tutar, KDV hariç" required />
-        <button className="glass-btn-lite" type="submit">
-          Fatura kes
-        </button>
-      </form>
-      <h4>Limit artışı</h4>
-      {office.limit_requests.map((row) => (
-        <p key={row.id}>
-          {resourceLabel(row.resource)} +{row.quantity} — {row.note} — {requestLabel(row.status)}
-        </p>
-      ))}
-      <form onSubmit={(event) => submitLimit(event, office.id, send)}>
-        <select name="resource" defaultValue="portfolios">
-          {RESOURCES.map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <input name="quantity" type="number" min="1" step="1" placeholder="Ek adet" required />
-        <input name="note" placeholder="Gerekçe" required />
-        <button className="glass-btn-lite" type="submit">
-          Limit artışı talep et
-        </button>
-      </form>
+      </div>
+      <div className="glass-section">
+        <h4>Limit artışı</h4>
+        {office.limit_requests.map((row) => (
+          <div key={row.id} className="glass-item">
+            <p>
+              {resourceLabel(row.resource)} +{row.quantity} — {row.note}
+            </p>
+            <span className="glass-pill" data-tone={row.status === "done" ? "active" : row.status === "rejected" ? "passive" : "hidden"}>{requestLabel(row.status)}</span>
+          </div>
+        ))}
+        <form className="glass-fields" onSubmit={(event) => submitLimit(event, office.id, send)}>
+          <select name="resource" defaultValue="portfolios">
+            {RESOURCES.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <input name="quantity" type="number" inputMode="numeric" min="1" step="1" placeholder="Ek adet" required />
+          <input name="note" placeholder="Gerekçe" required />
+          <button className="glass-btn-lite" type="submit">
+            Limit artışı talep et
+          </button>
+        </form>
+      </div>
     </article>
   );
+}
+
+function Meter({ cell }: { cell: LimitCell }) {
+  if (cell.limit < 0) {
+    return null;
+  }
+  const ratio = cell.limit === 0 ? 1 : Math.min(1, cell.used / cell.limit);
+  return (
+    <span className="glass-meter" data-full={ratio >= 1} role="meter" aria-valuemin={0} aria-valuemax={cell.limit} aria-valuenow={cell.used}>
+      <span style={{ width: `${Math.round(ratio * 100)}%` }} />
+    </span>
+  );
+}
+
+function invoiceTone(status: string): string {
+  if (status === "paid") return "active";
+  if (status === "overdue") return "passive";
+  if (status === "cancelled") return "";
+  return "hidden";
 }
 
 function submitInvoice(event: FormEvent<HTMLFormElement>, officeId: number, send: (url: string, payload: unknown) => void) {

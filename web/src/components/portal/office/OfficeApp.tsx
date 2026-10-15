@@ -11,10 +11,19 @@ import {
   roleOf,
   type OfficeMembership,
 } from "@/components/portal/office/access";
-import { OfficeProvider } from "@/components/portal/office/ui";
+import { EmptyState, OfficeProvider } from "@/components/portal/office/ui";
 import { OfficeWork } from "@/components/portal/office/work";
+import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
 
 export function OfficeApp({ parts }: { parts: string[] }) {
+  return (
+    <ToastProvider>
+      <OfficeScreen parts={parts} />
+    </ToastProvider>
+  );
+}
+
+function OfficeScreen({ parts }: { parts: string[] }) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -23,8 +32,9 @@ export function OfficeApp({ parts }: { parts: string[] }) {
   const route = parts.join("/");
   const [section, setSection] = useState(parts);
   const [switching, setSwitching] = useState(false);
-  const [message, setMessage] = useState("");
-  const notice = useCallback((value: string) => setMessage(value), []);
+  const [userName, setUserName] = useState({ first: "", last: "" });
+  const toast = useToast();
+  const notice = useCallback((value: string) => toast(value), [toast]);
 
   useEffect(() => {
     setSection(route === "" ? [] : route.split("/"));
@@ -40,7 +50,13 @@ export function OfficeApp({ parts }: { parts: string[] }) {
       }
       const sessionBody = (await session.json()) as OfficeRecord;
       const loginUser = isRecord(sessionBody.data) && isRecord(sessionBody.data.user) ? sessionBody.data.user : {};
-      if (!cancelled) setIsAdmin(Boolean(loginUser.is_admin));
+      if (!cancelled) {
+        setIsAdmin(Boolean(loginUser.is_admin));
+        setUserName({
+          first: typeof loginUser.first_name === "string" ? loginUser.first_name : "",
+          last: typeof loginUser.last_name === "string" ? loginUser.last_name : "",
+        });
+      }
       try {
         const me = await officeCall("me", null);
         const list = memberships(me.offices ?? loginUser.offices);
@@ -104,51 +120,86 @@ export function OfficeApp({ parts }: { parts: string[] }) {
   }
 
   if (!ready) {
-    return <main className="glass-shell"><p className="glass-muted">Açılıyor</p></main>;
+    return (
+      <main className="glass-loading" aria-busy="true">
+        <img className="glass-logo" alt="StartKey" src="/portal/img/startkey_logo.png" />
+        <span className="glass-spinner" />
+      </main>
+    );
   }
   if (!office || officeId === 0) {
     return (
-      <main className="glass-shell">
-        <p>Bu hesap bir ofise bağlı değil.</p>
-        {isAdmin ? <Link href="/portal">Franchise masası</Link> : null}
+      <main className="glass-login">
+        <section className="glass-panel">
+          <img className="glass-logo" alt="StartKey" src="/portal/img/startkey_logo.png" />
+          <EmptyState message="Bu hesap bir ofise bağlı değil." />
+          {isAdmin ? <Link className="glass-btn" href="/portal">Franchise masası</Link> : null}
+          <button className="glass-btn-lite" type="button" onClick={logout}>Çıkış</button>
+        </section>
       </main>
     );
   }
 
+  const shellLinks: ShellLink[] = links.map(([slug, label]) => ({
+    href: slug ? `/portal/office/${slug}` : "/portal/office",
+    label,
+    icon: ICONS[slug] ?? "grid",
+    current: (parts[0] ?? "") === slug,
+  }));
+
   return (
     <OfficeProvider value={{ officeId, office, isAdmin, notice, reload: () => undefined }}>
-      <main className="glass-shell">
-        <div className="glass-top">
-          <img className="glass-logo" alt="Logo" src="/portal/img/startkey_logo.png" />
-          <div className="glass-actions">
-            {offices.length > 1 ? (
-              <label className="glass-office">
-                <span>Ofis değiştir</span>
-                <select value={officeId} disabled={switching} onChange={(event) => choose(Number(event.target.value))}>
-                  {offices.map((item) => (
-                    <option key={officeNumber(item)} value={officeNumber(item)}>{officeLabel(item)}</option>
-                  ))}
-                </select>
-              </label>
-            ) : <span>{officeLabel(office)}</span>}
-            {isAdmin ? <Link className="glass-btn-lite" href="/portal">Franchise</Link> : null}
-            <button className="glass-btn-lite" type="button" onClick={logout}>Çıkış</button>
+      <AppShell
+        links={shellLinks}
+        homeHref="/portal/office"
+        header={
+          offices.length > 1 ? (
+            <label className="glass-office">
+              <span>Ofis</span>
+              <select value={officeId} disabled={switching} aria-busy={switching} onChange={(event) => choose(Number(event.target.value))}>
+                {offices.map((item) => (
+                  <option key={officeNumber(item)} value={officeNumber(item)}>{officeLabel(item)}</option>
+                ))}
+              </select>
+            </label>
+          ) : <div className="glass-office-name">{officeLabel(office)}</div>
+        }
+        footer={
+          <div className="glass-side-group">
+            <div className="glass-who">
+              <span className="glass-avatar">{initials(userName.first, userName.last)}</span>
+              <span>
+                <strong>{`${userName.first} ${userName.last}`.trim() || officeLabel(office)}</strong>
+                <small>{roleLabel(role)}</small>
+              </span>
+            </div>
+            {isAdmin ? <Link className="glass-nav-item" href="/portal"><Icon name="grid" /><span>Franchise</span></Link> : null}
+            <button className="glass-nav-item" type="button" onClick={logout}><Icon name="logout" /><span>Çıkış</span></button>
           </div>
+        }
+      >
+        <div key={`${officeId}:${section.join("/")}`} className="glass-view">
+          <OfficeWork key={officeId} parts={section} />
         </div>
-        <nav className="glass-nav">
-          {links.map(([slug, label]) => {
-            const href = slug ? `/portal/office/${slug}` : "/portal/office";
-            const current = (parts[0] ?? "") === slug;
-            return <Link key={slug || "home"} href={href} aria-current={current ? "page" : undefined}>{label}</Link>;
-          })}
-        </nav>
-        {message ? <p className={message.startsWith("Hata") ? "glass-error" : "glass-muted"}>{message}</p> : null}
-        <OfficeWork key={officeId} parts={section} />
-        <p className="glass-muted">{roleLabel(role)}</p>
-      </main>
+      </AppShell>
     </OfficeProvider>
   );
 }
+
+const ICONS: Record<string, IconName> = {
+  "": "home",
+  contacts: "people",
+  portfolios: "building",
+  demands: "search",
+  matches: "link",
+  calendar: "calendar",
+  earnings: "wallet",
+  reports: "chart",
+  collaborations: "swap",
+  lease: "key",
+  sahibinden: "globe",
+  settings: "sliders",
+};
 
 function memberships(value: unknown): OfficeMembership[] {
   if (!Array.isArray(value)) return [];

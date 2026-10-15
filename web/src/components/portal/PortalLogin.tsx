@@ -10,6 +10,8 @@ import {
   type PortalLoginLang,
 } from "@/content/portal-login";
 import { PortalDesk, type PortalUser } from "@/components/portal/PortalDesk";
+import { PasswordInput } from "@/components/portal/office/ui";
+import { Icon } from "@/components/portal/shell";
 
 export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
   const copy = PORTAL_LOGIN_COPY[lang];
@@ -18,7 +20,6 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -113,15 +114,24 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
     <main className="glass-login">
       <section className="glass-panel">
         <div className="glass-lang" ref={langWrapRef}>
-          <button type="button" onClick={() => setLangOpen((open) => !open)} aria-expanded={langOpen}>
-            <img src={current.flag} alt="" width={20} height={14} /> {copy.currentLangName}
+          <button
+            type="button"
+            onClick={() => setLangOpen((open) => !open)}
+            onKeyDown={(event) => { if (event.key === "Escape") setLangOpen(false); }}
+            aria-expanded={langOpen}
+            aria-haspopup="menu"
+          >
+            <img src={current.flag} alt="" width={18} height={13} />
+            {copy.currentLangName}
+            <Icon name="chevronDown" />
           </button>
           {langOpen ? (
-            <div className="glass-menu">
+            <div className="glass-menu" role="menu">
               {PORTAL_LOGIN_LANGUAGES.map((item) => (
-                <a key={item.code} href={`/portal?lang=${item.code}`} {...(item.code === lang ? { "aria-current": "true" as const } : {})}>
+                <a key={item.code} role="menuitem" href={`/portal?lang=${item.code}`} {...(item.code === lang ? { "aria-current": "true" as const } : {})}>
                   <img src={item.flag} alt="" width={20} height={14} />
                   <span>{item.name}</span>
+                  {item.code === lang ? <Icon name="check" /> : null}
                 </a>
               ))}
             </div>
@@ -137,6 +147,13 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
               id={emailId}
               name="Email"
               className="glass-input"
+              type="email"
+              inputMode="email"
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              aria-invalid={emailError ? true : undefined}
+              aria-describedby={emailError ? `${emailId}-error` : undefined}
               value={email}
               onChange={(event) => {
                 setEmail(event.target.value);
@@ -144,15 +161,16 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
               }}
             />
           </label>
-          {emailError ? <p className="glass-error">{emailError}</p> : null}
+          {emailError ? <p className="glass-error" id={`${emailId}-error`} role="alert">{emailError}</p> : null}
           <label className="glass-field" htmlFor={passwordId}>
             <span>{copy.passwordPlaceholder}</span>
-            <input
+            <PasswordInput
               id={passwordId}
               name="Password"
               className="glass-input"
-              type={showPassword ? "text" : "password"}
               autoComplete="current-password"
+              aria-invalid={passwordError ? true : undefined}
+              aria-describedby={passwordError ? `${passwordId}-error` : undefined}
               value={password}
               onChange={(event) => {
                 setPassword(event.target.value);
@@ -160,10 +178,7 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
               }}
             />
           </label>
-          <button className="glass-link" type="button" onClick={() => setShowPassword((value) => !value)}>
-            {showPassword ? "Gizle" : "Göster"}
-          </button>
-          {passwordError ? <p className="glass-error">{passwordError}</p> : null}
+          {passwordError ? <p className="glass-error" id={`${passwordId}-error`} role="alert">{passwordError}</p> : null}
           <div className="glass-row">
             <label>
               <input
@@ -179,7 +194,7 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
               {copy.forgotPassword}
             </Link>
           </div>
-          <button className="glass-btn" type="submit" disabled={submitting}>
+          <button className="glass-btn" type="submit" disabled={submitting} aria-busy={submitting}>
             {submitting ? copy.submitProgress : copy.submitLabel}
           </button>
         </form>
