@@ -22,4 +22,11 @@ declare global {
   }
 }
 
+declare module "react" {
+  interface CSSProperties {
+    "--sk-photo-w"?: number | string;
+    "--sk-photo-h"?: number | string;
+  }
+}
+
 export {};
