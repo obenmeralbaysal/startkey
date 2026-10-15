@@ -248,9 +248,17 @@ class ReonixCatalogue
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',
             'phoneLabel' => $phone,
             'email' => (string) ($row['email'] ?? ''),
-            'location' => (string) ($row['address'] ?? ''),
+            'location' => $this->cardLocation((string) ($row['address'] ?? '')),
             'variant' => 'office',
         ];
+    }
+
+    /** Office cards show "City / District" like the reference list; detail pages keep the full address. */
+    private function cardLocation(string $address): string
+    {
+        $parts = array_values(array_filter(array_map('trim', explode('/', $address)), fn ($part) => $part !== ''));
+
+        return implode(' / ', array_slice($parts, 0, 2));
     }
 
     /** @param  array<string, mixed>  $row */

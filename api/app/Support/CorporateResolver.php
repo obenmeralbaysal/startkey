@@ -1336,8 +1336,31 @@ class CorporateResolver
             $items[] = app(ReonixCatalogue::class)->officeCard($row, $locale);
         }
         $payload = $this->emptyOfficeList($locale, $path, $filters);
+        $foundTemplate = '{count}';
+        $perPage = 18;
 
-        return $this->pageRemote($payload, $items, $pageIndex, 18, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+        $list = CmsListPage::query()->where('type', 'office')->where('locale', $locale)->first();
+        if ($list !== null) {
+            $sidebar = $list->sidebar ?? [];
+            $payload['heading'] = $list->heading ?: $payload['heading'];
+            $payload['breadcrumb'] = $list->breadcrumb ?? $payload['breadcrumb'];
+            $payload['meta'] = $list->meta ?? $payload['meta'];
+            foreach (['searchHeading', 'searchPlaceholder', 'submitLabel'] as $key) {
+                if (($sidebar[$key] ?? '') !== '') {
+                    $payload['filter'][$key] = $sidebar[$key];
+                }
+            }
+            if (is_array($sidebar['bindUrls'] ?? null) && $sidebar['bindUrls'] !== []) {
+                $payload['filter']['bindUrls'] = $sidebar['bindUrls'];
+            }
+            $foundTemplate = (string) ($sidebar['foundTemplate'] ?? '{count}');
+            $perPage = max(1, (int) $list->per_page);
+        }
+
+        $payload = $this->pageRemote($payload, $items, $pageIndex, $perPage, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+        $payload['foundLabel'] = str_replace('{count}', (string) $payload['pagination']['total'], $foundTemplate);
+
+        return $payload;
     }
 
     /**

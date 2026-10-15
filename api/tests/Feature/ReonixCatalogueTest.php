@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CmsListPage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -65,6 +66,52 @@ class ReonixCatalogueTest extends TestCase
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
             ->assertOk()
             ->assertJsonPath('data.items.0.name', 'Ayse Demir');
+    }
+
+    public function test_the_portal_office_list_keeps_the_reference_page_shell(): void
+    {
+        CmsListPage::query()->create([
+            'type' => 'office',
+            'locale' => 'tr',
+            'url_path' => '/tr/ofisler',
+            'pager_base' => '/tr/ofislerimiz',
+            'per_page' => 18,
+            'continue_label' => '',
+            'heading' => 'Ofislerimiz',
+            'breadcrumb' => ['heading' => 'Ofislerimiz', 'trail' => [
+                ['href' => '/', 'label' => 'Anasayfa'],
+                ['href' => null, 'label' => 'Ofislerimiz'],
+            ]],
+            'meta' => ['title' => 'Startkey Türkiye | Ofislerimiz'],
+            'sidebar' => [
+                'searchHeading' => 'Ofis Ara :',
+                'searchPlaceholder' => 'Ofis Adı',
+                'submitLabel' => 'Ara',
+                'foundTemplate' => '{count} Ofis Bulundu',
+                'formAction' => '/tr/ofisler',
+            ],
+        ]);
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [
+                ['id' => 16369, 'name' => '1872', 'phone' => '+90 (232) 812-1872', 'address' => 'İzmir / Foça / Atatürk / Reha Midilli Cad. No:21'],
+                ['id' => 8, 'name' => 'Moda', 'phone' => '', 'address' => 'Moda'],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler')
+            ->assertOk()
+            ->assertJsonPath('data.breadcrumb.trail.0.label', 'Anasayfa')
+            ->assertJsonPath('data.meta.title', 'Startkey Türkiye | Ofislerimiz')
+            ->assertJsonPath('data.foundLabel', '2 Ofis Bulundu')
+            ->assertJsonPath('data.filter.action', '/tr/ofisler')
+            ->assertJsonPath('data.items.0.location', 'İzmir / Foça')
+            ->assertJsonPath('data.items.1.location', 'Moda');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler&SearchText=yok')
+            ->assertOk()
+            ->assertJsonPath('data.hasResults', false)
+            ->assertJsonPath('data.foundLabel', '0 Ofis Bulundu')
+            ->assertJsonPath('data.emptyLabel', 'Henüz eklenmiş ofis yok.');
     }
 
     public function test_a_listing_inquiry_is_sent_to_the_portal(): void
