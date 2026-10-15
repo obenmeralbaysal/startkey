@@ -23,5 +23,8 @@ return [
         'office_outside_network' => 'The selected office is not open for applications.',
         'email_taken' => 'A user with this email already exists.',
         'already_accepted' => 'This application has already been accepted.',
+        'password_reset_sent' => 'A password reset link has been sent.',
+        'password_reset_done' => 'Your password has been updated.',
+        'password_reset_invalid' => 'This link is invalid or has expired.',
     ],
 ];

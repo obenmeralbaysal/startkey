@@ -1,5 +1,6 @@
 ## [2026-10-14]
 
+- **[UI]**: Portal şifre sıfırlama bağlantısı StartKey adresine gider. Sosyal giriş eklenmedi.
 - **[UI]**: Ana sayfadaki öne çıkan portföyler ile ofis ve danışman araması, portal bağlantısı varken Reonix katalogundan gelir.
 - **[UI]**: Portal kapanışında iç ofis işbirliği, eşleşen talep ve gösterim sözleşmesi seçilebiliyor.
 - **[UI]**: Portal kapanışı alıcı, hizmet bedeli, evrak ve onay adımını Reonix’e gönderir.

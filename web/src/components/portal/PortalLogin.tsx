@@ -175,9 +175,9 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
               />{" "}
               {copy.rememberMe}
             </label>
-            <a className="glass-link" href="#sifremi-unuttum">
+            <Link className="glass-link" href={`/portal/forgot-password?lang=${lang}`}>
               {copy.forgotPassword}
-            </a>
+            </Link>
           </div>
           <button className="glass-btn" type="submit" disabled={submitting}>
             {submitting ? copy.submitProgress : copy.submitLabel}

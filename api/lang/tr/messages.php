@@ -23,5 +23,8 @@ return [
         'office_outside_network' => 'Seçilen ofis başvuruya açık değil.',
         'email_taken' => 'Bu e-posta ile kayıtlı bir kullanıcı var.',
         'already_accepted' => 'Bu başvuru zaten kabul edilmiş.',
+        'password_reset_sent' => 'Şifre sıfırlama bağlantısı gönderildi.',
+        'password_reset_done' => 'Şifreniz güncellendi.',
+        'password_reset_invalid' => 'Bağlantı geçersiz veya süresi dolmuş.',
     ],
 ];

@@ -46,6 +46,8 @@ Route::prefix('v1')->group(function () {
         ->middleware('throttle:consultant-application');
 
     Route::post('portal/session', [PortalSessionController::class, 'store'])->middleware('throttle:portal-session');
+    Route::post('portal/password/forgot', [PortalSessionController::class, 'forgotPassword'])->middleware('throttle:portal-password');
+    Route::post('portal/password/reset', [PortalSessionController::class, 'resetPassword'])->middleware('throttle:portal-password');
     Route::delete('portal/session', [PortalSessionController::class, 'destroy']);
     Route::middleware(AuthenticatePortalSession::class)->group(function () {
         Route::get('portal/session', [PortalSessionController::class, 'show']);

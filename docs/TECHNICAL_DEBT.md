@@ -28,17 +28,17 @@ Seed verisi Reonix'ten gelen canlı portföy, ofis, şehir ve lookup verileri il
 
 **Mevcut Durum:**
 
-Referans sitedeki ReOS CRM butonları **Portal** olarak gösterilir ve `/portal` açılır. E-posta ve şifre Startkey API üzerinden doğrulanır; oturum çerezi tarayıcıda kalır, karşı uçtaki token tarayıcıya dönmez. “Şifremi Unuttum”, Google ve Office 365 hâlâ gerçek oturum açmaz.
+“Şifremi Unuttum” portalda e-posta ister. Bağlantı StartKey `/portal/reset-password` adresine gider ve şifre Reonix’te güncellenir. Google ve Office 365 girişi istenmedi.
 
 **Geçici Olmasının Nedeni:**
 
-Şifre sıfırlama ve sosyal giriş bu dilime alınmadı.
+Şifre sıfırlama bağlı değildi. Sosyal giriş kapsam dışı bırakıldı.
 
 **Gelecekteki Implementasyon:**
 
-Şifremi unuttum, Google ve Office 365 aynı portal oturumuna bağlanacak.
+Şifre sıfırlama bağlandı. Sosyal giriş eklenmeyecek.
 
-**Durum:** Açık
+**Durum:** Çözüldü
 
 ### TD-003 — Public form reCAPTCHA sunucu doğrulaması atlanıyor
 

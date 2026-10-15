@@ -14,6 +14,43 @@ class PortalSessionController extends Controller
 {
     public function __construct(private readonly ReonixClient $reonix) {}
 
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        try {
+            $this->reonix->post('forgot-password', [
+                'email' => mb_strtolower($data['email']),
+            ]);
+        } catch (ReonixException) {
+            return response()->json(['message' => __('messages.portal.unavailable')], 422);
+        }
+
+        return response()->json(['message' => __('messages.portal.password_reset_sent')]);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'token' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        try {
+            $this->reonix->post('reset-password', [
+                'token' => $data['token'],
+                'password' => $data['password'],
+                'password_confirmation' => $data['password_confirmation'],
+            ]);
+        } catch (ReonixException $e) {
+            return response()->json(['message' => $this->message($e->error)], 422);
+        }
+
+        return response()->json(['message' => __('messages.portal.password_reset_done')]);
+    }
+
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([

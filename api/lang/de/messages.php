@@ -23,5 +23,8 @@ return [
         'office_outside_network' => 'Das gewählte Büro nimmt keine Bewerbungen an.',
         'email_taken' => 'Es gibt bereits einen Benutzer mit dieser E-Mail.',
         'already_accepted' => 'Diese Bewerbung wurde bereits angenommen.',
+        'password_reset_sent' => 'Ein Link zum Zurücksetzen des Passworts wurde gesendet.',
+        'password_reset_done' => 'Ihr Passwort wurde aktualisiert.',
+        'password_reset_invalid' => 'Dieser Link ist ungültig oder abgelaufen.',
     ],
 ];
