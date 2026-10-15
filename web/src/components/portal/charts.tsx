@@ -42,9 +42,11 @@ function useWidth<T extends HTMLElement>() {
 
 function niceMax(value: number): number {
   if (value <= 0) return 4;
-  const power = 10 ** Math.floor(Math.log10(value));
-  const step = [1, 2, 2.5, 5, 10].find((candidate) => candidate * power >= value / 4) ?? 10;
-  return Math.ceil(value / (step * power)) * step * power;
+  const raw = value / 4;
+  const power = 10 ** Math.floor(Math.log10(raw));
+  const steps = power >= 10 ? [1, 2, 2.5, 3, 4, 5, 10] : [1, 2, 3, 4, 5, 10];
+  const step = (steps.find((candidate) => candidate * power >= raw) ?? 10) * power;
+  return Math.max(4, step * 4);
 }
 
 export function ChartCard({ title, subtitle, children, aside }: { title: string; subtitle?: string; children: ReactNode; aside?: ReactNode }) {

@@ -1432,6 +1432,7 @@ a.glass-list-row:active {
   color: var(--label-2);
   background: var(--fill-2);
   font-size: 12px;
+  font-style: normal;
   font-weight: 600;
 }
 
@@ -1754,16 +1755,16 @@ button.glass-kpi:active {
 }
 
 @container (max-width: 400px) {
-  .glass-donut {
+  .glass-chart-card .glass-donut {
     grid-template-columns: minmax(0, 1fr);
     justify-items: center;
   }
 
-  .glass-donut svg {
+  .glass-chart-card .glass-donut svg {
     max-width: 180px;
   }
 
-  .glass-donut .glass-legend {
+  .glass-chart-card .glass-donut .glass-legend {
     width: 100%;
   }
 }
