@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\PopularCity;
 use App\Models\PropertyTranslation;
 use App\Models\SiteStat;
+use App\Services\ReonixCatalogue;
 use App\Support\Locale;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class HomepageController extends Controller
 {
+    public function __construct(private readonly ReonixCatalogue $catalogue) {}
+
     /**
      * The homepage sections that are backed by data rather than page copy: the counter
      * strip, the featured portfolio carousel and the popular city cards.
@@ -46,6 +49,14 @@ class HomepageController extends Controller
 
     private function featuredProperties(string $locale): array
     {
+        $remote = $this->catalogue->collection('portfolios');
+        if (is_array($remote)) {
+            return array_map(
+                fn (array $row) => $this->featuredFromCatalogue($row, $locale),
+                array_slice($remote, 0, 12),
+            );
+        }
+
         return PropertyTranslation::query()
             ->where('locale', $locale)
             ->where('is_featured', true)
@@ -71,6 +82,42 @@ class HomepageController extends Controller
                 ];
             })
             ->all();
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return array<string, mixed>
+     */
+    private function featuredFromCatalogue(array $row, string $locale): array
+    {
+        $card = $this->catalogue->listingCard($row, $locale);
+
+        return [
+            'externalId' => $card['externalId'],
+            'urlPath' => $card['urlPath'],
+            'image' => $card['image'],
+            'processType' => match ((string) ($row['type'] ?? '')) {
+                'sale' => match ($locale) {
+                    'en' => 'For Sale',
+                    'de' => 'Zum Verkauf',
+                    default => 'Satılık',
+                },
+                'rent' => match ($locale) {
+                    'en' => 'For Rent',
+                    'de' => 'Vermietung',
+                    default => 'Kiralık',
+                },
+                default => (string) ($row['type'] ?? ''),
+            },
+            'adSubType' => '',
+            'adType' => (string) ($row['property_type'] ?? ''),
+            'price' => $card['price'],
+            'title' => $card['title'],
+            'location' => $card['location'],
+            'rooms' => '',
+            'area' => '',
+            'detailLabel' => $locale === 'tr' ? 'Detay' : 'Detail',
+        ];
     }
 
     private function popularCities(string $locale): array

@@ -8,7 +8,7 @@ Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
 **Mevcut Durum:**
 
-İstatistik şeridi, öne çıkan portföy kartları, popüler şehirler ve arama formu dropdown seçenekleri `web/src/content/homepage.{tr,en,de}.json` / `reference-seed.json` içindeki referans anlık görüntüsünden gelir.
+Portal bağlantısı varken öne çıkan portföy kartları ile ofis ve danışman arama listeleri Reonix katalogundan gelir. İstatistik şeridi, popüler şehirler ve diğer arama seçenekleri referans anlık görüntüsünden gelir.
 
 2026-09-19 yenileme: sayaçlar 84 / 720 / 1082 / 35; seminer şeridi 6; TR öne çıkanlar 482977 ile başlar. EN/DE ana sayfa canlıdaki gibi ayrı ilan seti gösterir (`property_translations.is_featured`). Yeni ilanlar otomatik gelmez.
 

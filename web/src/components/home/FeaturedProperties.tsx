@@ -14,21 +14,26 @@ export function FeaturedProperties({
 
         <div data-carousel="cards">
           {properties.map((property) => {
+            const remote = property.image.startsWith("/") || property.image.startsWith("http");
             const imageBase = property.image.replace(/\.[^.]+$/, "");
             return (
               <div className="sk-property" key={property.externalId}>
                 <div className="sk-property-img">
                   <a href={property.urlPath}>
-                    <picture>
-                      <source srcSet={`/media/property/${imageBase}.webp`} type="image/webp" />
-                      <img
-                        src={`/media/property/${property.image}`}
-                        alt="Property-photo"
-                        width={420}
-                        height={300}
-                        loading="lazy"
-                      />
-                    </picture>
+                    {remote ? (
+                      <img src={property.image} alt="Property-photo" width={420} height={300} loading="lazy" />
+                    ) : (
+                      <picture>
+                        <source srcSet={`/media/property/${imageBase}.webp`} type="image/webp" />
+                        <img
+                          src={`/media/property/${property.image}`}
+                          alt="Property-photo"
+                          width={420}
+                          height={300}
+                          loading="lazy"
+                        />
+                      </picture>
+                    )}
                   </a>
                   <span className="sk-property-sale">{property.processType}</span>
                   <span className="sk-property-kind">{property.adSubType}</span>

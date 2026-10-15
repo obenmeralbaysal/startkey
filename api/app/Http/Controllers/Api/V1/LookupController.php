@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\LookupItem;
+use App\Services\ReonixCatalogue;
 use App\Support\Locale;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class LookupController extends Controller
 {
+    public function __construct(private readonly ReonixCatalogue $catalogue) {}
+
     /**
      * Options for one homepage search bar dropdown.
      *
@@ -47,6 +50,11 @@ class LookupController extends Controller
 
     private function options(array $definition, Request $request, string $locale): array
     {
+        $remote = $this->catalogueOptions($definition, $request);
+        if (is_array($remote)) {
+            return $remote;
+        }
+
         $query = LookupItem::query()
             ->where('group', $definition['group'])
             ->with(['translations' => fn ($relation) => $relation->where('locale', $locale)])
@@ -68,6 +76,39 @@ class LookupController extends Controller
                 'text' => $item->translations->first()?->label ?? '',
             ])
             ->all();
+    }
+
+    /**
+     * @param  array<string, mixed>  $definition
+     * @return list<array{id: string, text: string}>|null
+     */
+    private function catalogueOptions(array $definition, Request $request): ?array
+    {
+        $group = (string) ($definition['group'] ?? '');
+        if (! in_array($group, ['offices', 'consultants'], true)) {
+            return null;
+        }
+
+        $rows = $this->catalogue->collection($group === 'offices' ? 'offices' : 'consultants');
+        if (! is_array($rows)) {
+            return null;
+        }
+
+        if ($group === 'consultants' && $definition['parent'] !== null) {
+            $parents = $this->parentIds($request->query($definition['parent']), $definition['parent_fallback']);
+            if ($parents === []) {
+                return [];
+            }
+            $rows = array_values(array_filter(
+                $rows,
+                fn (array $row) => in_array((string) ($row['office_id'] ?? ''), $parents, true),
+            ));
+        }
+
+        return array_map(fn (array $row) => [
+            'id' => (string) ($row['id'] ?? ''),
+            'text' => (string) ($row['name'] ?? ''),
+        ], $rows);
     }
 
     /**
