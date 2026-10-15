@@ -1,6 +1,5 @@
 import { Picture } from "@/components/corporate/Picture";
 import type { DirectoryCardData } from "@/lib/corporate";
-import { scaled } from "@/lib/scale";
 
 function FramedPhoto({
   href,
@@ -77,25 +76,23 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
 
   return (
     <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0px_calc(6px_*_var(--sk-scale,_1))_calc(24px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.07)] [border:1px_solid_transparent] [border-radius:calc(5px_*_var(--sk-scale,_1))] relative [transition:0.4s] after:absolute after:[bottom:calc(-2px_*_var(--sk-scale,_1))] after:[left:50%] after:content-[''] after:[width:0%] after:[height:calc(3px_*_var(--sk-scale,_1))] after:[transform:translate(-50%,_-50%)] after:bg-navy after:[border-radius:0_0_calc(5px_*_var(--sk-scale,_1))_calc(5px_*_var(--sk-scale,_1))] after:[transition:0.4s] hover:[box-shadow:none] hover:[transform:translateY(calc(-5px_*_var(--sk-scale,_1)))] hover:after:[width:85%]">
-      <FramedPhoto href={item.urlPath} image={item.image} imageWebp={item.imageWebp} alt="User-photo" width={414} height={414} />
-      <div className="block">
-        <div className="[padding:calc(22px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))_calc(22px_*_var(--sk-scale,_1))] text-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(25px_*_var(--sk-scale,_1))] [border-bottom:1px_solid_rgba(0,_0,_0,_0.09)]" style={{ marginBottom: 0, paddingBottom: scaled(25) }}>
-          <h3>
-            <a href={item.urlPath}>{item.name}</a>
-          </h3>
-          {item.role ? <span>{item.role}</span> : null}
-          <br />
-          {item.phoneHref ? (
-            <div className="container items-center">
-              <i className="flaticon-phone-call" /> <a href={item.phoneHref} target="_blank">{item.phoneLabel}</a>
-            </div>
-          ) : null}
-          {item.email ? (
-            <div className="container items-center">
-              <i className="flaticon-envelope" /> <a href={`mailto:${item.email}`}> {item.email}</a>
-            </div>
-          ) : null}
-        </div>
+      <FramedPhoto href={item.urlPath} image={item.image} imageWebp={item.imageWebp} alt="User-photo" width={414} height={414} fill />
+      <div className="sk-office-info">
+        <h3>
+          <a href={item.urlPath}>{item.name}</a>
+        </h3>
+        {item.role ? <span>{item.role}</span> : null}
+        <br />
+        {item.phoneHref ? (
+          <div>
+            <i className="flaticon-phone-call" /> <a href={item.phoneHref} target="_blank">{item.phoneLabel}</a>
+          </div>
+        ) : null}
+        {item.email ? (
+          <div>
+            <i className="flaticon-envelope" /> <a href={`mailto:${item.email}`}> {item.email}</a>
+          </div>
+        ) : null}
       </div>
     </div>
   );

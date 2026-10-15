@@ -340,7 +340,10 @@ export type CorporatePayload =
       tabs: { id: string; label: string }[];
       teamGroups: { heading: string; members: DirectoryCardData[] }[];
       listings: ListingCardData[];
-      map: { latitude?: string; longitude?: string; iframeSrc?: string };
+      emptyListingsLabel?: string;
+      seeAllHref?: string;
+      seeAllLabel?: string;
+      map: { query?: string; iframeSrc?: string; directionsLabel?: string; streetViewLabel?: string };
       breadcrumb: CorporateBreadcrumb;
       meta: CorporateMeta;
       alternates: Record<string, string>;
@@ -377,6 +380,9 @@ export type CorporatePayload =
       listings: ListingCardData[];
       allListingsHref: string;
       allListingsLabel: string;
+      mineListingsHref?: string;
+      mineListingsLabel?: string;
+      emptyListingsLabel?: string;
       commentHeading: string;
       comments?: { firstName: string; lastName: string; date: string; text: string; rating: number | null }[];
       form: {

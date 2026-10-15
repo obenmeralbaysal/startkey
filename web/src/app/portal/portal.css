@@ -1009,8 +1009,9 @@ a.glass-list-row:active {
 }
 
 .glass-brand {
-  display: block;
-  padding: 0 10px;
+  display: flex;
+  justify-content: center;
+  padding: 4px 10px;
 }
 
 .glass-brand img {

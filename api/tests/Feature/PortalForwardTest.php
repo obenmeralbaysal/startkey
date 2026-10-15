@@ -45,7 +45,35 @@ class PortalForwardTest extends TestCase
         $this->getJson('/api/v1/portal/session')->assertUnauthorized();
         $this->getJson('/api/v1/portal/applications')->assertUnauthorized();
         $this->postJson('/api/v1/portal/offices/1/agents', [])->assertUnauthorized();
+        $this->getJson('/api/v1/portal/desk/stats')->assertUnauthorized();
         $this->deleteJson('/api/v1/portal/session')->assertOk();
+    }
+
+    public function test_desk_stats_are_forwarded_to_the_franchise_desk(): void
+    {
+        config(['reonix.base_url' => 'http://reonix.test', 'reonix.portal_key' => 'test-key']);
+        Http::fake([
+            'http://reonix.test/api/v1/integrations/portal/session' => Http::response([
+                'data' => ['token' => 'secret-token', 'user' => ['id' => 1, 'first_name' => 'Ada']],
+            ], 200),
+            'http://reonix.test/api/v1/integrations/portal/desk/stats' => Http::response([
+                'data' => ['offices' => ['total' => 3]],
+            ], 200),
+        ]);
+
+        $cookie = $this->postJson('/api/v1/portal/session', [
+            'email' => 'ada@example.com',
+            'password' => 'secret',
+        ])->assertOk()->getCookie('startkey_portal', false);
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->getJson('/api/v1/portal/desk/stats')
+            ->assertOk()
+            ->assertJsonPath('data.offices.total', 3);
+
+        Http::assertSent(fn ($request) => $request->url() === 'http://reonix.test/api/v1/integrations/portal/desk/stats'
+            && $request->hasHeader('Authorization', 'Bearer secret-token'));
     }
 
     public function test_portal_data_routes_allow_a_valid_session(): void

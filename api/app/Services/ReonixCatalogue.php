@@ -49,42 +49,76 @@ class ReonixCatalogue
         $consultants = is_array($body['consultants'] ?? null) ? $body['consultants'] : [];
         $portfolios = is_array($body['portfolios'] ?? null) ? $body['portfolios'] : [];
         $card = $this->officeCard($office, $locale);
+        $name = $card['name'];
+        $address = (string) ($office['address'] ?? '');
+        $latitude = trim((string) ($office['latitude'] ?? ''));
+        $longitude = trim((string) ($office['longitude'] ?? ''));
+        $mapQuery = ($latitude !== '' && $longitude !== '') ? $latitude.','.$longitude : $address;
 
         return [
             'kind' => 'office-detail',
             'externalId' => (int) $office['id'],
             'urlPath' => $card['urlPath'],
             'shortPath' => $card['urlPath'],
-            'name' => $card['name'],
+            'name' => $name,
             'image' => $card['image'],
             'imageWebp' => '',
             'phoneHref' => $card['phoneHref'],
             'phoneLabel' => $card['phoneLabel'],
             'email' => $card['email'],
-            'address' => (string) ($office['address'] ?? ''),
+            'address' => $address,
             'instagram' => '',
-            'portfoliosHref' => $this->listPath('listings', $locale),
-            'portfoliosLabel' => match ($locale) {
-                'en' => 'Our Portfolios',
-                'de' => 'Unsere Portfolios',
-                default => 'Portföylerimiz',
+            'portfoliosHref' => $this->listPath('listings', $locale).'?FilterDTO.OfficeId='.(int) $office['id'],
+            'portfoliosLabel' => $name.' '.match ($locale) {
+                'en' => 'All Portfolios',
+                'de' => 'Alle Portfolios',
+                default => 'Tüm Portföyleri',
             },
             'tabs' => [
-                ['id' => 'tab_1', 'label' => $locale === 'tr' ? 'Ekip' : ''],
+                ['id' => 'tab_1', 'label' => match ($locale) {
+                    'en' => 'Our team',
+                    'de' => 'Unser Team',
+                    default => 'Ekibimiz',
+                }],
                 ['id' => 'tab_2', 'label' => match ($locale) {
-                    'en' => 'Our Portfolios',
-                    'de' => 'Unsere Portfolios',
-                    default => 'Portföylerimiz',
+                    'en' => 'Portfolios of the Office',
+                    'de' => 'Portfolios des Amtes',
+                    default => 'Ofisin Portföyleri',
+                }],
+                ['id' => 'tab_3', 'label' => match ($locale) {
+                    'en' => 'Location',
+                    'de' => 'Ort',
+                    default => 'Konum',
                 }],
             ],
-            'teamGroups' => [[
-                'heading' => '',
-                'members' => array_values(array_map(fn ($row) => $this->consultantCard($row, $locale), array_filter($consultants, 'is_array'))),
-            ]],
+            'teamGroups' => $this->teamGroups($consultants, $locale),
             'listings' => array_values(array_map(fn ($row) => $this->listingCard($row, $locale), array_filter($portfolios, 'is_array'))),
-            'map' => [],
-            'breadcrumb' => ['heading' => $card['name'], 'trail' => []],
-            'meta' => ['title' => $card['name']],
+            'emptyListingsLabel' => $this->emptyListingsLabel($locale),
+            'seeAllHref' => $this->listPath('listings', $locale),
+            'seeAllLabel' => $this->seeAllLabel($locale),
+            'map' => $mapQuery === '' ? [] : [
+                'query' => $mapQuery,
+                'iframeSrc' => 'https://maps.google.com/maps?q='.rawurlencode($mapQuery).'&output=embed',
+                'directionsLabel' => match ($locale) {
+                    'en' => 'Directions',
+                    'de' => 'Wegbeschreibung',
+                    default => 'Yol Tarifi',
+                },
+                'streetViewLabel' => match ($locale) {
+                    'en' => 'Street View',
+                    'de' => 'Straßenansicht',
+                    default => 'Sokak Görünümü',
+                },
+            ],
+            'breadcrumb' => [
+                'heading' => $name,
+                'trail' => [
+                    ['href' => $this->homePath($locale), 'label' => $this->homeLabel($locale)],
+                    ['href' => $this->listPath('offices', $locale), 'label' => $this->officeListLabel($locale)],
+                    ['href' => null, 'label' => $name],
+                ],
+            ],
+            'meta' => ['title' => 'Startkey Türkiye | '.$name],
             'alternates' => $this->alternates('offices', (int) $office['id'], (string) $office['name']),
         ];
     }
@@ -99,13 +133,15 @@ class ReonixCatalogue
         $row = $body['consultant'];
         $card = $this->consultantCard($row, $locale);
         $officeId = (int) ($row['office_id'] ?? 0);
+        $name = $card['name'];
         $portfolios = is_array($body['portfolios'] ?? null) ? $body['portfolios'] : [];
+        $listPath = $this->listPath('listings', $locale);
 
         return [
             'kind' => 'consultant-detail',
             'externalId' => (int) $row['id'],
             'urlPath' => $card['urlPath'],
-            'name' => $card['name'],
+            'name' => $name,
             'role' => $card['role'],
             'image' => $card['image'],
             'imageWebp' => '',
@@ -115,35 +151,43 @@ class ReonixCatalogue
             'officeHref' => $officeId > 0 ? $this->detailPath('offices', $locale, $officeId, (string) ($row['office_name'] ?? '')) : '',
             'officeName' => (string) ($row['office_name'] ?? ''),
             'contactLabels' => [
-                'email' => 'Email',
+                'email' => 'Email:',
                 'phone' => match ($locale) {
-                    'en' => 'Phone',
-                    'de' => 'Telefon',
-                    default => 'Telefon',
+                    'en' => 'Phone:',
+                    'de' => 'Telefon:',
+                    default => 'Telefon:',
                 },
-                'office' => match ($locale) {
-                    'en' => 'Office',
-                    'de' => 'Büro',
-                    default => 'Ofis',
-                },
+                'office' => 'Startkey:',
             ],
             'tabs' => [
-                ['id' => 'tab_1', 'label' => ''],
-                ['id' => 'tab_2', 'label' => match ($locale) {
-                    'en' => 'Our Portfolios',
-                    'de' => 'Unsere Portfolios',
-                    default => 'Portföylerimiz',
+                ['id' => 'tab_1', 'label' => match ($locale) {
+                    'en' => 'About me',
+                    'de' => 'Über mich',
+                    default => 'Hakkımda',
+                }],
+                ['id' => 'tab_2', 'label' => 'Portföyler'],
+                ['id' => 'tab_3', 'label' => match ($locale) {
+                    'en' => 'Comments',
+                    'de' => 'Kommentare',
+                    default => 'Yorumlar',
                 }],
             ],
             'bioHtml' => '',
             'listings' => array_values(array_map(fn ($item) => $this->listingCard($item, $locale), array_filter($portfolios, 'is_array'))),
-            'allListingsHref' => $this->listPath('listings', $locale),
-            'allListingsLabel' => match ($locale) {
-                'en' => 'Our Portfolios',
-                'de' => 'Unsere Portfolios',
-                default => 'Portföylerimiz',
+            'allListingsHref' => $listPath,
+            'allListingsLabel' => $this->seeAllLabel($locale),
+            'mineListingsHref' => $listPath.'?FilterDTO.OfficeId='.$officeId.'&FilterDTO.UserId='.(int) $row['id'],
+            'mineListingsLabel' => match ($locale) {
+                'en' => 'All My Portfolios',
+                'de' => 'Alle meine Portfolios',
+                default => 'Tüm Portföylerim',
             },
-            'commentHeading' => '',
+            'emptyListingsLabel' => $this->emptyListingsLabel($locale),
+            'commentHeading' => match ($locale) {
+                'en' => 'Add Comment For '.$name,
+                'de' => 'Fügen Sie Kommentare für '.$name.' hinzu',
+                default => $name.' için Yorum Ekle',
+            },
             'comments' => array_values(array_map(fn ($review) => [
                 'firstName' => (string) ($review['firstName'] ?? ''),
                 'lastName' => (string) ($review['lastName'] ?? ''),
@@ -152,13 +196,32 @@ class ReonixCatalogue
                 'rating' => $review['rating'] ?? null,
             ], array_filter(is_array($row['reviews'] ?? null) ? $row['reviews'] : [], 'is_array'))),
             'form' => [
-                'placeholders' => [],
-                'submitLabel' => '',
+                'placeholders' => match ($locale) {
+                    'en' => ['FirstName' => 'Name', 'LastName' => 'Surname', 'Email' => 'Email', 'Comment' => 'Comment'],
+                    'de' => ['FirstName' => 'Name', 'LastName' => 'Familien-oder Nachname', 'Email' => 'Email', 'Comment' => 'Kommentar'],
+                    default => ['FirstName' => 'Ad', 'LastName' => 'Soyad', 'Email' => 'Email', 'Comment' => 'Yorum'],
+                },
+                'submitLabel' => match ($locale) {
+                    'en' => 'Send Comment',
+                    'de' => 'Senden Sie den Kommentar',
+                    default => 'Yorumu Gönder',
+                },
                 'captchaError' => 'Captcha boş bırakılamaz!',
             ],
-            'ratingLabel' => '',
-            'breadcrumb' => ['heading' => $card['name'], 'trail' => []],
-            'meta' => ['title' => $card['name']],
+            'ratingLabel' => 'Yıldız',
+            'breadcrumb' => [
+                'heading' => $name,
+                'trail' => [
+                    ['href' => $this->homePath($locale), 'label' => $this->homeLabel($locale)],
+                    ['href' => $this->listPath('consultants', $locale), 'label' => match ($locale) {
+                        'en' => 'Our Consultants',
+                        'de' => 'Unsere Berater',
+                        default => 'Danışmanlarımız',
+                    }],
+                    ['href' => null, 'label' => $name],
+                ],
+            ],
+            'meta' => ['title' => 'Startkey Türkiye | '.$name],
             'alternates' => $this->alternates('consultants', (int) $row['id'], (string) $row['name']),
         ];
     }
@@ -289,7 +352,7 @@ class ReonixCatalogue
             'externalId' => $id,
             'urlPath' => $this->detailPath('consultants', $locale, $id, $name),
             'name' => $name,
-            'role' => (string) ($row['role'] ?? ''),
+            'role' => $this->roleLabel((string) ($row['role'] ?? '')),
             'image' => $this->catalogueImage('consultants', $row),
             'imageWebp' => '',
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',

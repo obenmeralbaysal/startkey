@@ -1498,7 +1498,7 @@ a.btn.style2::after {
   color: #ec3323;
 }
 
-.sk-office-info span a {
+.sk-office-info a {
   color: #000;
 }
 
@@ -1580,6 +1580,228 @@ a.btn.style2::after {
     width: 36px;
     height: 36px;
     line-height: 36px;
+  }
+}
+
+.sk-agent-page {
+  padding: calc(100px * var(--sk-scale, 1)) 0;
+}
+
+.sk-agent {
+  padding: calc(50px * var(--sk-scale, 1)) calc(50px * var(--sk-scale, 1)) calc(25px * var(--sk-scale, 1));
+  box-shadow: 0 0 calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.09);
+}
+
+.sk-agent-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 calc(-24px * var(--sk-scale, 1));
+}
+
+.sk-agent-row > * {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 calc(24px * var(--sk-scale, 1));
+}
+
+.sk-agent-name {
+  margin-bottom: calc(25px * var(--sk-scale, 1));
+  padding-bottom: calc(25px * var(--sk-scale, 1));
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.sk-agent-name h2 {
+  margin: 0 0 calc(5px * var(--sk-scale, 1));
+  color: #000;
+  font-size: calc(34px * var(--sk-scale, 1));
+}
+
+.sk-agent-info {
+  margin: 0 0 calc(25px * var(--sk-scale, 1));
+  padding: 0 0 calc(25px * var(--sk-scale, 1));
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  list-style: none;
+}
+
+.sk-agent-info li {
+  margin-bottom: calc(15px * var(--sk-scale, 1));
+}
+
+.sk-agent-info li:last-child {
+  margin-bottom: 0;
+}
+
+.sk-agent-info a {
+  color: #000;
+}
+
+.sk-agent-info b {
+  display: inline-block;
+  min-width: calc(100px * var(--sk-scale, 1));
+  color: #000;
+}
+
+.sk-agent-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin: calc(25px * var(--sk-scale, 1)) 0 calc(30px * var(--sk-scale, 1));
+  padding: 0;
+  list-style: none;
+}
+
+.sk-agent-tabs li {
+  margin-right: calc(25px * var(--sk-scale, 1));
+}
+
+.sk-agent-tabs li:last-child {
+  margin-right: 0;
+}
+
+.sk-agent-tabs button {
+  position: relative;
+  padding: 0 0 calc(10px * var(--sk-scale, 1));
+  border: 0;
+  background: transparent;
+  color: #002172;
+  font-family: inherit;
+  font-size: calc(16px * var(--sk-scale, 1));
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sk-agent-tabs button::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  content: "";
+  background: #ec3323;
+  transition: width 0.4s;
+}
+
+.sk-agent-tabs button.active {
+  color: #ec3323;
+}
+
+.sk-agent-tabs button.active::after {
+  width: 100%;
+}
+
+.sk-btn {
+  display: inline-block;
+  padding: calc(14px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
+  border: 0;
+  border-radius: calc(5px * var(--sk-scale, 1));
+  background: #ec3323;
+  color: #fff;
+  font-size: calc(16px * var(--sk-scale, 1));
+  cursor: pointer;
+}
+
+.sk-btn-navy {
+  background: #002172;
+}
+
+.sk-btn:hover {
+  color: #fff;
+}
+
+.sk-highlight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 0 calc(30px * var(--sk-scale, 1));
+  color: #000;
+  font-size: calc(22px * var(--sk-scale, 1));
+}
+
+.sk-highlight::before,
+.sk-highlight::after {
+  width: 10%;
+  height: 2px;
+  content: "";
+  background: #ec3323;
+}
+
+.sk-highlight::before {
+  margin-right: 10px;
+}
+
+.sk-highlight::after {
+  margin-left: 10px;
+}
+
+.sk-team-rule {
+  width: 100%;
+  margin: calc(10px * var(--sk-scale, 1)) 0 calc(30px * var(--sk-scale, 1));
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.sk-map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(10px * var(--sk-scale, 1));
+  margin-bottom: calc(15px * var(--sk-scale, 1));
+}
+
+.sk-map {
+  width: 100%;
+  height: calc(500px * var(--sk-scale, 1));
+  border: 0;
+}
+
+.sk-comment-heading {
+  margin: calc(15px * var(--sk-scale, 1)) 0;
+}
+
+.sk-empty-listings {
+  margin-bottom: calc(15px * var(--sk-scale, 1));
+}
+
+@media (max-width: 767px) {
+  .sk-agent-page {
+    padding: calc(50px * var(--sk-scale, 1)) 0;
+  }
+
+  .sk-agent {
+    margin-bottom: calc(-25px * var(--sk-scale, 1));
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .sk-agent-name {
+    margin-bottom: calc(20px * var(--sk-scale, 1));
+    padding-bottom: calc(20px * var(--sk-scale, 1));
+  }
+
+  .sk-agent-name h2 {
+    font-size: calc(24px * var(--sk-scale, 1));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .sk-agent-page {
+    padding: calc(70px * var(--sk-scale, 1)) 0;
+  }
+
+  .sk-agent {
+    padding: calc(35px * var(--sk-scale, 1)) calc(35px * var(--sk-scale, 1)) calc(10px * var(--sk-scale, 1));
+  }
+}
+
+@media (max-width: 991px) {
+  .sk-agent-photo {
+    margin-bottom: calc(25px * var(--sk-scale, 1));
+  }
+}
+
+@media (min-width: 992px) {
+  .sk-agent-half {
+    width: 50%;
   }
 }
 

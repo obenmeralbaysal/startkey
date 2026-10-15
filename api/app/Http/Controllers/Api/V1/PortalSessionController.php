@@ -157,6 +157,11 @@ class PortalSessionController extends Controller
         return $this->proxy($request, 'get', 'desk/offices');
     }
 
+    public function deskStats(Request $request): JsonResponse
+    {
+        return $this->proxy($request, 'get', 'desk/stats');
+    }
+
     public function officePresence(Request $request, int $id): JsonResponse
     {
         $data = $request->validate([
