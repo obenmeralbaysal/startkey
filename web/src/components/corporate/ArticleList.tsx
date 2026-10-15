@@ -6,10 +6,10 @@ import type { CorporatePayload } from "@/lib/corporate";
 
 export function ArticleList({ data }: { data: Extract<CorporatePayload, { kind: "article-list" }> }) {
   const isBlog = data.layout === "two-col-sidebar";
-  const columnClass = isBlog ? "col-xl-6 col-lg-6 col-md-6" : "col-xl-4 col-lg-4 col-md-6";
+  const columnClass = isBlog ? "sk-half" : "sk-third";
 
   const cards = (
-    <div className="flex flex-wrap justify-center">
+    <div className="sk-split">
       {data.items.map((item) => (
         <div className={columnClass} key={item.externalId}>
           <ArticleCard item={item} continueLabel={data.continueLabel} />
@@ -21,15 +21,15 @@ export function ArticleList({ data }: { data: Extract<CorporatePayload, { kind: 
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <div className="blog-wrap [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
+      <div className="blog-wrap ptb-100">
         <div className="container">
-          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))]">
+          <div className="sk-split">
             {isBlog ? (
               <>
-                <div className="w-full lg:w-2/3">
+                <div className="sk-two-thirds">
                   {cards}
                 </div>
-                <div className="w-full xl:w-1/3">
+                <div className="sk-third">
                   {data.sidebar ? (
                     <BlogSidebar sidebar={data.sidebar} searchValue={data.search?.value ?? ""} />
                   ) : null}

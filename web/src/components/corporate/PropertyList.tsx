@@ -1,5 +1,6 @@
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { ListingCard } from "@/components/corporate/ListingCard";
+import { Pagination } from "@/components/corporate/Pagination";
 import type { CorporatePayload, ListingFilterData } from "@/lib/corporate";
 
 export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind: "listing-list" }> }) {
@@ -9,15 +10,15 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <section className="listing-wrap [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
+      <section className="listing-wrap ptb-100">
         <div className="container">
-          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))]">
-            <div className="w-full xl:w-1/3" style={{ display: "flex", justifyContent: "center" }}>
-              <div className="max-xl:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] max-xl:[margin-top:calc(25px_*_var(--sk-scale,_1))]" style={{ margin: 0 }}>
-                <button className="hidden [margin-bottom:calc(10px_*_var(--sk-scale,_1))] max-[768px]:block relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-navy text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-brand before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-brand after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" id="mobile-filter-btn">
+          <div className="sk-split">
+            <div className="sk-third">
+              <div className="sidebar">
+                <button className="btn sk-filter-toggle" id="mobile-filter-btn" type="button">
                   {data.filter.mobileOpenLabel}
                 </button>
-                <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] relative z-[1] [padding:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0_0_calc(25px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] last:[margin:0] max-md:[padding:calc(20px_*_var(--sk-scale,_1))] max-[768px]:hidden" id="filter-widget">
+                <div className="sidebar-widget" id="filter-widget">
                   <h4>{data.filter.heading}</h4>
                   <FilterForm filter={data.filter} />
                 </div>
@@ -25,7 +26,7 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
             </div>
 
             {data.hasResults ? (
-              <div className="w-full xl:w-2/3">
+              <div className="sk-two-thirds">
                 <div className="flex flex-wrap items-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
                   <div className="w-full md:w-2/3">
                     <div className="max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
@@ -46,14 +47,14 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap">
+                <div className="sk-split">
                   {data.items.map((item) => (
-                    <div className="w-full lg:w-1/2 md:w-1/2" key={item.externalId}>
+                    <div className="sk-half" key={item.externalId}>
                       <ListingCard item={item} />
                     </div>
                   ))}
                 </div>
-                <ListingPagination
+                <Pagination
                   pageIndex={data.pagination.pageIndex}
                   totalPages={data.pagination.totalPages}
                   basePath={data.pagination.basePath}
@@ -61,7 +62,7 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
                 />
               </div>
             ) : (
-              <div className="w-full xl:w-2/3">
+              <div className="sk-two-thirds">
                 <p className="text-center">{data.emptyLabel}</p>
               </div>
             )}
@@ -81,7 +82,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
     <form method="get" role="form" id="prop-filter" className="block" action={filter.action}>
       <input type="hidden" id="SortingType" name="SortingType" defaultValue={scalar(values["SortingType"])} />
 
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <input
           placeholder={filter.placeholders.keyword}
           type="text"
@@ -92,7 +93,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.Keyword" />
       </div>
 
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1">{labels.FilterDTO_AdTypeId}</label>
         <select
           className=""
@@ -110,7 +111,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.AdTypeId" />
       </div>
 
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1">{labels.FilterDTO_ProcessTypeId}</label>
         <select
           className=""
@@ -127,9 +128,9 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.ProcessTypeId" />
       </div>
 
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
-        <div className="flex flex-wrap">
-          <div className="w-full md:w-1/2">
+      <div className="form-group">
+        <div className="sk-pair">
+          <div>
             <label id="search-text-1">{labels.FilterDTO_MinPrice}</label>
             <input
               placeholder={filter.placeholders.minPrice}
@@ -139,7 +140,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
               defaultValue={scalar(values["FilterDTO.MinPrice"])}
             />
           </div>
-          <div className="w-full md:w-1/2">
+          <div>
             <label id="search-text-1">{labels.FilterDTO_MaxPrice}</label>
             <input
               placeholder={filter.placeholders.maxPrice}
@@ -152,7 +153,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         </div>
       </div>
 
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1">{labels.FilterDTO_CurrencyId}</label>
         <select
           className=""
@@ -167,7 +168,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <span className="text-brand field-validation-valid" data-valmsg-for="FilterDTO.CurrencyId" />
       </div>
 
-      <div className="mb-[calc(15px*var(--sk-scale,1))] flex flex-wrap">
+      <div className="form-group sk-pair">
         <div className="w-full md:w-1/2">
           <label id="search-text-1">{labels.FilterDTO_MinCleanArea}</label>
           <input
@@ -190,7 +191,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         </div>
       </div>
 
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1" style={{ marginTop: "6%" }}>
           {labels.FilterDTO_CountryId}
         </label>
@@ -204,7 +205,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           {selectedOption(values["FilterDTO.CountryId"])}
         </select>
       </div>
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1" style={{ marginTop: "6%" }}>
           {labels.FilterDTO_CityId}
         </label>
@@ -220,7 +221,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           {selectedOption(values["FilterDTO.CityId"])}
         </select>
       </div>
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1">{labels.FilterDTO_CountyIds}</label>
         <select
           className=""
@@ -239,7 +240,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           ))}
         </select>
       </div>
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1">{labels.FilterDTO_DistrictIds}</label>
         <select
           className=""
@@ -258,7 +259,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           ))}
         </select>
       </div>
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1">{labels.FilterDTO_OfficeId}</label>
         <select
           className=""
@@ -270,7 +271,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           {selectedOption(values["FilterDTO.OfficeId"])}
         </select>
       </div>
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <label id="search-text-1">{labels.FilterDTO_UserId}</label>
         <select
           className=""
@@ -296,61 +297,10 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <label id="search-text-1-1">{labels.FilterDTO_LandPropertyTypeId}</label>
         <select className="" id="FilterDTO_LandPropertyTypeId" name="FilterDTO.LandPropertyTypeId" />
       </div>
-      <div className="mb-[calc(15px*var(--sk-scale,1))]">
+      <div className="form-group">
         <button className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100 block w-full">{filter.submitLabel}</button>
       </div>
     </form>
-  );
-}
-
-function ListingPagination({
-  pageIndex,
-  totalPages,
-  basePath,
-  searchQuery,
-}: {
-  pageIndex: number;
-  totalPages: number;
-  basePath: string;
-  searchQuery: string;
-}) {
-  if (totalPages <= 1) {
-    return null;
-  }
-
-  const hrefFor = (page: number) => `${basePath}?pageIndex=${page}${searchQuery}`;
-  const start = Math.max(1, pageIndex - 5);
-  const end = Math.min(totalPages, pageIndex + 5);
-  const numbered = Array.from({ length: end - start + 1 }, (_, index) => start + index);
-
-  return (
-    <ul className="text-center list-none [margin-top:calc(10px_*_var(--sk-scale,_1))]">
-      <li className="inline-block">
-        <a className="" href={hrefFor(1)}>
-          &laquo;
-        </a>
-      </li>
-      {numbered.map((page) =>
-        page === pageIndex ? (
-          <li className="inline-block" key={page}>
-            <a className="">
-              <span>{page}</span>
-            </a>
-          </li>
-        ) : (
-          <li className="inline-block" key={page}>
-            <a className="" href={hrefFor(page)}>
-              {page}
-            </a>
-          </li>
-        ),
-      )}
-      <li className="inline-block">
-        <a className="" href={hrefFor(totalPages)}>
-          &raquo;
-        </a>
-      </li>
-    </ul>
   );
 }
 

@@ -47,11 +47,11 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
         <Breadcrumb breadcrumb={data.breadcrumb} />
         <section className="contact-us-wrap [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
           <div className="container">
-            <div className="flex flex-wrap justify-center [padding-bottom:calc(75px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(25px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(45px_*_var(--sk-scale,_1))]">
+            <div className="sk-split">
               {data.items.map((item) => (
-                <div className="w-full xl:w-1/3 lg:w-1/3 md:w-1/2" key={item.heading}>
-                  <div className="[padding:calc(25px_*_var(--sk-scale,_1))] [border-radius:0] [margin:calc(45px_*_var(--sk-scale,_1))_0_calc(25px_*_var(--sk-scale,_1))] relative z-[1] [transition:0.4s] text-center [box-shadow:0_0_calc(20px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] max-md:[margin:calc(35px_*_var(--sk-scale,_1))_0_calc(25px_*_var(--sk-scale,_1))] lg:max-xl:[padding:calc(25px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))]" style={styleFrom(item.itemStyle)}>
-                    <span className="flex flex-wrap flex-col justify-center [width:calc(80px_*_var(--sk-scale,_1))] [height:calc(80px_*_var(--sk-scale,_1))] rounded-full text-center bg-navy [box-shadow:0_calc(5px_*_var(--sk-scale,_1))_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.1)] [transition:0.4s] [margin:calc(-70px_*_var(--sk-scale,_1))_auto_calc(20px_*_var(--sk-scale,_1))] max-md:[width:calc(60px_*_var(--sk-scale,_1))] max-md:[height:calc(60px_*_var(--sk-scale,_1))] max-md:[margin:calc(-60px_*_var(--sk-scale,_1))_auto_calc(20px_*_var(--sk-scale,_1))]">
+                <div className="sk-third" key={item.heading}>
+                  <div className="contact-item" style={styleFrom(item.itemStyle)}>
+                    <span className="contact-icon">
                       <i className={item.icon} />
                     </span>
                     <div className="[transition:0.3s]" style={styleFrom(item.infoStyle)}>
@@ -62,8 +62,8 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
                 </div>
               ))}
             </div>
-            <div className="flex flex-wrap">
-              <div className="w-full lg:w-1/2" style={{ alignContent: "center" }}>
+            <div className="sk-split">
+              <div className="sk-half" style={{ alignContent: "center" }}>
                 <div className="max-lg:[margin-bottom:calc(30px_*_var(--sk-scale,_1))]">
                   <div className="relative [margin-bottom:calc(30px_*_var(--sk-scale,_1))] text-center [margin:calc(35px_*_var(--sk-scale,_1))_0_0] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))] [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))]">
                     <span>{data.kicker}</span>
@@ -99,7 +99,7 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
                   </ul>
                 </div>
               </div>
-              <div className="w-full lg:w-1/2">
+              <div className="sk-half">
                 <ContactForm data={data} locale={locale} />
               </div>
             </div>

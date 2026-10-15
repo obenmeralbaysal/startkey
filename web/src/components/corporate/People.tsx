@@ -1,7 +1,6 @@
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { Picture } from "@/components/corporate/Picture";
 import type { CorporatePayload } from "@/lib/corporate";
-import { scaled } from "@/lib/scale";
 
 function PersonCard({
   person,
@@ -9,9 +8,9 @@ function PersonCard({
   person: Extract<CorporatePayload, { kind: "people-list" }>["people"][number];
 }) {
   return (
-    <div className="w-full xl:w-1/2 lg:w-1/2 md:w-1/2">
-      <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0px_calc(6px_*_var(--sk-scale,_1))_calc(24px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.07)] [border:1px_solid_transparent] [border-radius:calc(5px_*_var(--sk-scale,_1))] relative [transition:0.4s] after:absolute after:[bottom:calc(-2px_*_var(--sk-scale,_1))] after:[left:50%] after:content-[''] after:[width:0%] after:[height:calc(3px_*_var(--sk-scale,_1))] after:[transform:translate(-50%,_-50%)] after:bg-navy after:[border-radius:0_0_calc(5px_*_var(--sk-scale,_1))_calc(5px_*_var(--sk-scale,_1))] after:[transition:0.4s] hover:[box-shadow:none] hover:[transform:translateY(calc(-5px_*_var(--sk-scale,_1)))] hover:after:[width:85%]">
-        <div className="[width:calc(70px_*_var(--sk-scale,_1))] [height:calc(70px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))] overflow-hidden relative max-lg:[margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
+    <div className="sk-half">
+      <div className="agent-card style1">
+        <div className="agent-img">
           <a href={person.urlPath}>
             <Picture width={414} height={414}>
               {person.imageWebp ? <source srcSet={person.imageWebp} type="image/webp" /> : null}
@@ -19,11 +18,8 @@ function PersonCard({
             </Picture>
           </a>
         </div>
-        <div className="block">
-          <div
-            className="[padding:calc(22px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))_calc(22px_*_var(--sk-scale,_1))] text-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(25px_*_var(--sk-scale,_1))] [border-bottom:1px_solid_rgba(0,_0,_0,_0.09)]"
-            style={{ marginBottom: 0, paddingBottom: scaled(25) }}
-          >
+        <div className="agent-info-wrap">
+          <div className="agent-info">
             <h3>
               <a href={person.urlPath}>{person.name}</a>
             </h3>
@@ -54,11 +50,11 @@ export function PeopleList({ data }: { data: Extract<CorporatePayload, { kind: "
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <section className="agent-wrap [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
+      <section className="agent-wrap ptb-100">
         <div className="container">
-          <div className="flex flex-wrap justify-center">
-            <div className="w-full lg:w-2/3">
-              <div className="flex flex-wrap gap-y-[calc(40px*var(--sk-scale,1))]">
+          <div className="sk-center">
+            <div>
+              <div className="sk-split">
                 {data.people.map((person) => (
                   <PersonCard person={person} key={person.externalId} />
                 ))}
@@ -75,18 +71,18 @@ export function PersonDetail({ data }: { data: Extract<CorporatePayload, { kind:
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <div className="container [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
-        <div className="[box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] [padding:calc(50px_*_var(--sk-scale,_1))_calc(50px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))] max-md:[padding:0] max-md:[box-shadow:none] max-md:[margin-bottom:calc(-25px_*_var(--sk-scale,_1))] md:max-lg:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(10px_*_var(--sk-scale,_1))]">
-          <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-center">
-            <div className="w-full lg:w-1/2">
-              <div className="[width:calc(70px_*_var(--sk-scale,_1))] [height:calc(70px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))] overflow-hidden relative max-lg:[margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
+      <div className="container ptb-100">
+        <div className="agent-details-wrap">
+          <div className="sk-split">
+            <div className="sk-half">
+              <div className="agent-img">
                 <Picture width={574} height={574}>
                   {data.imageWebp ? <source srcSet={data.imageWebp} type="image/webp" /> : null}
                   <img src={data.image} alt="OurTeam-photo" width={574} height={574} />
                 </Picture>
               </div>
             </div>
-            <div className="w-full lg:w-1/2">
+            <div className="sk-half">
               <div className="block">
                 <div className="[width:calc(100%_-_calc(85px_*_var(--sk-scale,_1)))] [margin-left:calc(15px_*_var(--sk-scale,_1))] [margin-bottom:calc(25px_*_var(--sk-scale,_1))] [padding-bottom:calc(25px_*_var(--sk-scale,_1))] [border-bottom:1px_solid_rgba(0,_0,_0,_0.09)] max-md:[padding-bottom:calc(20px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
                   <h2>{data.name}</h2>

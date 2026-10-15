@@ -114,21 +114,21 @@ export function PropertyDetail({
     <>
       <style dangerouslySetInnerHTML={{ __html: AGENT_CARD_CSS }} />
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <section className="block [padding-top:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] [padding-bottom:calc(75px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(25px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(45px_*_var(--sk-scale,_1))]">
+      <section className="property-details-wrap pt-100 pb-75">
         <div className="container">
-          <div className="flex flex-wrap items-start [margin-bottom:calc(.5rem_*_var(--sk-scale,_1))]">
-            <div className="w-full md:w-2/3">
+          <div className="sk-split">
+            <div className="sk-two-thirds">
               <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] max-md:[margin:0_0_calc(10px_*_var(--sk-scale,_1))]">
                 <h2>{data.title}</h2>
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap">
-            <div className="w-full lg:w-1/2">
-              <div id="mainCarousel" className="relative" data-carousel="single">
+          <div className="sk-split">
+            <div className="sk-half">
+              <div id="mainCarousel" className="sk-gallery" data-carousel="single">
                 {data.gallery.map((slide, index) => (
                   <div
-                    className="[width:calc(96px_*_var(--sk-scale,_1))] [padding:0] opacity-[0.5] [margin:calc(0.25rem_*_var(--sk-scale,_1))] [height:calc(64px_*_var(--sk-scale,_1))]"
+                    className="carousel__slide"
                     key={`${slide.original}-${index}`}
                     data-src={slide.original}
                     data-fancybox="gallery"
@@ -141,9 +141,9 @@ export function PropertyDetail({
                   </div>
                 ))}
               </div>
-              <div id="thumbCarousel" className="relative mx-auto">
+              <div id="thumbCarousel" className="sk-thumbs">
                 {data.gallery.map((slide, index) => (
-                  <div className="[width:calc(96px_*_var(--sk-scale,_1))] [padding:0] opacity-[0.5] [margin:calc(0.25rem_*_var(--sk-scale,_1))] [height:calc(64px_*_var(--sk-scale,_1))]" key={`thumb-${slide.thumb}-${index}`}>
+                  <div className="carousel__slide" key={`thumb-${slide.thumb}-${index}`}>
                     <Picture className="panzoom__content" width={100} height={100}>
                       <img src={slide.thumb || slide.image} alt="Property-photo" width={100} height={100} />
                     </Picture>
@@ -151,7 +151,7 @@ export function PropertyDetail({
                 ))}
               </div>
             </div>
-            <div className="w-full lg:w-1/4 md:w-2/3">
+            <div className="sk-quarter">
               <div className="[margin-bottom:calc(.5rem_*_var(--sk-scale,_1))]">
                 <div className="pr-price-into">
                   <h6>
@@ -176,7 +176,7 @@ export function PropertyDetail({
                 </ul>
               </div>
             </div>
-            <div className="w-full lg:w-1/4 md:w-1/3 hidden lg:block">
+            <div className="sk-quarter">
               <div className="max-xl:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] max-xl:[margin-top:calc(25px_*_var(--sk-scale,_1))]">
                 <AgentCard agent={data.agent} />
               </div>
@@ -253,11 +253,6 @@ export function PropertyDetail({
                 </div>
               ) : null}
             </div>
-            <div className="w-full lg:w-1/4 md:w-1/3 block md:hidden">
-              <div className="max-xl:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] max-xl:[margin-top:calc(25px_*_var(--sk-scale,_1))]">
-                <AgentCard agent={data.agent} />
-              </div>
-            </div>
             <div className="w-full">
               <div className="contact-form-wrap contact-form-bg">
                 <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))] last:[margin-bottom:0] max-md:[margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
@@ -275,9 +270,9 @@ export function PropertyDetail({
                     <hr />
                     <section className="property-slider-wrap td-cod">
                       <div className="container">
-                        <div className="homepage-featured-prop" data-carousel="cards">
+                        <div className="related-grid">
                           {data.related.map((item) => (
-                            <ListingCard item={{ ...item, style: "style6" }} key={`related-${item.externalId}`} />
+                            <ListingCard item={{ ...item, style: "style3" }} key={`related-${item.externalId}`} />
                           ))}
                         </div>
                       </div>

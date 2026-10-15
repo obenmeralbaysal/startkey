@@ -29,6 +29,16 @@ async function fillSelect(select: HTMLSelectElement, url: string) {
   }
 }
 
+function bindListingFilter() {
+  const button = document.getElementById("mobile-filter-btn");
+  const panel = document.getElementById("filter-widget");
+  if (!button || !panel || button.dataset.bound === "1") {
+    return;
+  }
+  button.dataset.bound = "1";
+  button.addEventListener("click", () => panel.classList.toggle("is-open"));
+}
+
 function bindLookups(root: ParentNode) {
   const selects = [...root.querySelectorAll<HTMLSelectElement>("select[bind-url]")];
   for (const select of selects) {
@@ -238,6 +248,7 @@ function bindBackToTop() {
 export function SiteBehaviors() {
   useEffect(() => {
     bindLookups(document);
+    bindListingFilter();
     document.querySelectorAll<HTMLElement>("[data-carousel='cards']").forEach((node) => bindCarousel(node, "cards"));
     document.querySelectorAll<HTMLElement>("[data-carousel='single']").forEach((node) => bindCarousel(node, "single"));
     bindLightbox();

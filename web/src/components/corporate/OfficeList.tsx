@@ -1,7 +1,6 @@
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { DirectoryCard, DirectoryPagination } from "@/components/corporate/DirectoryCard";
 import type { CorporatePayload, DirectoryFilterData } from "@/lib/corporate";
-import { scaled } from "@/lib/scale";
 
 export function OfficeList({ data }: { data: Extract<CorporatePayload, { kind: "office-list" }> }) {
   return (
@@ -50,8 +49,8 @@ function OfficeFilter({ filter }: { filter: DirectoryFilterData }) {
   const bind = filter.bindUrls;
 
   return (
-    <div className="bg-white [border-radius:calc(10px_*_var(--sk-scale,_1))] [padding:calc(35px_*_var(--sk-scale,_1))_calc(45px_*_var(--sk-scale,_1))_calc(45px_*_var(--sk-scale,_1))_calc(30px_*_var(--sk-scale,_1))] z-[1] relative [box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] [margin-top:calc(-85px_*_var(--sk-scale,_1))] max-sm:[padding:calc(20px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0] max-sm:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] sm:max-md:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(15px_*_var(--sk-scale,_1))] sm:max-md:[margin:calc(-65px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0] md:max-lg:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(15px_*_var(--sk-scale,_1))] md:max-lg:[margin:calc(-65px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0] lg:max-xl:[padding:calc(40px_*_var(--sk-scale,_1))] lg:max-xl:[margin:calc(-65px_*_var(--sk-scale,_1))_calc(20px_*_var(--sk-scale,_1))_0]" style={{ padding: scaled("25px 35px 25px 30px"), top: scaled(10), marginBottom: scaled(40) }}>
-      <form className="flex flex-wrap items-center search-bar-items mx-[calc(-8px*var(--sk-scale,1))] mt-[calc(-8px*var(--sk-scale,1))] [&>div]:box-border [&>div]:px-[calc(8px*var(--sk-scale,1))] [&>div]:mt-[calc(8px*var(--sk-scale,1))]" method="get" role="form" id="filterForm" action={filter.action}>
+    <div className="sk-search-shell">
+      <form className="sk-search-bar" method="get" role="form" id="filterForm" action={filter.action}>
         <div className="w-full sm:w-1/6">
           <h5 id="search-text-title" className="[font-size:calc(20px_*_var(--sk-scale,_1))]">
             {" "}

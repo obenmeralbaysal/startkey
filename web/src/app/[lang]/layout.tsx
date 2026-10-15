@@ -10,6 +10,7 @@ import { StructuredData } from "@/components/layout/StructuredData";
 import { SiteBehaviors } from "@/components/layout/SiteBehaviors";
 import { ThemeStyles } from "@/components/layout/ThemeStyles";
 import "@/styles/globals.css";
+import "@/styles/subpages.css";
 import { getHomepageContent } from "@/content/homepage";
 import { isLocale, locales, type Locale } from "@/lib/locales";
 

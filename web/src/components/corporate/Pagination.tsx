@@ -13,39 +13,31 @@ export function Pagination({
     return null;
   }
 
-  const hrefFor = (page: number) => {
-    const query = `pageIndex=${page}${searchQuery}`;
-    return `${basePath}?${query}`;
-  };
-
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const hrefFor = (page: number) => `${basePath}?pageIndex=${page}${searchQuery}`;
+  const start = Math.max(1, pageIndex - 5);
+  const end = Math.min(totalPages, pageIndex + 5);
+  const numbered = Array.from({ length: end - start + 1 }, (_, index) => start + index);
 
   return (
-    <ul className="text-center list-none [margin-top:calc(10px_*_var(--sk-scale,_1))]">
-      <li className="inline-block">
-        <a className="" href={hrefFor(1)}>
-          &laquo;
-        </a>
+    <ul className="sk-page-nav">
+      <li>
+        <a href={hrefFor(1)}>&laquo;</a>
       </li>
-      {pages.map((page) =>
+      {numbered.map((page) =>
         page === pageIndex ? (
-          <li className="inline-block" key={page}>
-            <a className="">
-              <span>{page}</span>
-            </a>
-          </li>
-        ) : (
-          <li className="inline-block" key={page}>
-            <a className="" href={hrefFor(page)}>
+          <li key={page}>
+            <a className="active" aria-current="page">
               {page}
             </a>
           </li>
+        ) : (
+          <li key={page}>
+            <a href={hrefFor(page)}>{page}</a>
+          </li>
         ),
       )}
-      <li className="inline-block">
-        <a className="" href={hrefFor(totalPages)}>
-          &raquo;
-        </a>
+      <li>
+        <a href={hrefFor(totalPages)}>&raquo;</a>
       </li>
     </ul>
   );

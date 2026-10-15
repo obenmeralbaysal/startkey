@@ -22,10 +22,10 @@ export function TrainingDetail({
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <section className="block [padding-top:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] [padding-bottom:calc(75px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(25px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(45px_*_var(--sk-scale,_1))]">
+      <section className="pt-100 pb-75">
         <div className="container">
-          <div className="flex flex-wrap">
-            <div className="w-full xl:w-2/3">
+          <div className="sk-split">
+            <div className="sk-two-thirds">
               <div className="block">
                 <div className="flex flex-wrap items-start">
                   <div className="w-full">
@@ -78,10 +78,10 @@ export function TrainingDetail({
                 </div>
               </div>
             </div>
-            <div className="w-full xl:w-1/3">
-              <div className="max-xl:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] max-xl:[margin-top:calc(25px_*_var(--sk-scale,_1))]">
+            <div className="sk-third">
+              <div className="sidebar">
                 {data.hasApplicationForm ? (
-                  <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] relative z-[1] [padding:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0_0_calc(25px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] last:[margin:0] max-md:[padding:calc(20px_*_var(--sk-scale,_1))]">
+                  <div className="sidebar-widget">
                     <h4>{data.formHeading}</h4>
                     <TrainingApplicationForm data={data} locale={locale} />
                   </div>
