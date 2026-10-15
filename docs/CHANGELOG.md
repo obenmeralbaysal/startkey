@@ -1,5 +1,6 @@
 ## [2026-10-15]
 
+- **[UI]**: Alt sayfa kabukları referans yerleşime alındı. Liste sayfalama düğmeleri ofis listesiyle aynı yuvarlak biçimi kullanır. Portföy, blog, haber, duyuru, kadro, şampiyon, eğitim ve iletişim sayfalarının kart, ızgara ve filtre yerleşimi referans ölçülerine çekildi. Danışman başvurusunun tanıtım gövdesi üç dilde canlı sayfadan basılır.
 - **[Portal]**: Franchise masasında ofis kullanıcıları listelenir. Ad, e-posta ve telefon düzenlenir; şifre portalda belirlenir. Başka bir ağa da kayıtlı hesap değiştirilemez.
 - **[Backend]**: Ana sayfadaki öne çıkan portföy ve popüler şehir kaydırıcıları, portal bağlıyken Reonix’te yayındaki ilanlardan gelir. Kartta il, ilçe, oda ve alan görünür. Şehir kartı o ilin ilan listesini açar.
 - **[Backend]**: Public danışman sayfasına yazılan yorum, Reonix süperadmin onaylamadan sitede görünmez. Onay ve ret `/admin/consultant-reviews` ekranındadır. Katalogdan gelen eski yorumlar yayında kalır.

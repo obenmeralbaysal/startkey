@@ -72,7 +72,7 @@ class ConsultantApplicationPage
                     ['value' => '4', 'label' => 'Ofis Yöneticisi'],
                     ['value' => '5', 'label' => 'Ofis Asistanı'],
                 ],
-                'bodyHtml' => '<section class="container pt-40 pb-40"><h3>Kendi Başarını Kendin İnşa Et</h3><p>Gayrimenkul sektöründe kendi kariyerini oluşturmak isteyen danışmanlar için Startkey, gelişim ve kazanç odaklı bir çalışma ortamı sunar.</p><h3>Neler Sunuyoruz?</h3><ul><li>Portföy ve müşteri geliştirme desteği</li><li>Kariyer gelişim fırsatları</li><li>Startkey Akademi</li></ul></section>',
+                'bodyHtml' => $this->body('tr'),
             ],
             'en' => [
                 'heading' => 'Consultant Application Form',
@@ -92,7 +92,7 @@ class ConsultantApplicationPage
                     ['value' => '4', 'label' => 'Office Manager'],
                     ['value' => '5', 'label' => 'Office Assistant'],
                 ],
-                'bodyHtml' => '',
+                'bodyHtml' => $this->body('en'),
             ],
             'de' => [
                 'heading' => 'Beraterantragsformular',
@@ -112,7 +112,7 @@ class ConsultantApplicationPage
                     ['value' => '4', 'label' => 'Büroleiter'],
                     ['value' => '5', 'label' => 'Büroassistent'],
                 ],
-                'bodyHtml' => '',
+                'bodyHtml' => $this->body('de'),
             ],
         ];
 
@@ -120,5 +120,12 @@ class ConsultantApplicationPage
         $page['required'] = $sharedRequired;
 
         return $page;
+    }
+
+    private function body(string $locale): string
+    {
+        $path = database_path('data/consultant-bodies/'.$locale.'.html');
+
+        return is_file($path) ? (string) file_get_contents($path) : '';
     }
 }

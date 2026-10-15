@@ -299,17 +299,17 @@ Sitemap yerel CMS’ten üretilecek. EN/DE 404 metni referansta belirdiğinde al
 
 **Mevcut Durum:**
 
-`/tr/danisman-basvuru`, `/en/consultant-form` ve `/de/consultant-form` form alanları, zorunlu metinler, pozisyonlar ve gönder düğmesi canlı sayfadan alındı. Ofis listesi canlıdaki 85 isim yerine portal ağındaki ofislerden gelir. TR gövdesi kısa bir özet; EN ve DE pazarlama gövdesi boş.
+`/tr/danisman-basvuru`, `/en/consultant-form` ve `/de/consultant-form` form alanları canlı sayfadan alınır. Tanıtım gövdesi `api/database/data/consultant-bodies/` içindeki canlı HTML’dir. Görseller `/media/micrositecontent/` altındadır. Ofis listesi portal ağındaki ofislerden gelir.
 
 **Geçici Olmasının Nedeni:**
 
-Başvuru akışı önce bağlandı. Sayfanın uzun tanıtım HTML’i ayrıca çekilmedi.
+Tanıtım gövdesi bağlandı.
 
 **Gelecekteki Implementasyon:**
 
-Üç dilin tanıtım gövdesi canlı belgeden, franchise sayfasındaki gibi tam HTML olarak basılacak.
+Gövde canlı belgeden alındı. Ofis seçenekleri portal ağına bağlı kalır.
 
-**Durum:** Açık
+**Durum:** Çözüldü
 
 ### TD-017 — %80 ölçek JS ve iframe ile verilen bazı ölçülere uygulanmıyor
 

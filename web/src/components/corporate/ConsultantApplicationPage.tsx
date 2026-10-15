@@ -12,6 +12,23 @@ import type { Locale } from "@/lib/locales";
 type ConsultantData = Extract<CorporatePayload, { kind: "consultant-application" }>;
 
 export function ConsultantApplicationPage({ data, locale }: { data: ConsultantData; locale: Locale }) {
+  useEffect(() => {
+    const widgetItems = document.querySelectorAll(".row .widget-item");
+    widgetItems.forEach((item, index) => {
+      const itemIndex = index + 1;
+      item.classList.remove("order-1", "order-2", "order-md-1", "order-md-2", "order-lg-1", "order-lg-2");
+      if (itemIndex % 4 === 1) {
+        item.classList.add("order-lg-2", "order-md-2", "order-1");
+      } else if (itemIndex % 4 === 2) {
+        item.classList.add("order-lg-1", "order-md-1", "order-2");
+      } else if (itemIndex % 4 === 3) {
+        item.classList.add("order-lg-1", "order-md-1", "order-1");
+      } else if (itemIndex % 4 === 0) {
+        item.classList.add("order-lg-2", "order-md-2", "order-2");
+      }
+    });
+  }, [data.bodyHtml]);
+
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
