@@ -1330,6 +1330,29 @@ a.btn.style2::after {
   visibility: hidden !important;
 }
 
+/* Reference frames: office logo 413×194 (detail 576×269), consultant photo square. */
+.sk-photo-frame {
+  overflow: hidden;
+  position: relative;
+  border-radius: calc(5px * var(--sk-scale, 1)) calc(5px * var(--sk-scale, 1)) 0 0;
+}
+
+.sk-photo-frame picture {
+  display: block;
+}
+
+.sk-photo-frame-detail {
+  border-radius: calc(5px * var(--sk-scale, 1));
+}
+
+.sk-photo {
+  display: block;
+  width: min(100%, calc(var(--sk-photo-w) * 1px * var(--sk-scale, 1)));
+  height: auto;
+  aspect-ratio: var(--sk-photo-w) / var(--sk-photo-h);
+  object-fit: cover;
+}
+
 @media (max-width: 767px) {
   .sk-counter {
     width: 50%;

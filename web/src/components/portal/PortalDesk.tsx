@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FranchiseDesk } from "@/components/portal/FranchiseDesk";
 
 export type PortalOffice = { id: number; name: string; role: string | null };
 
@@ -85,6 +86,8 @@ function AdminPanel() {
   }, []);
 
   return (
+    <>
+    <FranchiseDesk />
     <section className="glass-card">
       <h2>Ofis başvuruları</h2>
       {message ? <p>{message}</p> : null}
@@ -139,6 +142,7 @@ function AdminPanel() {
       ))}
       <PackageForm packages={packages} onDone={setMessage} />
     </section>
+    </>
   );
 }
 
@@ -181,7 +185,13 @@ function OwnerPanel({ office }: { office: PortalOffice }) {
       last_name: form.get("last_name"),
       email: form.get("email"),
       phone: form.get("phone"),
-    }).then((body) => setMessage(body.message || "Kaydedildi."));
+    }).then((body) => {
+      if (body.data?.attached) {
+        setMessage("Mevcut kişi bu ofise bağlandı. Portala aynı hesapla girip ofis değiştirebilir.");
+        return;
+      }
+      setMessage(body.message || "Kaydedildi.");
+    });
   }
 
   return (
@@ -222,7 +232,7 @@ async function portalGet<T>(url: string): Promise<T> {
   return (body.data ?? []) as T;
 }
 
-async function portalSend(url: string, payload: unknown, method = "POST"): Promise<{ message?: string }> {
+async function portalSend(url: string, payload: unknown, method = "POST"): Promise<{ message?: string; data?: { attached?: boolean } }> {
   const response = await fetch(url, {
     method,
     credentials: "include",

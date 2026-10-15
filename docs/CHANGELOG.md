@@ -1,5 +1,11 @@
+## [2026-10-15]
+
+- **[UI]**: Aynı kişi birden fazla ofisin broker’ı olabilir. İkinci ofise aynı e-posta ile eklenince yeni profil açılmaz. Portalda birden fazla ofisi olan hesap ofis değiştirir.
+- **[UI]**: Ofis logosu listede 413×194, detayda 576×269 geniş bant; danışman fotoğrafı kare. Referanstaki kırpma oranı kullanılıyor.
+
 ## [2026-10-14]
 
+- **[UI]**: Talep formunda diğer StartKey portföyleriyle eşleşme seçilir. Kullanıcı bu seçeneğin varsayılanını profilinden açıp kapatır.
 - **[UI]**: Portal şifre sıfırlama bağlantısı StartKey adresine gider. Sosyal giriş eklenmedi.
 - **[UI]**: Ana sayfadaki öne çıkan portföyler ile ofis ve danışman araması, portal bağlantısı varken Reonix katalogundan gelir.
 - **[UI]**: Portal kapanışında iç ofis işbirliği, eşleşen talep ve gösterim sözleşmesi seçilebiliyor.

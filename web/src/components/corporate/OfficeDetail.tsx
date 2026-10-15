@@ -27,10 +27,10 @@ export function OfficeDetail({ data }: { data: Extract<CorporatePayload, { kind:
         <div className="[box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] [padding:calc(50px_*_var(--sk-scale,_1))_calc(50px_*_var(--sk-scale,_1))_calc(25px_*_var(--sk-scale,_1))] max-md:[padding:0] max-md:[box-shadow:none] max-md:[margin-bottom:calc(-25px_*_var(--sk-scale,_1))] md:max-lg:[padding:calc(35px_*_var(--sk-scale,_1))_calc(35px_*_var(--sk-scale,_1))_calc(10px_*_var(--sk-scale,_1))]">
           <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-center">
             <div className="w-full lg:w-1/2">
-              <div className="[width:calc(70px_*_var(--sk-scale,_1))] [height:calc(70px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))] overflow-hidden relative max-lg:[margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
-                <Picture className="max-w-full h-auto" width={576} height={269}>
+              <div className="sk-photo-frame sk-photo-frame-detail">
+                <Picture width={576} height={269}>
                   {data.imageWebp ? <source srcSet={data.imageWebp} type="image/webp" /> : null}
-                  <img src={data.image} alt="OfficeLogo-photo" width={576} height={269} />
+                  <img className="sk-photo" src={data.image} alt="OfficeLogo-photo" width={576} height={269} style={{ "--sk-photo-w": 576, "--sk-photo-h": 269 }} />
                 </Picture>
               </div>
             </div>

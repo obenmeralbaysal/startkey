@@ -23,11 +23,11 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
       <div className="container consultant-draft">
         <div className="flex flex-wrap gap-x-[calc(48px*var(--sk-scale,1))] items-start">
           <div className="w-full lg:w-1/2">
-            <div className="consultant-draft-photo">
+            <div className="consultant-draft-photo sk-photo-frame sk-photo-frame-detail">
               <a href={data.urlPath}>
                 <Picture width={574} height={574}>
                   {data.imageWebp ? <source srcSet={data.imageWebp} type="image/webp" /> : null}
-                  <img src={data.image} alt="User-photo" width={574} height={574} />
+                  <img className="sk-photo" src={data.image} alt="User-photo" width={574} height={574} style={{ "--sk-photo-w": 574, "--sk-photo-h": 574 }} />
                 </Picture>
               </a>
             </div>

@@ -152,6 +152,67 @@ class PortalSessionController extends Controller
         return $this->storeMember($request, $id, 'agents');
     }
 
+    public function deskOffices(Request $request): JsonResponse
+    {
+        return $this->proxy($request, 'get', 'desk/offices');
+    }
+
+    public function officePresence(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'presence' => ['required', 'in:active,hidden,passive,archived'],
+        ]);
+
+        return $this->proxy($request, 'put', "offices/{$id}/presence", $data);
+    }
+
+    public function officeCurrency(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'currency' => ['required', 'in:TRY,USD,EUR,GBP,AZN'],
+        ]);
+
+        return $this->proxy($request, 'put', "offices/{$id}/currency", $data);
+    }
+
+    public function portfolioCatalogue(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate(['held' => ['required', 'boolean']]);
+
+        return $this->proxy($request, 'post', "portfolios/{$id}/catalogue", $data);
+    }
+
+    public function storeInvoice(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'description' => ['required', 'string', 'max:190'],
+            'amount' => ['required', 'numeric', 'min:0.01', 'max:10000000'],
+            'due_in_days' => ['nullable', 'integer', 'min:1', 'max:90'],
+        ]);
+
+        return $this->proxy($request, 'post', "offices/{$id}/invoices", $data);
+    }
+
+    public function payInvoice(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'amount' => ['required', 'numeric', 'min:0.01', 'max:10000000'],
+        ]);
+
+        return $this->proxy($request, 'post', "invoices/{$id}/payments", $data);
+    }
+
+    public function storeLimitRequest(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'resource' => ['required', 'in:portfolios,users,contacts,branches'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:10000'],
+            'note' => ['required', 'string', 'max:500'],
+        ]);
+
+        return $this->proxy($request, 'post', "offices/{$id}/limit-requests", $data);
+    }
+
     private function storeMember(Request $request, int $id, string $kind): JsonResponse
     {
         $data = $request->validate([

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { isRecord, officeCall, type OfficeRecord } from "@/components/portal/office/api";
@@ -14,12 +15,20 @@ import { OfficeProvider } from "@/components/portal/office/ui";
 import { OfficeWork } from "@/components/portal/office/work";
 
 export function OfficeApp({ parts }: { parts: string[] }) {
+  const router = useRouter();
   const [ready, setReady] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [offices, setOffices] = useState<OfficeMembership[]>([]);
   const [officeId, setOfficeId] = useState(0);
+  const route = parts.join("/");
+  const [section, setSection] = useState(parts);
+  const [switching, setSwitching] = useState(false);
   const [message, setMessage] = useState("");
   const notice = useCallback((value: string) => setMessage(value), []);
+
+  useEffect(() => {
+    setSection(route === "" ? [] : route.split("/"));
+  }, [route]);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,12 +83,18 @@ export function OfficeApp({ parts }: { parts: string[] }) {
   }, [role]);
 
   async function choose(next: number) {
+    if (next === officeId || switching) return;
+    setSwitching(true);
     try {
       await officeCall("auth/switch-office", null, { method: "POST", body: { office_id: next } });
       setOfficeId(next);
+      setSection([]);
       notice("");
+      if ((parts[0] ?? "") !== "") router.push("/portal/office");
     } catch (error) {
       notice(`Hata: ${error instanceof Error ? error.message : "Ofis değişmedi."}`);
+    } finally {
+      setSwitching(false);
     }
   }
 
@@ -107,11 +122,14 @@ export function OfficeApp({ parts }: { parts: string[] }) {
           <img className="glass-logo" alt="Logo" src="/portal/img/startkey_logo.png" />
           <div className="glass-actions">
             {offices.length > 1 ? (
-              <select value={officeId} onChange={(event) => choose(Number(event.target.value))}>
-                {offices.map((item) => (
-                  <option key={officeNumber(item)} value={officeNumber(item)}>{officeLabel(item)}</option>
-                ))}
-              </select>
+              <label className="glass-office">
+                <span>Ofis değiştir</span>
+                <select value={officeId} disabled={switching} onChange={(event) => choose(Number(event.target.value))}>
+                  {offices.map((item) => (
+                    <option key={officeNumber(item)} value={officeNumber(item)}>{officeLabel(item)}</option>
+                  ))}
+                </select>
+              </label>
             ) : <span>{officeLabel(office)}</span>}
             {isAdmin ? <Link className="glass-btn-lite" href="/portal">Franchise</Link> : null}
             <button className="glass-btn-lite" type="button" onClick={logout}>Çıkış</button>
@@ -125,7 +143,7 @@ export function OfficeApp({ parts }: { parts: string[] }) {
           })}
         </nav>
         {message ? <p className={message.startsWith("Hata") ? "glass-error" : "glass-muted"}>{message}</p> : null}
-        <OfficeWork parts={parts} />
+        <OfficeWork key={officeId} parts={section} />
         <p className="glass-muted">{roleLabel(role)}</p>
       </main>
     </OfficeProvider>

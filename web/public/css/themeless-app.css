@@ -13,9 +13,6 @@
 }
 
 .consultant-draft-photo img {
-  display: block;
-  width: 100%;
-  height: auto;
   border-radius: calc(4px * var(--sk-scale, 1));
 }
 

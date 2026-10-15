@@ -59,6 +59,13 @@ Route::prefix('v1')->group(function () {
         Route::post('portal/consultant-applications/{id}/accept', [PortalSessionController::class, 'acceptConsultant'])->whereNumber('id');
         Route::post('portal/offices/{id}/brokers', [PortalSessionController::class, 'storeBroker'])->whereNumber('id');
         Route::post('portal/offices/{id}/agents', [PortalSessionController::class, 'storeAgent'])->whereNumber('id');
+        Route::get('portal/desk/offices', [PortalSessionController::class, 'deskOffices']);
+        Route::put('portal/offices/{id}/presence', [PortalSessionController::class, 'officePresence'])->whereNumber('id');
+        Route::put('portal/offices/{id}/currency', [PortalSessionController::class, 'officeCurrency'])->whereNumber('id');
+        Route::post('portal/portfolios/{id}/catalogue', [PortalSessionController::class, 'portfolioCatalogue'])->whereNumber('id');
+        Route::post('portal/offices/{id}/invoices', [PortalSessionController::class, 'storeInvoice'])->whereNumber('id');
+        Route::post('portal/invoices/{id}/payments', [PortalSessionController::class, 'payInvoice'])->whereNumber('id');
+        Route::post('portal/offices/{id}/limit-requests', [PortalSessionController::class, 'storeLimitRequest'])->whereNumber('id');
         Route::match(['get', 'post', 'put', 'patch', 'delete'], 'portal/office/{path}', OfficeProxyController::class)->where('path', '.*');
         Route::get('portal/media/{path}', PortalMediaController::class)->where('path', '.*');
     });

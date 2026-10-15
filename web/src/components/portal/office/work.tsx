@@ -888,6 +888,19 @@ function DemandForm() {
   const contacts = useData("contacts?limit=100");
   const categories = useData("categories");
   const cities = useData("locations/cities");
+  const me = useData("me");
+  const [matchNetwork, setMatchNetwork] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (ready || !isRecord(me.data)) {
+      return;
+    }
+    const user = isRecord(me.data.user) ? me.data.user : me.data;
+    setMatchNetwork(user.demand_match_network_default === true || user.demand_match_network_default === 1);
+    setReady(true);
+  }, [me.data, ready]);
+
   return (
     <>
     <VoiceDraft kind="demand" />
@@ -905,6 +918,7 @@ function DemandForm() {
             max_price: form.get("max_price") ? Number(form.get("max_price")) : null,
             locations: [{ city_id: cityId }],
             notes: form.get("notes") || null,
+            match_network: matchNetwork,
           },
         });
         notice("Talep kaydedildi.");
@@ -918,6 +932,10 @@ function DemandForm() {
       <input name="min_price" type="number" placeholder="Alt fiyat" />
       <input name="max_price" type="number" placeholder="Üst fiyat" />
       <textarea name="notes" placeholder="Not" />
+      <label>
+        <input type="checkbox" checked={matchNetwork} onChange={(event) => setMatchNetwork(event.target.checked)} />
+        Diğer StartKey portföyleri ile eşleşsin
+      </label>
     </Form>
     </>
   );
@@ -1330,9 +1348,27 @@ function Settings({ page }: { page?: string }) {
 
 function ProfileForm() {
   const { officeId, notice } = useOffice();
+  const me = useData("me");
+  const [matchNetwork, setMatchNetwork] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (ready || !isRecord(me.data)) {
+      return;
+    }
+    const user = isRecord(me.data.user) ? me.data.user : me.data;
+    setMatchNetwork(user.demand_match_network_default === true || user.demand_match_network_default === 1);
+    setReady(true);
+  }, [me.data, ready]);
+
   return (
     <Form title="Profil" onSubmit={async (form) => {
-      const body: OfficeRecord = { first_name: form.get("first_name"), last_name: form.get("last_name"), phone: form.get("phone") };
+      const body: OfficeRecord = {
+        first_name: form.get("first_name"),
+        last_name: form.get("last_name"),
+        phone: form.get("phone"),
+        demand_match_network_default: matchNetwork,
+      };
       const password = String(form.get("password") || "");
       if (password) body.password = password;
       await officeCall("profile", officeId, { method: "PUT", body });
@@ -1342,6 +1378,10 @@ function ProfileForm() {
       <input name="last_name" placeholder="Soyad" required />
       <input name="phone" placeholder="Telefon" />
       <input name="password" type="password" placeholder="Yeni şifre" autoComplete="new-password" />
+      <label>
+        <input type="checkbox" checked={matchNetwork} onChange={(event) => setMatchNetwork(event.target.checked)} />
+        Yeni taleplerim diğer StartKey portföyleri ile eşleşsin
+      </label>
     </Form>
   );
 }
