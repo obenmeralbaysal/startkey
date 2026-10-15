@@ -1,5 +1,6 @@
 ## [2026-10-15]
 
+- **[Backend]**: Public danışman sayfasına yazılan yorum, Reonix süperadmin onaylamadan sitede görünmez. Onay ve ret `/admin/consultant-reviews` ekranındadır. Katalogdan gelen eski yorumlar yayında kalır.
 - **[UI]**: Franchise masasının başına “Panel” geldi: ofis, danışman, portföy, kişi ve bu yıl kapanış özetleri; portföy kategori, durum ve satılık/kiralık dağılımı; kişi tipleri; son 12 ayın satılık ve kiralık portföy, kapanış, ortalama fiyat, kapanış hacmi ve hizmet bedeli grafikleri; ofis sıralaması. Veri Reonix’in yeni salt okunur `integrations/portal/desk/stats` ucundan gelir ve 10 dakika önbellekte tutulur.
 - **[UI]**: Ofis “Özet” sayfası Reonix panelini izler. Broker, ofis yöneticisi ve manager için onay bekleyenler, düzeltme bekleyenler, bugünün nöbetçileri, beş gösterge, hızlı işlemler, finansal özet, aylık kapanış ve portföy büyüme grafikleri ile performans sıralaması gelir. Agent kendi portföy, randevu ve hizmet bedeli özetini görür.
 - **[UI]**: `/portal` Apple tarzı cam tasarıma geçti. Masaüstünde yan menü, tablette ikon şeridi, telefonda yüzen alt sekme çubuğu ve “Diğer” sayfası var. Bildirimler üstte kısa süreli kart olarak çıkar, yüklenirken iskelet görünür. Kişi, portföy ve talep silme onay ister. Tüm şifre alanlarında göster/gizle düğmesi var. API çağrıları, yetkiler ve adresler değişmedi.

@@ -21,8 +21,8 @@ class ConsultantCommentController extends Controller
     }
 
     /**
-     * Stores a public consultant-detail comment. Delivery / moderation is not
-     * implemented; the row is kept until that destination exists.
+     * Stores a public consultant-detail comment. Reonix keeps a new review
+     * pending until a super admin approves it.
      */
     public function store(ConsultantCommentRequest $request, int $externalId): JsonResponse
     {
