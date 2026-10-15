@@ -1345,6 +1345,110 @@ a.btn.style2::after {
   width: 100%;
 }
 
+.sk-office-info {
+  padding: calc(22px * var(--sk-scale, 1)) calc(25px * var(--sk-scale, 1));
+  text-align: center;
+}
+
+.sk-office-info h3 {
+  margin: 0 0 calc(5px * var(--sk-scale, 1));
+  font-size: calc(22px * var(--sk-scale, 1));
+}
+
+.sk-office-info h3 a {
+  color: #002172;
+  transition: color 0.3s;
+}
+
+.sk-office-info h3 a:hover {
+  color: #ec3323;
+}
+
+.sk-office-info span a {
+  color: #000;
+}
+
+.sk-office-social {
+  margin: calc(25px * var(--sk-scale, 1)) 0 0;
+  text-align: center;
+}
+
+.sk-office-social li {
+  display: inline-block;
+  margin: 0 calc(5px * var(--sk-scale, 1));
+}
+
+.sk-office-social a {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: calc(42px * var(--sk-scale, 1));
+  height: calc(42px * var(--sk-scale, 1));
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 calc(25px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease-in-out;
+}
+
+.sk-office-social a i {
+  color: #002172;
+  font-size: calc(16px * var(--sk-scale, 1));
+  line-height: 0.8;
+  transition: 0.3s ease-in-out;
+}
+
+.sk-office-social a:hover {
+  background: #ec3323;
+  transform: translateY(-3px);
+}
+
+.sk-office-social a:hover i {
+  color: #fff;
+}
+
+.sk-page-nav {
+  margin: calc(10px * var(--sk-scale, 1)) 0 0;
+  text-align: center;
+}
+
+.sk-page-nav li {
+  display: inline-block;
+  margin: 0 calc(5px * var(--sk-scale, 1));
+}
+
+.sk-page-nav a {
+  display: block;
+  width: calc(45px * var(--sk-scale, 1));
+  height: calc(45px * var(--sk-scale, 1));
+  border-radius: 50%;
+  background: #f9f9f9;
+  color: #666;
+  font-size: calc(16px * var(--sk-scale, 1));
+  font-weight: 400;
+  line-height: calc(44px * var(--sk-scale, 1));
+  text-align: center;
+  opacity: 0.7;
+  transition: 0.4s ease-in-out;
+}
+
+.sk-page-nav a.active,
+.sk-page-nav a:hover {
+  background: #ec3323;
+  color: #fff;
+  opacity: 1;
+}
+
+@media (max-width: 575px) {
+  .sk-page-nav a {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+  }
+}
+
 .sk-photo-frame-detail {
   border-radius: calc(5px * var(--sk-scale, 1));
 }
