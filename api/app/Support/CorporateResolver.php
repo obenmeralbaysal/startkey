@@ -1327,6 +1327,10 @@ class CorporateResolver
     private function remoteOfficeList(string $locale, string $path, int $pageIndex, array $filters, array $rows): array
     {
         $search = mb_strtolower(trim((string) ($this->filterScalar($filters, 'SearchText') ?? '')));
+        if (class_exists(\Collator::class)) {
+            $collator = new \Collator('tr_TR');
+            usort($rows, fn ($a, $b) => $collator->compare((string) ($a['name'] ?? ''), (string) ($b['name'] ?? '')));
+        }
         $items = [];
         foreach ($rows as $row) {
             $name = mb_strtolower((string) ($row['name'] ?? ''));
@@ -1336,7 +1340,7 @@ class CorporateResolver
             $items[] = app(ReonixCatalogue::class)->officeCard($row, $locale);
         }
         $payload = $this->emptyOfficeList($locale, $path, $filters);
-        $foundTemplate = '{count}';
+        $foundTemplate = $this->officeListDefaults($locale)['foundTemplate'];
         $perPage = 18;
 
         $list = CmsListPage::query()->where('type', 'office')->where('locale', $locale)->first();
@@ -1444,11 +1448,8 @@ class CorporateResolver
     {
         $lists = config('site.corporate.offices.lists', []);
         $canonical = is_array($lists[$locale] ?? null) ? ($lists[$locale][0] ?? $path) : $path;
-        $heading = match ($locale) {
-            'en' => 'Our Offices',
-            'de' => 'Unsere Büros',
-            default => 'Ofislerimiz',
-        };
+        $defaults = $this->officeListDefaults($locale);
+        $heading = $defaults['heading'];
         $keys = ['SearchText', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'];
         $values = [];
         foreach ($keys as $key) {
@@ -1464,25 +1465,16 @@ class CorporateResolver
         return [
             'kind' => 'office-list',
             'heading' => $heading,
-            'breadcrumb' => ['heading' => $heading, 'trail' => []],
-            'meta' => ['title' => $heading],
+            'breadcrumb' => ['heading' => $heading, 'trail' => [
+                ['href' => $defaults['homeHref'], 'label' => $defaults['homeLabel']],
+                ['href' => null, 'label' => $heading],
+            ]],
+            'meta' => ['title' => $defaults['title']],
             'filter' => [
                 'action' => $canonical,
-                'searchHeading' => match ($locale) {
-                    'en' => 'Search office:',
-                    'de' => 'Büro suchen:',
-                    default => 'Ofis Ara :',
-                },
-                'searchPlaceholder' => match ($locale) {
-                    'en' => 'Office name',
-                    'de' => 'Büroname',
-                    default => 'Ofis Adı',
-                },
-                'submitLabel' => match ($locale) {
-                    'en' => 'Search',
-                    'de' => 'Suchen',
-                    default => 'Ara',
-                },
+                'searchHeading' => $defaults['searchHeading'],
+                'searchPlaceholder' => $defaults['searchPlaceholder'],
+                'submitLabel' => $defaults['submitLabel'],
                 'placeholders' => [],
                 'bindUrls' => [
                     'countries' => '/'.$locale.'/Lookup/EnteredOfficeCountries',
@@ -1506,6 +1498,47 @@ class CorporateResolver
             ],
             'alternates' => $alternates,
         ];
+    }
+
+    /**
+     * Reference page texts (startkey.com.tr office list) used when the list page is not seeded.
+     *
+     * @return array{heading: string, title: string, homeHref: string, homeLabel: string, searchHeading: string, searchPlaceholder: string, submitLabel: string, foundTemplate: string}
+     */
+    private function officeListDefaults(string $locale): array
+    {
+        return match ($locale) {
+            'en' => [
+                'heading' => 'Our Offices',
+                'title' => '| Our Offices',
+                'homeHref' => '/en',
+                'homeLabel' => 'Home',
+                'searchHeading' => 'Search Office :',
+                'searchPlaceholder' => 'Office Name',
+                'submitLabel' => 'Search',
+                'foundTemplate' => '{count} Office Found',
+            ],
+            'de' => [
+                'heading' => 'Unsere buros',
+                'title' => '| Unsere buros',
+                'homeHref' => '/de',
+                'homeLabel' => 'Startseite',
+                'searchHeading' => 'Suchbüro :',
+                'searchPlaceholder' => 'Büroname',
+                'submitLabel' => 'Suche',
+                'foundTemplate' => '{count} Büro gefunden',
+            ],
+            default => [
+                'heading' => 'Ofislerimiz',
+                'title' => 'Startkey Türkiye | Ofislerimiz',
+                'homeHref' => '/',
+                'homeLabel' => 'Anasayfa',
+                'searchHeading' => 'Ofis Ara :',
+                'searchPlaceholder' => 'Ofis Adı',
+                'submitLabel' => 'Ara',
+                'foundTemplate' => '{count} Ofis Bulundu',
+            ],
+        };
     }
 
     private function officeEmptyLabel(string $locale): string

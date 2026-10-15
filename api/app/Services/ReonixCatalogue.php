@@ -246,11 +246,28 @@ class ReonixCatalogue
             'image' => $this->catalogueImage('offices', $row),
             'imageWebp' => '',
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',
-            'phoneLabel' => $phone,
+            'phoneLabel' => $this->phoneLabel($phone),
             'email' => (string) ($row['email'] ?? ''),
             'location' => $this->cardLocation((string) ($row['address'] ?? '')),
             'variant' => 'office',
         ];
+    }
+
+    /** Formats bare digits like the reference ("+90 (232) 812-1872"); ten digits are a Turkish number. */
+    private function phoneLabel(string $phone): string
+    {
+        $digits = preg_replace('/\D+/', '', $phone) ?? '';
+        if (! str_starts_with(trim($phone), '+') && str_starts_with($digits, '0') && strlen($digits) === 11) {
+            $digits = substr($digits, 1);
+        }
+        $length = strlen($digits);
+        if ($length < 10 || $length > 13) {
+            return $phone;
+        }
+        $country = $length === 10 ? '90' : substr($digits, 0, $length - 10);
+        $local = substr($digits, -10);
+
+        return '+'.$country.' ('.substr($local, 0, 3).') '.substr($local, 3, 3).'-'.substr($local, 6);
     }
 
     /** Office cards show "City / District" like the reference list; detail pages keep the full address. */

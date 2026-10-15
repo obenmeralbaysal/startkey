@@ -114,6 +114,37 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.emptyLabel', 'Henüz eklenmiş ofis yok.');
     }
 
+    public function test_the_portal_office_list_uses_reference_texts_without_a_seeded_page(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [
+                ['id' => 3, 'name' => 'Ege', 'phone' => '2323670535', 'address' => 'İzmir / Bornova'],
+                ['id' => 2, 'name' => 'Çapa', 'phone' => '442081808616', 'address' => 'London / New Eltham'],
+                ['id' => 1, 'name' => 'Corner', 'phone' => '+90 (232) 608-0035', 'address' => 'İzmir / Bornova'],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler')
+            ->assertOk()
+            ->assertJsonPath('data.breadcrumb.trail.0.label', 'Anasayfa')
+            ->assertJsonPath('data.breadcrumb.trail.0.href', '/')
+            ->assertJsonPath('data.meta.title', 'Startkey Türkiye | Ofislerimiz')
+            ->assertJsonPath('data.foundLabel', '3 Ofis Bulundu')
+            ->assertJsonPath('data.items.0.name', 'Corner')
+            ->assertJsonPath('data.items.1.name', 'Çapa')
+            ->assertJsonPath('data.items.2.name', 'Ege')
+            ->assertJsonPath('data.items.0.phoneLabel', '+90 (232) 608-0035')
+            ->assertJsonPath('data.items.1.phoneLabel', '+44 (208) 180-8616')
+            ->assertJsonPath('data.items.2.phoneLabel', '+90 (232) 367-0535')
+            ->assertJsonPath('data.items.2.phoneHref', 'tel:2323670535');
+
+        $this->getJson('/api/v1/corporate?locale=en&path=/en/offices')
+            ->assertOk()
+            ->assertJsonPath('data.breadcrumb.trail.0.label', 'Home')
+            ->assertJsonPath('data.filter.searchHeading', 'Search Office :')
+            ->assertJsonPath('data.foundLabel', '3 Office Found');
+    }
+
     public function test_a_listing_inquiry_is_sent_to_the_portal(): void
     {
         Http::fake([

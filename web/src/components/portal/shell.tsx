@@ -146,7 +146,7 @@ function NavItem({ item, onNavigate }: { item: ShellLink; onNavigate?: () => voi
   );
 }
 
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE = ':is(a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]):not([tabindex="-1"])';
 
 export function Sheet({
   open,

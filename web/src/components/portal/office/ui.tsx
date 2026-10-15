@@ -76,7 +76,7 @@ export function RecordTable({ rows, href, loading = false }: { rows: OfficeRecor
     <ul className="glass-list">
       {rows.map((row) => {
         const id = String(row.id ?? text(row, ["title", "name"]));
-        const label = text(row, ["title", "name", "applicant_name", "office_name", "status"]);
+        const label = text(row, typeof row.title === "string" && row.title ? ["title"] : ["first_name", "name", "applicant_name", "office_name", "status"]);
         const extra = text(row, ["status", "price", "phone", "email", "type"]);
         const body = (
           <>

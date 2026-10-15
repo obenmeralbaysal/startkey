@@ -317,7 +317,7 @@
   margin: 0 0 16px;
 }
 
-.glass-field > span {
+.glass-field > span:not(.glass-password) {
   padding-left: 4px;
   font-size: 13px;
   font-weight: 500;
@@ -734,6 +734,7 @@
 .glass-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  align-items: start;
   gap: 16px;
 }
 
@@ -789,9 +790,12 @@
 }
 
 .glass-dl > div {
-  display: grid;
-  grid-template-columns: minmax(120px, 200px) minmax(0, 1fr);
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+  min-height: 44px;
   padding: 11px 16px;
 }
 
@@ -800,22 +804,45 @@
 }
 
 .glass-dl dt {
+  flex: 0 1 auto;
+  max-width: 100%;
   color: var(--label-2);
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 14px;
   word-break: break-word;
 }
 
 .glass-dl dd {
-  margin: 0;
+  flex: 1 1 48px;
   min-width: 0;
+  margin: 0;
   font-size: 15px;
+  font-weight: 500;
+  text-align: right;
   word-break: break-word;
 }
 
-.glass-dl .glass-dl {
+.glass-dl dd:has(> .glass-dl, > .glass-list, > .glass-skeleton) {
+  flex-basis: 100%;
+  text-align: left;
+}
+
+.glass-dl .glass-dl,
+.glass-dl .glass-list {
+  margin-top: 4px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.glass-dl:has(> div:only-child > dd > .glass-dl) {
   background: transparent;
-  box-shadow: inset 0 0 0 1px var(--separator);
+  box-shadow: none;
+}
+
+.glass-dl > div:only-child:has(> dd > .glass-dl) {
+  padding: 0;
+}
+
+.glass-dl > div:only-child:has(> dd > .glass-dl) > dt {
+  display: none;
 }
 
 .glass-dl img {
@@ -938,8 +965,9 @@ a.glass-list-row:active {
 
 .glass-loading {
   display: grid;
-  place-items: center;
-  gap: 16px;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
   min-height: 100vh;
   min-height: 100dvh;
   color: var(--label-2);
@@ -1821,11 +1849,6 @@ section.glass-form,
 
   .glass-row {
     flex-wrap: wrap;
-  }
-
-  .glass-dl > div {
-    grid-template-columns: 1fr;
-    gap: 2px;
   }
 
   .glass-list-row {
