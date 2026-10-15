@@ -20,6 +20,9 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from office_catalogue import dedupe_catalogue, parse_comments
+
 ROOT = Path(__file__).resolve().parents[1]
 SNAP = ROOT / "reference" / "snapshots" / "offices"
 OUT = ROOT / "api" / "database" / "data" / "offices-seed.json"
@@ -392,6 +395,7 @@ def parse_consultant_detail(page: str, lang: str, url_path: str, card: dict | No
         "listingIds": parse_style6_ids(page),
         "allListingsLabel": all_label,
         "commentHeading": comment_heading,
+        "comments": parse_comments(page),
         "form": {
             "placeholders": placeholders,
             "submitLabel": text_of(submit.group(1)) if submit else "",
@@ -626,6 +630,23 @@ def main() -> int:
                 rec["countyLabel"] = parsed["countyLabel"]
             rec["translations"][lang] = parsed
 
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(
+        json.dumps(
+            {
+                "sample": {"offices": len(offices), "consultants": 0, "checkpoint": True},
+                "officeUi": office_ui,
+                "consultantUi": {},
+                "offices": [offices[s] for s in tr_order if s in offices],
+                "consultants": [],
+                "lookups": {},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    print(f"checkpoint offices {len(offices)}", flush=True)
+
     print("== consultant lists")
     consultant_ui: dict[str, dict] = {}
     cards_by_id: dict[int, dict[str, dict]] = {}
@@ -719,6 +740,7 @@ def main() -> int:
             rec["slug"] = parsed.get("slug") or rec.get("slug") or str(ext)
             if parsed.get("officeId"):
                 rec["officeId"] = parsed["officeId"]
+            rec.setdefault("translations", {})
             rec["translations"][lang] = parsed
             rec["hasFullDetail"] = set(rec["translations"]) == set(LANGS)
             if lang == "tr" and parsed.get("name"):
@@ -810,19 +832,31 @@ def main() -> int:
     if missing_offices:
         print(f"WARN offices without id: {missing_offices[:12]} ({len(missing_offices)})", file=sys.stderr)
 
+    office_rows = [offices[s] for s in tr_order if s in offices]
+    consultant_rows = [consultants[i] for i in detail_ids if i in consultants] + [
+        consultants[i] for i in consultants if i not in set(detail_ids)
+    ]
+    office_rows, consultant_rows, dedupe_report = dedupe_catalogue(office_rows, consultant_rows)
+    print(
+        f"dedupe aliases={len(dedupe_report['droppedOfficeAliases'])} "
+        f"mergedBrokers={len(dedupe_report['mergedBrokers'])} "
+        f"consultants={len(consultant_rows)}"
+    )
+
     payload = {
         "sample": {
-            "offices": len(offices),
-            "consultants": len(consultants),
-            "consultantFullDetail": sum(1 for row in consultants.values() if row.get("hasFullDetail")),
+            "offices": len(office_rows),
+            "consultants": len(consultant_rows),
+            "consultantFullDetail": sum(1 for row in consultant_rows if row.get("hasFullDetail")),
             "liveConsultants": len(detail_ids),
             "selection": "all public offices and consultants from the live lists, tr/en/de",
+            "droppedOfficeAliases": dedupe_report["droppedOfficeAliases"],
+            "mergedBrokers": dedupe_report["mergedBrokers"],
         },
         "officeUi": office_ui,
         "consultantUi": consultant_ui,
-        "offices": [offices[s] for s in tr_order if s in offices],
-        "consultants": [consultants[i] for i in detail_ids if i in consultants]
-        + [consultants[i] for i in consultants if i not in set(detail_ids)],
+        "offices": office_rows,
+        "consultants": consultant_rows,
         "lookups": {"cities": list(cities_lookup.values())},
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)

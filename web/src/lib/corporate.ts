@@ -378,6 +378,7 @@ export type CorporatePayload =
       allListingsHref: string;
       allListingsLabel: string;
       commentHeading: string;
+      comments?: { firstName: string; lastName: string; date: string; text: string; rating: number | null }[];
       form: {
         placeholders: Record<string, string>;
         submitLabel: string;

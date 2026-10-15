@@ -1,5 +1,6 @@
 ## [2026-10-15]
 
+- **[Backend]**: Public ofis ve danışman kataloğu Reonix’e bir kerelik yazılır. Ofis adı danışmanı düşer, aynı broker tek kişi olur, yayınlanan yorum Reonix kullanıcısında kalır ve public danışman sayfasında görünür.
 - **[Bugfix]**: Ofis ve danışman fotoğraf boyutu canlı web derlemesinde tip hatası verdiği için düzeltildi.
 - **[UI]**: Aynı kişi birden fazla ofisin broker’ı olabilir. İkinci ofise aynı e-posta ile eklenince yeni profil açılmaz. Portalda birden fazla ofisi olan hesap ofis değiştirir.
 - **[UI]**: Ofis logosu listede 413×194, detayda 576×269 geniş bant; danışman fotoğrafı kare. Referanstaki kırpma oranı kullanılıyor.

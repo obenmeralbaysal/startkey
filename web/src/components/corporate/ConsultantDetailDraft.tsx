@@ -129,6 +129,13 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
                   ) : null}
                 </div>
                 <div className={activeId === "tab_3" ? "tab-pane fade show active" : "tab-pane fade"} id="tab_3" role="tabpanel">
+                  {(data.comments ?? []).map((comment) => (
+                    <article className="comment-item" key={`${comment.date}-${comment.firstName}-${comment.text.slice(0, 24)}`}>
+                      <h5>{[comment.firstName, comment.lastName].filter(Boolean).join(" ")}</h5>
+                      {comment.date ? <span className="comment-date">{comment.date}</span> : null}
+                      <p>{comment.text}</p>
+                    </article>
+                  ))}
                   {data.commentHeading ? <h4 style={{ marginTop: scaled(15), marginBottom: scaled(15) }}>{data.commentHeading}</h4> : null}
                   <ConsultantCommentForm data={data} locale={locale} />
                 </div>

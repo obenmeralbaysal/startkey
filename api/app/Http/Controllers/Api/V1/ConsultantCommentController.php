@@ -7,6 +7,9 @@ use App\Http\Requests\ConsultantCommentRequest;
 use App\Models\CmsConsultant;
 use App\Models\ConsultantComment;
 use App\Services\CaptchaVerifier;
+use App\Services\ReonixCatalogue;
+use App\Services\ReonixClient;
+use App\Services\ReonixException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -23,11 +26,6 @@ class ConsultantCommentController extends Controller
      */
     public function store(ConsultantCommentRequest $request, int $externalId): JsonResponse
     {
-        $consultant = CmsConsultant::query()->published()->where('external_id', $externalId)->first();
-        if ($consultant === null) {
-            throw new NotFoundHttpException;
-        }
-
         if (! $this->captcha->verify($request->input('captcha_token'), $request->ip(), null, 'comment')) {
             $message = __('messages.captcha_failed');
 
@@ -35,6 +33,25 @@ class ConsultantCommentController extends Controller
                 'message' => $message,
                 'errors' => ['captcha_token' => [$message]],
             ], 422);
+        }
+
+        $consultant = CmsConsultant::query()->published()->where('external_id', $externalId)->first();
+        if ($consultant === null) {
+            if (! app(ReonixCatalogue::class)->configured()) {
+                throw new NotFoundHttpException;
+            }
+            try {
+                app(ReonixClient::class)->post('catalogue/consultants/'.$externalId.'/reviews', [
+                    'firstName' => trim($request->string('first_name')->value()),
+                    'lastName' => trim($request->string('last_name')->value()),
+                    'text' => trim($request->string('comment')->value()),
+                    'rating' => is_numeric($request->input('rating')) ? (int) $request->input('rating') : null,
+                ]);
+            } catch (ReonixException) {
+                throw new NotFoundHttpException;
+            }
+
+            return response()->json(['data' => ['stored' => true]], 201);
         }
 
         $rating = $request->input('rating');

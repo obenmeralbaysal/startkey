@@ -144,6 +144,13 @@ class ReonixCatalogue
                 default => 'Portföylerimiz',
             },
             'commentHeading' => '',
+            'comments' => array_values(array_map(fn ($review) => [
+                'firstName' => (string) ($review['firstName'] ?? ''),
+                'lastName' => (string) ($review['lastName'] ?? ''),
+                'date' => (string) ($review['date'] ?? ''),
+                'text' => (string) ($review['text'] ?? ''),
+                'rating' => $review['rating'] ?? null,
+            ], array_filter(is_array($row['reviews'] ?? null) ? $row['reviews'] : [], 'is_array'))),
             'form' => [
                 'placeholders' => [],
                 'submitLabel' => '',
