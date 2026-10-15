@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
-import { EmptyState, Skeleton } from "@/components/portal/office/ui";
+import { EmptyState, PasswordInput, Skeleton } from "@/components/portal/office/ui";
 import { useToast } from "@/components/portal/shell";
 
 type LimitCell = { used: number; limit: number };
@@ -20,6 +20,15 @@ type DeskInvoice = {
 };
 
 type DeskLimit = { id: number; resource: string; quantity: number; note: string; status: string };
+
+type DeskUser = {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  role: string | null;
+};
 
 type Presence = "active" | "hidden" | "passive" | "archived";
 
@@ -161,6 +170,7 @@ function OfficeCard({
         </label>
       </div>
       <p className="glass-muted">Yeni portföyler bu para birimiyle açılır. Mevcut portföyler ve StartKey faturaları aynı kalır.</p>
+      <OfficeUsers officeId={office.id} />
       <div className="glass-section">
         <h4>StartKey sitesindeki portföyler</h4>
         {office.portfolios.length === 0 ? <p className="glass-muted">Sitede portföy yok.</p> : null}
@@ -246,6 +256,121 @@ function OfficeCard({
       </div>
     </article>
   );
+}
+
+function OfficeUsers({ officeId }: { officeId: number }) {
+  const [open, setOpen] = useState(false);
+  const [users, setUsers] = useState<DeskUser[] | null>(null);
+  const toast = useToast();
+
+  async function load() {
+    const response = await fetch(`/api/v1/portal/offices/${officeId}/users`, {
+      credentials: "include",
+      headers: { Accept: "application/json" },
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      toast(body.message || "Kullanıcılar yüklenemedi.", "error");
+      setUsers([]);
+      return;
+    }
+    setUsers(Array.isArray(body.data) ? body.data : []);
+  }
+
+  async function save(url: string, payload: unknown, form: HTMLFormElement, clear: boolean) {
+    const response = await fetch(url, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const body = await response.json().catch(() => ({}));
+    toast(body.message || (response.ok ? "Kaydedildi." : "İşlem tamamlanamadı."), response.ok ? "info" : "error");
+    if (response.ok) {
+      if (clear) form.reset();
+      await load();
+    }
+  }
+
+  return (
+    <div className="glass-section">
+      <h4>Kullanıcılar</h4>
+      <button
+        className="glass-btn-lite"
+        type="button"
+        onClick={() => {
+          setOpen((value) => !value);
+          if (!open && users === null) void load();
+        }}
+      >
+        {open ? "Listeyi gizle" : "Kullanıcıları göster"}
+      </button>
+      {open && users === null ? <Skeleton /> : null}
+      {open && users !== null && users.length === 0 ? <p className="glass-muted">Bu ofiste kullanıcı yok.</p> : null}
+      {open
+        ? users?.map((user) => (
+            <div key={`${user.id}-${user.email}-${user.first_name}-${user.phone ?? ""}`} className="glass-item">
+              <p>
+                <strong>
+                  {user.first_name} {user.last_name}
+                </strong>
+                <span className="glass-muted"> — {roleLabel(user.role)}</span>
+                <br />
+                <span className="glass-muted">{user.email}</span>
+              </p>
+              <form
+                className="glass-fields"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  const form = event.currentTarget;
+                  const data = new FormData(form);
+                  void save(
+                    `/api/v1/portal/offices/${officeId}/users/${user.id}`,
+                    {
+                      first_name: data.get("first_name"),
+                      last_name: data.get("last_name"),
+                      email: data.get("email"),
+                      phone: data.get("phone") || null,
+                    },
+                    form,
+                    false,
+                  );
+                }}
+              >
+                <input name="first_name" defaultValue={user.first_name} placeholder="Ad" required />
+                <input name="last_name" defaultValue={user.last_name} placeholder="Soyad" required />
+                <input name="email" type="email" defaultValue={user.email} placeholder="E-posta" required />
+                <input name="phone" defaultValue={user.phone ?? ""} placeholder="Telefon" />
+                <button className="glass-btn-lite" type="submit">
+                  Bilgileri kaydet
+                </button>
+              </form>
+              <form
+                className="glass-fields"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  const form = event.currentTarget;
+                  const password = String(new FormData(form).get("password") || "");
+                  void save(`/api/v1/portal/offices/${officeId}/users/${user.id}/password`, { password }, form, true);
+                }}
+              >
+                <PasswordInput name="password" placeholder="Yeni şifre" autoComplete="new-password" minLength={8} required />
+                <button className="glass-btn-lite" type="submit">
+                  Şifreyi kaydet
+                </button>
+              </form>
+            </div>
+          ))
+        : null}
+    </div>
+  );
+}
+
+function roleLabel(role: string | null): string {
+  if (role === "owner") return "Broker";
+  if (role === "agent") return "Danışman";
+  if (role === "office_manager" || role === "manager") return "Ofis yöneticisi";
+  return role || "Üye";
 }
 
 function Meter({ cell }: { cell: LimitCell }) {

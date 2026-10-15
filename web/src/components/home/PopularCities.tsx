@@ -22,17 +22,22 @@ export function PopularCities({
 
         <div className="sk-city-row" data-carousel="cards">
           {cities.map((city) => {
+            const remote = city.image.startsWith("/") || city.image.startsWith("http");
             const imageBase = city.image.replace(/\.[^.]+$/, "");
             return (
               <div className="city-card style2" key={city.cityCode} data-city-id={city.cityCode}>
-                <picture>
-                  <source srcSet={`/media/micrositecontent/${imageBase}.webp`} type="image/webp" />
-                  <img
-                    src={`/media/micrositecontent/${city.image}`}
-                    alt="MicroSiteContent-photo"
-                    width={418}
-                  />
-                </picture>
+                {remote ? (
+                  <img src={city.image} alt="MicroSiteContent-photo" width={418} height={280} loading="lazy" />
+                ) : (
+                  <picture>
+                    <source srcSet={`/media/micrositecontent/${imageBase}.webp`} type="image/webp" />
+                    <img
+                      src={`/media/micrositecontent/${city.image}`}
+                      alt="MicroSiteContent-photo"
+                      width={418}
+                    />
+                  </picture>
+                )}
                 <h3>
                   <a href={city.urlPath}>{city.name}</a>
                 </h3>

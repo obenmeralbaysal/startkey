@@ -59,6 +59,9 @@ Route::prefix('v1')->group(function () {
         Route::post('portal/consultant-applications/{id}/accept', [PortalSessionController::class, 'acceptConsultant'])->whereNumber('id');
         Route::post('portal/offices/{id}/brokers', [PortalSessionController::class, 'storeBroker'])->whereNumber('id');
         Route::post('portal/offices/{id}/agents', [PortalSessionController::class, 'storeAgent'])->whereNumber('id');
+        Route::get('portal/offices/{id}/users', [PortalSessionController::class, 'officeUsers'])->whereNumber('id');
+        Route::put('portal/offices/{officeId}/users/{userId}', [PortalSessionController::class, 'updateOfficeUser'])->whereNumber('officeId')->whereNumber('userId');
+        Route::put('portal/offices/{officeId}/users/{userId}/password', [PortalSessionController::class, 'updateOfficeUserPassword'])->whereNumber('officeId')->whereNumber('userId');
         Route::get('portal/desk/offices', [PortalSessionController::class, 'deskOffices']);
         Route::get('portal/desk/stats', [PortalSessionController::class, 'deskStats']);
         Route::put('portal/offices/{id}/presence', [PortalSessionController::class, 'officePresence'])->whereNumber('id');

@@ -71,8 +71,27 @@ class HomepageApiTest extends TestCase
                 'currency' => 'TRY',
                 'type' => 'sale',
                 'property_type' => 'Konut',
+                'category' => 'Daire',
                 'address' => 'Kadikoy',
+                'city_id' => 100,
+                'city' => 'İzmir',
+                'plate_code' => '35',
+                'district' => 'Konak',
+                'rooms' => '3+1',
+                'area' => '120 m²',
                 'image_count' => 1,
+            ], [
+                'id' => 10,
+                'title' => 'Manisa daire',
+                'price' => 900000,
+                'currency' => 'TRY',
+                'type' => 'rent',
+                'property_type' => 'Konut',
+                'city_id' => 45,
+                'city' => 'Manisa',
+                'plate_code' => '45',
+                'district' => 'Şehzadeler',
+                'image_count' => 0,
             ]]]),
             'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [[
                 'id' => 7,
@@ -90,7 +109,29 @@ class HomepageApiTest extends TestCase
             ->assertJsonPath('data.featuredProperties.0.externalId', 9)
             ->assertJsonPath('data.featuredProperties.0.title', 'Moda daire')
             ->assertJsonPath('data.featuredProperties.0.detailLabel', 'Detay')
-            ->assertJsonPath('data.featuredProperties.0.image', '/api/v1/catalogue/media/portfolios/9');
+            ->assertJsonPath('data.featuredProperties.0.image', '/api/v1/catalogue/media/portfolios/9')
+            ->assertJsonPath('data.featuredProperties.0.rooms', '3+1')
+            ->assertJsonPath('data.featuredProperties.0.area', '120 m²')
+            ->assertJsonPath('data.featuredProperties.0.location', 'Konak / İzmir')
+            ->assertJsonPath('data.featuredProperties.0.adSubType', 'Daire')
+            ->assertJsonCount(2, 'data.popularCities')
+            ->assertJsonFragment([
+                'cityCode' => '100',
+                'name' => 'İzmir',
+                'image' => 'izmir.jpg',
+                'urlPath' => '/tr/portfoy?FilterDTO.CityId=100',
+            ])
+            ->assertJsonFragment([
+                'cityCode' => '45',
+                'name' => 'Manisa',
+                'image' => '/img/catalogue-mark.svg',
+                'urlPath' => '/tr/portfoy?FilterDTO.CityId=45',
+            ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy&FilterDTO.CityId=45')
+            ->assertOk()
+            ->assertJsonCount(1, 'data.items')
+            ->assertJsonPath('data.items.0.externalId', 10);
 
         $this->getJson('/api/v1/lookups/GetAllOffices?locale=tr')
             ->assertOk()

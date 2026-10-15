@@ -152,6 +152,32 @@ class PortalSessionController extends Controller
         return $this->storeMember($request, $id, 'agents');
     }
 
+    public function officeUsers(Request $request, int $id): JsonResponse
+    {
+        return $this->proxy($request, 'get', "offices/{$id}/users");
+    }
+
+    public function updateOfficeUser(Request $request, int $officeId, int $userId): JsonResponse
+    {
+        $data = $request->validate([
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', 'max:200'],
+            'phone' => ['nullable', 'string', 'max:40'],
+        ]);
+
+        return $this->proxy($request, 'put', "offices/{$officeId}/users/{$userId}", $data);
+    }
+
+    public function updateOfficeUserPassword(Request $request, int $officeId, int $userId): JsonResponse
+    {
+        $data = $request->validate([
+            'password' => ['required', 'string', 'min:8', 'max:200'],
+        ]);
+
+        return $this->proxy($request, 'put', "offices/{$officeId}/users/{$userId}/password", $data);
+    }
+
     public function deskOffices(Request $request): JsonResponse
     {
         return $this->proxy($request, 'get', 'desk/offices');

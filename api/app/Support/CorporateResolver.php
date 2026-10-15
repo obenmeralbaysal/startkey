@@ -1375,10 +1375,14 @@ class CorporateResolver
     private function remoteListingList(string $locale, string $path, int $pageIndex, array $filters, array $rows): array
     {
         $search = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Keyword') ?? $this->filterScalar($filters, 'SearchText') ?? '')));
+        $cityId = $this->filterScalar($filters, 'FilterDTO.CityId');
         $items = [];
         foreach ($rows as $row) {
             $title = mb_strtolower((string) ($row['title'] ?? ''));
             if ($search !== '' && ! str_contains($title, $search)) {
+                continue;
+            }
+            if ($cityId !== null && $cityId !== '' && ! $this->catalogueCityMatches($row, $cityId)) {
                 continue;
             }
             $items[] = app(ReonixCatalogue::class)->listingCard($row, $locale);
@@ -1386,6 +1390,17 @@ class CorporateResolver
         $payload = $this->emptyListingList($locale, $path, $filters);
 
         return $this->pageRemote($payload, $items, $pageIndex, 12, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function catalogueCityMatches(array $row, string $cityId): bool
+    {
+        if ((string) ($row['city_id'] ?? '') === $cityId) {
+            return true;
+        }
+        $plate = ltrim(trim((string) ($row['plate_code'] ?? '')), '0');
+
+        return $plate !== '' && $plate === ltrim($cityId, '0');
     }
 
     /**

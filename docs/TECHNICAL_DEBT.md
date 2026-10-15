@@ -8,9 +8,9 @@ Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
 **Mevcut Durum:**
 
-Portal bağlantısı varken öne çıkan portföy kartları ile ofis ve danışman arama listeleri Reonix katalogundan gelir. İstatistik şeridi, popüler şehirler ve diğer arama seçenekleri referans anlık görüntüsünden gelir.
+Portal bağlantısı varken öne çıkan portföy kartları, popüler şehir kaydırıcısı ve ofis ile danışman arama listeleri Reonix katalogundan gelir. Şehir kartı, yayındaki ilanı olan illerden kurulur; plaka kodu kayıtlı bir şehir fotoğrafıyla eşleşirse o fotoğraf kullanılır. İstatistik şeridi ve diğer arama seçenekleri referans anlık görüntüsünden gelir.
 
-2026-09-19 yenileme: sayaçlar 84 / 720 / 1082 / 35; seminer şeridi 6; TR öne çıkanlar 482977 ile başlar. EN/DE ana sayfa canlıdaki gibi ayrı ilan seti gösterir (`property_translations.is_featured`). Yeni ilanlar otomatik gelmez.
+2026-09-19 yenileme: sayaçlar 84 / 720 / 1082 / 35; seminer şeridi 6. Portal bağlı değilken öne çıkanlar ve şehirler hâlâ anlık görüntüden gelir.
 
 **Geçici Olmasının Nedeni:**
 

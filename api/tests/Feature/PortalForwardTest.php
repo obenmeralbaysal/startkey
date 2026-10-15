@@ -46,6 +46,8 @@ class PortalForwardTest extends TestCase
         $this->getJson('/api/v1/portal/applications')->assertUnauthorized();
         $this->postJson('/api/v1/portal/offices/1/agents', [])->assertUnauthorized();
         $this->getJson('/api/v1/portal/desk/stats')->assertUnauthorized();
+        $this->getJson('/api/v1/portal/offices/1/users')->assertUnauthorized();
+        $this->putJson('/api/v1/portal/offices/1/users/2/password', ['password' => 'long-enough'])->assertUnauthorized();
         $this->deleteJson('/api/v1/portal/session')->assertOk();
     }
 
@@ -73,6 +75,34 @@ class PortalForwardTest extends TestCase
             ->assertJsonPath('data.offices.total', 3);
 
         Http::assertSent(fn ($request) => $request->url() === 'http://reonix.test/api/v1/integrations/portal/desk/stats'
+            && $request->hasHeader('Authorization', 'Bearer secret-token'));
+    }
+
+    public function test_an_office_user_password_is_forwarded_without_being_stored_here(): void
+    {
+        config(['reonix.base_url' => 'http://reonix.test', 'reonix.portal_key' => 'test-key']);
+        Http::fake([
+            'http://reonix.test/api/v1/integrations/portal/session' => Http::response([
+                'data' => ['token' => 'secret-token', 'user' => ['id' => 1, 'first_name' => 'Ada']],
+            ], 200),
+            'http://reonix.test/api/v1/integrations/portal/offices/4/users/9/password' => Http::response([
+                'data' => ['updated' => true],
+            ], 200),
+        ]);
+
+        $cookie = $this->postJson('/api/v1/portal/session', [
+            'email' => 'ada@example.com',
+            'password' => 'secret',
+        ])->assertOk()->getCookie('startkey_portal', false);
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->putJson('/api/v1/portal/offices/4/users/9/password', ['password' => 'new-pass-1'])
+            ->assertOk()
+            ->assertJsonPath('data.updated', true);
+
+        Http::assertSent(fn ($request) => $request->url() === 'http://reonix.test/api/v1/integrations/portal/offices/4/users/9/password'
+            && $request['password'] === 'new-pass-1'
             && $request->hasHeader('Authorization', 'Bearer secret-token'));
     }
 

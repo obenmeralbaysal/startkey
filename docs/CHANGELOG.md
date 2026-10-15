@@ -1,5 +1,7 @@
 ## [2026-10-15]
 
+- **[Portal]**: Franchise masasında ofis kullanıcıları listelenir. Ad, e-posta ve telefon düzenlenir; şifre portalda belirlenir. Başka bir ağa da kayıtlı hesap değiştirilemez.
+- **[Backend]**: Ana sayfadaki öne çıkan portföy ve popüler şehir kaydırıcıları, portal bağlıyken Reonix’te yayındaki ilanlardan gelir. Kartta il, ilçe, oda ve alan görünür. Şehir kartı o ilin ilan listesini açar.
 - **[Backend]**: Public danışman sayfasına yazılan yorum, Reonix süperadmin onaylamadan sitede görünmez. Onay ve ret `/admin/consultant-reviews` ekranındadır. Katalogdan gelen eski yorumlar yayında kalır.
 - **[UI]**: Franchise masasının başına “Panel” geldi: ofis, danışman, portföy, kişi ve bu yıl kapanış özetleri; portföy kategori, durum ve satılık/kiralık dağılımı; kişi tipleri; son 12 ayın satılık ve kiralık portföy, kapanış, ortalama fiyat, kapanış hacmi ve hizmet bedeli grafikleri; ofis sıralaması. Veri Reonix’in yeni salt okunur `integrations/portal/desk/stats` ucundan gelir ve 10 dakika önbellekte tutulur.
 - **[UI]**: Ofis “Özet” sayfası Reonix panelini izler. Broker, ofis yöneticisi ve manager için onay bekleyenler, düzeltme bekleyenler, bugünün nöbetçileri, beş gösterge, hızlı işlemler, finansal özet, aylık kapanış ve portföy büyüme grafikleri ile performans sıralaması gelir. Agent kendi portföy, randevu ve hizmet bedeli özetini görür.
