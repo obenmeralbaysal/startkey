@@ -1,5 +1,5 @@
 # PHP-FPM image for the Laravel API.
-FROM php:8.4-fpm-alpine
+FROM php:8.4.27-fpm-alpine
 
 # pdo_pgsql/pgsql for PostgreSQL, redis for the cache and queue connection,
 # intl/zip for the framework, pdo_sqlite for the in-memory test database.
