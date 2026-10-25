@@ -2,9 +2,6 @@
 
 namespace App\Support;
 
-use App\Models\CmsArticle;
-use App\Models\CmsArticleTranslation;
-use App\Models\CmsChampionGroup;
 use App\Models\CmsConsultant;
 use App\Models\CmsConsultantTranslation;
 use App\Models\CmsListPage;
@@ -16,10 +13,9 @@ use App\Models\CmsPage;
 use App\Models\CmsPageTranslation;
 use App\Models\CmsPerson;
 use App\Models\CmsPersonTranslation;
-use App\Models\CmsTraining;
-use App\Models\CmsTrainingTranslation;
 use App\Models\LookupItem;
 use App\Services\ReonixCatalogue;
+use App\Services\ReonixContent;
 
 /**
  * Maps a public URL to the shared Kurumsal template payload. Superadmin-created
@@ -41,12 +37,9 @@ class CorporateResolver
             return $page;
         }
 
-        if ($detail = $this->articleByPath($locale, $path)) {
-            return $detail;
-        }
-
-        if ($detail = $this->trainingByPath($locale, $path)) {
-            return $detail;
+        $portal = app(ReonixContent::class)->resolve($locale, $path, $pageIndex, $searchText);
+        if ($portal['matched']) {
+            return $portal['payload'];
         }
 
         if ($detail = $this->listingByPath($locale, $path)) {
@@ -63,14 +56,6 @@ class CorporateResolver
 
         if ($person = $this->personByPath($locale, $path)) {
             return $person;
-        }
-
-        if ($list = $this->articleList($locale, $path, $pageIndex, $searchText)) {
-            return $list;
-        }
-
-        if ($list = $this->trainingList($locale, $path)) {
-            return $list;
         }
 
         if ($list = $this->listingList($locale, $path, $pageIndex, $filters)) {
@@ -91,18 +76,6 @@ class CorporateResolver
 
         if ($people = $this->peopleList($locale, $path)) {
             return $people;
-        }
-
-        if ($champions = $this->champions($locale, $path)) {
-            return $champions;
-        }
-
-        if ($detail = $this->articleByPrefix($locale, $path)) {
-            return $detail;
-        }
-
-        if ($detail = $this->trainingByPrefix($locale, $path)) {
-            return $detail;
         }
 
         if ($detail = $this->listingByPrefix($locale, $path)) {
@@ -238,302 +211,6 @@ class CorporateResolver
         return null;
     }
 
-    private function trainingByPath(string $locale, string $path): ?array
-    {
-        $translation = CmsTrainingTranslation::query()
-            ->where('url_path', $path)
-            ->with('training')
-            ->first();
-
-        if ($translation === null || ! $translation->training?->published) {
-            return null;
-        }
-
-        return $this->trainingDetailPayload($translation->training, $locale, $translation);
-    }
-
-    private function trainingByPrefix(string $locale, string $path): ?array
-    {
-        foreach (config('site.corporate.trainings.detail_prefixes.'.$locale, []) as $prefix) {
-            $id = $this->idAfterPrefix($path, $prefix);
-            if ($id === null) {
-                continue;
-            }
-            $training = CmsTraining::query()->published()->where('external_id', $id)->first();
-            if ($training === null) {
-                continue;
-            }
-
-            return $this->trainingDetailPayload($training, $locale);
-        }
-
-        return null;
-    }
-
-    private function trainingDetailPayload(CmsTraining $training, string $locale, ?CmsTrainingTranslation $fallback = null): ?array
-    {
-        $translation = $training->translations()->where('locale', $locale)->first() ?? $fallback;
-        if ($translation === null) {
-            return null;
-        }
-
-        $form = $translation->form ?? [];
-        // Tamamlanan eğitimlerde referans sayfa ön başvuru formu basmaz; yalnızca
-        // “Diğer Aktif Seminerler” listesi kalır. Form, canlı HTML’de submit düğmesi
-        // olan devam eden kayıtlarda vardır.
-        $hasApplicationForm = $training->group === 'ongoing'
-            && trim((string) ($form['submitLabel'] ?? '')) !== '';
-
-        return [
-            'kind' => 'training-detail',
-            'externalId' => $training->external_id,
-            'group' => $training->group,
-            'urlPath' => $translation->url_path,
-            'title' => $translation->title,
-            'image' => $translation->image !== '' ? $translation->image : $translation->list_image,
-            'datePrefix' => $translation->date_prefix,
-            'dateValue' => $translation->date_value,
-            'timePrefix' => $translation->time_prefix,
-            'timeValue' => $translation->time_value,
-            'pricePrefix' => $translation->price_prefix,
-            'priceValue' => $translation->price_value,
-            'locationHeading' => $translation->location_heading,
-            'locationValue' => $translation->location_value,
-            'descriptionHeading' => $translation->description_heading,
-            'descriptionHtml' => $translation->description_html ?? '',
-            'formHeading' => $hasApplicationForm ? $translation->form_heading : '',
-            'hasApplicationForm' => $hasApplicationForm,
-            'form' => [
-                'placeholders' => $hasApplicationForm ? ($form['placeholders'] ?? []) : [],
-                'required' => $hasApplicationForm ? ($form['required'] ?? []) : [],
-                'genders' => $hasApplicationForm ? ($form['genders'] ?? []) : [],
-                'submitLabel' => $hasApplicationForm ? ($form['submitLabel'] ?? '') : '',
-                'captchaError' => $hasApplicationForm ? ($form['captchaError'] ?? '') : '',
-                'paymentHtml' => $hasApplicationForm ? ($form['paymentHtml'] ?? '') : '',
-            ],
-            'relatedHeading' => $translation->related_heading,
-            'related' => $translation->related ?? [],
-            'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->page_heading ?: $translation->title, 'trail' => []],
-            'meta' => $translation->meta ?? [],
-            'alternates' => $this->trainingAlternates($training->id),
-        ];
-    }
-
-    private function trainingList(string $locale, string $path): ?array
-    {
-        if (! $this->pathMatches($path, config('site.corporate.trainings.lists.'.$locale, []))) {
-            return null;
-        }
-
-        $list = CmsListPage::query()->where('type', 'training')->where('locale', $locale)->first();
-        if ($list === null) {
-            return null;
-        }
-
-        $sectionsMeta = $list->sidebar['sections'] ?? [];
-        $trainings = CmsTraining::query()
-            ->published()
-            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
-            ->orderBy('position')
-            ->get();
-
-        $sections = [];
-        foreach ($sectionsMeta as $section) {
-            $group = $section['group'] ?? '';
-            $items = $trainings
-                ->where('group', $group)
-                ->map(function (CmsTraining $training) {
-                    $translation = $training->translations->first();
-
-                    return [
-                        'externalId' => $training->external_id,
-                        'urlPath' => $translation?->card_url_path ?: ($translation?->url_path ?? ''),
-                        'detailUrlPath' => $translation?->url_path ?: ($translation?->card_url_path ?? ''),
-                        'title' => $translation?->title ?? '',
-                        'image' => $translation?->list_image ?? '',
-                        'infoLines' => $translation?->info_lines ?? [],
-                        'detailLabel' => $translation?->detail_label ?? '',
-                    ];
-                })
-                ->values()
-                ->all();
-
-            $sections[] = [
-                'group' => $group,
-                'heading' => $section['heading'] ?? '',
-                'headingStyle' => $section['headingStyle'] ?? '',
-                'sectionStyle' => $section['sectionStyle'] ?? '',
-                'items' => $items,
-            ];
-        }
-
-        return [
-            'kind' => 'training-list',
-            'heading' => $list->heading,
-            'detailLabel' => $list->continue_label,
-            'breadcrumb' => $list->breadcrumb ?? ['heading' => $list->heading, 'trail' => []],
-            'meta' => $list->meta ?? [],
-            'sections' => $sections,
-            'alternates' => $this->listAlternates('training'),
-        ];
-    }
-
-    private function articleByPath(string $locale, string $path): ?array
-    {
-        $translation = CmsArticleTranslation::query()
-            ->where('url_path', $path)
-            ->with('article')
-            ->first();
-
-        if ($translation === null || ! $translation->article?->published) {
-            return null;
-        }
-
-        return $this->articleDetailPayload($translation->article, $locale, $translation);
-    }
-
-    private function articleByPrefix(string $locale, string $path): ?array
-    {
-        foreach (config('site.corporate.article_types') as $type => $spec) {
-            foreach ($spec['detail_prefixes'][$locale] ?? [] as $prefix) {
-                $id = $this->idAfterPrefix($path, $prefix);
-                if ($id === null) {
-                    continue;
-                }
-                $article = CmsArticle::query()->published()->ofType($type)->where('external_id', $id)->first();
-                if ($article === null) {
-                    continue;
-                }
-
-                return $this->articleDetailPayload($article, $locale);
-            }
-        }
-
-        return null;
-    }
-
-    private function articleDetailPayload(CmsArticle $article, string $locale, ?CmsArticleTranslation $fallback = null): ?array
-    {
-        $translation = $article->translations()->where('locale', $locale)->first() ?? $fallback;
-        if ($translation === null) {
-            return null;
-        }
-
-        $type = $article->type;
-        $spec = config("site.corporate.article_types.{$type}", []);
-        $list = CmsListPage::query()->where('type', $type)->where('locale', $locale)->first();
-
-        return [
-            'kind' => 'article-detail',
-            'type' => $type,
-            'layout' => $spec['detail_layout'] ?? 'wide',
-            'imageAlt' => $spec['detail_image_alt'] ?? '',
-            'externalId' => $article->external_id,
-            'urlPath' => $translation->url_path,
-            'title' => $translation->title,
-            'dateLabel' => $translation->date_label,
-            'category' => $translation->category,
-            'bodyHtml' => $translation->body_html ?? '',
-            'image' => $translation->image,
-            'imageWebp' => $translation->image_webp,
-            'shareLabel' => $translation->share_label,
-            'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->title, 'trail' => []],
-            'meta' => $translation->meta ?? [],
-            'sidebar' => $type === 'blog' ? $this->blogSidebar($locale, $list) : null,
-            'continueLabel' => $list?->continue_label ?? '',
-            'alternates' => $this->articleAlternates($article->id),
-        ];
-    }
-
-    private function articleList(string $locale, string $path, int $pageIndex, string $searchText): ?array
-    {
-        $type = $this->listTypeForPath($locale, $path);
-        if ($type === null) {
-            return null;
-        }
-
-        $list = CmsListPage::query()->where('type', $type)->where('locale', $locale)->first();
-        if ($list === null) {
-            return null;
-        }
-
-        $spec = config("site.corporate.article_types.{$type}", []);
-        $perPage = max(1, $list->per_page);
-
-        $query = CmsArticle::query()
-            ->published()
-            ->ofType($type)
-            ->whereHas('translations', function ($builder) use ($locale, $searchText) {
-                $builder->where('locale', $locale);
-                if ($searchText !== '') {
-                    $like = '%'.$this->escapeLike($searchText).'%';
-                    $operator = $builder->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
-                    $builder->where(function ($inner) use ($like, $operator) {
-                        $inner->where('title', $operator, $like)
-                            ->orWhere('body_html', $operator, $like);
-                    });
-                }
-            })
-            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
-            ->orderBy('position');
-
-        $total = (clone $query)->count();
-        $totalPages = max(1, (int) ceil($total / $perPage));
-        $pageIndex = min($pageIndex, $totalPages);
-
-        $items = $query
-            ->skip(($pageIndex - 1) * $perPage)
-            ->take($perPage)
-            ->get()
-            ->map(function (CmsArticle $article) use ($spec) {
-                $translation = $article->translations->first();
-
-                return [
-                    'externalId' => $article->external_id,
-                    'urlPath' => $translation?->url_path ?? '',
-                    'title' => $translation?->title ?? '',
-                    'dateLabel' => $translation?->date_label ?? '',
-                    'category' => $translation?->category ?? '',
-                    'image' => $translation?->list_image ?: ($translation?->image ?? ''),
-                    'imageWebp' => $translation?->list_image_webp ?: ($translation?->image_webp ?? ''),
-                    'width' => $translation?->list_width,
-                    'height' => $translation?->list_height,
-                    'imageAlt' => $spec['list_image_alt'] ?? '',
-                ];
-            })
-            ->all();
-
-        $pagerBase = $list->pager_base !== '' ? $list->pager_base : $list->url_path;
-        $searchQuery = $searchText !== '' ? '&searchText='.rawurlencode($searchText) : '';
-
-        return [
-            'kind' => 'article-list',
-            'type' => $type,
-            'layout' => $spec['list_layout'] ?? 'three-col',
-            'heading' => $list->heading,
-            'continueLabel' => $list->continue_label,
-            'breadcrumb' => $list->breadcrumb ?? ['heading' => $list->heading, 'trail' => []],
-            'meta' => $list->meta ?? [],
-            'items' => $items,
-            'pagination' => [
-                'pageIndex' => $pageIndex,
-                'perPage' => $perPage,
-                'total' => $total,
-                'totalPages' => $totalPages,
-                'basePath' => $pagerBase,
-                'searchText' => $searchText,
-                'searchQuery' => $searchQuery,
-            ],
-            'sidebar' => $type === 'blog' ? $this->blogSidebar($locale, $list) : null,
-            'search' => $type === 'blog' ? [
-                'action' => $list->url_path,
-                'placeholder' => $list->sidebar['searchPlaceholder'] ?? '',
-                'value' => $searchText,
-            ] : null,
-            'alternates' => $this->listAlternates($type),
-        ];
-    }
-
     private function peopleList(string $locale, string $path): ?array
     {
         if (! $this->pathMatches($path, config('site.corporate.people.lists.'.$locale, []))) {
@@ -638,104 +315,6 @@ class CorporateResolver
         ];
     }
 
-    private function champions(string $locale, string $path): ?array
-    {
-        if (! $this->pathMatches($path, config('site.corporate.champions.lists.'.$locale, []))) {
-            return null;
-        }
-
-        $list = CmsListPage::query()->where('type', 'champions')->where('locale', $locale)->first();
-        if ($list === null) {
-            return null;
-        }
-
-        $groups = CmsChampionGroup::query()
-            ->published()
-            ->with([
-                'translations' => fn ($builder) => $builder->where('locale', $locale),
-                'photos',
-            ])
-            ->orderBy('position')
-            ->get()
-            ->map(function (CmsChampionGroup $group) {
-                $translation = $group->translations->first();
-
-                return [
-                    'kicker' => $translation?->kicker ?? '',
-                    'title' => $translation?->title ?? '',
-                    'photos' => $group->photos->map(fn ($photo) => $photo->image)->all(),
-                ];
-            })
-            ->all();
-
-        return [
-            'kind' => 'champions',
-            'heading' => $list->heading,
-            'breadcrumb' => $list->breadcrumb ?? ['heading' => $list->heading, 'trail' => []],
-            'meta' => $list->meta ?? [],
-            'groups' => $groups,
-            'alternates' => $this->listAlternates('champions'),
-        ];
-    }
-
-    private function blogSidebar(string $locale, ?CmsListPage $list): ?array
-    {
-        $sidebar = $list?->sidebar ?? [];
-        $popular = $sidebar['popular'] ?? [];
-
-        // The reference sidebar is a captured widget (six 85x85 thumbs), not "the
-        // first N list cards". Rebuild from articles only when Superadmin has not
-        // stored that widget yet.
-        if (! is_array($popular) || $popular === []) {
-            $popular = CmsArticle::query()
-                ->published()
-                ->ofType('blog')
-                ->whereHas('translations', fn ($builder) => $builder->where('locale', $locale))
-                ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
-                ->orderBy('position')
-                ->take(6)
-                ->get()
-                ->map(function (CmsArticle $article) {
-                    $translation = $article->translations->first();
-
-                    return [
-                        'urlPath' => $translation?->url_path ?? '',
-                        'title' => $translation?->title ?? '',
-                        'dateLabel' => $translation?->date_label ?? '',
-                        'image' => $translation?->list_image ?: ($translation?->image ?? ''),
-                        'imageWebp' => $translation?->list_image_webp ?: ($translation?->image_webp ?? ''),
-                    ];
-                })
-                ->all();
-        }
-
-        return [
-            'searchPlaceholder' => $sidebar['searchPlaceholder'] ?? '',
-            'searchAction' => $sidebar['searchAction'] ?? ($list?->url_path ?? ''),
-            'popularHeading' => $sidebar['popularHeading'] ?? '',
-            'popular' => array_values($popular),
-        ];
-    }
-
-    private function listTypeForPath(string $locale, string $path): ?string
-    {
-        foreach (config('site.corporate.article_types') as $type => $spec) {
-            if ($this->pathMatches($path, $spec['lists'][$locale] ?? [])) {
-                return $type;
-            }
-        }
-
-        $list = CmsListPage::query()
-            ->where('locale', $locale)
-            ->where(function ($builder) use ($path) {
-                $builder->where('url_path', $path)->orWhere('pager_base', $path);
-            })
-            ->whereIn('type', ['news', 'announcement', 'blog'])
-            ->first();
-
-        return $list?->type;
-    }
-
     private function pageAlternates(int $pageId): array
     {
         return CmsPageTranslation::query()
@@ -744,26 +323,10 @@ class CorporateResolver
             ->all();
     }
 
-    private function articleAlternates(int $articleId): array
-    {
-        return CmsArticleTranslation::query()
-            ->where('cms_article_id', $articleId)
-            ->pluck('url_path', 'locale')
-            ->all();
-    }
-
     private function personAlternates(int $personId): array
     {
         return CmsPersonTranslation::query()
             ->where('cms_person_id', $personId)
-            ->pluck('url_path', 'locale')
-            ->all();
-    }
-
-    private function trainingAlternates(int $trainingId): array
-    {
-        return CmsTrainingTranslation::query()
-            ->where('cms_training_id', $trainingId)
             ->pluck('url_path', 'locale')
             ->all();
     }
