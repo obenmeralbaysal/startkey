@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { DirectoryCard } from "@/components/corporate/DirectoryCard";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
+import { OfficeMap } from "@/components/home/OfficeMap";
 import type { CorporatePayload } from "@/lib/corporate";
 
 type OfficeDetailData = Extract<CorporatePayload, { kind: "office-detail" }>;
 
 export function OfficeDetail({ data }: { data: OfficeDetailData }) {
-  const [activeId, setActiveId] = useState(data.tabs[0]?.id ?? "tab_1");
-  const mapQuery = data.map.query ?? "";
-  const mapSrc = data.map.iframeSrc || (mapQuery ? `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed` : "");
+  const pin = data.pin && Number.isFinite(data.pin.latitude) && Number.isFinite(data.pin.longitude) ? data.pin : null;
+  const pins = useMemo(() => (pin ? [pin] : []), [pin]);
+  const tabs = pin ? data.tabs : data.tabs.filter((tab) => tab.id !== "tab_3");
+  const [activeId, setActiveId] = useState(tabs[0]?.id ?? "tab_1");
+  const mapQuery = pin ? `${pin.latitude},${pin.longitude}` : "";
 
   return (
     <>
@@ -65,7 +68,7 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
             </div>
             <div>
               <ul className="sk-agent-tabs" role="tablist">
-                {data.tabs.map((tab) => (
+                {tabs.map((tab) => (
                   <li key={tab.id}>
                     <button className={tab.id === activeId ? "active" : ""} type="button" role="tab" aria-selected={tab.id === activeId} onClick={() => setActiveId(tab.id)}>
                       {tab.label}
@@ -104,9 +107,9 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
                   ) : null}
                 </div>
               ) : null}
-              {activeId === "tab_3" && mapSrc ? (
+              {activeId === "tab_3" && pin ? (
                 <div>
-                  {mapQuery ? (
+                  {data.map.directionsLabel ? (
                     <div className="sk-map-actions">
                       <button className="sk-btn sk-btn-navy" type="button" onClick={() => window.open(`https://www.google.com/maps/dir//${encodeURIComponent(mapQuery)}/`, "_blank")}>
                         <i className="ri-direction-fill" /> {data.map.directionsLabel}
@@ -116,7 +119,7 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
                       </button>
                     </div>
                   ) : null}
-                  <iframe className="sk-map" src={mapSrc} title={data.name} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  <OfficeMap offices={pins} zoom={15} label={data.name} />
                 </div>
               ) : null}
             </div>

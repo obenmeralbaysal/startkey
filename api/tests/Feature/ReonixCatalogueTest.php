@@ -176,7 +176,8 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.teamGroups.1.heading', 'PROFESYONELLER')
             ->assertJsonPath('data.teamGroups.1.members.0.role', 'Gayrimenkul Danışmanı')
             ->assertJsonPath('data.emptyListingsLabel', 'Henüz İlan Girilmemiş. Tüm İlanlarımızı Görmek İçin Butona Tıklayınız')
-            ->assertJsonPath('data.map.query', 'İzmir / Karşıyaka / Fikri Altay');
+            ->assertJsonPath('data.pin', null)
+            ->assertJsonPath('data.map', []);
 
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar/1/meral-akin')
             ->assertOk()
@@ -187,6 +188,36 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.commentHeading', 'Meral Akın için Yorum Ekle')
             ->assertJsonPath('data.form.submitLabel', 'Yorumu Gönder')
             ->assertJsonPath('data.mineListingsLabel', 'Tüm Portföylerim');
+    }
+
+    public function test_the_portal_office_detail_carries_a_map_pin_only_with_reonix_coordinates(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices/7' => Http::response(['data' => [
+                'office' => ['id' => 7, 'name' => 'Akın', 'phone' => '', 'address' => 'İzmir', 'latitude' => '38.4551', 'longitude' => '27.1123'],
+                'consultants' => [],
+                'portfolios' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices/8' => Http::response(['data' => [
+                'office' => ['id' => 8, 'name' => 'Ege', 'phone' => '', 'address' => 'İzmir', 'latitude' => null, 'longitude' => '27.1'],
+                'consultants' => [],
+                'portfolios' => [],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler/7/akin')
+            ->assertOk()
+            ->assertJsonPath('data.pin.id', 7)
+            ->assertJsonPath('data.pin.name', 'Akın')
+            ->assertJsonPath('data.pin.latitude', 38.4551)
+            ->assertJsonPath('data.pin.longitude', 27.1123)
+            ->assertJsonPath('data.map.query', '38.4551,27.1123')
+            ->assertJsonMissingPath('data.map.iframeSrc');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler/8/ege')
+            ->assertOk()
+            ->assertJsonPath('data.pin', null)
+            ->assertJsonPath('data.map', []);
     }
 
     public function test_a_listing_inquiry_is_sent_to_the_portal(): void

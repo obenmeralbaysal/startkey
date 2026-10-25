@@ -51,9 +51,16 @@ class ReonixCatalogue
         $card = $this->officeCard($office, $locale);
         $name = $card['name'];
         $address = (string) ($office['address'] ?? '');
-        $latitude = trim((string) ($office['latitude'] ?? ''));
-        $longitude = trim((string) ($office['longitude'] ?? ''));
-        $mapQuery = ($latitude !== '' && $longitude !== '') ? $latitude.','.$longitude : $address;
+        $latitude = $this->coordinate($office['latitude'] ?? null);
+        $longitude = $this->coordinate($office['longitude'] ?? null);
+        $pin = ($latitude !== null && $longitude !== null && abs($latitude) <= 90) ? [
+            'id' => (int) $office['id'],
+            'name' => $name,
+            'urlPath' => $card['urlPath'],
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+        ] : null;
+        $mapQuery = $pin === null ? '' : $latitude.','.$longitude;
 
         return [
             'kind' => 'office-detail',
@@ -96,9 +103,9 @@ class ReonixCatalogue
             'emptyListingsLabel' => $this->emptyListingsLabel($locale),
             'seeAllHref' => $this->listPath('listings', $locale),
             'seeAllLabel' => $this->seeAllLabel($locale),
+            'pin' => $pin,
             'map' => $mapQuery === '' ? [] : [
                 'query' => $mapQuery,
-                'iframeSrc' => 'https://maps.google.com/maps?q='.rawurlencode($mapQuery).'&output=embed',
                 'directionsLabel' => match ($locale) {
                     'en' => 'Directions',
                     'de' => 'Wegbeschreibung',
