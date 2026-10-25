@@ -6,6 +6,10 @@ Single-class rules become utilities on that class. Same-element compounds
 unless that class is generic (`btn`, `style1`, columns, display helpers).
 
 Seed HTML that still contains an unmapped Bootstrap or Fela class fails the run.
+
+After a crawl, convert only the fresh seed files and refresh the class source:
+
+    python3 scripts/migrate-tailwind-classes.py --seed api/database/data/corporate-seed.json
 """
 
 from __future__ import annotations
@@ -53,6 +57,22 @@ ICON_PREFIXES = ("ri-", "flaticon-", "fa-", "fab", "fas", "far", "fal")
 ICON_EXACT = {"fa", "fas", "far", "fal", "fab"}
 
 PHRASES: dict[str, str] = {
+    # Share bar under CMS pages and articles (.post-share / .social-profile.style2 in style.css).
+    "post-share": "inline-block [&_span]:font-medium [&_span]:text-black",
+    # Paid training payment block: only .list-style applies outside .agent-info-box.
+    "agent-address list-style": "m-0 list-none p-0",
+    "social-profile style2 list-style": (
+        "relative top-[calc(2px*var(--sk-scale,1))] inline-block m-0 ml-[calc(5px*var(--sk-scale,1))] p-0 "
+        "list-none [&_li]:inline-block [&_li]:mx-[calc(4px*var(--sk-scale,1))] [&_li:first-child]:ml-0 "
+        "[&_li:last-child]:mr-0 [&_a]:flex [&_a]:flex-col [&_a]:justify-center "
+        "[&_a]:w-[calc(35px*var(--sk-scale,1))] [&_a]:h-[calc(35px*var(--sk-scale,1))] [&_a]:text-center "
+        "[&_a]:border [&_a]:border-solid [&_a]:border-transparent [&_a]:bg-neutral-50 [&_a]:rounded-full "
+        "[&_a]:shadow-[0_calc(5px*var(--sk-scale,1))_calc(8px*var(--sk-scale,1))_rgba(0,0,0,0.01)] "
+        "[&_a]:transition-all [&_a]:duration-300 [&_a]:ease-in-out [&_a:hover]:bg-brand "
+        "[&_a:hover]:-translate-y-[calc(3px*var(--sk-scale,1))] [&_i]:block "
+        "[&_i]:text-[calc(16px*var(--sk-scale,1))] [&_i]:leading-[0.8] [&_i]:text-navy "
+        "[&_i]:transition-all [&_a:hover_i]:text-white"
+    ),
     "btn style1": (
         "relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent "
         "bg-navy text-center text-white rounded-[calc(5px*var(--sk-scale,1))] "
@@ -83,7 +103,13 @@ PHRASES: dict[str, str] = {
 GRID: dict[str, str] = {
     "container": "container",
     "container-fluid": "w-full px-[calc(12px*var(--sk-scale,1))]",
-    "row": "flex flex-wrap",
+    # Bootstrap gutter: column padding and a negative row margin, 24px unless gx-* says otherwise.
+    # Children reset --sk-gx so a nested row starts from the default again.
+    "row": (
+        "flex flex-wrap [--sk-row-gx:var(--sk-gx,calc(24px*var(--sk-scale,1)))] "
+        "mx-[calc(var(--sk-row-gx)*-0.5)] [&>*]:[--sk-gx:initial] [&>*]:box-border [&>*]:shrink-0 "
+        "[&>*]:max-w-full [&>*]:px-[calc(var(--sk-row-gx)*0.5)]"
+    ),
     "w-100": "w-full",
     "h-100": "h-full",
     "d-none": "hidden",
@@ -164,12 +190,23 @@ GRID["order-md-1"] = "md:order-1"
 GRID["order-md-2"] = "md:order-2"
 GRID["order-lg-1"] = "lg:order-1"
 GRID["order-lg-2"] = "lg:order-2"
-GRID["gx-0"] = "gap-x-0"
-GRID["gx-3"] = "gap-x-[calc(16px*var(--sk-scale,1))]"
-GRID["gx-5"] = "gap-x-[calc(48px*var(--sk-scale,1))]"
-GRID["gy-2"] = "gap-y-[calc(8px*var(--sk-scale,1))]"
+def gutter_x(px: int) -> str:
+    return f"[--sk-gx:calc({px}px*var(--sk-scale,1))]" if px else "[--sk-gx:0px]"
+
+
+def gutter_y(px: int) -> str:
+    return (
+        f"[--sk-row-gy:calc({px}px*var(--sk-scale,1))] mt-[calc(var(--sk-row-gy)*-1)] "
+        "[&>*]:mt-[var(--sk-row-gy)]"
+    )
+
+
+GRID["gx-0"] = gutter_x(0)
+GRID["gx-3"] = gutter_x(16)
+GRID["gx-5"] = gutter_x(48)
+GRID["gy-2"] = gutter_y(8)
 GRID["gy-40"] = "gap-y-[calc(40px*var(--sk-scale,1))]"
-GRID["g-4"] = "gap-[calc(24px*var(--sk-scale,1))]"
+GRID["g-4"] = f"{gutter_x(24)} {gutter_y(24)}"
 GRID["row-cols-1"] = "[&>*]:w-full"
 GRID["row-cols-md-2"] = "md:[&>*]:w-1/2"
 GRID["row-cols-lg-3"] = "lg:[&>*]:w-1/3"
@@ -545,7 +582,77 @@ def rewrite_text(text: str, mapping: dict[str, str]) -> str:
     return re.sub(r'(class=\\")([^\\"]+)(\\")', replace_attr, text)
 
 
+CMS_CLASS_SOURCE = ROOT / "web/src/styles/cms-classes.txt"
+
+
+def seed_string(value: str, mapping: dict[str, str]) -> str:
+    if "class=" not in value:
+        return value
+    value = rewrite_text(value, mapping).replace("\\,", ",")
+    # A double quote inside class="…" would end the attribute.
+    return value.replace(':[content:""]', ":content-['']")
+
+
+def convert_seed_value(value, mapping: dict[str, str]):
+    if isinstance(value, str):
+        return seed_string(value, mapping)
+    if isinstance(value, list):
+        return [convert_seed_value(item, mapping) for item in value]
+    if isinstance(value, dict):
+        return {key: convert_seed_value(item, mapping) for key, item in value.items()}
+    return value
+
+
+def seed_classes(value, found: set[str]) -> None:
+    if isinstance(value, str):
+        for match in re.findall(r'class="([^"]+)"', value):
+            found.update(match.split())
+    elif isinstance(value, list):
+        for item in value:
+            seed_classes(item, found)
+    elif isinstance(value, dict):
+        for item in value.values():
+            seed_classes(item, found)
+
+
+def write_cms_class_source() -> None:
+    """Tailwind only scans web/; list the classes stored in CMS HTML so their utilities are built."""
+    found: set[str] = set()
+    for path in sorted((ROOT / "api/database/data").glob("*.json")):
+        seed_classes(json.loads(path.read_text(encoding="utf-8")), found)
+    # Relative url() would be resolved by the bundler at build time and fail.
+    lines = sorted(name for name in found if not re.search(r"url\((?!/|https?:)", name))
+    CMS_CLASS_SOURCE.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"cms class source {len(lines)} -> {CMS_CLASS_SOURCE.relative_to(ROOT)}")
+
+
+def convert_seeds(paths: list[Path]) -> int:
+    mapping = build_map()
+    known = css_class_index()
+    unmapped: set[str] = set()
+    for path in paths:
+        data = convert_seed_value(json.loads(path.read_text(encoding="utf-8")), mapping)
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        found: set[str] = set()
+        seed_classes(data, found)
+        unmapped.update(
+            name for name in found
+            if name not in mapping and not is_icon(name) and name in known and name not in SKIP_CLASS
+        )
+        print(f"converted {path.relative_to(ROOT)}")
+    write_cms_class_source()
+    for name in sorted(unmapped):
+        print(f"unmapped {name}")
+    return 1 if unmapped else 0
+
+
 def main() -> int:
+    if "--seed" in sys.argv:
+        paths = [Path(arg).resolve() for arg in sys.argv[sys.argv.index("--seed") + 1 :]]
+        return convert_seeds(paths)
+    if "--class-source" in sys.argv:
+        write_cms_class_source()
+        return 0
     apply = "--apply" in sys.argv
     mapping = build_map()
     known = css_class_index()

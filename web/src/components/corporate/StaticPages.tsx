@@ -16,22 +16,27 @@ export function ChampionsPage({ data }: { data: Extract<CorporatePayload, { kind
   return (
     <>
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <div className="container ptb-100">
+      <div className="container sk-champions">
         {data.groups.map((group, index) => (
           <Fragment key={`${group.title}-${index}`}>
             <div className="section-title style2">
               {group.kicker ? <span>{group.kicker}</span> : null}
-              {group.title ? <h2>{group.title}</h2> : null}
+              {group.title ? <h3>{group.title}</h3> : null}
             </div>
-            <div className="sk-photo-grid">
-              {group.photos.map((photo) => (
-                <div className="photo" key={photo}>
-                  <a data-fslightbox="gallery" data-type="image" href={photo}>
-                    <img src={photo} alt="" />
-                  </a>
+            <section>
+              <div className="container mb-[calc(40px*var(--sk-scale,1))]">
+                <div className="sk-photo-grid">
+                  {group.photos.map((photo) => (
+                    <div className="photo" key={photo}>
+                      <a data-fslightbox="gallery" data-type="image" href={photo}>
+                        <img src={photo} alt="" />
+                      </a>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            </section>
+            <br />
           </Fragment>
         ))}
       </div>

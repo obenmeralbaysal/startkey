@@ -77,7 +77,7 @@ class ConsultantApplicationPage
             'en' => [
                 'heading' => 'Consultant Application Form',
                 'formHeading' => 'Consultant Application',
-                'metaTitle' => 'Consultant Application Form',
+                'metaTitle' => '| Consultant Application Form',
                 'home' => 'Home',
                 'submitLabel' => 'Send Application',
                 'captchaError' => 'Verification is required.',
@@ -97,7 +97,7 @@ class ConsultantApplicationPage
             'de' => [
                 'heading' => 'Beraterantragsformular',
                 'formHeading' => 'Beraterbewerbung',
-                'metaTitle' => 'Beraterantragsformular',
+                'metaTitle' => '| Beraterantragsformular',
                 'home' => 'Startseite',
                 'submitLabel' => 'Senden Sie die Bewerbung',
                 'captchaError' => 'Verifizierung ist erforderlich.',

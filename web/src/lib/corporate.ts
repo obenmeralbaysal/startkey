@@ -152,6 +152,7 @@ export type CorporatePayload =
         items: {
           externalId: number;
           urlPath: string;
+          detailUrlPath?: string;
           title: string;
           image: string;
           infoLines: { icon: string; text: string }[];
@@ -185,6 +186,7 @@ export type CorporatePayload =
         genders: { value: number; label: string }[];
         submitLabel: string;
         captchaError: string;
+        paymentHtml?: string;
       };
       relatedHeading: string;
       related: { externalId: number | null; urlPath: string; title: string; image: string }[];

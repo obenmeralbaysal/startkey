@@ -37,7 +37,7 @@ export function TrainingList({ data }: { data: Extract<CorporatePayload, { kind:
                           {line.text}
                         </p>
                       ))}
-                      <a className="btn style2" style={{ width: "100%" }} href={item.urlPath}>
+                      <a className="btn style2" style={{ width: "100%" }} href={item.detailUrlPath || item.urlPath}>
                         {item.detailLabel} <i className="ri-arrow-right-s-line" />
                       </a>
                     </div>

@@ -309,6 +309,7 @@ class CorporateResolver
                 'genders' => $hasApplicationForm ? ($form['genders'] ?? []) : [],
                 'submitLabel' => $hasApplicationForm ? ($form['submitLabel'] ?? '') : '',
                 'captchaError' => $hasApplicationForm ? ($form['captchaError'] ?? '') : '',
+                'paymentHtml' => $hasApplicationForm ? ($form['paymentHtml'] ?? '') : '',
             ],
             'relatedHeading' => $translation->related_heading,
             'related' => $translation->related ?? [],
@@ -347,6 +348,7 @@ class CorporateResolver
                     return [
                         'externalId' => $training->external_id,
                         'urlPath' => $translation?->card_url_path ?: ($translation?->url_path ?? ''),
+                        'detailUrlPath' => $translation?->url_path ?: ($translation?->card_url_path ?? ''),
                         'title' => $translation?->title ?? '',
                         'image' => $translation?->list_image ?? '',
                         'infoLines' => $translation?->info_lines ?? [],
@@ -1577,16 +1579,17 @@ class CorporateResolver
     {
         $canonical = $this->cataloguePath('listings', $locale, $path);
         $heading = match ($locale) {
-            'en' => 'Our Portfolios',
+            'en' => 'Our Properties',
             'de' => 'Unsere Portfolios',
             default => 'Portföylerimiz',
         };
+        $title = $locale === 'tr' ? 'Startkey Türkiye | '.$heading : '| '.$heading;
 
         return [
             'kind' => 'listing-list',
             'heading' => $heading,
             'breadcrumb' => ['heading' => $heading, 'trail' => []],
-            'meta' => ['title' => $heading],
+            'meta' => ['title' => $title],
             'filter' => [
                 'action' => $canonical,
                 'heading' => match ($locale) {

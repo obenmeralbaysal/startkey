@@ -26,7 +26,7 @@ from html.parser import HTMLParser
 
 SCOPE_ATTR = re.compile(r"^b-[a-z0-9]{10}$")
 CDN = re.compile(r"https?://cdnc\.re-os\.com")
-IMAGEKIT = re.compile(r"https?://ik\.imagekit\.io/reoscom/*(?:tr:[^/]*/)?")
+IMAGEKIT = re.compile(r"https?://ik\.imagekit\.io/[A-Za-z0-9_-]+/*(?:tr:[^/]*/)?")
 REFERENCE_ORIGIN = re.compile(r"https?://(?:www\.)?startkey\.com\.tr")
 CACHE_BUST = re.compile(r"\?v=[^\s\"']+")
 WHITESPACE = re.compile(r"\s+")

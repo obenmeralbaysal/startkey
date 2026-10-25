@@ -29,10 +29,10 @@ LANGS = ("tr", "en", "de")
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 SCOPE = re.compile(r"\s+b-[a-z0-9]{10}(?=[\s>/])")
 CDN = re.compile(r"https?://cdnc\.re-os\.com")
-IMAGEKIT = re.compile(r"https?://ik\.imagekit\.io/reoscom/*(?:tr:[^/]*/)?")
+IMAGEKIT = re.compile(r"https?://ik\.imagekit\.io/[A-Za-z0-9_-]+/*(?:tr:[^/]*/)?")
 ORIGIN = re.compile(r"https?://(?:www\.)?startkey\.com\.tr")
 S3 = re.compile(r"https?://reos-cdn-files\.s3-eu-west-1\.amazonaws\.com")
-MEDIA_HOST = r"https://(?:cdnc\.re-os\.com|ik\.imagekit\.io/reoscom|reos-cdn-files\.s3-eu-west-1\.amazonaws\.com)"
+MEDIA_HOST = r"https://(?:cdnc\.re-os\.com|ik\.imagekit\.io/[A-Za-z0-9_-]+|reos-cdn-files\.s3-eu-west-1\.amazonaws\.com)"
 MEDIA_URL = re.compile(
     rf'(?:(?:src|srcset|href)="\s*({MEDIA_HOST}[^"\s]+)|url\(\s*({MEDIA_HOST}[^)\s]+)\s*\))'
 )

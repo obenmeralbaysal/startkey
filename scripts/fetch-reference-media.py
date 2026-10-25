@@ -26,12 +26,12 @@ PUBLIC = ROOT / "web" / "public" / "media"
 LANGS = ("tr", "en", "de")
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 
-MEDIA_HOST = r"https://(?:cdnc\.re-os\.com|ik\.imagekit\.io/reoscom)"
+MEDIA_HOST = r"https://(?:cdnc\.re-os\.com|ik\.imagekit\.io/[A-Za-z0-9_-]+)"
 # `src`/`srcset` attributes plus CSS `url()` references in inline styles.
 MEDIA_URL = re.compile(
     rf'(?:(?:src|srcset)="\s*({MEDIA_HOST}[^"\s]+)|url\(\s*({MEDIA_HOST}[^)\s]+)\s*\))'
 )
-IMAGEKIT = re.compile(r"^https://ik\.imagekit\.io/reoscom/*(?P<transform>[^/]*)/(?P<path>.+)$")
+IMAGEKIT = re.compile(r"^https://ik\.imagekit\.io/[A-Za-z0-9_-]+/*(?P<transform>[^/]*)/(?P<path>.+)$")
 CDN = re.compile(r"^https://cdnc\.re-os\.com/(?P<path>.+)$")
 
 

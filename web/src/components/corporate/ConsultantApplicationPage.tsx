@@ -27,6 +27,16 @@ export function ConsultantApplicationPage({ data, locale }: { data: ConsultantDa
         item.classList.add("order-lg-2", "order-md-2", "order-2");
       }
     });
+
+    // Reference `scrollToForm()`: the form lands 230px below the top of the window.
+    const scrollToForm = () => {
+      const form = document.getElementById("form");
+      if (!form) return;
+      window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 230, behavior: "smooth" });
+    };
+    const triggers = document.querySelectorAll<HTMLElement>("[data-scroll-to-form]");
+    triggers.forEach((trigger) => trigger.addEventListener("click", scrollToForm));
+    return () => triggers.forEach((trigger) => trigger.removeEventListener("click", scrollToForm));
   }, [data.bodyHtml]);
 
   return (
@@ -140,14 +150,14 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
   }
 
   return (
-    <form className="block" id="form" noValidate onSubmit={handleSubmit}>
+    <form className="block sk-filter-form" id="form" noValidate onSubmit={handleSubmit}>
       {status ? <p className={status.kind === "success" ? "text-success" : "text-danger"}>{status.message}</p> : null}
-      <div className="sk-form-row flex flex-wrap">
+      <div className="flex flex-wrap mx-[calc(-12px*var(--sk-scale,1))] [&>div]:box-border [&>div]:px-[calc(12px*var(--sk-scale,1))]">
         <Field id="FirstName" name="FirstName" placeholder={data.placeholders.FirstName} error={fieldErrors.FirstName} required={data.required.FirstName} />
         <Field id="LastName" name="LastName" placeholder={data.placeholders.LastName} error={fieldErrors.LastName} required={data.required.LastName} />
         <Field id="Email" name="Email" type="email" placeholder={data.placeholders.Email} error={fieldErrors.Email} required={data.required.Email} />
         <Field id="Phone" name="Phone" type="tel" error={fieldErrors.Phone} required={data.required.Phone} />
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/3">
           <select
             id="OfficeCityId"
             name="OfficeCityId"
@@ -162,7 +172,7 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
           </select>
           <span className="text-brand">{fieldErrors.OfficeCityId}</span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/3">
           <select id="OfficeCountyId" name="OfficeCountyId" key={cityId} defaultValue="">
             <option value="">{choose}</option>
             {counties.map((county) => (
@@ -170,7 +180,7 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
             ))}
           </select>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/3">
           <select id="OfficeId" name="OfficeId" className="" defaultValue="">
             <option value="">{choose}</option>
             {offices.map((office) => (
@@ -179,7 +189,7 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
           </select>
           <span className="text-brand">{fieldErrors.OfficeId}</span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/3">
           <select id="AppealTypeId" name="AppealTypeId" className="" defaultValue="">
             <option value="">{choose}</option>
             {data.positions.map((position) => (
@@ -188,7 +198,7 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
           </select>
           <span className="text-brand">{fieldErrors.AppealTypeId}</span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full">
           <textarea id="Notes" name="Notes" rows={3} placeholder={data.placeholders.Notes} />
         </div>
       </div>
@@ -198,7 +208,7 @@ function ConsultantForm({ data, locale }: { data: ConsultantData; locale: Locale
         </span>
       ) : null}
       <CaptchaNotice locale={locale} />
-      <button className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-navy text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-brand before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-brand after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" type="submit" disabled={submitting}>{data.submitLabel}</button>
+      <button className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand uppercase text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" type="submit" disabled={submitting}>{data.submitLabel}</button>
     </form>
   );
 }
@@ -219,7 +229,7 @@ function Field({
   type?: string;
 }) {
   return (
-    <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/3">
+    <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/3">
       <input id={id} name={name} type={type} placeholder={placeholder} data-val-required={required} defaultValue="" />
       <span className="text-brand">{error}</span>
     </div>

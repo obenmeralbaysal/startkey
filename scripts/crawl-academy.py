@@ -28,9 +28,9 @@ LANGS = ("tr", "en", "de")
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 SCOPE = re.compile(r"\s+b-[a-z0-9]{10}(?=[\s>/])")
 CDN = re.compile(r"https?://cdnc\.re-os\.com")
-IMAGEKIT = re.compile(r"https?://ik\.imagekit\.io/reoscom/*(?:tr:[^/]*/)?")
+IMAGEKIT = re.compile(r"https?://ik\.imagekit\.io/[A-Za-z0-9_-]+/*(?:tr:[^/]*/)?")
 ORIGIN = re.compile(r"https?://(?:www\.)?startkey\.com\.tr")
-MEDIA_HOST = r"https://(?:cdnc\.re-os\.com|ik\.imagekit\.io/reoscom)"
+MEDIA_HOST = r"https://(?:cdnc\.re-os\.com|ik\.imagekit\.io/[A-Za-z0-9_-]+)"
 MEDIA_URL = re.compile(
     rf'(?:(?:src|srcset|href)="\s*({MEDIA_HOST}[^"\s]+)|url\(\s*({MEDIA_HOST}[^)\s]+)\s*\))'
 )
@@ -57,8 +57,8 @@ CONTACT_ALIASES = {
 }
 DETAIL_PREFIX = {
     "tr": "/tr/egitim-detay",
-    "en": "/en/egitim-detay",
-    "de": "/de/egitim-detay",
+    "en": "/en/education-detail",
+    "de": "/de/education-detail",
 }
 ALL_HTML: list[str] = []
 
@@ -297,10 +297,16 @@ def training_detail(page: str) -> dict:
             desc_h = text_of(blocks[1].group(1))
             desc_html = localise_html(blocks[1].group(2).strip())
     form_heading = ""
+    payment_html = ""
     if re.search(r'class="filter-widget form"', page):
-        fh = re.search(r'class="sidebar-widget">\s*<h4>(.*?)</h4>\s*<form', page, re.S)
-        if fh:
-            form_heading = text_of(fh.group(1))
+        widget = re.search(r'class="sidebar-widget">([\s\S]*?)<form', page)
+        if widget:
+            headings = list(re.finditer(r"<h4>(.*?)</h4>", widget.group(1), re.S))
+            if headings:
+                form_heading = text_of(headings[-1].group(1))
+                lead = widget.group(1)[: headings[-1].start()].strip()
+                if "agent-address" in lead:
+                    payment_html = localise_html(lead)
     placeholders = {"firstName": "", "lastName": "", "email": ""}
     fn = re.search(r'name="FirstName"[^>]*placeholder="([^"]*)"|placeholder="([^"]*)"[^>]*name="FirstName"', page)
     if fn:
@@ -333,6 +339,7 @@ def training_detail(page: str) -> dict:
         "descriptionHeading": desc_h,
         "descriptionHtml": desc_html,
         "formHeading": form_heading,
+        "paymentHtml": payment_html,
         "placeholders": placeholders,
         "required": required_messages(page),
         "genders": genders,
@@ -432,7 +439,7 @@ def collect_media(pages: list[str]) -> dict[str, str]:
     targets = {}
     for url in urls:
         path = url
-        path = re.sub(r"^https://ik\.imagekit\.io/reoscom/*(?:tr:[^/]*/)?", "", path)
+        path = re.sub(r"^https://ik\.imagekit\.io/[A-Za-z0-9_-]+/*(?:tr:[^/]*/)?", "", path)
         path = re.sub(r"^https://cdnc\.re-os.com/", "", path)
         path, _, query = path.partition("?")
         path = path.lstrip("/")

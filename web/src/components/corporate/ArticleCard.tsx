@@ -39,7 +39,8 @@ export function ArticleCard({
         <h3 className="content-title-responsive">
           <a href={item.urlPath}>{item.title}</a>
         </h3>
-        <a className="bl-continue link style2" href={item.urlPath}>
+        {/* The reference repeats the class attribute; browsers keep only "bl-continue". */}
+        <a className="bl-continue" href={item.urlPath}>
           {continueLabel} <i className="flaticon-right-arrow-1" />
         </a>
       </div>

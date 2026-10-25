@@ -53,6 +53,7 @@ class AcademyDataSeeder extends Seeder
                     'genders' => $translation['genders'] ?? [],
                     'submitLabel' => $translation['submitLabel'] ?? '',
                     'captchaError' => $translation['captchaError'] ?? '',
+                    'paymentHtml' => $translation['paymentHtml'] ?? '',
                 ];
                 $hasForm = ($row['group'] ?? '') === 'ongoing' && trim((string) ($form['submitLabel'] ?? '')) !== '';
 
@@ -83,6 +84,7 @@ class AcademyDataSeeder extends Seeder
                             'genders' => [],
                             'submitLabel' => '',
                             'captchaError' => '',
+                            'paymentHtml' => '',
                         ]),
                         'related_heading' => $translation['relatedHeading'] ?? '',
                         'related' => $this->related($translation['related'] ?? []),
@@ -92,6 +94,15 @@ class AcademyDataSeeder extends Seeder
                     ],
                 );
             }
+        }
+
+        // The reference list only shows the current trainings; older ones keep a live detail page.
+        $listed = array_column($trainings, 'externalId');
+        if ($listed !== []) {
+            CmsTraining::query()
+                ->whereNotIn('external_id', $listed)
+                ->where('group', '!=', 'archived')
+                ->update(['group' => 'archived']);
         }
 
         foreach ($ui as $locale => $page) {

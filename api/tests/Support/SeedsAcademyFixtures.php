@@ -18,8 +18,8 @@ trait SeedsAcademyFixtures
         ]);
         $ongoing->translations()->createMany([
             $this->trainingTranslation('tr', '/tr/egitim-detay/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Devam'),
-            $this->trainingTranslation('en', '/en/egitim-detay/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Continuing'),
-            $this->trainingTranslation('de', '/de/egitim-detay/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Fortlaufend'),
+            $this->trainingTranslation('en', '/en/education-detail/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Continuing'),
+            $this->trainingTranslation('de', '/de/education-detail/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Fortlaufend'),
         ]);
 
         $completed = CmsTraining::query()->create([
@@ -40,7 +40,7 @@ trait SeedsAcademyFixtures
             ),
             $this->trainingTranslation(
                 'en',
-                '/en/egitim-detay/380/pikselden-portfoye',
+                '/en/education-detail/380/pikselden-portfoye',
                 "Piksel'den Portföy'e",
                 '',
                 [['icon' => 'flaticon-time', 'text' => 'Training Date 26.8.2026']],
@@ -49,7 +49,7 @@ trait SeedsAcademyFixtures
             ),
             $this->trainingTranslation(
                 'de',
-                '/de/egitim-detay/380/pikselden-portfoye',
+                '/de/education-detail/380/pikselden-portfoye',
                 "Piksel'den Portföy'e",
                 '',
                 [['icon' => 'flaticon-time', 'text' => 'Schulungsdatum 26.8.2026']],

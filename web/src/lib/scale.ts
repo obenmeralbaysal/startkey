@@ -14,8 +14,9 @@ export function scaled(value: number | string): string {
 }
 
 /**
- * Image `width`/`height` attributes scale like stylesheet lengths. The rules have no
- * specificity, so a size set by any stylesheet still wins, as it does over the attribute.
+ * Image `width`/`height` attributes scale like stylesheet lengths. The rules sit in the
+ * lowest cascade layer (declared first in globals.css), so a size set by any stylesheet,
+ * layered or not, still wins, as it does over the attribute.
  */
 export function imageSizeCss(widths: Iterable<number>, heights: Iterable<number>): string {
   const rules = (attribute: "width" | "height", values: Iterable<number>) =>
@@ -23,5 +24,5 @@ export function imageSizeCss(widths: Iterable<number>, heights: Iterable<number>
       .filter((value) => value > 1)
       .map((value) => `:where(img[${attribute}="${value}"]){${attribute}:${scaled(value)}}`)
       .join("");
-  return rules("width", widths) + rules("height", heights);
+  return `@layer sk-image-size{${rules("width", widths)}${rules("height", heights)}}`;
 }

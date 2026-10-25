@@ -59,7 +59,7 @@ def find_one(pattern, page, group=1, flags=0):
 
 REFERENCE_ORIGIN = re.compile(r"https?://(?:www\.)?startkey\.com\.tr")
 CDN_ORIGIN = re.compile(r"https?://cdnc\.re-os\.com")
-IMAGEKIT_ORIGIN = re.compile(r"https?://ik\.imagekit\.io/reoscom/*(?:tr:[^/]*/)?")
+IMAGEKIT_ORIGIN = re.compile(r"https?://ik\.imagekit\.io/[A-Za-z0-9_-]+/*(?:tr:[^/]*/)?")
 
 
 def strip_origin(value):

@@ -141,6 +141,76 @@ function bindCarousel(node: HTMLElement, mode: "cards" | "single") {
   });
 }
 
+/** CMS partner logos: the reference theme's `.social-slider` Owl Carousel options. */
+function bindSocialSlider(node: HTMLElement) {
+  if (node.dataset.skReady === "1") return;
+  const items = [...node.children] as HTMLElement[];
+  if (items.length === 0) return;
+  node.dataset.skReady = "1";
+
+  const track = document.createElement("div");
+  track.style.display = "flex";
+  track.style.alignItems = "flex-start";
+  const before = items.map((item) => item.cloneNode(true) as HTMLElement);
+  const after = items.map((item) => item.cloneNode(true) as HTMLElement);
+  track.append(...before, ...items, ...after);
+  node.replaceChildren(track);
+  node.style.overflow = "hidden";
+  node.style.transition = "height 300ms ease";
+
+  const slides = [...track.children] as HTMLElement[];
+  let current = items.length;
+  let width = 0;
+  let gap = 0;
+
+  const place = (animate: boolean) => {
+    track.style.transition = animate ? "transform 1300ms ease" : "none";
+    const offset = (node.clientWidth - width) / 2 - current * (width + gap);
+    track.style.transform = `translate3d(${offset}px, 0, 0)`;
+    const count = window.innerWidth >= 600 ? 3 : 2;
+    const first = current - Math.floor(count / 2);
+    const visible = slides.slice(first, first + count);
+    node.style.height = `${Math.max(...visible.map((slide) => slide.offsetHeight))}px`;
+  };
+
+  const layout = () => {
+    const count = window.innerWidth >= 600 ? 3 : 2;
+    const scale = Number(getComputedStyle(document.documentElement).getPropertyValue("--sk-scale")) || 1;
+    gap = 30 * scale;
+    width = node.clientWidth / count - gap;
+    slides.forEach((slide) => {
+      slide.style.flex = `0 0 ${width}px`;
+      slide.style.marginRight = `${gap}px`;
+    });
+    place(false);
+  };
+
+  track.addEventListener("transitionend", (event) => {
+    if (event.target !== track || event.propertyName !== "transform") return;
+    if (current >= items.length * 2) {
+      current -= items.length;
+      place(false);
+    }
+  });
+
+  let paused = false;
+  node.addEventListener("mouseenter", () => {
+    paused = true;
+  });
+  node.addEventListener("mouseleave", () => {
+    paused = false;
+  });
+  window.setInterval(() => {
+    if (paused || document.hidden) return;
+    current += 1;
+    place(true);
+  }, 4000);
+
+  window.addEventListener("resize", layout);
+  window.addEventListener("load", layout);
+  layout();
+}
+
 function bindLightbox() {
   const dialog = document.createElement("dialog");
   dialog.className = "m-auto max-w-[calc(960px*var(--sk-scale,1))] bg-transparent p-0 backdrop:bg-black/70";
@@ -243,7 +313,8 @@ function bindBackToTop() {
 
 /**
  * Public interactions that used to live in the jQuery theme bundle: lookup selects,
- * carousels, the video/gallery lightbox, scroll counters and back-to-top.
+ * carousels (including the CMS partner slider), the video/gallery lightbox, scroll
+ * counters and back-to-top.
  */
 export function SiteBehaviors() {
   useEffect(() => {
@@ -251,6 +322,7 @@ export function SiteBehaviors() {
     bindListingFilter();
     document.querySelectorAll<HTMLElement>("[data-carousel='cards']").forEach((node) => bindCarousel(node, "cards"));
     document.querySelectorAll<HTMLElement>("[data-carousel='single']").forEach((node) => bindCarousel(node, "single"));
+    document.querySelectorAll<HTMLElement>(".social-slider").forEach(bindSocialSlider);
     bindLightbox();
     bindMotion();
     bindFaq();

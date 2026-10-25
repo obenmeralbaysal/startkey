@@ -15,7 +15,7 @@ class ReferenceHtml
             return '';
         }
 
-        $html = preg_replace('#https?://ik\.imagekit\.io/reoscom/*(?:tr:[^/]*/)?#', '/media/', $html) ?? $html;
+        $html = preg_replace('#https?://ik\.imagekit\.io/[A-Za-z0-9_-]+/*(?:tr:[^/]*/)?#', '/media/', $html) ?? $html;
         $html = preg_replace('#https?://cdnc\.re-os\.com/#', '/media/', $html) ?? $html;
         $html = preg_replace('#https?://reos-cdn-files\.s3-eu-west-1\.amazonaws\.com/#', '/media/', $html) ?? $html;
         $html = preg_replace('#https?://(?:www\.)?startkey\.com\.tr#', '', $html) ?? $html;

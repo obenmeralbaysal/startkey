@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CmsTraining;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Support\SeedsAcademyFixtures;
 use Tests\TestCase;
@@ -47,7 +48,64 @@ class AcademyApiTest extends TestCase
     {
         $this->getJson('/api/v1/corporate?locale=en&path=/en/our-educations')
             ->assertOk()
-            ->assertJsonPath('data.sections.1.items.0.urlPath', '/tr/egitim-detay/380/pikselden-portfoye');
+            ->assertJsonPath('data.sections.1.items.0.urlPath', '/tr/egitim-detay/380/pikselden-portfoye')
+            ->assertJsonPath('data.sections.1.items.0.detailUrlPath', '/en/education-detail/380/pikselden-portfoye');
+    }
+
+    public function test_english_and_german_training_details_resolve_on_the_reference_path(): void
+    {
+        $this->getJson('/api/v1/corporate?locale=en&path=/en/education-detail/385/unutuyoruz-neden')
+            ->assertOk()
+            ->assertJsonPath('data.kind', 'training-detail')
+            ->assertJsonPath('data.externalId', 385);
+
+        $this->getJson('/api/v1/corporate?locale=de&path=/de/education-detail/385/other-slug')
+            ->assertOk()
+            ->assertJsonPath('data.kind', 'training-detail')
+            ->assertJsonPath('data.urlPath', '/de/education-detail/385/unutuyoruz-neden');
+    }
+
+    public function test_the_old_english_training_detail_prefix_still_resolves(): void
+    {
+        $this->getJson('/api/v1/corporate?locale=en&path=/en/egitim-detay/385/unutuyoruz-neden')
+            ->assertOk()
+            ->assertJsonPath('data.kind', 'training-detail')
+            ->assertJsonPath('data.urlPath', '/en/education-detail/385/unutuyoruz-neden');
+    }
+
+    public function test_archived_trainings_leave_the_list_but_keep_their_detail_page(): void
+    {
+        CmsTraining::query()->where('external_id', 380)->update(['group' => 'archived']);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitimlerimiz')
+            ->assertOk()
+            ->assertJsonCount(0, 'data.sections.1.items');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitim-detay/380/pikselden-portfoye')
+            ->assertOk()
+            ->assertJsonPath('data.kind', 'training-detail')
+            ->assertJsonPath('data.hasApplicationForm', false);
+    }
+
+    public function test_paid_training_payment_block_is_only_sent_with_the_form(): void
+    {
+        $translation = CmsTraining::query()->where('external_id', 385)->firstOrFail()
+            ->translations()->where('locale', 'tr')->firstOrFail();
+        $translation->update(['form' => [...$translation->form, 'paymentHtml' => '<h4>Ödeme Bilgileri</h4>']]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitim-detay/385/unutuyoruz-neden')
+            ->assertOk()
+            ->assertJsonPath('data.form.paymentHtml', '<h4>Ödeme Bilgileri</h4>');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitim-detay/380/pikselden-portfoye')
+            ->assertOk()
+            ->assertJsonPath('data.form.paymentHtml', '');
+    }
+
+    public function test_unknown_training_on_the_reference_path_is_not_found(): void
+    {
+        $this->getJson('/api/v1/corporate?locale=en&path=/en/education-detail/999999/missing')
+            ->assertNotFound();
     }
 
     public function test_it_returns_a_training_detail_with_form_and_related(): void
@@ -60,7 +118,7 @@ class AcademyApiTest extends TestCase
             ->assertJsonPath('data.form.submitLabel', 'Başvuruyu Gönder')
             ->assertJsonPath('data.hasApplicationForm', true)
             ->assertJsonPath('data.related.0.externalId', 385)
-            ->assertJsonPath('data.alternates.en', '/en/egitim-detay/385/unutuyoruz-neden');
+            ->assertJsonPath('data.alternates.en', '/en/education-detail/385/unutuyoruz-neden');
     }
 
     public function test_completed_trainings_do_not_include_an_application_form(): void
@@ -95,6 +153,6 @@ class AcademyApiTest extends TestCase
     {
         $this->getJson('/api/v1/corporate/alternate?locale=en&path=/tr/egitim-detay/385/unutuyoruz-neden')
             ->assertOk()
-            ->assertJsonPath('data.urlPath', '/en/egitim-detay/385/unutuyoruz-neden');
+            ->assertJsonPath('data.urlPath', '/en/education-detail/385/unutuyoruz-neden');
     }
 }

@@ -65,12 +65,18 @@ export function ArticleDetail({
             <div className={withSidebar ? "sk-two-thirds" : "w-full"}>
               <article>
                 {data.image ? (
-                  <div className="post-img" style={withSidebar ? undefined : { textAlign: "center" }}>
-                    <Picture width={800} height={478}>
-                      {data.imageWebp ? <source srcSet={data.imageWebp} type="image/webp" /> : null}
-                      <img src={data.image} alt={data.imageAlt || "Blog-photo"} width={800} height={478} />
-                    </Picture>
-                  </div>
+                  withSidebar ? (
+                    <div className="post-img">
+                      <Picture width={800} height={478}>
+                        {data.imageWebp ? <source srcSet={data.imageWebp} type="image/webp" /> : null}
+                        <img src={data.image} alt={data.imageAlt || "Blog-photo"} width={800} height={478} />
+                      </Picture>
+                    </div>
+                  ) : (
+                    <div className="post-img" style={{ textAlign: "center" }}>
+                      <img src={data.image} alt={data.imageAlt || "Blog-photo"} />
+                    </div>
+                  )
                 ) : null}
                 <ul className="post-metainfo">
                   {data.dateLabel ? (

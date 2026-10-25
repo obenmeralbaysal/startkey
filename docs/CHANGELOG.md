@@ -1,3 +1,14 @@
+## [2026-10-24]
+
+- **[UI]**: Telefon ve tablet menüsü referanstaki gibi soldan kayarak açılır. Kurumsal, Startkey ve Akademi alt menüleri ok ya da başlığa dokununca açılır; aynı anda tek alt menü açık kalır. Menüde logo, tam genişlik başvuru ve Portal düğmeleri, açık sayfanın vurgusu var; dil seçici menünün dışında tek kalır. Menü açıkken sayfa kaymaz; Escape ile kapanır, odak menü içinde kalır ve kapanınca hamburgere döner. Masaüstü alt menüleri klavye odağıyla da açılır.
+- **[UI]**: Header logosu yüksek çözünürlüklü dosyaya (`/media/brand/startkey-logo.png`, 500×200) geçti.
+
+- **[Bugfix]**: İngilizce ve Almanca eğitim detayları referans yolunda açılıyor (`/en/education-detail/…`, `/de/education-detail/…`). Eğitim kartındaki “Detay” düğmesi bu yola gider; görsel ve başlık referanstaki gibi Türkçe detayı açar. Eski `/en/egitim-detay/…` yolu çalışmaya devam eder.
+- **[Content]**: Kurumsal, akademi ve footer içeriği canlı siteden yeniden alındı: yeni blog, duyuru, yönetim kadrosu ve eğitim kayıtları geldi. Eğitim listesi referanstaki 16 kaydı gösterir; eski eğitimlerin detay sayfası açık kalır. Ücretli eğitimlerde “Ödeme Bilgileri” bloğu form üstünde görünür.
+- **[UI]**: Danışman başvuru sayfasının alt gövdesi tamamlandı: başvuru ve sunum düğmeleri, “İş Ortaklarımız” ve “Sosyal Sorumluluk İş Ortaklarımız” kaydırıcıları. Kurumsal sayfalardaki iş ortağı logoları referanstaki gibi kayar.
+- **[UI]**: İç sayfalar referans yerleşimine yaklaştırıldı: header altındaki boşluk, CMS gövdelerindeki sütun aralığı, görsellerin boyutu, haber/duyuru/blog kart ve detayları, iletişim, şampiyonlar, eğitim ve başvuru formları, paylaş düğmeleri, liste ve paragraf aralıkları, telefonda yazı boyutları.
+- **[SEO]**: Portföy listesi ve danışman formu başlıkları referansla aynı. Referans ile yerel adres farkları ve önerilen yönlendirmeler `docs/URL_MAP.md` içinde.
+
 ## [2026-10-15]
 
 - **[UI]**: Alt sayfa kabukları referans yerleşime alındı. Liste sayfalama düğmeleri ofis listesiyle aynı yuvarlak biçimi kullanır. Portföy, blog, haber, duyuru, kadro, şampiyon, eğitim ve iletişim sayfalarının kart, ızgara ve filtre yerleşimi referans ölçülerine çekildi. Danışman başvurusunun tanıtım gövdesi üç dilde canlı sayfadan basılır.

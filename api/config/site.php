@@ -161,8 +161,8 @@ return [
             ],
             'detail_prefixes' => [
                 'tr' => ['/tr/egitim-detay'],
-                'en' => ['/en/egitim-detay'],
-                'de' => ['/de/egitim-detay'],
+                'en' => ['/en/education-detail', '/en/egitim-detay'],
+                'de' => ['/de/education-detail', '/de/egitim-detay'],
             ],
         ],
         'contact' => [

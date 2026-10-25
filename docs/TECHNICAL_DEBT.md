@@ -106,7 +106,9 @@ Hakkımızda, vizyon-misyon, STARTKEY, Medyada Biz (yalnızca TR), yönetim kart
 
 2026-09-19 yenileme: `/tr/sayfa/startkey`, `/en/page/startkey`, `/de/page/startkey` ve `/tr/sayfa/medyada-biz` eklendi. EN haber kategorisi “Media Us”, EN/DE blog kategorisi “General” olarak canlıdan alındı. DE STARTKEY gövdesi canlıda da boştur. Nav “Medyada Biz” her iki sitede `/tr/haberler` açar.
 
-Türkçe listelerde İngilizce/Almanca karşılığı olmayan az sayıda kayıt vardır (duyuru 73/72/72, blog 41/39/39); o dillerde gösterilmezler.
+Türkçe listelerde İngilizce/Almanca karşılığı olmayan az sayıda kayıt vardır (duyuru 74/73/73, blog 42/40/40); o dillerde gösterilmezler.
+
+2026-10-24 yenileme: anlık görüntü yeniden alındı (blog 1249, duyuru 1526, yönetim 599 eklendi). Akış: `scripts/crawl-corporate.py` → `scripts/migrate-tailwind-classes.py --seed api/database/data/corporate-seed.json` → `CorporateDataSeeder`. `--seed` adımı `web/src/styles/cms-classes.txt` dosyasını da yeniler; Tailwind CMS HTML’indeki sınıfları bu dosyadan üretir. Referans ImageKit adresi artık `ik.imagekit.io/startkey/` (ve tek tük başka hesaplar); crawler’lar her hesabı `/media/` altına çevirir.
 
 **Geçici Olmasının Nedeni:**
 
@@ -144,6 +146,8 @@ Referans sitedeki gerçek sonuç metinleri gözlemlendiğinde bu dosyadaki dizel
 
 Seminer/eğitim kartları, detay metinleri ve İletişim sayfası `api/database/data/academy-seed.json` içindeki referans siteden çekilmiş anlık görüntüden seed edilir. Next.js bu satırları `training-list`, `training-detail` ve `contact` şablonlarına basar. Superadmin paneli henüz yazmadığı için yeni içerik API/veritabanına elle veya seed yenilemesi ile girer.
 
+2026-10-24 yenileme: referans listesi 16 eğitim gösterir (4 devam eden, 12 tamamlanan). Listede olmayan eski eğitimler seed sırasında `archived` grubuna alınır; listede görünmez, detay adresi açık kalır (referans da eski detayları açar). Ücretli eğitimlerin “Ödeme Bilgileri” bloğu `form.paymentHtml` alanında tutulur. EN/DE detay yolu `/{en,de}/education-detail/…`; eski `/{en,de}/egitim-detay/…` takma ad olarak açıktır.
+
 **Geçici Olmasının Nedeni:**
 
 Nihai yazma arayüzü Superadmin panelidir. CMS StartKey veritabanında kalır.
@@ -163,6 +167,8 @@ Superadmin aynı CMS tablolarına (`cms_trainings`, `cms_pages` contact kaydı) 
 Franchise başvuru, KVKK ve Hizmet Sözleşmesi `api/database/data/footer-seed.json` içindeki referans siteden çekilmiş anlık görüntüden seed edilir. Next.js Franchise’ı `franchise` şablonuna, KVKK ve Hizmet Sözleşmesi’ni `cms-page` şablonuna basar. Superadmin paneli henüz yazmadığı için yeni içerik API/veritabanına elle veya seed yenilemesi ile girer.
 
 KVKK yalnızca Türkçe olarak mevcuttur; canlı sitede EN/DE karşılığı ana sayfaya düşer.
+
+2026-10-24 yenileme: anlık görüntü yeniden alındı; franchise sunum PDF’i değişti.
 
 **Geçici Olmasının Nedeni:**
 
@@ -210,6 +216,8 @@ Bu kayıt özellikle sonradan incelenecek: her form için referanstaki doldurma-
 **Mevcut Durum:**
 
 Portal bağlantısı varken `/tr/portfoy` ve ilan detayı Reonix’te listelenmiş portföyleri basar. Bağlantı yoksa şablon `cms_listings` satırlarını basar. Ana sayfa kartları hâlâ `portfolio-seed.json` anlık görüntüsündedir. Fotoğrafı olan kayıt StartKey üzerinden gösterilir. Fotoğrafı olmayan kayıtta yerel boş işaret kalır.
+
+2026-10-24 yerel durum: Portal bağlantısı yapılandırılmamış ve `portfolio-seed.json` (Git dışı) diskte yok. Portföy listesi boş, referanstaki ilan detayları 404 verir; danışman detayındaki ilan sekmesi boştur. Boş listenin başlığı referansla aynıdır (`Startkey Türkiye | Portföylerimiz`, `| Our Properties`, `| Unsere Portfolios`).
 
 **Geçici Olmasının Nedeni:**
 
@@ -309,6 +317,8 @@ Tanıtım gövdesi bağlandı.
 
 Gövde canlı belgeden alındı. Ofis seçenekleri portal ağına bağlı kalır.
 
+2026-10-24: gövdenin yalnızca `hw-wrap` bölümü alınmıştı. `scripts/crawl-consultant-body.py` artık formdan footer’a kadar tüm gövdeyi alır: başvuru / sunum düğmeleri ve iki iş ortağı kaydırıcısı. Sunum PDF’i `/media/content/` altındadır.
+
 **Durum:** Çözüldü
 
 ### TD-017 — %80 ölçek JS ve iframe ile verilen bazı ölçülere uygulanmıyor
@@ -344,4 +354,58 @@ Bu işler ilk turda portal kabuğuna bağlanmamıştı.
 Aynı izin listeli vekil üzerinden bağlandı.
 
 **Durum:** Çözüldü
+
+### TD-019 — Dil değiştirici referanstan farklı adrese gider
+
+**Alan:** Frontend / Dil değiştirme / SEO
+
+**Mevcut Durum:**
+
+Yerel dil değiştirici aynı kaydın hedef dildeki slug’ına gider (`/tr/sayfa/hakkimizda` → `/en/page/about-us`). Referans çoğu sayfada Türkçe slug’ı korur (`/en/page/hakkimizda`) ve bazı hedefleri yerelde yoktur (`/en/office-list`, `/en/consultant-list`). KVKK ve Medyada Biz yerelde dil ana sayfasına düşer. Ofis detayı yerelde kök ofis adresine (`/en/laya`) gider. Referansın `routeName` biçimli `ChangeCulture` adresi yerelde dil ana sayfasına veya 404’e düşer. Tam liste `docs/URL_MAP.md` içindedir.
+
+**Geçici Olmasının Nedeni:**
+
+Kullanıcı kararı: yerel davranış kalır, fark kayda geçer. Canlıya geçişte eski adreslerin kaybolmaması için yönlendirme gerekir.
+
+**Gelecekteki Implementasyon:**
+
+`docs/URL_MAP.md` içindeki referans adresleri için 301 yönlendirmesi kurulacak.
+
+**Durum:** Açık
+
+### TD-021 — Mobil menü erişilebilirlik etiketleri referanstan alınmadı
+
+**Alan:** Frontend / Header / i18n
+
+**Mevcut Durum:**
+
+Hamburger ve kapatma düğmelerinin ekran okuyucu etiketleri (`Menüyü aç` / `Menüyü kapat`, `Open menu` / `Close menu`, `Menü öffnen` / `Menü schließen`) `web/src/components/layout/Header.tsx` içindeki `MENU_LABELS` sabitindedir. Referansta bu düğmelerin etiketi yoktur; metinler proje içinde yazıldı. Menüdeki logo, düğmeler, aktif sayfa vurgusu ve tek dil seçici referansın mobil menüsünden bilinçli sapmadır (kullanıcı kararı).
+
+**Geçici Olmasının Nedeni:**
+
+Referansta karşılığı olmayan metin. Header metinleri henüz içerik JSON’undan veya CMS’ten gelmiyor.
+
+**Gelecekteki Implementasyon:**
+
+Etiketler header içeriğiyle birlikte dil dosyasına (`web/src/content/homepage.{tr,en,de}.json`) veya Superadmin’e taşınacak; metinler marka ekibince onaylanacak.
+
+**Durum:** Açık
+
+### TD-020 — Referans gövde tipografisi yalnızca iç sayfalarda
+
+**Alan:** Frontend / Tipografi
+
+**Mevcut Durum:**
+
+Referans gövde satır yüksekliği Bootstrap’in 1.5’idir; 768px altında `p, input, textarea` 14px’tir; başlıklar telefonda küçülür. Yerelde bu kurallar iç sayfa sarmalayıcısına (`sk-inner`, `web/src/lib/content-offset.ts`) bağlıdır. Ana sayfa, header ve footer hâlâ 1.8 satır yüksekliği ve 16px paragraf ile çalışır. Yerel `@layer base` öğe kuralları Tailwind yardımcılarından sonra gelir.
+
+**Geçici Olmasının Nedeni:**
+
+Ana sayfa Faz 1’de bölüm bölüm ölçüldü; küresel değişiklik o sayfayı yeniden ölçmeden yapılmadı.
+
+**Gelecekteki Implementasyon:**
+
+Ana sayfa referansla yeniden ölçülüp aynı kurallar `body` düzeyine taşınacak.
+
+**Durum:** Açık
 

@@ -30,7 +30,7 @@ export function TrainingDetail({
                 <div className="flex flex-wrap items-start">
                   <div className="w-full">
                     <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] max-md:[margin:0_0_calc(10px_*_var(--sk-scale,_1))]">
-                      <h2>{data.title}</h2>
+                      <h2 className="text-[calc(32px*var(--sk-scale,1))] leading-[1.3]">{data.title}</h2>
                       <ul className="flex flex-wrap justify-between [border:none] bg-neutral-50 [box-shadow:0_0_calc(15px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.06)] list-none">
                         {data.dateValue ? (
                           <li>
@@ -82,17 +82,20 @@ export function TrainingDetail({
               <div className="sidebar">
                 {data.hasApplicationForm ? (
                   <div className="sidebar-widget">
+                    {data.form.paymentHtml ? (
+                      <div className="sk-training-payment" dangerouslySetInnerHTML={{ __html: data.form.paymentHtml }} />
+                    ) : null}
                     <h4>{data.formHeading}</h4>
                     <TrainingApplicationForm data={data} locale={locale} />
                   </div>
                 ) : null}
                 {data.related.length > 0 ? (
                   <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] relative z-[1] [padding:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0_0_calc(25px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] last:[margin:0] max-md:[padding:calc(20px_*_var(--sk-scale,_1))]">
-                    <h4>{data.relatedHeading}</h4>
+                    <h4 className="mb-[calc(25px*var(--sk-scale,1))] text-[calc(24px*var(--sk-scale,1))] leading-[calc(24px*var(--sk-scale,1))]">{data.relatedHeading}</h4>
                     {data.related.map((item) => (
                       <div className="flex flex-wrap items-center [margin:0_0_calc(15px_*_var(--sk-scale,_1))] last:[margin-bottom:0]" key={`${item.externalId}-${item.urlPath}`}>
                         <div className="[width:calc(80px_*_var(--sk-scale,_1))] [border-radius:calc(5px_*_var(--sk-scale,_1))]">
-                          <img src={item.image} alt="image" />
+                          <img className="block" src={item.image} alt="image" />
                         </div>
                         <div className="[width:calc(100%_-_calc(95px_*_var(--sk-scale,_1)))] [margin-left:calc(15px_*_var(--sk-scale,_1))]">
                           <h6>
@@ -194,9 +197,9 @@ function TrainingApplicationForm({
   }
 
   return (
-    <form method="post" id="form" className="block form" action={data.urlPath} onSubmit={handleSubmit}>
-      <div className="sk-form-row flex flex-wrap">
-        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+    <form method="post" id="form" className="block form sk-filter-form" action={data.urlPath} onSubmit={handleSubmit}>
+      <div className="flex flex-wrap mx-[calc(-12px*var(--sk-scale,1))] [&>div]:box-border [&>div]:w-full [&>div]:px-[calc(12px*var(--sk-scale,1))]">
+        <div className="mb-[calc(20px*var(--sk-scale,1))]">
           <input
             placeholder={data.form.placeholders.firstName}
             type="text"
@@ -208,7 +211,7 @@ function TrainingApplicationForm({
             {fieldErrors.FirstName}
           </span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+        <div className="mb-[calc(20px*var(--sk-scale,1))]">
           <input
             placeholder={data.form.placeholders.lastName}
             type="text"
@@ -220,7 +223,7 @@ function TrainingApplicationForm({
             {fieldErrors.LastName}
           </span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+        <div className="mb-[calc(20px*var(--sk-scale,1))]">
           <input
             placeholder={data.form.placeholders.email}
             type="email"
@@ -232,13 +235,13 @@ function TrainingApplicationForm({
             {fieldErrors.Email}
           </span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+        <div className="mb-[calc(20px*var(--sk-scale,1))]">
           <input id="PhoneNew" className="intl-phone" type="tel" name="Phone" defaultValue="" />
           <span className="text-brand field-validation-valid" data-valmsg-for="Phone">
             {fieldErrors.PhoneNew}
           </span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+        <div className="mb-[calc(20px*var(--sk-scale,1))]">
           <select className="search-fields" id="GenderId" name="GenderId" defaultValue={data.form.genders[0]?.value}>
             {data.form.genders.map((option) => (
               <option key={option.value} value={option.value}>
@@ -256,7 +259,7 @@ function TrainingApplicationForm({
           </span>
         ) : null}
         <CaptchaNotice locale={locale} />
-        <div className="mb-[calc(15px*var(--sk-scale,1))]">
+        <div className="mb-[calc(20px*var(--sk-scale,1))]">
           <button type="submit" className="relative z-[1] inline-block overflow-hidden whitespace-nowrap border border-transparent bg-brand text-center text-white rounded-[calc(5px*var(--sk-scale,1))] px-[calc(35px*var(--sk-scale,1))] py-[calc(14px*var(--sk-scale,1))] leading-[calc(26px*var(--sk-scale,1))] font-normal transition-all duration-[700ms] before:absolute before:top-0 before:left-0 before:z-[-1] before:h-0 before:w-1/2 before:bg-navy before:invisible before:opacity-0 before:transition-all before:duration-[400ms] after:absolute after:right-0 after:bottom-0 after:z-[-1] after:h-0 after:w-1/2 after:bg-navy after:invisible after:opacity-0 after:transition-all after:duration-[400ms] hover:text-white hover:before:visible hover:before:h-full hover:before:w-full hover:before:opacity-100 hover:after:visible hover:after:h-full hover:after:w-full hover:after:opacity-100" disabled={submitting}>
             {data.form.submitLabel}
           </button>

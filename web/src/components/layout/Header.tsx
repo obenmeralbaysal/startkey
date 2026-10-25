@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import type { HomepageContent, NavItem } from "@/content/types";
 import type { Locale } from "@/lib/locales";
 import { portalLoginHref } from "@/lib/portal";
 
-const LOGO = "12eb7cb9-f028-4e57-9b14-f99fc92c2045";
+const LOGO_SRC = "/media/brand/startkey-logo.png";
 
 /**
  * Header measured on startkey.com.tr at 1440px. Lengths below are those reference
@@ -94,7 +95,8 @@ const HEADER_STYLES = `
     padding: calc(10px * var(--sk-scale, 1)) 0;
     box-shadow: 0 0 calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);
   }
-  .sk-nav > li:hover > .sk-drop { display: block; }
+  .sk-nav > li:hover > .sk-drop,
+  .sk-nav > li:focus-within > .sk-drop { display: block; }
   .sk-drop a {
     display: block;
     padding: calc(9px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
@@ -111,7 +113,7 @@ const HEADER_STYLES = `
   }
   .sk-mobile-tools { display: none; }
   .sk-drawer { display: contents; }
-  .sk-drawer > .sk-burger { display: none; }
+  .sk-drawer-close, .sk-drawer-logo, .sk-expand { display: none; }
   @media (max-width: 991px) {
     .sk-header-row { min-height: calc(78px * var(--sk-scale, 1)); }
     .sk-nav, .sk-actions { display: none; }
@@ -127,24 +129,138 @@ const HEADER_STYLES = `
       justify-content: center;
       width: calc(42px * var(--sk-scale, 1));
       height: calc(42px * var(--sk-scale, 1));
+      padding: 0;
+      border: 0;
       border-radius: 50%;
       background: #002172;
       color: #fff;
+      font-size: calc(20px * var(--sk-scale, 1));
+      cursor: pointer;
     }
+    /* Reference .main-menu-wrap: full-height panel sliding in from the left. */
     .sk-drawer {
-      display: none;
+      display: block;
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: -100%;
       z-index: 1000;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      box-sizing: border-box;
       overflow-y: auto;
+      overscroll-behavior: contain;
       background: #fff;
       padding: calc(55px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) calc(30px * var(--sk-scale, 1));
+      visibility: hidden;
+      transition: left 0.4s, visibility 0s 0.4s;
     }
-    .sk-drawer.is-open { display: block; }
-    .sk-drawer.is-open > .sk-burger { display: inline-flex; }
-    .sk-drawer .sk-nav, .sk-drawer .sk-actions { display: flex; }
-    .sk-drawer .sk-nav { flex-direction: column; align-items: flex-start; margin: 0; }
-    .sk-drawer .sk-actions { flex-direction: column; align-items: flex-start; margin-top: calc(16px * var(--sk-scale, 1)); }
+    .sk-drawer.is-open {
+      left: 0;
+      visibility: visible;
+      transition: left 0.4s;
+    }
+    .sk-drawer-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: calc(8px * var(--sk-scale, 1));
+      right: calc(8px * var(--sk-scale, 1));
+      width: calc(44px * var(--sk-scale, 1));
+      height: calc(44px * var(--sk-scale, 1));
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #000;
+      font-size: calc(26px * var(--sk-scale, 1));
+      cursor: pointer;
+    }
+    .sk-drawer-logo {
+      display: block;
+      margin: 0 0 calc(20px * var(--sk-scale, 1));
+      text-align: center;
+    }
+    .sk-drawer-logo img {
+      display: inline-block;
+      width: calc(150px * var(--sk-scale, 1));
+      height: auto;
+    }
+    .sk-drawer .sk-nav {
+      display: block;
+      margin: 0;
+    }
+    .sk-drawer .sk-nav > li {
+      position: relative;
+      margin: 0;
+    }
+    .sk-drawer .sk-nav a {
+      display: block;
+      padding: calc(15px * var(--sk-scale, 1)) 0;
+      border-bottom: 1px solid #f3f4f6;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: calc(16px * var(--sk-scale, 1));
+      font-weight: 400;
+      line-height: 1.5;
+      white-space: normal;
+    }
+    .sk-drawer .sk-nav > li > a::after { display: none; }
+    .sk-drawer .sk-nav a.is-active { color: #ec3323; font-weight: 500; }
+    .sk-drawer .sk-nav > li > a .ri-add-line { transform: none; }
+    .sk-expand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: calc(56px * var(--sk-scale, 1));
+      height: calc(55px * var(--sk-scale, 1));
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #000;
+      font-size: calc(18px * var(--sk-scale, 1));
+      cursor: pointer;
+    }
+    .sk-expand i { transition: transform 0.4s; }
+    .sk-nav > li.menu-open > .sk-expand i { transform: rotate(180deg); }
+    /* Reference accordion: slideUp/slideDown("slow"), one submenu open at a time. */
+    .sk-drawer .sk-drop {
+      display: block;
+      position: static;
+      min-width: 0;
+      max-height: 0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      visibility: hidden;
+      transition: max-height 0.6s ease, visibility 0s 0.6s;
+    }
+    .sk-drawer .sk-nav > li.menu-open > .sk-drop {
+      max-height: calc(800px * var(--sk-scale, 1));
+      transition: max-height 0.6s ease;
+    }
+    .sk-drawer.is-open .sk-nav > li.menu-open > .sk-drop { visibility: visible; }
+    .sk-drawer .sk-drop a {
+      margin-left: calc(10px * var(--sk-scale, 1));
+      padding: calc(15px * var(--sk-scale, 1)) 0 calc(15px * var(--sk-scale, 1)) calc(10px * var(--sk-scale, 1));
+      font-size: calc(14px * var(--sk-scale, 1));
+    }
+    .sk-drawer .sk-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: calc(12px * var(--sk-scale, 1));
+      margin-top: calc(24px * var(--sk-scale, 1));
+    }
+    .sk-drawer .sk-actions .sk-lang-desktop { display: none; }
+    .sk-drawer .sk-actions .sk-btn { justify-content: center; width: 100%; box-sizing: border-box; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sk-drawer, .sk-drawer.is-open, .sk-drawer .sk-drop, .sk-expand i { transition: none; }
   }
   @media (min-width: 992px) and (max-width: 1199px) {
     .sk-nav > li { margin: 0 calc(7px * var(--sk-scale, 1)); }
@@ -174,11 +290,38 @@ function HeaderButton({
   );
 }
 
-function NavEntry({ item }: { item: NavItem }) {
+const MENU_LABELS: Record<Locale, { open: string; close: string }> = {
+  tr: { open: "Menüyü aç", close: "Menüyü kapat" },
+  en: { open: "Open menu", close: "Close menu" },
+  de: { open: "Menü öffnen", close: "Menü schließen" },
+};
+
+function isCurrent(href: string, pathname: string): boolean {
+  if (!href || href === "#" || /^https?:/.test(href)) return false;
+  const path = href.split("?")[0].replace(/\/$/, "");
+  return path === pathname.replace(/\/$/, "");
+}
+
+function NavEntry({
+  item,
+  pathname,
+  open,
+  onToggle,
+}: {
+  item: NavItem;
+  pathname: string;
+  open: boolean;
+  onToggle: () => void;
+}) {
   if (item.children.length === 0) {
     return (
       <li>
-        <a href={item.href} {...(item.target ? { target: item.target, rel: "noopener noreferrer" } : {})}>
+        <a
+          href={item.href}
+          className={isCurrent(item.href, pathname) ? "is-active" : undefined}
+          aria-current={isCurrent(item.href, pathname) ? "page" : undefined}
+          {...(item.target ? { target: item.target, rel: "noopener noreferrer" } : {})}
+        >
           {item.label}
         </a>
       </li>
@@ -186,15 +329,30 @@ function NavEntry({ item }: { item: NavItem }) {
   }
 
   return (
-    <li className="relative">
-      <a href="#">
+    <li className={`relative${open ? " menu-open" : ""}`}>
+      <button type="button" className="sk-expand" aria-expanded={open} aria-label={item.label} onClick={onToggle}>
+        <i className="ri-arrow-down-s-line" />
+      </button>
+      <a
+        href="#"
+        className={item.children.some((child) => isCurrent(child.href, pathname)) ? "is-active" : undefined}
+        onClick={(event) => {
+          event.preventDefault();
+          onToggle();
+        }}
+      >
         {item.label}
         <i className="ri-add-line" />
       </a>
       <ul className="sk-drop">
         {item.children.map((child) => (
           <li key={`${child.label}-${child.href}`}>
-            <a href={child.href} {...(child.target ? { target: child.target, rel: "noopener noreferrer" } : {})}>
+            <a
+              href={child.href}
+              className={isCurrent(child.href, pathname) ? "is-active" : undefined}
+              aria-current={isCurrent(child.href, pathname) ? "page" : undefined}
+              {...(child.target ? { target: child.target, rel: "noopener noreferrer" } : {})}
+            >
               {child.label}
             </a>
           </li>
@@ -204,9 +362,66 @@ function NavEntry({ item }: { item: NavItem }) {
   );
 }
 
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export function Header({ content, locale }: { content: HomepageContent; locale: Locale }) {
   const { nav, languageSwitcher, headerButtons } = content;
+  const pathname = usePathname() || `/${locale}`;
+  const labels = MENU_LABELS[locale];
   const [menuOpen, setMenuOpen] = useState(false);
+  const [openIndex, setOpenIndex] = useState<number | null>(() => {
+    const index = nav.findIndex((item) => item.children.some((child) => isCurrent(child.href, pathname)));
+    return index >= 0 ? index : null;
+  });
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false);
+    burgerRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const root = document.documentElement;
+    const previousOverflow = root.style.overflow;
+    root.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeMenu();
+        return;
+      }
+      if (event.key !== "Tab" || !drawerRef.current) return;
+      const items = [...drawerRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+        (element) => element.offsetParent !== null,
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    const desktop = window.matchMedia("(min-width: 992px)");
+    const onDesktop = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    desktop.addEventListener("change", onDesktop);
+    return () => {
+      root.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      desktop.removeEventListener("change", onDesktop);
+    };
+  }, [menuOpen, closeMenu]);
 
   return (
     <header className="sk-header">
@@ -214,35 +429,54 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
       <div className="container">
         <div className="sk-header-row">
           <a className="sk-logo" href={`/${locale}`}>
-            <picture>
-              <source srcSet={`/media/officelogo/${LOGO}.webp`} type="image/webp" />
-              <img src={`/media/officelogo/${LOGO}.png`} alt="OfficeLogo-photo" width={192} height={78} />
-            </picture>
+            <img src={LOGO_SRC} alt="OfficeLogo-photo" width={192} height={77} />
           </a>
 
           <div className="sk-mobile-tools">
             <LanguageSelector content={languageSwitcher} currentCode={locale} id="languageMenuMobile" />
-            <a className="sk-burger" role="button" onClick={() => setMenuOpen(true)}>
+            <button
+              ref={burgerRef}
+              type="button"
+              className="sk-burger"
+              aria-label={labels.open}
+              aria-expanded={menuOpen}
+              aria-controls="sk-main-menu"
+              onClick={() => setMenuOpen(true)}
+            >
               <i className="ri-menu-line" />
-            </a>
+            </button>
           </div>
 
-          <div className={`sk-drawer${menuOpen ? " is-open" : ""}`}>
-            <a
-              className="sk-burger"
-              role="button"
-              onClick={() => setMenuOpen(false)}
-              style={{ position: "absolute", top: "calc(13px * var(--sk-scale, 1))", right: "calc(16px * var(--sk-scale, 1))" }}
-            >
+          <div
+            ref={drawerRef}
+            id="sk-main-menu"
+            className={`sk-drawer${menuOpen ? " is-open" : ""}`}
+            onClick={(event) => {
+              const link = (event.target as HTMLElement).closest("a");
+              if (link && link.getAttribute("href") !== "#") setMenuOpen(false);
+            }}
+          >
+            <button ref={closeRef} type="button" className="sk-drawer-close" aria-label={labels.close} onClick={closeMenu}>
               <i className="ri-close-line" />
+            </button>
+            <a className="sk-drawer-logo" href={`/${locale}`}>
+              <img src={LOGO_SRC} alt="OfficeLogo-photo" width={150} height={60} />
             </a>
             <ul className="sk-nav">
-              {nav.map((item) => (
-                <NavEntry item={item} key={`${item.label}-${item.href}`} />
+              {nav.map((item, index) => (
+                <NavEntry
+                  item={item}
+                  pathname={pathname}
+                  key={`${item.label}-${item.href}`}
+                  open={openIndex === index}
+                  onToggle={() => setOpenIndex((current) => (current === index ? null : index))}
+                />
               ))}
             </ul>
             <div className="sk-actions">
-              <LanguageSelector content={languageSwitcher} currentCode={locale} id="languageMenuDesktop" />
+              <div className="sk-lang-desktop">
+                <LanguageSelector content={languageSwitcher} currentCode={locale} id="languageMenuDesktop" />
+              </div>
               <HeaderButton href={headerButtons.consultant.href} tone="brand">
                 {headerButtons.consultant.label}
               </HeaderButton>

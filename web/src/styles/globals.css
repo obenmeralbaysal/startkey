@@ -3,8 +3,10 @@
  * defaults stay until each component sets its own. Lengths follow --sk-scale
  * (desktop and tablet 80%, phone 100%), the same factor as the previous theme.
  */
+@layer sk-image-size;
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
+@source "./cms-classes.txt";
 
 :root {
   --sk-scale: 1;
@@ -34,6 +36,7 @@
 }
 
 @utility container {
+  box-sizing: border-box;
   width: 100%;
   margin-inline: auto;
   padding-inline: calc(12px * var(--sk-scale, 1));
@@ -145,12 +148,25 @@
   }
 }
 
-.cms h2,
-.cms h3 {
+.cms h2 {
   margin-bottom: calc(12px * var(--sk-scale, 1));
   font-family: var(--font-heading);
   font-size: calc(40px * var(--sk-scale, 1));
   font-weight: 700;
+}
+
+/* Bootstrap h3: calc(1.3rem + .6vw), 1.75rem from 1200px. */
+.cms h3 {
+  margin-bottom: calc(8px * var(--sk-scale, 1));
+  font-family: var(--font-heading);
+  font-size: calc((20.8px + 0.6vw) * var(--sk-scale, 1));
+  font-weight: 600;
+}
+
+@media (min-width: 1200px) {
+  .cms h3 {
+    font-size: calc(28px * var(--sk-scale, 1));
+  }
 }
 
 .cms p {

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { CaptchaNotice } from "@/components/forms/CaptchaNotice";
 import { publicFormStatus } from "@/content/public-form-status";
+import { CONTENT_OFFSET } from "@/lib/content-offset";
 import type { CorporatePayload } from "@/lib/corporate";
 import { executeRecaptchaV3Action } from "@/lib/recaptcha-v3";
 import type { Locale } from "@/lib/locales";
@@ -43,11 +44,11 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CONTACT_FORM_CSS }} />
-      <div className="mt-[calc(85px*var(--sk-scale,1))]">
+      <div className={CONTENT_OFFSET}>
         <Breadcrumb breadcrumb={data.breadcrumb} />
         <section className="contact-us-wrap [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))]">
           <div className="container">
-            <div className="sk-split">
+            <div className="sk-split pb-[calc(75px*var(--sk-scale,1))]">
               {data.items.map((item) => (
                 <div className="sk-third" key={item.heading}>
                   <div className="contact-item" style={styleFrom(item.itemStyle)}>
@@ -55,8 +56,8 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
                       <i className={item.icon} />
                     </span>
                     <div className="[transition:0.3s]" style={styleFrom(item.infoStyle)}>
-                      <h3>{item.heading}</h3>
-                      <div dangerouslySetInnerHTML={{ __html: item.html }} />
+                      <h3 className="mb-[calc(10px*var(--sk-scale,1))] text-[calc(24px*var(--sk-scale,1))] leading-[1.3]">{item.heading}</h3>
+                      <div className="[&_a]:block" dangerouslySetInnerHTML={{ __html: item.html }} />
                     </div>
                   </div>
                 </div>
@@ -65,14 +66,14 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
             <div className="sk-split">
               <div className="sk-half" style={{ alignContent: "center" }}>
                 <div className="max-lg:[margin-bottom:calc(30px_*_var(--sk-scale,_1))]">
-                  <div className="relative [margin-bottom:calc(30px_*_var(--sk-scale,_1))] text-center [margin:calc(35px_*_var(--sk-scale,_1))_0_0] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))] [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))]">
+                  <div className="relative [margin:0_0_calc(30px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))] [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_p]:pr-[calc(25px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:leading-none [&_span]:text-brand">
                     <span>{data.kicker}</span>
                     <h2>{data.pageHeading}</h2>
                     <p>{data.intro}</p>
                   </div>
                   <div className="container [background-color:#2f2f7e] [border-radius:calc(10px_*_var(--sk-scale,_1))] [padding-left:calc(30px_*_var(--sk-scale,_1))] [margin-top:calc(30px_*_var(--sk-scale,_1))] [margin-bottom:calc(30px_*_var(--sk-scale,_1))]">
                     <br />
-                    <h4 className="text-white">{data.hoursHeading}</h4>
+                    <h4 className="mb-[calc(8px*var(--sk-scale,1))] text-[calc(24px*var(--sk-scale,1))] leading-[1.3] text-white">{data.hoursHeading}</h4>
                     {data.hours.map((row) => (
                       <div className="flex flex-wrap" key={row.value + row.labelHtml}>
                         <div className="w-full md:w-2/3">
@@ -88,7 +89,7 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
                     ))}
                     <br />
                   </div>
-                  <ul className="[margin:calc(20px_*_var(--sk-scale,_1))_0_calc(20px_*_var(--sk-scale,_1))] [margin-top:calc(25px_*_var(--sk-scale,_1))] text-right max-md:text-center list-none">
+                  <ul className="m-0 list-none p-0 [&_li]:mr-[calc(4px*var(--sk-scale,1))] [&_li]:inline-block [&_li:last-child]:mr-0 [&_a]:flex [&_a]:flex-col [&_a]:justify-center [&_a]:h-[calc(50px*var(--sk-scale,1))] [&_a]:w-[calc(50px*var(--sk-scale,1))] [&_a]:rounded-full [&_a]:border [&_a]:border-solid [&_a]:border-transparent [&_a]:bg-neutral-50 [&_a]:text-center [&_a]:transition-all [&_a]:duration-300 [&_a:hover]:bg-brand [&_i]:block [&_i]:text-[calc(20px*var(--sk-scale,1))] [&_i]:leading-[0.8] [&_i]:text-navy [&_a:hover_i]:text-white">
                     {data.social.map((item) => (
                       <li key={item.href}>
                         <a href={item.href} target="_blank" rel="noreferrer">
@@ -208,15 +209,15 @@ function ContactForm({ data, locale }: { data: ContactData; locale: Locale }) {
       action={data.alternates[locale] ?? ""}
       onSubmit={handleSubmit}
     >
-      <h3 className="form-title">{data.formTitle}</h3>
-      <div className="sk-form-row flex flex-wrap">
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/2">
+      <h3 className="form-title mb-[calc(8px*var(--sk-scale,1))] text-[calc(28px*var(--sk-scale,1))] leading-[1.3]">{data.formTitle}</h3>
+      <div className="flex flex-wrap mx-[calc(-12px*var(--sk-scale,1))] [&>div]:box-border [&>div]:px-[calc(12px*var(--sk-scale,1))]">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/2">
           <input className="" placeholder={data.placeholders.Name} type="text" id="Name" name="Name" defaultValue="" />
           <span className="text-brand field-validation-valid" data-valmsg-for="Name">
             {fieldErrors.Name}
           </span>
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/2">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/2">
           <input
             className=""
             placeholder={data.placeholders.Surname}
@@ -230,7 +231,7 @@ function ContactForm({ data, locale }: { data: ContactData; locale: Locale }) {
           </span>
           <i className="fal fa-user" />
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/2">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/2">
           <input
             className=""
             placeholder={data.placeholders.Email}
@@ -244,14 +245,14 @@ function ContactForm({ data, locale }: { data: ContactData; locale: Locale }) {
           </span>
           <i className="fal fa-envelope" />
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full md:w-1/2">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full md:w-1/2">
           <input className="" type="tel" id="Phone" name="Phone" defaultValue="" />
           <span className="text-brand field-validation-valid" data-valmsg-for="Phone">
             {fieldErrors.Phone}
           </span>
           <i className="fal fa-phone" />
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full">
           <input
             className=""
             placeholder={data.placeholders.Subject}
@@ -265,7 +266,7 @@ function ContactForm({ data, locale }: { data: ContactData; locale: Locale }) {
           </span>
           <i className="fal fa-line" />
         </div>
-        <div className="mb-[calc(15px*var(--sk-scale,1))] w-full">
+        <div className="mb-[calc(20px*var(--sk-scale,1))] w-full">
           <textarea className="" placeholder={data.placeholders.Message} id="Message" name="Message" defaultValue="" />
           <span className="text-brand field-validation-valid" data-valmsg-for="Message">
             {fieldErrors.Message}
