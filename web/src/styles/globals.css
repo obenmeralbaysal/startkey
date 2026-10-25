@@ -127,6 +127,12 @@
     line-height: 1.8;
   }
 
+  @media (max-width: 767px) {
+    p {
+      font-size: 14px;
+    }
+  }
+
   p:last-child {
     margin-bottom: 0;
   }
@@ -249,6 +255,10 @@
   border-radius: calc(8px * var(--sk-scale, 1));
   overflow: hidden;
   z-index: 0;
+}
+
+.sk-office-map.is-detail {
+  height: 500px;
 }
 
 .sk-office-map .leaflet-control-attribution {
@@ -1895,7 +1905,16 @@ a.btn.style2::after {
 
 @media (max-width: 767px) {
   .sk-agent-page {
-    padding: calc(50px * var(--sk-scale, 1)) 0;
+    padding-top: calc(50px * var(--sk-scale, 1));
+    padding-bottom: calc(50px * var(--sk-scale, 1));
+    padding-right: calc(12px * var(--sk-scale, 1));
+    padding-left: calc(12px * var(--sk-scale, 1));
+  }
+
+  /* Cancel the row gutter so the Konum map keeps the container's 12px side inset (366px at 390). */
+  .sk-office-detail-map {
+    margin-right: calc(-24px * var(--sk-scale, 1));
+    margin-left: calc(-24px * var(--sk-scale, 1));
   }
 
   .sk-agent {

@@ -22,7 +22,17 @@ function escapeHtml(value: string): string {
 }
 
 /** Leaflet map of catalogue offices. Loaded only in the browser. */
-export function OfficeMap({ offices, zoom = 8, label = "Startkey Global" }: { offices: MapOffice[]; zoom?: number; label?: string }) {
+export function OfficeMap({
+  offices,
+  zoom = 8,
+  label = "Startkey Global",
+  className = "",
+}: {
+  offices: MapOffice[];
+  zoom?: number;
+  label?: string;
+  className?: string;
+}) {
   const node = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -75,5 +85,7 @@ export function OfficeMap({ offices, zoom = 8, label = "Startkey Global" }: { of
     };
   }, [offices, zoom]);
 
-  return <div ref={node} className="sk-office-map" role="region" aria-label={label} />;
+  const classes = className === "" ? "sk-office-map" : `sk-office-map ${className}`;
+
+  return <div ref={node} className={classes} role="region" aria-label={label} />;
 }
