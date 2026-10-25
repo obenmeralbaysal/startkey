@@ -40,6 +40,8 @@ type DeskOffice = {
   currency: string;
   latitude?: number | null;
   longitude?: number | null;
+  location_needs_review?: boolean | null;
+  location_note?: string | null;
   consultant_count: number;
   balance: number;
   limits: Record<"portfolios" | "users" | "contacts" | "branches", LimitCell>;
@@ -118,6 +120,9 @@ function OfficeCard({
       <div className="glass-card-head">
         <h3>{office.name}</h3>
         <span className="glass-pill" data-tone={office.presence}>{presenceLabel(office.presence)}</span>
+        {office.location_needs_review ? (
+          <span className="glass-pill" data-tone="hidden" title={office.location_note ?? undefined}>Konum kontrol edilmeli</span>
+        ) : null}
       </div>
       <p className="glass-muted">{presenceText(office.presence)}</p>
       <div className="glass-stats">
