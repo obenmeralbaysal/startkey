@@ -1905,16 +1905,15 @@ a.btn.style2::after {
 
 @media (max-width: 767px) {
   .sk-agent-page {
-    padding-top: calc(50px * var(--sk-scale, 1));
-    padding-bottom: calc(50px * var(--sk-scale, 1));
-    padding-right: calc(12px * var(--sk-scale, 1));
-    padding-left: calc(12px * var(--sk-scale, 1));
+    padding: calc(50px * var(--sk-scale, 1)) 0;
   }
 
-  /* Cancel the row gutter so the Konum map keeps the container's 12px side inset (366px at 390). */
+  /* Container inset is 12px a side, so 366px at a 390px viewport. The row gutter must not pull the map to the screen edge. */
   .sk-office-detail-map {
-    margin-right: calc(-24px * var(--sk-scale, 1));
-    margin-left: calc(-24px * var(--sk-scale, 1));
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    margin-right: auto;
+    margin-left: auto;
   }
 
   .sk-agent {

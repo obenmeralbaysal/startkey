@@ -115,7 +115,7 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
               title={data.mapTitle || undefined}
               width="100%"
               height="500"
-              style={{ border: 0, pointerEvents: "none", height: scaled(500) }}
+              style={{ border: 0, pointerEvents: "none", height: "500px" }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
