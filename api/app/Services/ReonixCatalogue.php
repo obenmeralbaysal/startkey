@@ -480,6 +480,58 @@ class ReonixCatalogue
         ];
     }
 
+    /**
+     * Homepage map pins. Offices without a numeric latitude and longitude are skipped.
+     *
+     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float}>
+     */
+    public function mapOffices(string $locale): array
+    {
+        $rows = $this->collection('offices');
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        $pins = [];
+        $skipped = 0;
+        foreach ($rows as $row) {
+            $latitude = $this->coordinate($row['latitude'] ?? null);
+            $longitude = $this->coordinate($row['longitude'] ?? null);
+            if ($latitude === null || $longitude === null) {
+                $skipped++;
+
+                continue;
+            }
+            $card = $this->officeCard($row, $locale);
+            $pins[] = [
+                'id' => (int) $card['externalId'],
+                'name' => (string) $card['name'],
+                'urlPath' => (string) $card['urlPath'],
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+            ];
+        }
+
+        if ($skipped > 0) {
+            Log::info('Homepage map skipped offices without coordinates.', ['count' => $skipped]);
+        }
+
+        return $pins;
+    }
+
+    private function coordinate(mixed $value): ?float
+    {
+        if (! is_numeric($value)) {
+            return null;
+        }
+        $number = (float) $value;
+        if ($number < -180 || $number > 180 || ($number === 0.0 && trim((string) $value) === '')) {
+            return null;
+        }
+
+        return $number;
+    }
+
     /** @return array<string, mixed>|null */
     private function one(string $path): ?array
     {

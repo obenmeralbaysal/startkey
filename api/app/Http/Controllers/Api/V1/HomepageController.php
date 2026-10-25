@@ -33,6 +33,7 @@ class HomepageController extends Controller
                 'popularCities' => is_array($portfolios)
                     ? $this->citiesFromPortfolios($portfolios, $locale)
                     : $this->popularCities($locale),
+                'offices' => $this->catalogue->mapOffices($locale),
             ],
         ]);
     }

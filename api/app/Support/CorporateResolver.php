@@ -1378,6 +1378,8 @@ class CorporateResolver
     {
         $search = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Keyword') ?? $this->filterScalar($filters, 'SearchText') ?? '')));
         $cityId = $this->filterScalar($filters, 'FilterDTO.CityId');
+        $sort = $this->filterScalar($filters, 'SortingType');
+        $rows = $this->sortCatalogueListings($rows, $sort);
         $items = [];
         foreach ($rows as $row) {
             $title = mb_strtolower((string) ($row['title'] ?? ''));
@@ -1390,8 +1392,43 @@ class CorporateResolver
             $items[] = app(ReonixCatalogue::class)->listingCard($row, $locale);
         }
         $payload = $this->emptyListingList($locale, $path, $filters);
+        $payload = $this->pageRemote($payload, $items, $pageIndex, 12, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+        $payload['foundLabel'] = str_replace('{count}', (string) $payload['pagination']['total'], $this->listingFoundTemplate($locale));
 
-        return $this->pageRemote($payload, $items, $pageIndex, 12, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+        return $payload;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rows
+     * @return list<array<string, mixed>>
+     */
+    private function sortCatalogueListings(array $rows, ?string $sort): array
+    {
+        if ($sort === null || $sort === '') {
+            return $rows;
+        }
+        $price = fn (array $row): float => (float) ($row['price'] ?? 0);
+        $date = function (array $row): int {
+            foreach (['updated_at', 'created_at', 'published_at'] as $key) {
+                $stamp = strtotime((string) ($row[$key] ?? ''));
+                if ($stamp !== false) {
+                    return $stamp;
+                }
+            }
+
+            return (int) ($row['id'] ?? 0);
+        };
+        usort($rows, function (array $left, array $right) use ($sort, $price, $date): int {
+            return match ($sort) {
+                '1' => $price($left) <=> $price($right),
+                '2' => $price($right) <=> $price($left),
+                '3' => $date($left) <=> $date($right),
+                '4' => $date($right) <=> $date($left),
+                default => 0,
+            };
+        });
+
+        return $rows;
     }
 
     /** @param  array<string, mixed>  $row */
@@ -1426,8 +1463,9 @@ class CorporateResolver
             $items[] = app(ReonixCatalogue::class)->consultantCard($row, $locale);
         }
         $payload = $this->emptyConsultantList($locale, $path, $filters);
+        $payload = $this->pageRemote($payload, $items, $pageIndex, 18, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
 
-        return $this->pageRemote($payload, $items, $pageIndex, 18, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
+        return $this->withConsultantHeading($payload, $locale);
     }
 
     /**
@@ -1563,6 +1601,195 @@ class CorporateResolver
         return $this->catalogueEmptyLabel('offices', $locale);
     }
 
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    private function withConsultantHeading(array $payload, string $locale): array
+    {
+        $defaults = $this->consultantListDefaults($locale);
+        $heading = $defaults['heading'];
+        $payload['heading'] = $heading;
+        $payload['breadcrumb'] = [
+            'heading' => $heading,
+            'trail' => [
+                ['href' => $defaults['homeHref'], 'label' => $defaults['homeLabel']],
+                ['href' => null, 'label' => $heading],
+            ],
+        ];
+        $meta = is_array($payload['meta'] ?? null) ? $payload['meta'] : [];
+        $meta['title'] = $locale === 'tr' ? 'Startkey Türkiye | '.$heading : '| '.$heading;
+        $payload['meta'] = $meta;
+        $total = $payload['pagination']['total'] ?? null;
+        if ($total !== null && ($payload['hasResults'] ?? false)) {
+            $payload['foundLabel'] = str_replace('{count}', (string) $total, $defaults['foundTemplate']);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @return array{heading: string, homeHref: string, homeLabel: string, foundTemplate: string}
+     */
+    private function consultantListDefaults(string $locale): array
+    {
+        return match ($locale) {
+            'en' => [
+                'heading' => 'Our Consultants',
+                'homeHref' => '/en',
+                'homeLabel' => 'Home',
+                'foundTemplate' => '{count} Consultant Found',
+            ],
+            'de' => [
+                'heading' => 'Unsere Berater',
+                'homeHref' => '/de',
+                'homeLabel' => 'Startseite',
+                'foundTemplate' => '{count} Berater gefunden',
+            ],
+            default => [
+                'heading' => 'Danışmanlarımız',
+                'homeHref' => '/',
+                'homeLabel' => 'Anasayfa',
+                'foundTemplate' => '{count} Danışman Bulundu',
+            ],
+        };
+    }
+
+    private function listingFoundTemplate(string $locale): string
+    {
+        return match ($locale) {
+            'en' => '{count} Ad Found',
+            'de' => '{count} Anzeige gefunden',
+            default => '{count} İlan Bulundu',
+        };
+    }
+
+    /**
+     * Visible filter chrome from the reference portfolio list.
+     *
+     * @return array{labels: array<string, string>, placeholders: array<string, string>, adTypes: list<array{value: string, label: string}>, sortOptions: list<array{value: string, label: string}>, bindUrls: array<string, string>}
+     */
+    private function listingFilterChrome(string $locale): array
+    {
+        $labels = match ($locale) {
+            'en' => [
+                'FilterDTO_AdTypeId' => 'Property Type',
+                'FilterDTO_ProcessTypeId' => 'Property Status',
+                'FilterDTO_MinPrice' => 'Minimum Price',
+                'FilterDTO_MaxPrice' => 'Maximum Price',
+                'FilterDTO_CurrencyId' => 'Currency Type',
+                'FilterDTO_MinCleanArea' => 'Minimum Gross Area m2',
+                'FilterDTO_MaxCleanArea' => 'Maximum Gross Area m2',
+                'FilterDTO_CountryId' => 'Country',
+                'FilterDTO_CityId' => 'City',
+                'FilterDTO_CountyIds' => 'County',
+                'FilterDTO_DistrictIds' => 'District',
+                'FilterDTO_OfficeId' => 'Office',
+                'FilterDTO_UserId' => 'Real Estate Agent',
+                'FilterDTO_HousePropertyTypeId' => 'Konut Tipi',
+                'FilterDTO_CommercialPropertyTypeId' => 'Ticari Tipi',
+                'FilterDTO_LandPropertyTypeId' => 'Arsa Tipi',
+            ],
+            'de' => [
+                'FilterDTO_AdTypeId' => 'Portfolio -Typ',
+                'FilterDTO_ProcessTypeId' => 'Portfoliostatus',
+                'FilterDTO_MinPrice' => 'Minimaler Preis',
+                'FilterDTO_MaxPrice' => 'Maximaler Preis',
+                'FilterDTO_CurrencyId' => 'Währungseinheit',
+                'FilterDTO_MinCleanArea' => 'Minimales Brutto m2',
+                'FilterDTO_MaxCleanArea' => 'Maximales Brutto m2',
+                'FilterDTO_CountryId' => 'Land',
+                'FilterDTO_CityId' => 'Stadt',
+                'FilterDTO_CountyIds' => 'Bezirk',
+                'FilterDTO_DistrictIds' => 'Mahalle / Distrikt',
+                'FilterDTO_OfficeId' => 'Büro',
+                'FilterDTO_UserId' => 'Immobilienmakler',
+                'FilterDTO_HousePropertyTypeId' => 'Konut Tipi',
+                'FilterDTO_CommercialPropertyTypeId' => 'Ticari Tipi',
+                'FilterDTO_LandPropertyTypeId' => 'Arsa Tipi',
+            ],
+            default => [
+                'FilterDTO_AdTypeId' => 'Portföy Tipi',
+                'FilterDTO_ProcessTypeId' => 'Portföy Durumu',
+                'FilterDTO_MinPrice' => 'Min. Fiyat',
+                'FilterDTO_MaxPrice' => 'Max. Fiyat',
+                'FilterDTO_CurrencyId' => 'Para Birimi',
+                'FilterDTO_MinCleanArea' => 'Min. Brüt m2',
+                'FilterDTO_MaxCleanArea' => 'Max. Brüt m2',
+                'FilterDTO_CountryId' => 'Ülke',
+                'FilterDTO_CityId' => 'İl',
+                'FilterDTO_CountyIds' => 'İlçe',
+                'FilterDTO_DistrictIds' => 'Mahalle / Semt',
+                'FilterDTO_OfficeId' => 'Ofis',
+                'FilterDTO_UserId' => 'Gayrimenkul Danışmanı',
+                'FilterDTO_HousePropertyTypeId' => 'Konut Tipi',
+                'FilterDTO_CommercialPropertyTypeId' => 'Ticari Tipi',
+                'FilterDTO_LandPropertyTypeId' => 'Arsa Tipi',
+            ],
+        };
+        $choose = match ($locale) {
+            'en' => 'Select',
+            'de' => 'Wählen',
+            default => 'Seçiniz',
+        };
+        $sort = match ($locale) {
+            'en' => ['Select', 'Descending by price', 'Increased by price', 'Descending by date', 'Increased by date'],
+            'de' => ['Wählen', 'Preis sinkt', 'Preis erhöht', 'Geschichte abnehmend', 'Geschichte zunimmt'],
+            default => ['Seçiniz', 'Fiyat Azalan', 'Fiyat Artan', 'Tarih Azalan', 'Tarih Artan'],
+        };
+
+        return [
+            'labels' => $labels,
+            'placeholders' => match ($locale) {
+                'en' => [
+                    'keyword' => 'Enter Portfolio Name or ID',
+                    'minPrice' => 'Min',
+                    'maxPrice' => 'Max',
+                    'minArea' => 'Min',
+                    'maxArea' => 'Max',
+                ],
+                'de' => [
+                    'keyword' => 'Geben Sie den Portfolionamen oder die ID ein',
+                    'minPrice' => 'Min',
+                    'maxPrice' => 'Max',
+                    'minArea' => 'Min',
+                    'maxArea' => 'Max',
+                ],
+                default => [
+                    'keyword' => 'Portföy Adı Veya İd Giriniz',
+                    'minPrice' => 'Min',
+                    'maxPrice' => 'Max',
+                    'minArea' => 'Min',
+                    'maxArea' => 'Max',
+                ],
+            },
+            'adTypes' => [
+                ['value' => '', 'label' => $choose],
+                ['value' => '1', 'label' => 'Arsa'],
+                ['value' => '2', 'label' => 'Konut'],
+                ['value' => '4', 'label' => 'Ticari'],
+                ['value' => '6', 'label' => 'Turistik Tesis'],
+            ],
+            'sortOptions' => [
+                ['value' => '', 'label' => $sort[0]],
+                ['value' => '2', 'label' => $sort[1]],
+                ['value' => '1', 'label' => $sort[2]],
+                ['value' => '4', 'label' => $sort[3]],
+                ['value' => '3', 'label' => $sort[4]],
+            ],
+            'bindUrls' => [
+                'processTypes' => '/'.$locale.'/lookup/ProcessTypes',
+                'currencies' => '/'.$locale.'/lookup/Currencies',
+                'countries' => '/'.$locale.'/lookup/EnteredCountries',
+                'cities' => '/'.$locale.'/lookup/EnteredCitiesByCountryId',
+                'counties' => '/'.$locale.'/lookup/Counties',
+                'districts' => '/'.$locale.'/lookup/Districts',
+                'offices' => '/'.$locale.'/Lookup/GetAllOffices',
+                'users' => '/'.$locale.'/lookup/Users',
+            ],
+        ];
+    }
+
     private function catalogueEmptyLabel(string $group, string $locale): string
     {
         $key = 'messages.'.$group.'.empty';
@@ -1584,6 +1811,7 @@ class CorporateResolver
             default => 'Portföylerimiz',
         };
         $title = $locale === 'tr' ? 'Startkey Türkiye | '.$heading : '| '.$heading;
+        $chrome = $this->listingFilterChrome($locale);
 
         return [
             'kind' => 'listing-list',
@@ -1607,11 +1835,11 @@ class CorporateResolver
                     'de' => 'Suchen',
                     default => 'Ara',
                 },
-                'labels' => [],
-                'placeholders' => [],
-                'adTypes' => [],
-                'sortOptions' => [],
-                'bindUrls' => [],
+                'labels' => $chrome['labels'],
+                'placeholders' => $chrome['placeholders'],
+                'adTypes' => $chrome['adTypes'],
+                'sortOptions' => $chrome['sortOptions'],
+                'bindUrls' => $chrome['bindUrls'],
                 'values' => $this->listingFilterValues($filters),
             ],
             'foundLabel' => '',
@@ -1637,11 +1865,8 @@ class CorporateResolver
     private function emptyConsultantList(string $locale, string $path, array $filters): array
     {
         $canonical = $this->cataloguePath('consultants', $locale, $path);
-        $heading = match ($locale) {
-            'en' => 'Our Professionals',
-            'de' => 'Unsere Fachleute',
-            default => 'Profesyonellerimiz',
-        };
+        $defaults = $this->consultantListDefaults($locale);
+        $heading = $defaults['heading'];
         $keys = ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId'];
         $values = [];
         foreach ($keys as $key) {
@@ -1738,7 +1963,7 @@ class CorporateResolver
 
         $list = CmsListPage::query()->where('type', 'consultant')->where('locale', $locale)->first();
         if ($list === null) {
-            return $this->emptyConsultantList($locale, $path, $filters);
+            return $this->withConsultantHeading($this->emptyConsultantList($locale, $path, $filters), $locale);
         }
 
         $perPage = max(1, $list->per_page);
@@ -1786,7 +2011,7 @@ class CorporateResolver
         );
         $payload['emptyLabel'] = $this->catalogueEmptyLabel('consultants', $locale);
 
-        return $payload;
+        return $this->withConsultantHeading($payload, $locale);
     }
 
     /**
