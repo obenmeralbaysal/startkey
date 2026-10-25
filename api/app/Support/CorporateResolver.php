@@ -1763,7 +1763,9 @@ class CorporateResolver
             'tabs' => $detail['tabs'] ?? [],
             'teamGroups' => $groups,
             'listings' => $this->listingCardsByIds($detail['listingIds'] ?? [], $locale),
-            'map' => $detail['map'] ?? [],
+            // Office pins come only from Reonix coordinates; seeded pages carry no map.
+            'pin' => null,
+            'map' => [],
             'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->name, 'trail' => []],
             'meta' => $translation->meta ?? [],
             'alternates' => $this->officeAlternates($office->id),
