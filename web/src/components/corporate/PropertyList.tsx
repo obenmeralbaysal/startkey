@@ -25,47 +25,47 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
               </div>
             </div>
 
-            {data.hasResults ? (
-              <div className="sk-two-thirds">
-                <div className="flex flex-wrap items-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
-                  <div className="w-full md:w-2/3">
-                    <div className="max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
-                      <p>
-                        <i className="ri-building-2-fill" /> {data.foundLabel}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/3">
-                    <div className="block">
-                      <select className="select single-select" id="sorting-type-select" name="SortingType" defaultValue={sorting}>
-                        {data.filter.sortOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+            <div className="sk-two-thirds">
+              <div className="flex flex-wrap items-center [margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
+                <div className="w-full md:w-2/3">
+                  <div className="max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))]">
+                    <p>
+                      <i className="ri-building-2-fill" /> {data.foundLabel}
+                    </p>
                   </div>
                 </div>
-                <div className="sk-split">
-                  {data.items.map((item) => (
-                    <div className="sk-half" key={item.externalId}>
-                      <ListingCard item={item} />
-                    </div>
-                  ))}
+                <div className="w-full md:w-1/3">
+                  <div className="block">
+                    <select className="select single-select" id="sorting-type-select" name="SortingType" defaultValue={sorting}>
+                      {data.filter.sortOptions.map((option) => (
+                        <option key={option.value || "default"} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <Pagination
-                  pageIndex={data.pagination.pageIndex}
-                  totalPages={data.pagination.totalPages}
-                  basePath={data.pagination.basePath}
-                  searchQuery={data.pagination.searchQuery}
-                />
               </div>
-            ) : (
-              <div className="sk-two-thirds">
+              {data.hasResults ? (
+                <>
+                  <div className="sk-split">
+                    {data.items.map((item) => (
+                      <div className="sk-half" key={item.externalId}>
+                        <ListingCard item={item} />
+                      </div>
+                    ))}
+                  </div>
+                  <Pagination
+                    pageIndex={data.pagination.pageIndex}
+                    totalPages={data.pagination.totalPages}
+                    basePath={data.pagination.basePath}
+                    searchQuery={data.pagination.searchQuery}
+                  />
+                </>
+              ) : (
                 <p className="text-center">{data.emptyLabel}</p>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -79,7 +79,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
   const bind = filter.bindUrls;
 
   return (
-    <form method="get" role="form" id="prop-filter" className="block" action={filter.action}>
+    <form method="get" role="form" id="prop-filter" className="filter-widget block" action={filter.action}>
       <input type="hidden" id="SortingType" name="SortingType" defaultValue={scalar(values["SortingType"])} />
 
       <div className="form-group">

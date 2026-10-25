@@ -69,7 +69,7 @@
 
 @media (min-width: 1400px) {
   .container {
-    max-width: 1320px;
+    max-width: 1056px;
   }
 }
 
@@ -98,6 +98,13 @@
     font-family: var(--font-sans);
     font-size: calc(16px * var(--sk-scale, 1));
     line-height: 1.8;
+  }
+
+  @media (max-width: 767px) {
+    body,
+    body p {
+      line-height: 1.5;
+    }
   }
 
   h1,
@@ -236,6 +243,114 @@
   }
 }
 
+.sk-office-map {
+  height: calc(480px * var(--sk-scale, 1));
+  min-height: 280px;
+  border-radius: calc(8px * var(--sk-scale, 1));
+  overflow: hidden;
+  z-index: 0;
+}
+
+.sk-office-map .leaflet-control-attribution {
+  margin: 0;
+  padding: 0 4px;
+  background: rgba(255, 255, 255, 0.55);
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.sk-seminar {
+  box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+  .sk-seminar {
+    height: 65px;
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  .sk-seminar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 65px;
+    font-size: 15px;
+    line-height: 1.2;
+  }
+}
+
+.back-to-top {
+  display: none;
+  position: fixed;
+  right: calc(20px * var(--sk-scale, 1));
+  bottom: calc(230px * var(--sk-scale, 1));
+  z-index: 999;
+  width: calc(45px * var(--sk-scale, 1));
+  height: calc(45px * var(--sk-scale, 1));
+  border-radius: calc(5px * var(--sk-scale, 1));
+  background: #ec3323;
+  box-shadow: 0 calc(5px * var(--sk-scale, 1)) calc(5px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-size: calc(24px * var(--sk-scale, 1));
+  line-height: calc(42px * var(--sk-scale, 1));
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+}
+
+.back-to-top.open {
+  bottom: calc(30px * var(--sk-scale, 1));
+}
+
+.back-to-top.bounce {
+  animation: float 1.5s ease-in-out infinite;
+}
+
+.back-to-top i {
+  color: #fff;
+}
+
+.iti {
+  width: 100%;
+}
+
+.contact-forms .form-btn {
+  text-align: right;
+}
+
+body[data-sk-http="404"] .sk-footer-map {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-header,
+  .sk-header.sticky,
+  .back-to-top,
+  .back-to-top.bounce,
+  .sk-btn,
+  a.btn.style1,
+  a.btn.style2,
+  .agent-card,
+  .agent-card::after,
+  .contact-item,
+  .contact-icon,
+  .contact-icon i,
+  .sk-nav > li > a {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  [data-aos] {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 @keyframes moveWatermark {
   from {
     left: -100%;
@@ -263,7 +378,7 @@ a.btn.style2 {
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
-  transition: color 0.7s ease-in-out;
+  transition: all 0.7s ease-in-out;
 }
 
 .sk-btn::before,

@@ -562,6 +562,37 @@
   margin-left: calc(15px * var(--sk-scale, 1));
 }
 
+.agent-card {
+  position: relative;
+  margin-bottom: calc(25px * var(--sk-scale, 1));
+  border: 1px solid transparent;
+  border-radius: calc(5px * var(--sk-scale, 1));
+  box-shadow: 0 calc(6px * var(--sk-scale, 1)) calc(24px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.07);
+  transition: all 0.4s ease;
+}
+
+.agent-card::after {
+  position: absolute;
+  bottom: calc(-2px * var(--sk-scale, 1));
+  left: 50%;
+  width: 0;
+  height: calc(3px * var(--sk-scale, 1));
+  border-radius: 0 0 calc(5px * var(--sk-scale, 1)) calc(5px * var(--sk-scale, 1));
+  background: #002172;
+  content: "";
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease;
+}
+
+.agent-card:hover {
+  box-shadow: none;
+  transform: translateY(calc(-5px * var(--sk-scale, 1)));
+}
+
+.agent-card:hover::after {
+  width: 85%;
+}
+
 .agent-card .agent-img,
 .agent-details-wrap .agent-img {
   overflow: hidden;
@@ -1011,6 +1042,7 @@ article ol li {
   padding: calc(25px * var(--sk-scale, 1));
   text-align: center;
   box-shadow: 0 0 calc(20px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.09);
+  transition: all 0.4s ease;
 }
 
 .contact-icon {
@@ -1021,9 +1053,21 @@ article ol li {
   height: calc(80px * var(--sk-scale, 1));
   margin: calc(-70px * var(--sk-scale, 1)) auto calc(20px * var(--sk-scale, 1));
   border-radius: 50%;
-  background: #002172;
+  background: #ec3323;
   color: #fff;
   box-shadow: 0 calc(5px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+
+.contact-icon i {
+  color: #fff;
+  font-size: calc(36px * var(--sk-scale, 1));
+  line-height: 0.8;
+  transition: all 0.34s ease;
+}
+
+.contact-item:hover .contact-icon {
+  background: #002172;
 }
 
 .contact-map iframe {

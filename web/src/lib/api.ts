@@ -30,10 +30,19 @@ export interface ApiPopularCity {
   urlPath: string;
 }
 
+export interface MapOffice {
+  id: number;
+  name: string;
+  urlPath: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface HomepageData {
   stats: ApiStat[];
   featuredProperties: ApiProperty[];
   popularCities: ApiPopularCity[];
+  offices: MapOffice[];
 }
 
 /**
@@ -52,5 +61,5 @@ export async function fetchHomepageData(locale: Locale): Promise<HomepageData> {
   }
 
   const payload = (await response.json()) as { data: HomepageData };
-  return payload.data;
+  return { ...payload.data, offices: payload.data.offices ?? [] };
 }

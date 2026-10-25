@@ -67,7 +67,7 @@ export function Footer({ content }: { content: HomepageContent }) {
             ))}
 
             <div className="w-full xl:w-1/4 lg:w-1/2 md:w-1/2 sm:w-1/2">
-              <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
+              <div className="sk-footer-map [margin-bottom:calc(25px_*_var(--sk-scale,_1))]">
                 <a
                   href={footer.mapLink}
                   target="_blank"

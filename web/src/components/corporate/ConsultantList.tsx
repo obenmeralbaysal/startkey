@@ -22,7 +22,7 @@ export function ConsultantList({ data }: { data: Extract<CorporatePayload, { kin
               </div>
               <div className="flex flex-wrap justify-center">
                 {data.items.map((item) => (
-                  <div className="w-full xl:w-1/3 lg:w-1/2 md:w-1/2" key={item.externalId}>
+                  <div className="box-border w-full px-[calc(12px*var(--sk-scale,1))] md:w-1/2 xl:w-1/3" key={item.externalId}>
                     <DirectoryCard item={item} />
                   </div>
                 ))}
