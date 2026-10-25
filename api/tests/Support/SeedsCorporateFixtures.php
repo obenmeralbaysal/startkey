@@ -2,8 +2,6 @@
 
 namespace Tests\Support;
 
-use App\Models\CmsArticle;
-use App\Models\CmsChampionGroup;
 use App\Models\CmsListPage;
 use App\Models\CmsPage;
 use App\Models\CmsPerson;
@@ -12,6 +10,9 @@ trait SeedsCorporateFixtures
 {
     protected function seedCorporateFixtures(): void
     {
+        FakePortalContent::reset();
+        FakePortalContent::install();
+
         $about = CmsPage::query()->create(['key' => 'about', 'published' => true, 'position' => 0]);
         $about->translations()->createMany([
             [
@@ -273,13 +274,11 @@ trait SeedsCorporateFixtures
         $this->listPage('people', 'en', '/en/people', '/en/people', 13, '', 'Management');
         $this->listPage('people', 'de', '/de/people', '/de/people', 13, '', 'Management');
 
-        $group = CmsChampionGroup::query()->create(['published' => true, 'position' => 0]);
-        $group->translations()->createMany([
-            ['locale' => 'tr', 'kicker' => 'Startkey Türkiye', 'title' => 'Ağustos Ayı Şampiyonları'],
-            ['locale' => 'en', 'kicker' => 'Startkey Turkiye', 'title' => 'August Champions'],
-            ['locale' => 'de', 'kicker' => 'Startkey Turkiye', 'title' => 'August-Champions'],
-        ]);
-        $group->photos()->create(['image' => '/media/content/champion.jpg', 'position' => 0]);
+        FakePortalContent::addChampion(0, [
+            'tr' => ['kicker' => 'Startkey Türkiye', 'title' => 'Ağustos Ayı Şampiyonları'],
+            'en' => ['kicker' => 'Startkey Turkiye', 'title' => 'August Champions'],
+            'de' => ['kicker' => 'Startkey Turkiye', 'title' => 'August-Champions'],
+        ], ['/media/content/champion.jpg']);
         $this->listPage('champions', 'tr', '/tr/sampiyonlar', '/tr/sampiyonlar', 12, '', 'Şampiyonlarımız');
         $this->listPage('champions', 'en', '/en/champions', '/en/champions', 12, '', 'Our Champions');
         $this->listPage('champions', 'de', '/de/champions', '/de/champions', 12, '', 'Unsere Champions');
@@ -287,32 +286,7 @@ trait SeedsCorporateFixtures
 
     private function article(string $type, int $externalId, int $position, array $translations): void
     {
-        $article = CmsArticle::query()->create([
-            'type' => $type,
-            'external_id' => $externalId,
-            'published' => true,
-            'position' => $position,
-        ]);
-
-        foreach ($translations as $locale => $translation) {
-            $article->translations()->create([
-                'locale' => $locale,
-                'url_path' => $translation['url_path'],
-                'title' => $translation['title'],
-                'date_label' => $translation['date_label'],
-                'category' => $translation['category'],
-                'body_html' => $translation['body_html'],
-                'image' => '/media/content/article.jpg',
-                'image_webp' => '/media/content/article.webp',
-                'list_image' => '/media/content/article-416x500.jpg',
-                'list_image_webp' => '/media/content/article-416x500.webp',
-                'list_width' => 416,
-                'list_height' => 500,
-                'share_label' => $translation['share_label'],
-                'breadcrumb' => ['heading' => $translation['title'], 'trail' => []],
-                'meta' => ['title' => $translation['title']],
-            ]);
-        }
+        FakePortalContent::addArticle($type, $externalId, $position, $translations);
     }
 
     private function listPage(
@@ -325,6 +299,12 @@ trait SeedsCorporateFixtures
         string $heading,
         ?array $sidebar = null,
     ): void {
+        if (in_array($type, ['news', 'announcement', 'blog', 'champions'], true)) {
+            FakePortalContent::addList($type, $locale, $urlPath, $pagerBase, $perPage, $continueLabel, $heading, $sidebar);
+
+            return;
+        }
+
         CmsListPage::query()->create([
             'type' => $type,
             'locale' => $locale,

@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\CmsArticle;
-use App\Models\CmsChampionGroup;
 use App\Models\CmsListPage;
 use App\Models\CmsPage;
 use App\Models\CmsPerson;
@@ -13,11 +11,9 @@ use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 /**
- * Loads database/data/corporate-seed.json produced by scripts/crawl-corporate.py.
+ * Loads pages and people from database/data/corporate-seed.json.
  *
- * The rows back the shared Kurumsal templates. A future Superadmin will write the
- * same tables; until then the public site serves this captured snapshot (see
- * docs/TECHNICAL_DEBT.md). Re-running updates existing rows instead of duplicating.
+ * News, announcements, blog posts and champion groups are served from Reonix.
  */
 class CorporateDataSeeder extends Seeder
 {
@@ -34,8 +30,6 @@ class CorporateDataSeeder extends Seeder
         DB::transaction(function () use ($data) {
             $this->seedPages($data['pages'] ?? []);
             $this->seedPeople($data['people'] ?? [], $data['peopleUi'] ?? []);
-            $this->seedChampions($data['championGroups'] ?? [], $data['championsUi'] ?? []);
-            $this->seedArticles($data['articles'] ?? [], $data['listUi'] ?? []);
         });
     }
 
@@ -104,97 +98,6 @@ class CorporateDataSeeder extends Seeder
 
         foreach ($ui as $locale => $page) {
             $this->upsertListPage('people', $locale, $page, 13, '');
-        }
-    }
-
-    private function seedChampions(array $groupsByLang, array $ui): void
-    {
-        $canonical = $groupsByLang['tr'] ?? reset($groupsByLang) ?: [];
-
-        foreach ($canonical as $index => $group) {
-            $record = CmsChampionGroup::updateOrCreate(
-                ['position' => $index],
-                ['published' => true],
-            );
-
-            foreach ($groupsByLang as $locale => $groups) {
-                $local = $groups[$index] ?? ['kicker' => '', 'title' => ''];
-                $record->translations()->updateOrCreate(
-                    ['locale' => $locale],
-                    [
-                        'kicker' => $local['kicker'] ?? '',
-                        'title' => $local['title'] ?? '',
-                    ],
-                );
-            }
-
-            $record->photos()->delete();
-            foreach ($group['photos'] ?? [] as $photoIndex => $image) {
-                $record->photos()->create([
-                    'image' => $this->media($image),
-                    'position' => $photoIndex,
-                ]);
-            }
-        }
-
-        foreach ($ui as $locale => $page) {
-            $this->upsertListPage('champions', $locale, $page, 12, '');
-        }
-    }
-
-    private function seedArticles(array $articles, array $listUi): void
-    {
-        foreach ($articles as $type => $rows) {
-            foreach ($rows as $index => $row) {
-                $article = CmsArticle::updateOrCreate(
-                    ['type' => $type, 'external_id' => $row['externalId']],
-                    ['published' => true, 'position' => $index],
-                );
-
-                foreach ($row['translations'] as $locale => $translation) {
-                    $article->translations()->updateOrCreate(
-                        ['locale' => $locale],
-                        [
-                            'url_path' => $translation['urlPath'],
-                            'title' => $translation['title'] ?? '',
-                            'date_label' => $translation['dateLabel'] ?? '',
-                            'category' => $translation['category'] ?? '',
-                            'body_html' => ReferenceHtml::rewrite($translation['bodyHtml'] ?? ''),
-                            'image' => $this->media($translation['image'] ?? ''),
-                            'image_webp' => $this->media($translation['imageWebp'] ?? '', webp: true),
-                            'list_image' => $this->media(
-                                $translation['listImage'] ?? '',
-                                $translation['listWidth'] ?? null,
-                                $translation['listHeight'] ?? null,
-                            ),
-                            'list_image_webp' => $this->media(
-                                $translation['listImageWebp'] ?? '',
-                                $translation['listWidth'] ?? null,
-                                $translation['listHeight'] ?? null,
-                                true,
-                            ),
-                            'list_width' => $translation['listWidth'] ?? null,
-                            'list_height' => $translation['listHeight'] ?? null,
-                            'share_label' => $translation['shareLabel'] ?? '',
-                            'breadcrumb' => $this->rewriteDeep($translation['breadcrumb'] ?? []),
-                            'meta' => $this->rewriteDeep($translation['meta'] ?? []),
-                        ],
-                    );
-                }
-            }
-        }
-
-        foreach ($listUi as $type => $locales) {
-            foreach ($locales as $locale => $page) {
-                $this->upsertListPage(
-                    $type,
-                    $locale,
-                    $page,
-                    $page['perPage'] ?? 9,
-                    $page['continueLabel'] ?? '',
-                    $this->rewriteDeep($page['sidebar'] ?? null),
-                );
-            }
         }
     }
 

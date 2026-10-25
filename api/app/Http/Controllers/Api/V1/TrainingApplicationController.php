@@ -7,6 +7,7 @@ use App\Http\Requests\TrainingApplicationRequest;
 use App\Models\CmsTraining;
 use App\Models\TrainingApplication;
 use App\Services\CaptchaVerifier;
+use App\Services\ReonixContent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
@@ -22,14 +23,15 @@ class TrainingApplicationController extends Controller
      */
     public function store(TrainingApplicationRequest $request, int $externalId): JsonResponse
     {
-        $training = CmsTraining::query()->published()->where('external_id', $externalId)->first();
-        if ($training === null) {
+        $gate = app(ReonixContent::class)->trainingGate($externalId);
+        if ($gate === null || ! $gate['published'] || $gate['group'] !== 'ongoing') {
             return response()->json(['message' => 'Not Found'], 404);
         }
 
-        if ($training->group !== 'ongoing') {
-            return response()->json(['message' => 'Not Found'], 404);
-        }
+        $training = CmsTraining::query()->updateOrCreate(
+            ['external_id' => $externalId],
+            ['group' => $gate['group'], 'published' => true, 'position' => 0],
+        );
 
         if (! $this->captcha->verify($request->input('captcha_token'), $request->ip(), null, 'training')) {
             $message = __('messages.captcha_failed');
