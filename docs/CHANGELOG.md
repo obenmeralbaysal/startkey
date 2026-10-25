@@ -1,3 +1,7 @@
+## [2026-10-25]
+
+- **[Backend]**: Haber, duyuru, blog, eğitim ve şampiyon sayfaları artık yerel seed yerine Reonix portalından okunur. Reonix yanıt vermezse bu sayfalar boş kalır; yerel `cms_articles`, `cms_trainings` ve şampiyon tablolarına düşülmez. Eğitim başvurusu, formun yabancı anahtarı için yayındaki eğitimin gölge satırını tutar.
+
 ## [2026-10-24]
 
 - **[UI]**: Telefon ve tablet menüsü referanstaki gibi soldan kayarak açılır. Kurumsal, Startkey ve Akademi alt menüleri ok ya da başlığa dokununca açılır; aynı anda tek alt menü açık kalır. Menüde logo, tam genişlik başvuru ve Portal düğmeleri, açık sayfanın vurgusu var; dil seçici menünün dışında tek kalır. Menü açıkken sayfa kaymaz; Escape ile kapanır, odak menü içinde kalır ve kapanınca hamburgere döner. Masaüstü alt menüleri klavye odağıyla da açılır.

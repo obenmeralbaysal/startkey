@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\CmsTraining;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\FakePortalContent;
 use Tests\Support\SeedsAcademyFixtures;
 use Tests\TestCase;
 
@@ -75,7 +75,7 @@ class AcademyApiTest extends TestCase
 
     public function test_archived_trainings_leave_the_list_but_keep_their_detail_page(): void
     {
-        CmsTraining::query()->where('external_id', 380)->update(['group' => 'archived']);
+        FakePortalContent::setTrainingGroup(380, 'archived');
 
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitimlerimiz')
             ->assertOk()
@@ -89,9 +89,7 @@ class AcademyApiTest extends TestCase
 
     public function test_paid_training_payment_block_is_only_sent_with_the_form(): void
     {
-        $translation = CmsTraining::query()->where('external_id', 385)->firstOrFail()
-            ->translations()->where('locale', 'tr')->firstOrFail();
-        $translation->update(['form' => [...$translation->form, 'paymentHtml' => '<h4>Ödeme Bilgileri</h4>']]);
+        FakePortalContent::setTrainingPaymentHtml(385, 'tr', '<h4>Ödeme Bilgileri</h4>');
 
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitim-detay/385/unutuyoruz-neden')
             ->assertOk()

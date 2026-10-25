@@ -2,33 +2,22 @@
 
 namespace Tests\Support;
 
-use App\Models\CmsListPage;
 use App\Models\CmsPage;
-use App\Models\CmsTraining;
 
 trait SeedsAcademyFixtures
 {
     protected function seedAcademyFixtures(): void
     {
-        $ongoing = CmsTraining::query()->create([
-            'external_id' => 385,
-            'group' => 'ongoing',
-            'published' => true,
-            'position' => 0,
-        ]);
-        $ongoing->translations()->createMany([
+        FakePortalContent::reset();
+        FakePortalContent::install();
+
+        FakePortalContent::addTraining(385, 'ongoing', 0, [
             $this->trainingTranslation('tr', '/tr/egitim-detay/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Devam'),
             $this->trainingTranslation('en', '/en/education-detail/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Continuing'),
             $this->trainingTranslation('de', '/de/education-detail/385/unutuyoruz-neden', 'Unutuyoruz, Neden?', 'Fortlaufend'),
         ]);
 
-        $completed = CmsTraining::query()->create([
-            'external_id' => 380,
-            'group' => 'completed',
-            'published' => true,
-            'position' => 1,
-        ]);
-        $completed->translations()->createMany([
+        FakePortalContent::addTraining(380, 'completed', 1, [
             $this->trainingTranslation(
                 'tr',
                 '/tr/egitim-detay/380/pikselden-portfoye',
@@ -67,23 +56,20 @@ trait SeedsAcademyFixtures
             $headings = ['tr' => 'Eğitimlerimiz', 'en' => 'Our Educations', 'de' => 'Unsere Schulungen'];
             $ongoingHeadings = ['tr' => 'Devam Eden Eğitimler', 'en' => 'Continuing Trainings', 'de' => 'Fortlaufende Schulungen'];
             $completedHeadings = ['tr' => 'Tamamlanan Eğitimler', 'en' => 'Completed Trainings', 'de' => 'Abgeschlossene Schulungen'];
-            CmsListPage::query()->create([
-                'type' => 'training',
-                'locale' => $locale,
-                'url_path' => $paths[$locale],
-                'pager_base' => $paths[$locale],
-                'per_page' => 100,
-                'continue_label' => 'Detay',
-                'heading' => $headings[$locale],
-                'breadcrumb' => ['heading' => $headings[$locale], 'trail' => []],
-                'meta' => ['title' => $headings[$locale].' | Startkey'],
-                'sidebar' => [
-                    'sections' => [
-                        ['group' => 'ongoing', 'heading' => $ongoingHeadings[$locale], 'headingStyle' => 'margin-bottom:20px;', 'sectionStyle' => ''],
-                        ['group' => 'completed', 'heading' => $completedHeadings[$locale], 'headingStyle' => 'margin-bottom:30px;', 'sectionStyle' => 'padding-top:0px;'],
-                    ],
+            FakePortalContent::addList(
+                'training',
+                $locale,
+                $paths[$locale],
+                $paths[$locale],
+                100,
+                'Detay',
+                $headings[$locale],
+                null,
+                [
+                    ['group' => 'ongoing', 'heading' => $ongoingHeadings[$locale], 'headingStyle' => 'margin-bottom:20px;', 'sectionStyle' => ''],
+                    ['group' => 'completed', 'heading' => $completedHeadings[$locale], 'headingStyle' => 'margin-bottom:30px;', 'sectionStyle' => 'padding-top:0px;'],
                 ],
-            ]);
+            );
         }
 
         $contact = CmsPage::query()->create(['key' => 'contact', 'published' => true, 'position' => 20]);
