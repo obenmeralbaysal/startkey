@@ -206,6 +206,16 @@ class PortalSessionController extends Controller
         return $this->proxy($request, 'put', "offices/{$id}/currency", $data);
     }
 
+    public function officeLocation(Request $request, int $id): JsonResponse
+    {
+        $data = $request->validate([
+            'latitude' => ['present', 'nullable', 'numeric', 'between:-90,90', 'required_with:longitude'],
+            'longitude' => ['present', 'nullable', 'numeric', 'between:-180,180', 'required_with:latitude'],
+        ]);
+
+        return $this->proxy($request, 'put', "offices/{$id}/location", $data);
+    }
+
     public function portfolioCatalogue(Request $request, int $id): JsonResponse
     {
         $data = $request->validate(['held' => ['required', 'boolean']]);

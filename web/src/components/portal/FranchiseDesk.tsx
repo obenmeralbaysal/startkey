@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 
 import { EmptyState, PasswordInput, Skeleton } from "@/components/portal/office/ui";
+import { OfficePinEditor } from "@/components/portal/OfficePinEditor";
 import { useToast } from "@/components/portal/shell";
 
 type LimitCell = { used: number; limit: number };
@@ -37,6 +38,8 @@ type DeskOffice = {
   name: string;
   presence: Presence;
   currency: string;
+  latitude?: number | null;
+  longitude?: number | null;
   consultant_count: number;
   balance: number;
   limits: Record<"portfolios" | "users" | "contacts" | "branches", LimitCell>;
@@ -170,6 +173,12 @@ function OfficeCard({
         </label>
       </div>
       <p className="glass-muted">Yeni portföyler bu para birimiyle açılır. Mevcut portföyler ve StartKey faturaları aynı kalır.</p>
+      <OfficePinEditor
+        officeId={office.id}
+        latitude={office.latitude ?? null}
+        longitude={office.longitude ?? null}
+        send={send}
+      />
       <OfficeUsers officeId={office.id} />
       <div className="glass-section">
         <h4>StartKey sitesindeki portföyler</h4>

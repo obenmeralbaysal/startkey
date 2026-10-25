@@ -66,6 +66,7 @@ Route::prefix('v1')->group(function () {
         Route::get('portal/desk/stats', [PortalSessionController::class, 'deskStats']);
         Route::put('portal/offices/{id}/presence', [PortalSessionController::class, 'officePresence'])->whereNumber('id');
         Route::put('portal/offices/{id}/currency', [PortalSessionController::class, 'officeCurrency'])->whereNumber('id');
+        Route::put('portal/offices/{id}/location', [PortalSessionController::class, 'officeLocation'])->whereNumber('id');
         Route::post('portal/portfolios/{id}/catalogue', [PortalSessionController::class, 'portfolioCatalogue'])->whereNumber('id');
         Route::post('portal/offices/{id}/invoices', [PortalSessionController::class, 'storeInvoice'])->whereNumber('id');
         Route::post('portal/invoices/{id}/payments', [PortalSessionController::class, 'payInvoice'])->whereNumber('id');
