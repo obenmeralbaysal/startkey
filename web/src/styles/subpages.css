@@ -856,7 +856,8 @@ article ol li {
 /* Consultant and training forms: .filter-widget fields in the reference theme. */
 .sk-filter-form input[type="text"],
 .sk-filter-form input[type="email"],
-.sk-filter-form input[type="tel"] {
+.sk-filter-form input[type="tel"],
+.sk-filter-form select {
   height: calc(55px * var(--sk-scale, 1));
   min-height: 0;
   padding: calc(15px * var(--sk-scale, 1));
@@ -1031,6 +1032,25 @@ article ol li {
   padding-bottom: calc(100px * var(--sk-scale, 1));
 }
 
+@media (max-width: 767px) {
+  .cms .pb-100 {
+    padding-bottom: calc(50px * var(--sk-scale, 1));
+  }
+
+  .cms .mb-40,
+  .cms .section-title.mb-40 {
+    margin-bottom: calc(25px * var(--sk-scale, 1));
+  }
+
+  .cms h2,
+  .cms .section-title h2,
+  .cms .content-title h2,
+  .sk-apply-title h2 {
+    font-size: calc(24px * var(--sk-scale, 1));
+    line-height: 1.3;
+  }
+}
+
 .cms .mt-40 {
   margin-top: calc(40px * var(--sk-scale, 1));
 }
@@ -1073,7 +1093,7 @@ article ol li {
 .contact-map iframe {
   display: block;
   width: 100%;
-  height: calc(500px * var(--sk-scale, 1));
+  height: 500px;
   border: 0;
 }
 
