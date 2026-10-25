@@ -119,7 +119,9 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
                       </button>
                     </div>
                   ) : null}
-                  <OfficeMap offices={pins} zoom={15} label={data.name} />
+                  <div className="sk-office-detail-map">
+                    <OfficeMap offices={pins} zoom={15} label={data.name} className="is-detail" />
+                  </div>
                 </div>
               ) : null}
             </div>

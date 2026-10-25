@@ -15,7 +15,9 @@ export function OfficeMapSection({ offices }: { offices: MapOffice[] }) {
         <div className="sk-section-title is-center [margin-bottom:calc(30px_*_var(--sk-scale,_1))]" data-aos="fade-up" data-aos-duration="1200">
           <h2>Startkey Global</h2>
         </div>
-        <OfficeMap offices={offices} />
+        <div data-aos="fade-up" data-aos-duration="1200">
+          <OfficeMap offices={offices} />
+        </div>
       </div>
     </section>
   );

@@ -20,7 +20,7 @@ const HEADER_STYLES = `
     top: 0;
     z-index: 999;
     background: #fff;
-    transition: all 1s ease, top 2s ease;
+    transition: 0.4s;
   }
   .sk-header.sticky {
     box-shadow: 0 calc(5px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);

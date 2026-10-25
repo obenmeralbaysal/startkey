@@ -48,7 +48,7 @@ export function FranchisePage({ data, locale }: { data: FranchiseData; locale: L
       {data.widgetCss ? <style dangerouslySetInnerHTML={{ __html: data.widgetCss }} /> : null}
       <Breadcrumb breadcrumb={data.breadcrumb} />
       <div className="container">
-        <div className="relative [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))] text-center [margin-bottom:calc(40px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(25px_*_var(--sk-scale,_1))] [margin-top:calc(40px_*_var(--sk-scale,_1))]">
+        <div className="sk-apply-title relative [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:text-brand [&_span]:tracking-[calc(8px*var(--sk-scale,1))] text-center [margin-bottom:calc(40px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(25px_*_var(--sk-scale,_1))] [margin-top:calc(40px_*_var(--sk-scale,_1))]">
           <h2>{data.formHeading}</h2>
         </div>
         <div className="flex flex-wrap">
@@ -138,7 +138,7 @@ function FranchiseForm({ data, locale }: { data: FranchiseData; locale: Locale }
   }
 
   return (
-    <form method="post" id="form" className="block" action={data.urlPath} onSubmit={handleSubmit}>
+    <form method="post" id="form" className="block sk-filter-form" action={data.urlPath} onSubmit={handleSubmit}>
       <div className="sk-form-row flex flex-wrap">
         <div className="w-full md:w-1/3 mb-[calc(15px*var(--sk-scale,1))]">
           <input

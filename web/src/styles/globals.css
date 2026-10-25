@@ -127,6 +127,12 @@
     line-height: 1.8;
   }
 
+  @media (max-width: 767px) {
+    p {
+      font-size: 14px;
+    }
+  }
+
   p:last-child {
     margin-bottom: 0;
   }
@@ -249,6 +255,10 @@
   border-radius: calc(8px * var(--sk-scale, 1));
   overflow: hidden;
   z-index: 0;
+}
+
+.sk-office-map.is-detail {
+  height: 500px;
 }
 
 .sk-office-map .leaflet-control-attribution {
@@ -1896,6 +1906,14 @@ a.btn.style2::after {
 @media (max-width: 767px) {
   .sk-agent-page {
     padding: calc(50px * var(--sk-scale, 1)) 0;
+  }
+
+  /* Container inset is 12px a side, so 366px at a 390px viewport. The row gutter must not pull the map to the screen edge. */
+  .sk-office-detail-map {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    margin-right: auto;
+    margin-left: auto;
   }
 
   .sk-agent {

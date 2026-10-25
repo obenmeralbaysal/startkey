@@ -1,5 +1,6 @@
 ## [2026-10-25]
 
+- **[UI]**: Ana sayfa kaydırma animasyonu haritayı da kapsar; telefonda paragraf 14px. Danışman ve franchise başvurusu telefonda daha sıkı aralık ve 55px alan yüksekliği kullanır. Ofis kartı 0.4s hover, iletişim haritası 500px, ofis detay haritası masaüstünde 500px ve telefonda konteyner genişliğindedir. Header geçişi 0.4s. #2178
 - **[UI]**: Ana sayfada Startkey Global yuvası, Reonix kataloğundaki koordinatı olan ofisleri gösteren bir Leaflet haritasıdır. Sıra harita, ilanlar, franchise tanıtımıdır. Danışman listesi başlığı “Danışmanlarımız” ve kırıntı yolu referanstaki gibidir; kartlar üçlü çerçevelidir. Portföy filtresinde alan etiketleri ve sıralama seçici görünür. Masaüstü konteyner 1056px, telefonda duyuru bandı 15px/65px, logo %10 küçük ve gövde satır yüksekliği 1.5’tir. Telefon alanlarında bayraklı +90 seçici vardır. Yukarı çık düğmesi, kaydırmalı başlık ve kart/düğme geçişleri referans sürelerindedir; 404 footer haritası gizlenir. #2178
 - **[Backend]**: Haber, duyuru, blog, eğitim ve şampiyon sayfaları artık yerel seed yerine Reonix portalından okunur. Reonix yanıt vermezse bu sayfalar boş kalır; yerel `cms_articles`, `cms_trainings` ve şampiyon tablolarına düşülmez. Eğitim başvurusu, formun yabancı anahtarı için yayındaki eğitimin gölge satırını tutar.
 
