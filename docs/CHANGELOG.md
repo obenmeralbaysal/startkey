@@ -1,3 +1,7 @@
+## [2026-10-25]
+
+- **[UI]**: Ana sayfada Startkey Global yuvası, Reonix kataloğundaki koordinatı olan ofisleri gösteren bir Leaflet haritasıdır. Sıra harita, ilanlar, franchise tanıtımıdır. Danışman listesi başlığı “Danışmanlarımız” ve kırıntı yolu referanstaki gibidir; kartlar üçlü çerçevelidir. Portföy filtresinde alan etiketleri ve sıralama seçici görünür. Masaüstü konteyner 1056px, telefonda duyuru bandı 15px/65px, logo %10 küçük ve gövde satır yüksekliği 1.5’tir. Telefon alanlarında bayraklı +90 seçici vardır. Yukarı çık düğmesi, kaydırmalı başlık ve kart/düğme geçişleri referans sürelerindedir; 404 footer haritası gizlenir. #2178
+
 ## [2026-10-24]
 
 - **[UI]**: Telefon ve tablet menüsü referanstaki gibi soldan kayarak açılır. Kurumsal, Startkey ve Akademi alt menüleri ok ya da başlığa dokununca açılır; aynı anda tek alt menü açık kalır. Menüde logo, tam genişlik başvuru ve Portal düğmeleri, açık sayfanın vurgusu var; dil seçici menünün dışında tek kalır. Menü açıkken sayfa kaymaz; Escape ile kapanır, odak menü içinde kalır ve kapanınca hamburgere döner. Masaüstü alt menüleri klavye odağıyla da açılır.
