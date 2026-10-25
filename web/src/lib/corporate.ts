@@ -1,6 +1,7 @@
 import { rewriteBrandDeep } from "@/lib/brand";
 import { config } from "@/lib/config";
 import type { Locale } from "@/lib/locales";
+import type { MapOffice } from "@/lib/api";
 
 export interface CorporateBreadcrumb {
   heading: string;
@@ -345,6 +346,7 @@ export type CorporatePayload =
       emptyListingsLabel?: string;
       seeAllHref?: string;
       seeAllLabel?: string;
+      pin?: MapOffice | null;
       map: { query?: string; iframeSrc?: string; directionsLabel?: string; streetViewLabel?: string };
       breadcrumb: CorporateBreadcrumb;
       meta: CorporateMeta;
