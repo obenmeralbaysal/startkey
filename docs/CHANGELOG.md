@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- 662-1: Ana sayfa franchise linkleri mutlak /tr/franchise-basvuru yapıldı (göreli tr/... alt sayfalarda 404 veriyordu).
 - **[Backend]**: Ofis ciro, işlem ve kulüp rozetleri (`rankBadges`) ofis kartında, ofis listesinde ve ofis detayında görünür. Katalog içe aktarması her ofis ve danışman için `rankBadges` gönderir; boş liste kayıtlı rozetleri siler. Tam ofis ve danışman taraması gecelik çalışır. #2178
 - **[Backend]**: Franchise yöneticisi ve franchise personeli mevcut portal girişi ile ağı salt okunur görür. Ofis seçimi bu roller için gerekmez; `/me` `context: network` ve `role` döner. Ağ özeti, ofis ve danışman listeleri Reonix’ten gelir. Bu rollerin portal yazma istekleri 403 olur. #2182
 - **[Portal]**: Franchise ağı salt okunur açılır. Oturumdaki `/me` cevabı `context: network` ve rol `franchise_admin` veya `franchise_staff` ise ofis seçimi atlanır; menü yalnız Ağ Özeti, Ofisler ve Danışmanlardır. Listeler StartKey vekilinden gelir, telefon ve e-posta düşer. Danışman unvanı ofis rolünden TR, EN ve DE basılır. #2182
