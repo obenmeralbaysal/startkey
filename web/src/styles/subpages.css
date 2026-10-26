@@ -1649,7 +1649,8 @@ article ol li {
 .sk-lightbox {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  /* Above the fixed site header (1000+) and the mobile bar. */
+  z-index: 2000;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-rows: auto minmax(0, 1fr);

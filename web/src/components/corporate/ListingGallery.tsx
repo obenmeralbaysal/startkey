@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { createPortal } from "react-dom";
 
 import type { ListingGallerySlide } from "@/lib/corporate";
 import {
@@ -247,7 +248,7 @@ export function ListingGallery({
           </div>
         ) : null}
       </div>
-      {open && active ? (
+      {open && active && typeof document !== "undefined" ? createPortal(
         <div
           ref={dialogRef}
           className="sk-lightbox"
@@ -275,7 +276,7 @@ export function ListingGallery({
             ›
           </button>
         </div>
-      ) : null}
+      , document.body) : null}
     </>
   );
 }
