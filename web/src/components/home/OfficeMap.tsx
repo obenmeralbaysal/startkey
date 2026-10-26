@@ -3,19 +3,15 @@
 import { useEffect, useRef } from "react";
 
 import type { MapOffice } from "@/lib/api";
+import { officeMapTiles } from "@/lib/config";
 
-/** Mainland box used when Reonix has not sent `locationNeedsReview`. Inclusive. */
-const TURKEY_LATITUDE = { min: 35.8, max: 42.2 };
-const TURKEY_LONGITUDE = { min: 25.6, max: 44.9 };
-
-function isInsideTurkey(latitude: number, longitude: number): boolean {
-  return (
-    latitude >= TURKEY_LATITUDE.min &&
-    latitude <= TURKEY_LATITUDE.max &&
-    longitude >= TURKEY_LONGITUDE.min &&
-    longitude <= TURKEY_LONGITUDE.max
-  );
-}
+/** Pixel inset so every pin, including the corner ones, stays inside the frame. */
+const BOUNDS_PADDING = 40;
+/**
+ * Zoom and the reset control occupy the top-left. The northwest pin (the
+ * England office) would sit under them with an even 40px inset.
+ */
+const BOUNDS_PADDING_TOP_LEFT: [number, number] = [48, 118];
 
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (char) => {
@@ -34,20 +30,26 @@ function escapeHtml(value: string): string {
   });
 }
 
+type Leaflet = typeof import("leaflet");
+
+function withLeafletGlobal(L: Leaflet): void {
+  (globalThis as unknown as { L: Leaflet }).L = L;
+}
+
 /** Leaflet map of catalogue offices. Loaded only in the browser. */
 export function OfficeMap({
   offices,
   zoom = 8,
   label = "Startkey Global",
   className = "",
-  constrainBoundsToTurkey = false,
+  overview = false,
 }: {
   offices: MapOffice[];
   zoom?: number;
   label?: string;
   className?: string;
-  /** Homepage fitBounds ignores pins outside Turkey. Detail maps stay centered on their pin. */
-  constrainBoundsToTurkey?: boolean;
+  /** Homepage: cluster pins, fit every office, fly to a pin, and offer reset. */
+  overview?: boolean;
 }) {
   const node = useRef<HTMLDivElement>(null);
 
@@ -60,44 +62,102 @@ export function OfficeMap({
     void (async () => {
       const leaflet = await import("leaflet");
       await import("leaflet/dist/leaflet.css");
-      if (cancelled || !node.current) return;
       const L = leaflet.default;
+      if (overview) {
+        withLeafletGlobal(L);
+        await import("leaflet.markercluster");
+        await import("leaflet.markercluster/dist/MarkerCluster.css");
+        await import("leaflet.markercluster/dist/MarkerCluster.Default.css");
+      }
+      if (cancelled || !node.current) return;
       map = L.map(node.current, { attributionControl: false, scrollWheelZoom: false });
       L.control.attribution({ prefix: false }).addTo(map);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
+      const tiles = officeMapTiles();
+      L.tileLayer(tiles.url, {
+        attribution: tiles.attribution,
         maxZoom: 18,
       }).addTo(map);
 
-      const bounds: [number, number][] = [];
+      const group = overview
+        ? L.markerClusterGroup({
+            showCoverageOnHover: false,
+            iconCreateFunction(cluster) {
+              const count = cluster.getChildCount();
+              return L.divIcon({
+                html: `<span>${count}</span>`,
+                className: "sk-office-cluster",
+                iconSize: L.point(36, 36),
+              });
+            },
+          }).addTo(map)
+        : null;
+
+      const bounds = L.latLngBounds([]);
+      let placed = 0;
       for (const office of offices) {
         if (!Number.isFinite(office.latitude) || !Number.isFinite(office.longitude)) continue;
+        placed += 1;
+        const latlng = L.latLng(office.latitude, office.longitude);
         const href = office.urlPath.startsWith("/") ? office.urlPath : "/";
-        L.circleMarker([office.latitude, office.longitude], {
+        const marker = L.circleMarker(latlng, {
           radius: 7,
-          color: "#ec3323",
+          color: "#ffffff",
           weight: 2,
           fillColor: "#ec3323",
-          fillOpacity: 0.9,
-        })
-          .bindPopup(`<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`)
-          .addTo(map);
-        const outsideTurkey = constrainBoundsToTurkey && !isInsideTurkey(office.latitude, office.longitude);
-        if (office.locationNeedsReview !== true && !outsideTurkey) {
-          bounds.push([office.latitude, office.longitude]);
+          fillOpacity: 1,
+          className: "sk-office-pin",
+        }).bindPopup(`<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`);
+        if (overview) {
+          marker.on("click", () => {
+            map?.flyTo(marker.getLatLng(), 13);
+            map?.once("moveend", () => {
+              marker.openPopup();
+            });
+          });
         }
+        if (group) group.addLayer(marker);
+        else marker.addTo(map);
+        bounds.extend(latlng);
       }
 
       const fit = () => {
         if (!map) return;
-        if (bounds.length > 1) {
-          map.fitBounds(bounds, { padding: [20, 20] });
-        } else if (bounds.length === 1) {
-          map.setView(bounds[0], zoom);
+        if (placed > 1) {
+          map.fitBounds(
+            bounds,
+            overview
+              ? { paddingTopLeft: BOUNDS_PADDING_TOP_LEFT, paddingBottomRight: [BOUNDS_PADDING, BOUNDS_PADDING] }
+              : { padding: [BOUNDS_PADDING, BOUNDS_PADDING] },
+          );
+        } else if (placed === 1) {
+          map.setView(bounds.getCenter(), zoom);
         } else {
           map.setView([39, 35], 5);
         }
       };
+      if (overview) {
+        const ResetControl = L.Control.extend({
+          options: { position: "topleft" },
+          onAdd() {
+            const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+            const button = L.DomUtil.create("a", "sk-office-map-reset", container) as HTMLAnchorElement;
+            button.href = "#";
+            button.title = "Tümünü göster";
+            button.setAttribute("role", "button");
+            button.setAttribute("aria-label", "Tümünü göster");
+            button.innerHTML =
+              '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg>';
+            L.DomEvent.disableClickPropagation(container);
+            L.DomEvent.on(button, "click", (event) => {
+              L.DomEvent.preventDefault(event);
+              L.DomEvent.stop(event);
+              fit();
+            });
+            return container;
+          },
+        });
+        map.addControl(new ResetControl());
+      }
       fit();
       window.setTimeout(() => {
         map?.invalidateSize();
@@ -109,7 +169,7 @@ export function OfficeMap({
       cancelled = true;
       map?.remove();
     };
-  }, [offices, zoom, constrainBoundsToTurkey]);
+  }, [offices, overview, zoom]);
 
   const classes = className === "" ? "sk-office-map" : `sk-office-map ${className}`;
 

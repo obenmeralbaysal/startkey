@@ -17,7 +17,7 @@ export function OfficeMapSection({ offices }: { offices: MapOffice[] }) {
         </div>
       </div>
       <div data-aos="fade-up" data-aos-duration="1200">
-        <OfficeMap offices={offices} className="is-bleed" constrainBoundsToTurkey />
+        <OfficeMap offices={offices} className="is-bleed" overview />
       </div>
     </section>
   );

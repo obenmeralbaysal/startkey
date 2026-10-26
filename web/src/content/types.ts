@@ -85,7 +85,7 @@ export interface HomepageContent {
   about3: { contentHtml: string };
   howItWorks: {
     titleHtml: string;
-    cards: { image: string; step: string; infoHtml: string }[];
+    cards: { image: string; step: string; alt: string; infoHtml: string }[];
     button: LinkContent;
   };
   addListing: {
