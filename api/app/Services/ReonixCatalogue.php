@@ -491,7 +491,7 @@ class ReonixCatalogue
     /**
      * Homepage map pins. Offices without a numeric latitude and longitude are skipped.
      *
-     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float}>
+     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float, locationNeedsReview: bool}>
      */
     public function mapOffices(string $locale): array
     {
@@ -517,6 +517,7 @@ class ReonixCatalogue
                 'urlPath' => (string) $card['urlPath'],
                 'latitude' => $latitude,
                 'longitude' => $longitude,
+                'locationNeedsReview' => $this->locationNeedsReview($row),
             ];
         }
 
@@ -525,6 +526,14 @@ class ReonixCatalogue
         }
 
         return $pins;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function locationNeedsReview(array $row): bool
+    {
+        $value = $row['location_needs_review'] ?? $row['locationNeedsReview'] ?? false;
+
+        return $value === true || $value === 1 || $value === '1' || $value === 'true';
     }
 
     private function coordinate(mixed $value): ?float

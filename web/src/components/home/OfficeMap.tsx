@@ -66,17 +66,26 @@ export function OfficeMap({
         })
           .bindPopup(`<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`)
           .addTo(map);
-        bounds.push([office.latitude, office.longitude]);
+        if (office.locationNeedsReview !== true) {
+          bounds.push([office.latitude, office.longitude]);
+        }
       }
 
-      if (bounds.length > 1) {
-        map.fitBounds(bounds, { padding: [28, 28] });
-      } else if (bounds.length === 1) {
-        map.setView(bounds[0], zoom);
-      } else {
-        map.setView([39, 35], 5);
-      }
-      window.setTimeout(() => map?.invalidateSize(), 0);
+      const fit = () => {
+        if (!map) return;
+        if (bounds.length > 1) {
+          map.fitBounds(bounds, { padding: [20, 20] });
+        } else if (bounds.length === 1) {
+          map.setView(bounds[0], zoom);
+        } else {
+          map.setView([39, 35], 5);
+        }
+      };
+      fit();
+      window.setTimeout(() => {
+        map?.invalidateSize();
+        fit();
+      }, 0);
     })();
 
     return () => {

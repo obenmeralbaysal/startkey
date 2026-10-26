@@ -261,6 +261,11 @@
   height: 500px;
 }
 
+.sk-office-map.is-bleed {
+  width: 100%;
+  border-radius: 0;
+}
+
 .sk-office-map .leaflet-control-attribution {
   margin: 0;
   padding: 0 4px;

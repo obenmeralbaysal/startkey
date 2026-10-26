@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: Ana sayfadaki Startkey Global haritası sayfa genişliğindedir. Sınırlar, konumu incelenmesi gereken ofisler dışında kalan pinlere 20px payla oturur; bu pinler haritada durur. `location_needs_review` ana sayfa ofis listesinde `locationNeedsReview` olarak gelir. #2178
 - **[Bugfix]**: İlan, ofis ve danışman görselleri dosya adı olarak kalınca tarayıcı adresi sayfa yoluna ekliyordu. Katalogda fotoğraf sayısı varsa adres `/api/v1/catalogue/media/...` olur; yalnızca dosya adı varsa `/media/...` olur. Ana sayfa içeriğindeki aynı dosya adları da tam yola çevrilir. #2178
 - **[UI]**: Telefonda header logosu 130×53 px. Franchise başvurusu bölüm aralıkları, başlık ve paragraf boşlukları referansla aynı; Akademi metnindeki sohbet sınıfları yerleşimi büyütmez. Form alanları ve doğrulama aynı kalır. #2178
 

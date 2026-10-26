@@ -36,6 +36,7 @@ export interface MapOffice {
   urlPath: string;
   latitude: number;
   longitude: number;
+  locationNeedsReview?: boolean;
 }
 
 export interface HomepageData {
