@@ -9,6 +9,11 @@ import { pinClickMovesMap, popupHost, stickyPopupOptions } from "@/lib/office-ma
 
 /** Pixel inset so every pin, including the corner ones, stays inside the frame. */
 const BOUNDS_PADDING = 40;
+/** Web Mercator world. Stops a drag past the antimeridian from showing an empty grey strip. */
+const WORLD_BOUNDS: [[number, number], [number, number]] = [
+  [-85.05112878, -180],
+  [85.05112878, 180],
+];
 /**
  * Zoom and the reset control occupy the top-left. The northwest pin (the
  * England office) would sit under them with an even 40px inset.
@@ -83,12 +88,18 @@ export function OfficeMap({
         await import("leaflet.markercluster/dist/MarkerCluster.Default.css");
       }
       if (cancelled || !node.current) return;
-      map = L.map(node.current, { attributionControl: false, scrollWheelZoom: false });
+      map = L.map(node.current, {
+        attributionControl: false,
+        scrollWheelZoom: false,
+        maxBounds: WORLD_BOUNDS,
+        maxBoundsViscosity: 1,
+      });
       L.control.attribution({ prefix: false }).addTo(map);
       const tiles = officeMapTiles();
       L.tileLayer(tiles.url, {
         attribution: tiles.attribution,
         maxZoom: 18,
+        noWrap: true,
       }).addTo(map);
 
       const group = overview

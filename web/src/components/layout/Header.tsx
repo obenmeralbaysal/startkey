@@ -169,6 +169,14 @@ const HEADER_STYLES = `
   }
   .sk-portal:hover { background: #F4F6FB; }
   .sk-apply { position: relative; }
+  .sk-apply.is-open::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    height: 8px;
+  }
   .sk-apply-trigger {
     display: inline-flex;
     align-items: center;
@@ -355,6 +363,7 @@ const HEADER_STYLES = `
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08);
     }
+    .sk-drawer-apply-block { display: grid; gap: 8px; }
     .sk-drawer-apply-list[hidden] { display: none !important; }
     .sk-drawer-apply-list a { display: block; padding: 8px; border-radius: 8px; text-decoration: none; }
     .sk-drawer-actions .sk-portal { width: 100%; }
@@ -521,6 +530,14 @@ function ApplicationMenu({
     triggerRef.current?.focus();
   }, []);
 
+  const dismiss = useCallback(() => {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && rootRef.current?.contains(active) && active !== triggerRef.current) {
+      triggerRef.current?.focus();
+    }
+    setOpen(false);
+  }, []);
+
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -545,7 +562,16 @@ function ApplicationMenu({
   }, [open, close]);
 
   return (
-    <div ref={rootRef} className={`sk-apply${open ? " is-open" : ""}`}>
+    <div
+      ref={rootRef}
+      className={`sk-apply${open ? " is-open" : ""}`}
+      onMouseLeave={dismiss}
+      onBlur={(event) => {
+        const next = event.relatedTarget;
+        if (next instanceof Node && rootRef.current?.contains(next)) return;
+        setOpen(false);
+      }}
+    >
       <button
         ref={triggerRef}
         type="button"
@@ -604,6 +630,10 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
     setDrawerApplyOpen(false);
     burgerRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    setDrawerApplyOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setStuck(window.scrollY >= 100);
@@ -719,23 +749,33 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
           onToggle={(key) => setOpenKey((current) => (current === key ? null : key))}
         />
         <div className="sk-drawer-actions">
-          <button
-            type="button"
-            className="sk-drawer-apply"
-            aria-expanded={drawerApplyOpen}
-            aria-controls="sk-drawer-apply-menu"
-            onClick={() => setDrawerApplyOpen((current) => !current)}
+          <div
+            className="sk-drawer-apply-block"
+            onMouseLeave={() => setDrawerApplyOpen(false)}
+            onBlur={(event) => {
+              const next = event.relatedTarget;
+              if (next instanceof Node && event.currentTarget.contains(next)) return;
+              setDrawerApplyOpen(false);
+            }}
           >
-            <span>{menu.label}</span>
-            <span className="sk-caret" aria-hidden="true">▾</span>
-          </button>
-          <div id="sk-drawer-apply-menu" className="sk-drawer-apply-list" hidden={!drawerApplyOpen}>
-            {applyItems.map((item) => (
-              <a key={item.href} href={item.href}>
-                <span className="sk-apply-label">{item.label}</span>
-                <span className="sk-apply-desc">{item.description}</span>
-              </a>
-            ))}
+            <button
+              type="button"
+              className="sk-drawer-apply"
+              aria-expanded={drawerApplyOpen}
+              aria-controls="sk-drawer-apply-menu"
+              onClick={() => setDrawerApplyOpen((current) => !current)}
+            >
+              <span>{menu.label}</span>
+              <span className="sk-caret" aria-hidden="true">▾</span>
+            </button>
+            <div id="sk-drawer-apply-menu" className="sk-drawer-apply-list" hidden={!drawerApplyOpen}>
+              {applyItems.map((item) => (
+                <a key={item.href} href={item.href}>
+                  <span className="sk-apply-label">{item.label}</span>
+                  <span className="sk-apply-desc">{item.description}</span>
+                </a>
+              ))}
+            </div>
           </div>
           <a className="sk-portal" href={portalLoginHref(locale)}>
             {PORTAL_ENTRY[locale]}

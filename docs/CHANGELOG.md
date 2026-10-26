@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Bugfix]**: Ofis haritası dünya sınırının soluna kaydırılınca gri şerit çıkmaz (`maxBounds`, `maxBoundsViscosity` 1, karo `noWrap`). Başvuru menüsü fare ayrılınca, odak dışarı çıkınca ve sayfa değişince kapanır. #2185
 - **[UI]**: Portföy küçük resmindeki “Filigranlı görsel” rozeti koyu yarı saydam zemin, açık yazı ve küçük köşe yarıçapı kullanır. Yerleşim aynı kalır. #2184
 - **[Bugfix]**: Başvuru ve diğer formlardaki reCAPTCHA bildirimi, reCAPTCHA betiği yüklenene kadar basılmaz. Betik yüklenince metin aynı kalır.
 - 662-1: Ana sayfa franchise linkleri mutlak /tr/franchise-basvuru yapıldı (göreli tr/... alt sayfalarda 404 veriyordu).
