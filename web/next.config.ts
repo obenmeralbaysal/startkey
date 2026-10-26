@@ -28,6 +28,9 @@ const LOOKUP_ENDPOINTS = [
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  experimental: {
+    authInterrupts: true,
+  },
 
   // The reference website sends one complete HTML document with its metadata inside
   // <head>. Next streams metadata after the body unless the client is a bot that

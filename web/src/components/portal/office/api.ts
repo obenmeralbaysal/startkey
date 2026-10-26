@@ -13,10 +13,14 @@ export class OfficeError extends Error {
 
 const readCache = new Map<string, { at: number; body: OfficeRecord }>();
 const READ_TTL_MS = 20_000;
-const CACHED_GET = /^(me$|categories(?:[/?]|$)|locations\/(?:cities$|districts\?|neighborhoods\?)|dashboard\/|duty-roster\/today$)/;
+const CACHED_GET = /^(me$|portfolios$|categories(?:[/?]|$)|locations\/(?:cities$|districts\?|neighborhoods\?)|dashboard\/|duty-roster\/today$)/;
+const STORAGE_PREFIX = "sk-office-read:";
+let bypassBrowserCacheUntil = 0;
 
 export function clearOfficeReads(): void {
   readCache.clear();
+  bypassBrowserCacheUntil = 0;
+  clearStoredReads();
 }
 
 export async function officeCall(
@@ -26,13 +30,17 @@ export async function officeCall(
 ): Promise<OfficeRecord> {
   const method = (init?.method ?? "GET").toUpperCase();
   const cacheKey = `${officeId ?? 0}:${path}`;
-  if (method === "GET" && CACHED_GET.test(path)) {
-    const hit = readCache.get(cacheKey);
+  const cacheable = method === "GET" && CACHED_GET.test(path);
+  if (cacheable) {
+    const hit = readCache.get(cacheKey) ?? readStored(cacheKey);
     if (hit && Date.now() - hit.at < READ_TTL_MS) {
+      readCache.set(cacheKey, hit);
       return hit.body;
     }
   } else if (method !== "GET") {
     readCache.clear();
+    bypassBrowserCacheUntil = Date.now() + READ_TTL_MS;
+    clearStoredReads();
   }
   const headers: Record<string, string> = { Accept: "application/json" };
   if (officeId) {
@@ -48,6 +56,7 @@ export async function officeCall(
   const response = await fetch(`/api/v1/portal/office/${path.replace(/^\//, "")}`, {
     method,
     credentials: "include",
+    cache: cacheable && Date.now() >= bypassBrowserCacheUntil ? "default" : "reload",
     headers,
     body,
   });
@@ -55,10 +64,55 @@ export async function officeCall(
   if (!response.ok) {
     throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload));
   }
-  if (method === "GET" && CACHED_GET.test(path)) {
-    readCache.set(cacheKey, { at: Date.now(), body: payload });
+  if (cacheable) {
+    const entry = { at: Date.now(), body: payload };
+    readCache.set(cacheKey, entry);
+    writeStored(cacheKey, entry);
   }
   return payload;
+}
+
+function storage(): Storage | null {
+  try {
+    return typeof sessionStorage === "undefined" ? null : sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+function readStored(key: string): { at: number; body: OfficeRecord } | null {
+  const store = storage();
+  if (!store) return null;
+  const raw = store.getItem(STORAGE_PREFIX + key);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as { at?: unknown; body?: unknown };
+    if (typeof parsed.at !== "number" || !isRecord(parsed.body)) return null;
+    return { at: parsed.at, body: parsed.body };
+  } catch {
+    return null;
+  }
+}
+
+function writeStored(key: string, entry: { at: number; body: OfficeRecord }): void {
+  const store = storage();
+  if (!store) return;
+  try {
+    store.setItem(STORAGE_PREFIX + key, JSON.stringify(entry));
+  } catch {
+    // A full tab store must not fail the read itself.
+  }
+}
+
+function clearStoredReads(): void {
+  const store = storage();
+  if (!store) return;
+  const keys: string[] = [];
+  for (let index = 0; index < store.length; index += 1) {
+    const key = store.key(index);
+    if (key?.startsWith(STORAGE_PREFIX)) keys.push(key);
+  }
+  keys.forEach((key) => store.removeItem(key));
 }
 
 export async function publicCall(path: string, init?: { method?: string; body?: unknown }): Promise<OfficeRecord> {

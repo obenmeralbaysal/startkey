@@ -179,6 +179,7 @@ class OfficeProxyTest extends TestCase
         $cookie = $this->login();
         Http::fake([
             'http://reonix.test/api/v1/commission-policy' => Http::response(['message' => 'Yetkiniz yok.'], 403),
+            'http://reonix.test/api/v1/badges' => Http::response(['data' => []]),
             'http://reonix.test/api/v1/team' => Http::response(['data' => []]),
             'http://reonix.test/api/v1/duty-roster/today' => Http::response(['data' => []]),
         ]);
@@ -189,6 +190,11 @@ class OfficeProxyTest extends TestCase
             ->getJson('/api/v1/portal/office/commission-policy')
             ->assertForbidden()
             ->assertJsonPath('message', 'Yetkiniz yok.');
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/badges')
+            ->assertOk();
 
         $manager = $this->login([
             'role' => 'office_manager',
@@ -197,12 +203,18 @@ class OfficeProxyTest extends TestCase
         ]);
         Http::fake([
             'http://reonix.test/api/v1/team' => Http::response(['data' => []]),
+            'http://reonix.test/api/v1/offices/7' => Http::response(['data' => ['id' => 7]]),
             'http://reonix.test/api/v1/duty-roster/today' => Http::response(['data' => []]),
         ]);
         $this->withCredentials()
             ->withUnencryptedCookie($manager->getName(), $manager->getValue())
             ->withHeader('X-Portal-Office', '7')
             ->getJson('/api/v1/portal/office/team')
+            ->assertOk();
+        $this->withCredentials()
+            ->withUnencryptedCookie($manager->getName(), $manager->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/offices/7')
             ->assertOk();
         $agent = $this->login([
             'role' => 'agent',
@@ -267,6 +279,27 @@ class OfficeProxyTest extends TestCase
         $this->assertSame(count($pages), $calls - $before);
         $this->assertGreaterThan(400, $coldMs);
         $this->assertLessThan($coldMs / 3, $warmMs, "dashboard cold={$coldMs}ms warm={$warmMs}ms upstream=".($calls - $before));
+
+        $call()->getJson('/api/v1/portal/office/dashboard/stats')
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=15, private');
+        $this->assertSame(count($pages), $calls - $before);
+
+        $before = $calls;
+        $started = microtime(true);
+        $call()->getJson('/api/v1/portal/office/portfolios?sort_by=title&page=1&_=111')
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=20, private');
+        $coldList = (microtime(true) - $started) * 1000;
+        $started = microtime(true);
+        $call()->getJson('/api/v1/portal/office/portfolios?page=1&sort_by=title&_=222')
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=20, private');
+        $warmList = (microtime(true) - $started) * 1000;
+
+        $this->assertSame(1, $calls - $before, 'portfolio list upstream='.($calls - $before));
+        $this->assertGreaterThan(80, $coldList);
+        $this->assertLessThan($coldList / 2, $warmList, "portfolios cold={$coldList}ms warm={$warmList}ms");
     }
 
     /**
@@ -277,6 +310,10 @@ class OfficeProxyTest extends TestCase
         return [
             'agent commission' => ['agent', null, 'get', '/api/v1/portal/office/commission-policy'],
             'agent rates' => ['agent', null, 'get', '/api/v1/portal/office/earning-rates'],
+            'agent badges read' => ['agent', null, 'get', '/api/v1/portal/office/badges'],
+            'agent whatsapp read' => ['agent', null, 'get', '/api/v1/portal/office/whatsapp/accounts'],
+            'agent duty read' => ['agent', null, 'get', '/api/v1/portal/office/duty-roster'],
+            'agent office read' => ['agent', null, 'get', '/api/v1/portal/office/offices/7'],
             'agent duty write' => ['agent', null, 'put', '/api/v1/portal/office/duty-roster'],
             'agent team' => ['agent', null, 'get', '/api/v1/portal/office/team'],
             'agent email' => ['agent', null, 'put', '/api/v1/portal/office/office/imap-settings'],
@@ -285,8 +322,10 @@ class OfficeProxyTest extends TestCase
             'manager commission' => ['office_manager', null, 'get', '/api/v1/portal/office/commission-policy'],
             'manager rates' => ['office_manager', null, 'get', '/api/v1/portal/office/earning-rates'],
             'manager badges' => ['office_manager', null, 'post', '/api/v1/portal/office/badges'],
+            'manager badges read' => ['office_manager', null, 'get', '/api/v1/portal/office/badges'],
             'branched matchmaking' => ['office_manager', 4, 'post', '/api/v1/portal/office/office/matchmaking-weights'],
             'branched office' => ['office_manager', 4, 'put', '/api/v1/portal/office/offices/7'],
+            'branched office read' => ['office_manager', 4, 'get', '/api/v1/portal/office/offices/7'],
         ];
     }
 

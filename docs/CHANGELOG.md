@@ -1,5 +1,7 @@
 ## [2026-10-26]
 
+- **[Security]**: Yetkisiz bir ayar sekmesi artık HTTP 403 döner ve "Bu ayara erişim yetkiniz yok" metnini basar. Aynı sekmenin okuma API'leri de rol yetmezse 403 JSON döner. #2185
+- **[Backend]**: Portföy listesi 20 saniye önbelleğe alınır. Önbelleğe giren okumalar `Cache-Control: private, max-age` ile gelir; tarayıcı aynı süre içinde ikinci açılışı yeniden Reonix'e götürmez. Sorgu sırası ve `_` gibi tek kullanımlık parametreler anahtarı bozmaz. #2185
 - **[Bugfix]**: Yeni portföy formu il veya ilçe seçilmeden mahalle listesini istemez. `district_id` veya `city_id` 0 ise API Reonix'e gitmez ve 422 döner. Büyük düz listelerde yük temizliği ikinci kopya çıkarmaz. #2185
 - **[Security]**: Ayarlar sekmesi role kapalıysa liste yerine "Bu ayara erişim yetkiniz yok" görünür. API aynı kapıyı ofis rolüne göre 403 ile uygular; Reonix'in 403 yanıtı da iletilir. #2185
 - **[Backend]**: Portal oturumu, kategori, il ve pano okumaları kısa süre Redis'te tutulur. Aynı sayfa ikinci kez açıldığında bu uçlar Reonix'e yeniden gitmez. #2185

@@ -131,6 +131,24 @@ export function settingsPageAccess(page: string | undefined, role: OfficeRole, o
   return settingsAllowed(page, role, office) ? "allow" : "deny";
 }
 
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+/** Role check for the server-rendered settings tab. Unknown payloads stay on the client. */
+export function settingsHttpDecision(page: string, body: unknown): "allow" | "deny" | "unknown" {
+  const root = asRecord(body);
+  if (!root) return "unknown";
+  const payload = asRecord(root.data) ?? root;
+  const user = asRecord(payload.user) ?? {};
+  const listed = Array.isArray(payload.offices) ? payload.offices : Array.isArray(user.offices) ? user.offices : [];
+  const offices = listed.filter((item): item is OfficeMembership => asRecord(item) !== null);
+  if (offices.length === 0) return "unknown";
+  const current = Number(user.office_id ?? 0);
+  const office = (current ? offices.find((item) => officeNumber(item) === current) : undefined) ?? offices[0];
+  return settingsPageAccess(page, roleOf(office), office) === "allow" ? "allow" : "deny";
+}
+
 export function settingsLinks(role: OfficeRole, office: OfficeMembership | undefined): { slug: string; label: string }[] {
   return SETTINGS_PAGES.filter(([slug]) => settingsAllowed(slug, role, office)).map(([slug, label]) => ({ slug, label }));
 }

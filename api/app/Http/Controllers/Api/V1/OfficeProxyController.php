@@ -53,7 +53,7 @@ class OfficeProxyController extends Controller
         if ($request->isMethod('GET') && is_string($sessionId) && $sessionId !== '') {
             $cached = PortalReadCache::get($sessionId, $officeId, $remotePath, $query);
             if ($cached !== null) {
-                return response()->json($cached);
+                return $this->json($cached, 200, PortalReadCache::seconds($remotePath));
             }
         }
 
@@ -153,11 +153,26 @@ class OfficeProxyController extends Controller
             }
         }
 
+        $ttl = null;
         if ($upstream->status() === 200 && is_string($sessionId) && $sessionId !== '' && strtoupper($method) === 'GET') {
+            $ttl = PortalReadCache::seconds($path);
             PortalReadCache::put($sessionId, $officeId, $path, $query, $body);
         }
 
-        return response()->json($body, $upstream->status());
+        return $this->json($body, $upstream->status(), $ttl);
+    }
+
+    /**
+     * @param  array<string, mixed>  $body
+     */
+    private function json(array $body, int $status, ?int $ttl = null): Response
+    {
+        $response = response()->json($body, $status);
+        if ($status === 200 && $ttl !== null && $ttl > 0) {
+            $response->headers->set('Cache-Control', 'private, max-age='.$ttl);
+        }
+
+        return $response;
     }
 
     /**
