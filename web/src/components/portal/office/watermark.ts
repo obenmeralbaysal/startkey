@@ -14,11 +14,10 @@ export function WatermarkBadge({ flagged, compact = false }: { flagged: boolean;
   if (!label) {
     return null;
   }
-  return createElement(
-    "span",
-    { className: "glass-pill", "data-tone": "hidden", "data-watermark": compact ? "list" : "image" },
-    label,
-  );
+  if (compact) {
+    return createElement("span", { className: "glass-pill", "data-tone": "hidden", "data-watermark": "list" }, label);
+  }
+  return createElement("span", { className: "sk-watermark-badge", "data-watermark": "image" }, label);
 }
 
 export function WatermarkBanner({ show }: { show: boolean }): ReactNode {

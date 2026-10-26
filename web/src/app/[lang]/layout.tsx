@@ -11,6 +11,7 @@ import { SiteBehaviors } from "@/components/layout/SiteBehaviors";
 import { ThemeStyles } from "@/components/layout/ThemeStyles";
 import "@/styles/globals.css";
 import "@/styles/subpages.css";
+import "@/styles/watermark-badge.css";
 import { getHomepageContent } from "@/content/homepage";
 import { fetchUpcomingSeminarCount } from "@/lib/api";
 import { isLocale, locales, type Locale } from "@/lib/locales";

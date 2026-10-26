@@ -1,0 +1,40 @@
+/*
+ * “Filigranlı görsel” on a photo. One style for listing cards, the homepage
+ * strip, gallery thumbnails, and the portal gallery.
+ * White type, a dark stroke, and a ~65% black plate stay readable on a bright photo.
+ */
+.sk-watermark-badge {
+  position: absolute;
+  z-index: 4;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow:
+    0 0 2px #000,
+    0 1px 1px #000,
+    0 0 6px #000,
+    0 2px 4px rgba(0, 0, 0, 0.95);
+  -webkit-text-stroke: 1px #000;
+  paint-order: stroke fill;
+  pointer-events: none;
+}
+
+.sk-photo-thumb .sk-watermark-badge,
+.portfolio-media .sk-watermark-badge {
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  padding: 2px 4px;
+  font-size: 10px;
+  -webkit-text-stroke: 0.7px #000;
+}

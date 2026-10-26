@@ -1,5 +1,5 @@
 import { ListingPhoto } from "@/components/corporate/ListingGallery";
-import { WATERMARK_IMAGE_LABEL } from "@/components/portal/office/watermark";
+import { WatermarkBadge } from "@/components/portal/office/watermark";
 import type { ListingCardData } from "@/lib/corporate";
 import { localeFromListingPath } from "@/lib/listing-gallery";
 
@@ -21,7 +21,7 @@ export function ListingCard({ item }: { item: ListingCardData }) {
           href={item.urlPath}
           title={item.title}
         />
-        {item.has_watermarked_media ? <span className="sk-watermark-badge">{WATERMARK_IMAGE_LABEL}</span> : null}
+        <WatermarkBadge flagged={item.has_watermarked_media === true} />
         {item.processType ? <span className="property-estatestatus">{item.processType}</span> : null}
         {item.adSubType ? <span className="property-status">{item.adSubType}</span> : null}
       </div>

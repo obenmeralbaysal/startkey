@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import "./portal.css";
+import "@/styles/watermark-badge.css";
 
 export const metadata: Metadata = {
   title: "Giriş - StartKey Emlak Sistemi",

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
 
-import { WATERMARK_IMAGE_LABEL } from "@/components/portal/office/watermark";
+import { WatermarkBadge } from "@/components/portal/office/watermark";
 import type { ListingGallerySlide } from "@/lib/corporate";
 import {
   gallerySlots,
@@ -225,7 +225,7 @@ export function ListingGallery({
             failed={false}
             onFail={() => setFailed((current) => ({ ...current, [available.indexOf(main)]: true }))}
           />
-          {main.watermarked ? <span className="sk-watermark-badge">{WATERMARK_IMAGE_LABEL}</span> : null}
+          <WatermarkBadge flagged={main.watermarked} />
         </button>
         {slots.thumbs.length > 0 ? (
           <div className="sk-photo-thumbs" style={{ ["--thumb-n" as string]: String(slots.thumbs.length) }}>
@@ -245,7 +245,7 @@ export function ListingGallery({
                   onClick={(event) => openAt(slot.index, event.currentTarget)}
                 >
                   <img src={photo.thumb || photo.image} alt="" loading="lazy" decoding="async" onError={() => setFailed((current) => ({ ...current, [available.indexOf(photo)]: true }))} />
-                  {photo.watermarked ? <span className="sk-watermark-badge">{WATERMARK_IMAGE_LABEL}</span> : null}
+                  <WatermarkBadge flagged={photo.watermarked} />
                   {slot.kind === "more" ? <span className="sk-photo-more">{label}</span> : null}
                 </button>
               );

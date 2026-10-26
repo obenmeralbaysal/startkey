@@ -17,6 +17,8 @@ test("the image badge is Filigranlı görsel only when the photo is watermarked"
   const marked = renderToStaticMarkup(createElement(WatermarkBadge, { flagged: true }));
   assert.match(marked, /Filigranlı görsel/);
   assert.match(marked, /data-watermark="image"/);
+  assert.match(marked, /sk-watermark-badge/);
+  assert.doesNotMatch(marked, /glass-pill/);
   assert.equal(renderToStaticMarkup(createElement(WatermarkBadge, { flagged: false })), "");
   const list = renderToStaticMarkup(createElement(WatermarkBadge, { flagged: true, compact: true }));
   assert.match(list, /data-watermark="list"/);

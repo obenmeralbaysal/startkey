@@ -4,16 +4,12 @@ import { useEffect, useRef } from "react";
 
 import type { MapOffice } from "@/lib/api";
 import { officeMapTiles } from "@/lib/config";
+import { bindWorldFill, syncWorldMinZoom, worldMapOptions } from "@/lib/leaflet-world";
 import { mapPinPosition } from "@/lib/map-coordinates";
 import { pinClickMovesMap, popupHost, stickyPopupOptions } from "@/lib/office-map-popup";
 
 /** Pixel inset so every pin, including the corner ones, stays inside the frame. */
 const BOUNDS_PADDING = 40;
-/** Web Mercator world. Stops a drag past the antimeridian from showing an empty grey strip. */
-const WORLD_BOUNDS: [[number, number], [number, number]] = [
-  [-85.05112878, -180],
-  [85.05112878, 180],
-];
 /**
  * Zoom and the reset control occupy the top-left. The northwest pin (the
  * England office) would sit under them with an even 40px inset.
@@ -74,6 +70,7 @@ export function OfficeMap({
     const host = node.current;
     if (!host) return;
     let map: import("leaflet").Map | undefined;
+    let unbindWorld: (() => void) | undefined;
     let cancelled = false;
     let settle: number | undefined;
 
@@ -91,8 +88,7 @@ export function OfficeMap({
       map = L.map(node.current, {
         attributionControl: false,
         scrollWheelZoom: false,
-        maxBounds: WORLD_BOUNDS,
-        maxBoundsViscosity: 1,
+        ...worldMapOptions(),
       });
       L.control.attribution({ prefix: false }).addTo(map);
       const tiles = officeMapTiles();
@@ -101,6 +97,7 @@ export function OfficeMap({
         maxZoom: 18,
         noWrap: true,
       }).addTo(map);
+      unbindWorld = bindWorldFill(map);
 
       const group = overview
         ? L.markerClusterGroup({
@@ -177,6 +174,7 @@ export function OfficeMap({
 
       const fit = () => {
         if (!map) return;
+        syncWorldMinZoom(map);
         if (placed > 1) {
           map.fitBounds(
             bounds,
@@ -225,6 +223,7 @@ export function OfficeMap({
     return () => {
       cancelled = true;
       if (settle !== undefined) window.clearTimeout(settle);
+      unbindWorld?.();
       map?.remove();
       map = undefined;
     };

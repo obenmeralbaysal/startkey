@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { bindWorldFill, worldMapOptions } from "@/lib/leaflet-world";
+
 type Props = {
   officeId: number;
   latitude: number | null;
@@ -32,6 +34,7 @@ export function OfficePinEditor({ officeId, latitude, longitude, send }: Props) 
     const host = node.current;
     if (!host) return;
     let map: import("leaflet").Map | undefined;
+    let unbindWorld: (() => void) | undefined;
     let cancelled = false;
 
     void (async () => {
@@ -39,12 +42,18 @@ export function OfficePinEditor({ officeId, latitude, longitude, send }: Props) 
       await import("leaflet/dist/leaflet.css");
       if (cancelled || !node.current) return;
       const L = leaflet.default;
-      map = L.map(node.current, { attributionControl: false, scrollWheelZoom: false });
+      map = L.map(node.current, {
+        attributionControl: false,
+        scrollWheelZoom: false,
+        ...worldMapOptions(),
+      });
       L.control.attribution({ prefix: false }).addTo(map);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap",
         maxZoom: 19,
+        noWrap: true,
       }).addTo(map);
+      unbindWorld = bindWorldFill(map);
       const has = latitude !== null && longitude !== null;
       const start: [number, number] = has ? [latitude, longitude] : TURKEY;
       map.setView(start, has ? 16 : 5);
@@ -73,6 +82,7 @@ export function OfficePinEditor({ officeId, latitude, longitude, send }: Props) 
     return () => {
       cancelled = true;
       marker.current = null;
+      unbindWorld?.();
       map?.remove();
     };
   }, [latitude, longitude]);
