@@ -102,6 +102,35 @@ export type PortalUxCopy = {
   fieldRequired: string;
   record: string;
   summaryColumn: string;
+  listings: {
+    mine: string;
+    all: string;
+    tabs: { active: string; pending: string; revision: string; closed: string };
+    empty: string;
+    approve: string;
+    requestRevision: string;
+    search: string;
+    category: string;
+    consultant: string;
+    price: string;
+    priceHigh: string;
+    priceLow: string;
+    allCategories: string;
+    allConsultants: string;
+    note: string;
+    noteRequired: string;
+    revisionTitle: string;
+    send: string;
+    cancel: string;
+    approved: string;
+    revisionSent: string;
+    create: string;
+    priceMonth: string;
+    portfolioColumn: string;
+    priceColumn: string;
+    consultantColumn: string;
+    statusColumn: string;
+  };
 };
 
 export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
@@ -212,6 +241,35 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     fieldRequired: "Bu alan zorunludur.",
     record: "Kayıt",
     summaryColumn: "Özet",
+    listings: {
+      mine: "Portföylerim",
+      all: "Tümü",
+      tabs: { active: "Aktif", pending: "Onay Bekleyen", revision: "Düzeltme İstenen", closed: "Kapatıldı" },
+      empty: "Bu durumda portföy yok.",
+      approve: "Onayla",
+      requestRevision: "Düzeltme iste",
+      search: "Başlık, no, mahalle",
+      category: "Kategori",
+      consultant: "Danışman",
+      price: "Fiyat",
+      priceHigh: "Fiyat (yüksek)",
+      priceLow: "Fiyat (düşük)",
+      allCategories: "Kategori",
+      allConsultants: "Danışman",
+      note: "Not",
+      noteRequired: "Not zorunludur.",
+      revisionTitle: "Düzeltme iste",
+      send: "Gönder",
+      cancel: "Vazgeç",
+      approved: "Portföy aktif sekmesine alındı.",
+      revisionSent: "Düzeltme istendi.",
+      create: "Yeni",
+      priceMonth: "/ay",
+      portfolioColumn: "Portföy",
+      priceColumn: "Fiyat",
+      consultantColumn: "Danışman",
+      statusColumn: "Durum",
+    },
   },
   en: {
     summary: "Summary",
@@ -320,6 +378,35 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     fieldRequired: "This field is required.",
     record: "Record",
     summaryColumn: "Summary",
+    listings: {
+      mine: "My portfolios",
+      all: "All",
+      tabs: { active: "Active", pending: "Pending approval", revision: "Revision requested", closed: "Closed" },
+      empty: "No portfolios in this status.",
+      approve: "Approve",
+      requestRevision: "Request revision",
+      search: "Title, no, neighbourhood",
+      category: "Category",
+      consultant: "Consultant",
+      price: "Price",
+      priceHigh: "Price (high)",
+      priceLow: "Price (low)",
+      allCategories: "Category",
+      allConsultants: "Consultant",
+      note: "Note",
+      noteRequired: "A note is required.",
+      revisionTitle: "Request revision",
+      send: "Send",
+      cancel: "Cancel",
+      approved: "The portfolio moved to Active.",
+      revisionSent: "Revision requested.",
+      create: "New",
+      priceMonth: "/mo",
+      portfolioColumn: "Portfolio",
+      priceColumn: "Price",
+      consultantColumn: "Consultant",
+      statusColumn: "Status",
+    },
   },
   de: {
     summary: "Übersicht",
@@ -428,5 +515,34 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     fieldRequired: "Dieses Feld ist erforderlich.",
     record: "Eintrag",
     summaryColumn: "Überblick",
+    listings: {
+      mine: "Meine Portfolios",
+      all: "Alle",
+      tabs: { active: "Aktiv", pending: "Freigabe offen", revision: "Korrektur angefordert", closed: "Geschlossen" },
+      empty: "In diesem Status gibt es kein Portfolio.",
+      approve: "Freigeben",
+      requestRevision: "Korrektur anfordern",
+      search: "Titel, Nr., Viertel",
+      category: "Kategorie",
+      consultant: "Berater",
+      price: "Preis",
+      priceHigh: "Preis (hoch)",
+      priceLow: "Preis (niedrig)",
+      allCategories: "Kategorie",
+      allConsultants: "Berater",
+      note: "Notiz",
+      noteRequired: "Eine Notiz ist erforderlich.",
+      revisionTitle: "Korrektur anfordern",
+      send: "Senden",
+      cancel: "Abbrechen",
+      approved: "Das Portfolio liegt jetzt unter Aktiv.",
+      revisionSent: "Korrektur wurde angefordert.",
+      create: "Neu",
+      priceMonth: "/Mon.",
+      portfolioColumn: "Portfolio",
+      priceColumn: "Preis",
+      consultantColumn: "Berater",
+      statusColumn: "Status",
+    },
   },
 };

@@ -17,6 +17,7 @@ export type OfficeState = {
   firstName: string;
   jobTitle: string;
   locale: Locale;
+  userId: number;
   notice: (message: string) => void;
   reload: () => void;
 };

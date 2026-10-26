@@ -2,6 +2,24 @@
 
 Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
+### TD-025 — Portföy durum filtresi ve düzeltme isteği sözleşmesi yok
+
+**Alan:** Portal / Portföy listesi
+
+**Mevcut Durum:**
+
+Liste `GET portfolios?scope=mine|all` çağırır ve sekmeyi tarayıcıda süzer. Düzeltme isteği `POST portfolios/{id}/revision-request` gövdesinde zorunlu `note` ile gider. Onay `POST portfolios/{id}/approve` kullanır. Başarısız düzeltme isteği kayıt taşınmaz; bildirim burada üretilmez.
+
+**Geçici Olmasının Nedeni:**
+
+Reonix tarafında durum filtresi ile `scope=mine|all` doğrulanmadı. `reject` ucu zorunlu not, `revision_requested` ve danışmana uygulama içi bildirim taşımıyor.
+
+**Gelecekteki Implementasyon:**
+
+Master Developer durum ve kapsam filtresini doğrular. Düzeltme isteği notu kaydeder, durumu `revision_requested` yapar ve danışmana uygulama içi bildirim gönderir. Portal yolu aynı kalır.
+
+**Durum:** Açık
+
 ### TD-024 — Telefon, ofis kuralları ve ekip şube/TTBS alanı eksik
 
 **Alan:** Portal / Ofis ayarları ve ekip

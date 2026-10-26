@@ -4062,3 +4062,264 @@ button.glass-chip {
     font-weight: 600;
   }
 }
+
+.ux-listings {
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.ux-listing-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ux-scope {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ux-scope button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--ux-navy, #002172);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ux-navy, #002172);
+  font-weight: 700;
+}
+
+.ux-scope button[aria-pressed="true"] {
+  background: var(--ux-navy, #002172);
+  color: #fff;
+}
+
+.ux-port-tabs {
+  display: flex;
+  gap: 16px;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-bottom: 1px solid rgba(0, 33, 114, 0.12);
+}
+
+.ux-port-tabs button {
+  flex: none;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6e6e73;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ux-port-tabs button[aria-selected="true"] {
+  color: var(--ux-navy, #002172);
+  box-shadow: inset 0 -2px 0 var(--ux-red, #ec3323);
+}
+
+.ux-port-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ux-port-filters .ux-field {
+  flex: 1 1 160px;
+  max-width: 100%;
+}
+
+.ux-port-filters textarea,
+.ux-listings textarea {
+  width: 100%;
+  min-height: 96px;
+  border: 1px solid rgba(0, 33, 114, 0.16);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--ux-navy, #002172);
+}
+
+.ux-port-head,
+.ux-port-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(100px, 0.6fr) minmax(120px, 0.7fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.ux-port-head {
+  padding: 0 4px 8px;
+  color: #6e6e73;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ux-port-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ux-port-list li {
+  padding: 12px 4px;
+  border-top: 1px solid rgba(0, 33, 114, 0.08);
+}
+
+.ux-port-main {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.ux-port-main img,
+.ux-port-swatch {
+  width: 48px;
+  height: 40px;
+  flex: none;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.ux-port-main div {
+  min-width: 0;
+}
+
+.glass-page .ux-port-main a,
+.glass-page .ux-port-main a:hover,
+.glass-page .ux-port-main a:focus-visible {
+  display: block;
+  overflow: hidden;
+  color: var(--ux-navy, #002172);
+  font-weight: 700;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ux-port-meta {
+  display: block;
+  overflow: hidden;
+  color: #6e6e73;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ux-port-person {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.ux-port-person > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ux-port-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--ux-navy, #002172);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ux-port-status {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.ux-port-pill {
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ux-port-pill[data-tab="pending"] { background: #fff4d6; color: #8a5a00; }
+.ux-port-pill[data-tab="active"] { background: #e5f6e8; color: #1d7a32; }
+.ux-port-pill[data-tab="revision"] { background: #fde8e6; color: #b42318; }
+.ux-port-pill[data-tab="closed"] { background: #eee; color: #555; }
+
+.ux-port-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.ux-port-approve,
+.ux-port-revise {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.ux-port-approve {
+  border: 0;
+  background: var(--ux-red, #ec3323);
+  color: #fff;
+}
+
+.ux-port-revise {
+  border: 1px solid var(--ux-navy, #002172);
+  background: #fff;
+  color: var(--ux-navy, #002172);
+}
+
+@media (max-width: 719px) {
+  .ux-port-head,
+  .ux-port-price,
+  .ux-port-person,
+  .ux-port-pill {
+    display: none;
+  }
+
+  .ux-port-list li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .ux-port-actions {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  .ux-port-tabs {
+    gap: 14px;
+    padding-bottom: 0;
+  }
+
+  .ux-port-tabs button {
+    font-size: 13px;
+  }
+
+  .ux-port-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .ux-port-filters .ux-field:first-child {
+    grid-column: 1 / -1;
+  }
+}

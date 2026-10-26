@@ -19,6 +19,7 @@ import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/c
 import { matchedFieldErrors, withFieldErrors } from "@/components/portal/office/field-errors";
 import { OfficeDashboard } from "@/components/portal/office/dashboard";
 import { OfficeSettingsForm } from "@/components/portal/office/office-settings-form";
+import { PortfolioList } from "@/components/portal/office/portfolio-list";
 import { TeamSettings } from "@/components/portal/office/team-settings";
 import { ConfirmButton, PageFrame, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 import { hasWatermarkedMedia, isWatermarkedImage, mediaThumb, portfolioMedia, WatermarkBadge, WatermarkBanner } from "@/components/portal/office/watermark";
@@ -46,6 +47,7 @@ export function OfficeWork({ parts, tab = "" }: { parts: string[]; tab?: string 
   }
   if (!head) return <OfficeDashboard />;
   if (head === "contacts") return id === "new" ? <ContactForm /> : id ? <ContactDetail id={id} /> : <ContactList />;
+  if (head === "listings") return <PortfolioList />;
   if (head === "portfolios") return id === "new" ? <PortfolioNew step={parts[2]} /> : id ? <PortfolioDetail id={id} /> : <PortfolioList />;
   if (head === "demands") return id === "new" ? <DemandForm /> : id ? <DemandDetail id={id} /> : <DemandList />;
   if (head === "matches") return <SimpleList title={PORTAL_UX_COPY[locale].matches} path="matches" />;
@@ -134,17 +136,6 @@ function ContactDetail({ id }: { id: string }) {
         ) : null}
       </div>
     </section>
-  );
-}
-
-function PortfolioList() {
-  const { locale } = useOffice();
-  const copy = PORTAL_UX_COPY[locale];
-  const list = useData("portfolios");
-  return (
-    <PageFrame title={copy.portfolios} action={<Link className="ux-create" href={withLang("/portal/office/portfolios/new", locale)}>+ {copy.newPortfolio}</Link>}>
-      <RecordTable rows={rows(list.data)} loading={list.data === undefined} href={(row) => withLang(`/portal/office/portfolios/${row.id}`, locale)} recordLabel={copy.record} summaryLabel={copy.summaryColumn} />
-    </PageFrame>
   );
 }
 

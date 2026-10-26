@@ -66,8 +66,11 @@ test("office menu follows role access and the mobile bar is the four work items"
   assert.equal(owner.some((entry) => entry.id === "earnings"), false);
   const portfolios = owner.find((entry) => entry.id === "portfolios");
   assert.equal(portfolios?.label, "Portföyler");
+  assert.equal(portfolios?.href, "/portal/office/listings");
   assert.equal(portfolios?.bottomLabel, portfolios?.label);
   assert.equal(portfolios?.icon, "building");
+  assert.equal(menuCurrent("portfolios", ["listings"]), true);
+  assert.equal(menuCurrent("portfolios", ["portfolios", "9"]), true);
   assert.equal(owner.find((entry) => entry.id === "lease")?.label, PORTAL_UX_COPY.tr.lease);
   assert.equal(countText(PORTAL_UX_COPY.tr, "Kira takvimi"), 1);
   assert.equal(countText(PORTAL_UX_COPY.en, "Lease calendar"), 1);

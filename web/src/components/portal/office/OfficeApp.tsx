@@ -36,6 +36,7 @@ type OfficeBoot = {
   first: string;
   last: string;
   title: string;
+  userId: number;
   offices: OfficeMembership[];
   officeId: number;
 };
@@ -62,6 +63,7 @@ function OfficeScreen({ parts, lang, tab }: { parts: string[]; lang: Locale; tab
   const [section, setSection] = useState(parts);
   const [switching, setSwitching] = useState(false);
   const [userName, setUserName] = useState({ first: "", last: "", title: "" });
+  const [userId, setUserId] = useState(0);
   const toast = useToast();
   const notice = useCallback((value: string) => toast(value), [toast]);
   const noticeRef = useRef(notice);
@@ -77,6 +79,7 @@ function OfficeScreen({ parts, lang, tab }: { parts: string[]; lang: Locale; tab
       if (cancelled) return;
       setIsAdmin(boot.isAdmin);
       setUserName({ first: boot.first, last: boot.last, title: boot.title });
+      setUserId(boot.userId);
       setOffices(boot.offices);
       setOfficeId(boot.officeId);
       setReady(true);
@@ -119,6 +122,7 @@ function OfficeScreen({ parts, lang, tab }: { parts: string[]; lang: Locale; tab
           first,
           last,
           title: personTitle(me) || personTitle(loginUser),
+          userId: (isRecord(me.user) ? userNumber(me.user) : 0) || userNumber(loginUser),
           offices: list,
           officeId: current || (list[0] ? officeNumber(list[0]) : 0),
         };
@@ -196,7 +200,7 @@ function OfficeScreen({ parts, lang, tab }: { parts: string[]; lang: Locale; tab
   const badge = officeRoleBadge(role, lang);
 
   return (
-    <OfficeProvider value={{ officeId, office, isAdmin, firstName: userName.first, jobTitle: userName.title, locale: lang, notice, reload: () => undefined }}>
+    <OfficeProvider value={{ officeId, office, isAdmin, firstName: userName.first, jobTitle: userName.title, locale: lang, userId, notice, reload: () => undefined }}>
       <AppShell
         variant="ux"
         links={shellLinks}
@@ -263,6 +267,12 @@ function sectionHref(parts: string[], locale: Locale): string {
 function memberships(value: unknown): OfficeMembership[] {
   if (!Array.isArray(value)) return [];
   return value.filter(isRecord).map((row) => row as OfficeMembership);
+}
+
+function userNumber(record: OfficeRecord): number {
+  const raw = record.id;
+  const id = typeof raw === "number" ? raw : typeof raw === "string" ? Number(raw) : 0;
+  return Number.isInteger(id) && id > 0 ? id : 0;
 }
 
 function roleLabel(role: string, title?: string | null): string {

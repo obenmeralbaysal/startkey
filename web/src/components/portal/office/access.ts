@@ -16,6 +16,8 @@ export type OfficeMembership = {
   can_delete_portfolios?: boolean;
   managers_can_view_financial_reports?: boolean;
   managers_can_view_earnings?: boolean;
+  /** Consultant may open the office-wide portfolio view. Absent means own rows only. */
+  can_view_all_portfolios?: boolean;
 };
 
 export function officeNumber(office: OfficeMembership): number {

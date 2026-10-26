@@ -110,7 +110,7 @@ export function officeMenu(role: OfficeRole, office: OfficeMembership | undefine
   const copy = PORTAL_UX_COPY[locale];
   const work: OfficeMenuItem[] = [
     item("summary", "/portal/office", copy.summary, "work", "home", copy.summary),
-    item("portfolios", "/portal/office/portfolios", copy.portfolios, "work", "building"),
+    item("portfolios", "/portal/office/listings", copy.portfolios, "work", "building"),
     item("contacts", "/portal/office/contacts", copy.contacts, "work", "people", copy.contacts),
     item("demands", "/portal/office/demands", copy.demands, "work", "search", copy.demands),
     item("matches", "/portal/office/matches", copy.matches, "work", "link"),
@@ -169,6 +169,7 @@ export function menuCurrent(id: string, parts: readonly string[], separateEarnin
   if (id === "team") return parts[0] === "settings" && parts[1] === "team";
   if (id === "notifications") return parts[0] === "settings" && parts[1] === "notifications";
   if (id === "reports" && !separateEarnings) return parts[0] === "reports" || parts[0] === "earnings";
+  if (id === "portfolios") return parts[0] === "portfolios" || parts[0] === "listings";
   return parts[0] === id;
 }
 
