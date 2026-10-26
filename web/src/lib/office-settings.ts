@@ -14,6 +14,11 @@ export function bulkRateVisible(role: string): boolean {
   return role === "owner";
 }
 
+/** Add-member form and row edit actions. Owner and office manager only; Yönetici stays read-only. */
+export function teamWriteVisible(role: string): boolean {
+  return role === "owner" || role === "office_manager";
+}
+
 export type OfficeProfileInput = {
   name: string;
   phone: string;

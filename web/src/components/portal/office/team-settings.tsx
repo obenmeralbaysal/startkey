@@ -20,6 +20,7 @@ import {
   teamFieldError,
   teamLicenceBody,
   teamMemberBody,
+  teamWriteVisible,
   type TeamMemberInput,
 } from "@/lib/office-settings";
 
@@ -48,6 +49,9 @@ export function TeamSettings() {
   const [rate, setRate] = useState("");
   const [pending, setPending] = useState(false);
   const [version, setVersion] = useState(0);
+  const canWrite = teamWriteVisible(roleOf(office));
+  const canRemove = canWrite && canDeleteTeam(roleOf(office), office);
+  const canRate = bulkRateVisible(roleOf(office));
 
   useEffect(() => {
     let cancelled = false;
@@ -82,7 +86,7 @@ export function TeamSettings() {
 
   async function addMember(event: FormEvent) {
     event.preventDefault();
-    if (pending) return;
+    if (!canWrite || pending) return;
     const invalid = teamFieldError(form, copy.fieldRequired);
     if (invalid) {
       setFieldError(invalid);
@@ -114,6 +118,7 @@ export function TeamSettings() {
   }
 
   async function changeRole(row: OfficeRecord, roleId: string) {
+    if (!canWrite) return;
     const id = row.id ?? row.user_id;
     try {
       await officeCall(`team/${id}`, officeId, { method: "PUT", body: { role_id: Number(roleId) } });
@@ -125,6 +130,7 @@ export function TeamSettings() {
   }
 
   async function remove(row: OfficeRecord) {
+    if (!canRemove) return;
     const id = row.id ?? row.user_id;
     try {
       await officeCall(`team/${id}`, officeId, { method: "DELETE" });
@@ -161,14 +167,17 @@ export function TeamSettings() {
     }
   }
 
-  const canRemove = canDeleteTeam(roleOf(office), office);
-  const canRate = bulkRateVisible(roleOf(office));
+  function branchLabel(row: OfficeRecord): string {
+    const id = String(row.branch_id ?? "");
+    const match = branches.find((branch) => String(branch.id) === id);
+    return match ? text(match, ["name", "title"]) : text(row, ["branch_name", "branch"]);
+  }
 
   return (
     <PageFrame title={copy.team} crumb={[copy.settings, copy.team]}>
       <div data-screen="office-team">
         {banner ? <p className="ux-banner" data-status={banner === APPROVAL_SENT ? "sent" : "stub"}>{banner === APPROVAL_SENT ? copy.approvalSent : banner}</p> : null}
-        <form className="ux-form-grid" onSubmit={addMember}>
+        {canWrite ? <form className="ux-form-grid" onSubmit={addMember}>
           <Field label={copy.firstName} error={fieldError?.field === "first_name" ? fieldError.message : ""}>
             <input name="first_name" value={form.first_name} autoComplete="given-name" onChange={(event) => setForm({ ...form, first_name: event.target.value })} />
           </Field>
@@ -200,7 +209,7 @@ export function TeamSettings() {
             <input name="myk_no" value={form.myk_no} onChange={(event) => setForm({ ...form, myk_no: event.target.value })} />
           </Field>
           <button className="ux-create" type="submit" disabled={pending}>{copy.add}</button>
-        </form>
+        </form> : null}
 
         <div className="ux-table-wrap">
           <table className="ux-table">
@@ -230,38 +239,42 @@ export function TeamSettings() {
                     ) : null}
                     <td data-label={copy.firstName}>{text(row, ["first_name", "name"])}</td>
                     <td data-label={copy.teamRole}>
-                      <select defaultValue="" aria-label={copy.teamRole} onChange={(event) => { if (event.target.value) changeRole(row, event.target.value); }}>
-                        <option value="">{memberRoleLabel(row, labels)}</option>
-                        {roles.map((role) => <option key={role.id} value={role.id}>{role.label}</option>)}
-                      </select>
+                      {canWrite ? (
+                        <select defaultValue="" aria-label={copy.teamRole} onChange={(event) => { if (event.target.value) changeRole(row, event.target.value); }}>
+                          <option value="">{memberRoleLabel(row, labels)}</option>
+                          {roles.map((role) => <option key={role.id} value={role.id}>{role.label}</option>)}
+                        </select>
+                      ) : memberRoleLabel(row, labels)}
                     </td>
                     <td data-label={copy.teamBranch}>
-                      <select
-                        aria-label={copy.teamBranch}
-                        defaultValue={String(row.branch_id ?? "")}
-                        onChange={(event) => {
-                          const id = row.id ?? row.user_id;
-                          void officeCall(`team/${id}`, officeId, {
-                            method: "PUT",
-                            body: teamLicenceBody({
-                              branch_id: event.target.value,
-                              ttbs_no: String(row.ttbs_no ?? ""),
-                              myk_no: String(row.myk_no ?? ""),
-                            }),
-                          }).then(() => {
-                            notice(copy.saved);
-                            reload();
-                          }).catch((error: unknown) => {
-                            const message = error instanceof OfficeError && error.fields.branch_id
-                              ? error.fields.branch_id
-                              : error instanceof Error ? error.message : copy.savedError;
-                            setFieldError({ field: "branch_id", message });
-                          });
-                        }}
-                      >
-                        <option value="">{copy.teamBranch}</option>
-                        {branches.map((branch) => <option key={String(branch.id)} value={String(branch.id)}>{text(branch, ["name", "title"])}</option>)}
-                      </select>
+                      {canWrite ? (
+                        <select
+                          aria-label={copy.teamBranch}
+                          defaultValue={String(row.branch_id ?? "")}
+                          onChange={(event) => {
+                            const id = row.id ?? row.user_id;
+                            void officeCall(`team/${id}`, officeId, {
+                              method: "PUT",
+                              body: teamLicenceBody({
+                                branch_id: event.target.value,
+                                ttbs_no: String(row.ttbs_no ?? ""),
+                                myk_no: String(row.myk_no ?? ""),
+                              }),
+                            }).then(() => {
+                              notice(copy.saved);
+                              reload();
+                            }).catch((error: unknown) => {
+                              const message = error instanceof OfficeError && error.fields.branch_id
+                                ? error.fields.branch_id
+                                : error instanceof Error ? error.message : copy.savedError;
+                              setFieldError({ field: "branch_id", message });
+                            });
+                          }}
+                        >
+                          <option value="">{copy.teamBranch}</option>
+                          {branches.map((branch) => <option key={String(branch.id)} value={String(branch.id)}>{text(branch, ["name", "title"])}</option>)}
+                        </select>
+                      ) : branchLabel(row)}
                     </td>
                     <td data-label={copy.email}>{text(row, ["email"])}</td>
                     {canRemove ? (

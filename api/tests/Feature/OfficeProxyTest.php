@@ -226,6 +226,8 @@ class OfficeProxyTest extends TestCase
         $response = match ($method) {
             'put' => $call->putJson($url, []),
             'post' => $call->postJson($url, []),
+            'patch' => $call->patchJson($url, []),
+            'delete' => $call->deleteJson($url),
             default => $call->getJson($url),
         };
 
@@ -723,8 +725,15 @@ class OfficeProxyTest extends TestCase
             'manager bulk rate' => ['manager', null, 'post', '/api/v1/portal/office/commission-policy/changes'],
             'agent team create' => ['agent', null, 'post', '/api/v1/portal/office/team'],
             'agent team update' => ['agent', null, 'put', '/api/v1/portal/office/team/4'],
+            'manager team create' => ['manager', null, 'post', '/api/v1/portal/office/team'],
+            'manager team update' => ['manager', null, 'put', '/api/v1/portal/office/team/4'],
+            'manager team delete' => ['manager', null, 'delete', '/api/v1/portal/office/team/4'],
+            'manager team invite' => ['manager', null, 'post', '/api/v1/portal/office/team/invite'],
+            'manager team role' => ['manager', null, 'put', '/api/v1/portal/office/team/4/role'],
+            'manager team status' => ['manager', null, 'patch', '/api/v1/portal/office/team/4/status'],
             'agent branch create' => ['agent', null, 'post', '/api/v1/portal/office/branches'],
             'manager branch update' => ['manager', null, 'put', '/api/v1/portal/office/branches/3'],
+            'manager branch delete' => ['manager', null, 'delete', '/api/v1/portal/office/branches/3'],
         ];
     }
 
@@ -778,6 +787,12 @@ class OfficeProxyTest extends TestCase
             'ttbs_no' => '3500000',
             'myk_no' => 'MYK-2',
         ])->assertOk();
+        $as($lead)->postJson('/api/v1/portal/office/team', [
+            'branch_id' => 3,
+            'ttbs_no' => '3500000',
+        ])->assertOk();
+        $as($lead)->putJson('/api/v1/portal/office/team/4', ['role_id' => 2])->assertOk();
+        $as($lead)->deleteJson('/api/v1/portal/office/team/4')->assertOk();
         $as($owner)->postJson('/api/v1/portal/office/commission-policy/changes', [
             'user_ids' => [4],
             'rate_percentage' => 42.5,
@@ -793,6 +808,14 @@ class OfficeProxyTest extends TestCase
         Http::assertSent(fn ($request) => $request->method() === 'PUT'
             && str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/api/v1/branches/3')
             && ($request->data()['name'] ?? null) === 'Karşıyaka');
+
+        $reader = $this->login(['role' => 'manager', 'role_slug' => 'manager']);
+        Http::fake([
+            'http://reonix.test/api/v1/team' => Http::response(['data' => []]),
+            'http://reonix.test/api/v1/branches' => Http::response(['data' => []]),
+        ]);
+        $as($reader)->getJson('/api/v1/portal/office/team')->assertOk();
+        $as($reader)->getJson('/api/v1/portal/office/branches')->assertOk();
     }
 
     /**

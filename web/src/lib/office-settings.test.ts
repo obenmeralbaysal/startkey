@@ -13,6 +13,7 @@ import {
   assignableRoles,
   bulkRateBody,
   bulkRateVisible,
+  teamWriteVisible,
   displayCell,
   duplicateTeamEmail,
   isSafeHex,
@@ -170,6 +171,12 @@ test("team create and edit send the branch and licence fields", () => {
 test("bulk rate is visible only for the owner", () => {
   for (const role of ["owner", "manager", "office_manager", "agent", "franchise_admin", "franchise_staff", "broker"]) {
     assert.equal(bulkRateVisible(role), role === "owner");
+  }
+});
+
+test("team writes are visible only for owner and office manager", () => {
+  for (const role of ["owner", "manager", "office_manager", "agent", "franchise_admin", "franchise_staff", "broker"]) {
+    assert.equal(teamWriteVisible(role), role === "owner" || role === "office_manager");
   }
 });
 
