@@ -1,4 +1,5 @@
 import type { HomepageContent } from "@/content/types";
+import { absoluteMedia } from "@/lib/media-path";
 
 export function HowItWorks({ content }: { content: HomepageContent["howItWorks"] }) {
   return (
@@ -13,8 +14,10 @@ export function HowItWorks({ content }: { content: HomepageContent["howItWorks"]
           </div>
         </div>
         <div className="flex flex-wrap justify-center">
-          {content.cards.map((card) => {
-            const imageBase = card.image.replace(/\.[^.]+$/, "");
+          {content.cards.map((card, index) => {
+            const src = absoluteMedia(card.image, "micrositecontent");
+            const imageBase = src.replace(/\.[^.]+$/, "");
+            const step = String(index + 1).padStart(2, "0");
             return (
               <div
                 className="w-full xl:w-1/3 lg:w-1/3 md:w-1/2 sm:w-1/2"
@@ -33,17 +36,18 @@ export function HowItWorks({ content }: { content: HomepageContent["howItWorks"]
                     />
                     <picture>
                       <source
-                        srcSet={`/media/micrositecontent/${imageBase}.webp`}
+                        srcSet={`${imageBase}.webp`}
                         type="image/webp"
                       />
                       <img
-                        src={`/media/micrositecontent/${card.image}`}
-                        alt="MicroSiteContent-photo"
+                        src={src}
+                        alt={card.alt}
                         width={260}
+                        height={180}
                         loading="lazy"
                       />
                     </picture>
-                    <span>{card.step}</span>
+                    <span>{step}</span>
                   </div>
                   <div className="hw-info" dangerouslySetInnerHTML={{ __html: card.infoHtml }} />
                 </div>

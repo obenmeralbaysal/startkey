@@ -14,12 +14,14 @@ use App\Http\Controllers\Api\V1\OfficeProxyController;
 use App\Http\Controllers\Api\V1\PortalMediaController;
 use App\Http\Controllers\Api\V1\PortalSessionController;
 use App\Http\Controllers\Api\V1\PublicPortalController;
+use App\Http\Controllers\Api\V1\SeminarCountController;
 use App\Http\Controllers\Api\V1\TrainingApplicationController;
 use App\Http\Middleware\AuthenticatePortalSession;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::get('homepage', HomepageController::class);
+    Route::get('seminars/upcoming-count', SeminarCountController::class);
 
     Route::get('corporate', [CorporateController::class, 'show']);
     Route::get('catalogue/media/{kind}/{id}/{index?}', CatalogueMediaController::class)

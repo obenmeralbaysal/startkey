@@ -31,6 +31,9 @@ class EmptyOfficeListTest extends TestCase
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
             ->assertOk()
             ->assertJsonPath('data.kind', 'consultant-list')
+            ->assertJsonPath('data.heading', 'Danışmanlarımız')
+            ->assertJsonPath('data.breadcrumb.trail.0.label', 'Anasayfa')
+            ->assertJsonPath('data.breadcrumb.trail.1.label', 'Danışmanlarımız')
             ->assertJsonPath('data.hasResults', false)
             ->assertJsonPath('data.emptyLabel', 'Henüz eklenmiş danışman yok.');
 

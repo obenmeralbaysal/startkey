@@ -450,18 +450,21 @@
     "titleHtml": "<h2>Become a Real Estate Expert in Three Steps</h2> <p style=\"text-align: justify;\">Startkey Academy offers a wide range of training, from effective presentation techniques to successful sales strategies, and from client relations to negotiation skills, helping you stand out in your career. Gain the skills needed to become a leader in the sector through comprehensive content provided in Startkey Academy’s <strong>Broker Training</strong>,<strong> Real Estate Consultant Beginner Training</strong>, and <strong>Assistant Training</strong> programs.</p> <p style=\"text-align: justify;\">Join <a href=\"https://startkey.com.tr/tr/egitimlerimiz\"><strong>Startkey Academy’s</strong></a> training sessions and take a new step toward success on this journey.</p>",
     "cards": [
       {
-        "image": "7db72a5d-790b-4e30-9921-b02c1a62f982.png",
+        "image": "/img/3-adim/01-startkey-akademi.webp",
         "step": "01",
+        "alt": "Startkey Academy: laptop and graduation cap",
         "infoHtml": "<h3>Startkey Academy</h3> <p>Visit the Startkey Academy Page, Complete Your Registration, and Join the Training of Your Choice</p>"
       },
       {
-        "image": "9f785e99-e74a-4773-9b27-0f17a43b87fc.png",
-        "step": "01",
+        "image": "/img/3-adim/02-egitime-katilin.webp",
+        "step": "02",
+        "alt": "Join the training: classroom, calendar and check mark",
         "infoHtml": "<h3>Don’t Miss the Training</h3> <p>Enhance Your Skills with Startkey Academy Training and Take Your Real Estate Expertise to the Next Level</p>"
       },
       {
-        "image": "2249d240-41ac-4b2f-a6bc-598642ee9e88.png",
-        "step": "01",
+        "image": "/img/3-adim/03-yukselisin-keyfi.webp",
+        "step": "03",
+        "alt": "Enjoy your advancement: steps, house, key and rising arrow",
         "infoHtml": "<h3>Enjoy Your Advancement</h3> <p>With Startkey Academy Training, Acquire Better Presentation Skills, More Effective Negotiation Techniques, and the Ability to Close Deals More Successfully</p>"
       }
     ],

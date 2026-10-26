@@ -64,14 +64,14 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
               ))}
             </div>
             <div className="sk-split">
-              <div className="sk-half" style={{ alignContent: "center" }}>
+              <div className="sk-half">
                 <div className="max-lg:[margin-bottom:calc(30px_*_var(--sk-scale,_1))]">
                   <div className="relative [margin:0_0_calc(30px_*_var(--sk-scale,_1))] max-md:[margin-bottom:calc(20px_*_var(--sk-scale,_1))] [&_h2]:font-heading [&_h2]:text-[calc(40px*var(--sk-scale,1))] [&_h2]:font-bold [&_h2]:m-0 [&_p]:mt-[calc(12px*var(--sk-scale,1))] [&_p]:pr-[calc(25px*var(--sk-scale,1))] [&_span]:mb-[calc(10px*var(--sk-scale,1))] [&_span]:inline-block [&_span]:font-semibold [&_span]:leading-none [&_span]:text-brand">
                     <span>{data.kicker}</span>
                     <h2>{data.pageHeading}</h2>
                     <p>{data.intro}</p>
                   </div>
-                  <div className="container [background-color:#2f2f7e] [border-radius:calc(10px_*_var(--sk-scale,_1))] [padding-left:calc(30px_*_var(--sk-scale,_1))] [margin-top:calc(30px_*_var(--sk-scale,_1))] [margin-bottom:calc(30px_*_var(--sk-scale,_1))]">
+                  <div className="work-time [background-color:#2f2f7e] [border-radius:calc(10px_*_var(--sk-scale,_1))] [padding-left:calc(30px_*_var(--sk-scale,_1))] [margin-top:calc(30px_*_var(--sk-scale,_1))] [margin-bottom:calc(30px_*_var(--sk-scale,_1))]">
                     <br />
                     <h4 className="mb-[calc(8px*var(--sk-scale,1))] text-[calc(24px*var(--sk-scale,1))] leading-[1.3] text-white">{data.hoursHeading}</h4>
                     {data.hours.map((row) => (
@@ -115,7 +115,7 @@ export function ContactPage({ data, locale }: { data: ContactData; locale: Local
               title={data.mapTitle || undefined}
               width="100%"
               height="500"
-              style={{ border: 0, pointerEvents: "none", height: scaled(500) }}
+              style={{ border: 0, pointerEvents: "none", height: "500px" }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

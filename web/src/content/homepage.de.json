@@ -450,18 +450,21 @@
     "titleHtml": "<h2>3 Schritte, um ein Immobilienexperte zu werden</h2> <p style=\"text-align: justify;\">Die Startkey Akademie, die ein breites Spektrum an Schulungen anbietet, von effektiven Präsentationstechniken bis hin zu erfolgreichen Verkaufsstrategien, von Kundenbeziehungen bis hin zu Verhandlungsgeschick, wird Ihnen helfen, in Ihrer Karriere etwas zu bewegen. Startkey Akademie <strong>Maklerausbildungen</strong>,<strong> Immobilienberater Erstausbildungen</strong> und <strong>Assistentenausbildungen</strong> erwerben Sie das nötige Rüstzeug, um mit den umfassenden Inhalten, die sie bietet, zu den führenden Unternehmen der Branche zu gehören.</p> <p style=\"text-align: justify;\">Nehmen Sie an den Schulungen der <a href=\"https://startkey.com.tr/tr/egitimlerimiz\"><strong>Startkey Akademie</strong></a> teil und machen Sie einen neuen Schritt auf diesem Weg zum Erfolg.</p>",
     "cards": [
       {
-        "image": "7db72a5d-790b-4e30-9921-b02c1a62f982.png",
+        "image": "/img/3-adim/01-startkey-akademi.webp",
         "step": "01",
+        "alt": "Startkey Akademie: Laptop und Abschlusskappe",
         "infoHtml": "<h3>Startkey Akademie</h3> <p>Sie können an der von Ihnen gewünschten Schulung teilnehmen, indem Sie auf die Startkey Akademie Seite gehen und den Registrierungsprozess abschließen</p>"
       },
       {
-        "image": "9f785e99-e74a-4773-9b27-0f17a43b87fc.png",
-        "step": "01",
+        "image": "/img/3-adim/02-egitime-katilin.webp",
+        "step": "02",
+        "alt": "An der Schulung teilnehmen: Schulungsraum, Kalender und Häkchen",
         "infoHtml": "<h3>Vernachlässigen Sie nicht die Teilnahme an Schulungen</h3> <p>Mit den Schulungen der Startkey Akademie erweitern Sie Ihre Fähigkeiten und bringen Ihr Fachwissen im Immobilienbereich einen Schritt weiter</p>"
       },
       {
-        "image": "2249d240-41ac-4b2f-a6bc-598642ee9e88.png",
-        "step": "01",
+        "image": "/img/3-adim/03-yukselisin-keyfi.webp",
+        "step": "03",
+        "alt": "Genießen Sie Ihren Aufstieg: Stufen, Haus, Schlüssel und steigender Pfeil",
         "infoHtml": "<h3>Genießen Sie Ihren Aufstieg</h3> <p>Bessere Präsentation, effektiveres Verhandeln und erfolgreichere Verkaufsabschlüsse mit den Schulungen der Startkey Akademie</p>"
       }
     ],

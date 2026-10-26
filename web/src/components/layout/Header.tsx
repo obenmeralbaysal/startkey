@@ -20,6 +20,15 @@ const HEADER_STYLES = `
     top: 0;
     z-index: 999;
     background: #fff;
+    transition: 0.4s;
+  }
+  .sk-header.sticky {
+    box-shadow: 0 calc(5px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);
+    animation: sk-header-slide 1s ease;
+  }
+  @keyframes sk-header-slide {
+    from { transform: translateY(-100%); }
+    to { transform: none; }
   }
   .sk-header-row {
     display: flex;
@@ -36,6 +45,12 @@ const HEADER_STYLES = `
     width: calc(192px * var(--sk-scale, 1));
     height: auto;
     max-width: none;
+  }
+  @media (max-width: 767px) {
+    .sk-logo img {
+      width: 130px;
+      height: 53px;
+    }
   }
   .sk-nav {
     display: flex;
@@ -58,6 +73,7 @@ const HEADER_STYLES = `
     font-weight: 500;
     line-height: 1.5;
     white-space: nowrap;
+    transition: color 0.3s ease;
   }
   .sk-nav > li > a::after {
     content: "";
@@ -260,7 +276,7 @@ const HEADER_STYLES = `
     .sk-drawer .sk-actions .sk-btn { justify-content: center; width: 100%; box-sizing: border-box; text-align: center; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sk-drawer, .sk-drawer.is-open, .sk-drawer .sk-drop, .sk-expand i { transition: none; }
+    .sk-drawer, .sk-drawer.is-open, .sk-drawer .sk-drop, .sk-expand i, .sk-header, .sk-header.sticky, .sk-nav > li > a { transition: none; animation: none; }
   }
   @media (min-width: 992px) and (max-width: 1199px) {
     .sk-nav > li { margin: 0 calc(7px * var(--sk-scale, 1)); }
@@ -369,6 +385,7 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
   const pathname = usePathname() || `/${locale}`;
   const labels = MENU_LABELS[locale];
   const [menuOpen, setMenuOpen] = useState(false);
+  const [stuck, setStuck] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(() => {
     const index = nav.findIndex((item) => item.children.some((child) => isCurrent(child.href, pathname)));
     return index >= 0 ? index : null;
@@ -380,6 +397,13 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
     burgerRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setStuck(window.scrollY >= 100);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -424,7 +448,7 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
   }, [menuOpen, closeMenu]);
 
   return (
-    <header className="sk-header">
+    <header className={stuck ? "sk-header sticky" : "sk-header"}>
       <style dangerouslySetInnerHTML={{ __html: HEADER_STYLES }} />
       <div className="container">
         <div className="sk-header-row">

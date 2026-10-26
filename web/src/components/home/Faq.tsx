@@ -1,11 +1,13 @@
 import type { HomepageContent } from "@/content/types";
+import { absoluteMedia } from "@/lib/media-path";
 
 /**
  * Bootstrap accordion, with the reference website's own ids, class strings and
  * expanded state so its collapse behaviour is wired up identically.
  */
 export function Faq({ content }: { content: HomepageContent["faq"] }) {
-  const imageBase = content.image.replace(/\.[^.]+$/, "");
+  const src = absoluteMedia(content.image, "content");
+  const imageBase = src.replace(/\.[^.]+$/, "");
 
   return (
     <section className="relative [padding-top:calc(100px_*_var(--sk-scale,_1))] [padding-bottom:calc(100px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(50px_*_var(--sk-scale,_1))] max-md:[padding-bottom:calc(50px_*_var(--sk-scale,_1))] md:max-lg:[padding-top:calc(70px_*_var(--sk-scale,_1))] md:max-lg:[padding-bottom:calc(70px_*_var(--sk-scale,_1))] bg-seashell">
@@ -14,9 +16,9 @@ export function Faq({ content }: { content: HomepageContent["faq"] }) {
           <div className="sk-col-6" data-aos="fade-right" data-aos-duration="1200" data-aos-delay="400">
             <div className="max-lg:[margin-bottom:calc(30px_*_var(--sk-scale,_1))]">
               <picture>
-                <source srcSet={`/media/content/${imageBase}.webp`} type="image/webp" />
+                <source srcSet={`${imageBase}.webp`} type="image/webp" />
                 <img
-                  src={`/media/content/${content.image}`}
+                  src={src}
                   alt=""
                   width={530}
                   height={629}

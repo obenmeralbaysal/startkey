@@ -186,7 +186,7 @@ sunucu: docker compose build web && docker compose up -d
 
 `public/media` mount ise yeni imaj boş media getirmez; eski klasör bağlanır.
 
-`.env` içindeki `NEXT_PUBLIC_*` (Reonix URL, reCAPTCHA v3 site key) **build anında** Next bundle’a girer. Bunları değiştirince web’i yeniden build et.
+`.env` içindeki `NEXT_PUBLIC_*` (Reonix URL, reCAPTCHA v3 site key, ofis haritası altlığı `NEXT_PUBLIC_MAP_STYLE` / `NEXT_PUBLIC_MAP_SATELLITE_URL` / `NEXT_PUBLIC_MAP_SATELLITE_ATTRIBUTION`) **build anında** Next bundle’a girer. Bunları değiştirince web’i yeniden build et. Uydu adresi boşsa veya stil `default` ise harita OpenStreetMap’te kalır. Adreste sağlayıcı token’ı olabilir; token yalnızca deploy ortamında durur, repoya yazılmaz.
 
 ---
 

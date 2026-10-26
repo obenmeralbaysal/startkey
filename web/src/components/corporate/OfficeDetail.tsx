@@ -1,19 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { DirectoryCard } from "@/components/corporate/DirectoryCard";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
+import { OfficeMap } from "@/components/home/OfficeMap";
 import type { CorporatePayload } from "@/lib/corporate";
+import { mapPinPosition } from "@/lib/map-coordinates";
 
 type OfficeDetailData = Extract<CorporatePayload, { kind: "office-detail" }>;
 
+const SOCIAL_ICONS: Record<string, string> = {
+  instagram: "ri-instagram-line",
+  facebook: "ri-facebook-fill",
+  linkedin: "ri-linkedin-fill",
+  twitter: "ri-twitter-fill",
+  youtube: "ri-youtube-fill",
+  tiktok: "ri-tiktok-fill",
+  whatsapp: "ri-whatsapp-line",
+};
+
 export function OfficeDetail({ data }: { data: OfficeDetailData }) {
-  const [activeId, setActiveId] = useState(data.tabs[0]?.id ?? "tab_1");
-  const mapQuery = data.map.query ?? "";
-  const mapSrc = data.map.iframeSrc || (mapQuery ? `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed` : "");
+  const pin = useMemo(() => {
+    if (!data.pin) {
+      return null;
+    }
+    const position = mapPinPosition(data.pin.latitude, data.pin.longitude);
+    return position ? { ...data.pin, latitude: position.latitude, longitude: position.longitude } : null;
+  }, [data.pin]);
+  const pins = useMemo(() => (pin ? [pin] : []), [pin]);
+  const socialLinks = data.social?.length ? data.social : data.instagram ? [{ network: "instagram", href: data.instagram }] : [];
+  const tabs = pin ? data.tabs : data.tabs.filter((tab) => tab.id !== "tab_3");
+  const [activeId, setActiveId] = useState(tabs[0]?.id ?? "tab_1");
+  const mapQuery = pin ? `${pin.latitude},${pin.longitude}` : "";
 
   return (
     <>
@@ -50,13 +71,15 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
                   </li>
                 ) : null}
               </ul>
-              {data.instagram ? (
+              {socialLinks.length > 0 ? (
                 <ul className="sk-office-social">
-                  <li>
-                    <a href={data.instagram} target="_blank">
-                      <i className="ri-instagram-line" />
-                    </a>
-                  </li>
+                  {socialLinks.map((link) => (
+                    <li key={link.href}>
+                      <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.network}>
+                        <i className={SOCIAL_ICONS[link.network] ?? "ri-links-line"} />
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               ) : null}
               {data.portfoliosLabel ? (
@@ -65,7 +88,7 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
             </div>
             <div>
               <ul className="sk-agent-tabs" role="tablist">
-                {data.tabs.map((tab) => (
+                {tabs.map((tab) => (
                   <li key={tab.id}>
                     <button className={tab.id === activeId ? "active" : ""} type="button" role="tab" aria-selected={tab.id === activeId} onClick={() => setActiveId(tab.id)}>
                       {tab.label}
@@ -104,9 +127,9 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
                   ) : null}
                 </div>
               ) : null}
-              {activeId === "tab_3" && mapSrc ? (
+              {activeId === "tab_3" && pin ? (
                 <div>
-                  {mapQuery ? (
+                  {data.map.directionsLabel ? (
                     <div className="sk-map-actions">
                       <button className="sk-btn sk-btn-navy" type="button" onClick={() => window.open(`https://www.google.com/maps/dir//${encodeURIComponent(mapQuery)}/`, "_blank")}>
                         <i className="ri-direction-fill" /> {data.map.directionsLabel}
@@ -116,7 +139,9 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
                       </button>
                     </div>
                   ) : null}
-                  <iframe className="sk-map" src={mapSrc} title={data.name} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  <div className="sk-office-detail-map">
+                    <OfficeMap offices={pins} zoom={15} label={data.name} className="is-detail" />
+                  </div>
                 </div>
               ) : null}
             </div>

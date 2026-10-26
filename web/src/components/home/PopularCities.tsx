@@ -25,7 +25,7 @@ export function PopularCities({
             const remote = city.image.startsWith("/") || city.image.startsWith("http");
             const imageBase = city.image.replace(/\.[^.]+$/, "");
             return (
-              <div className="city-card style2" key={city.cityCode} data-city-id={city.cityCode}>
+              <div className="city-card style2" key={city.cityCode} data-city-id={city.cityCode} data-aos="fade-up" data-aos-duration="1200" data-aos-delay="200">
                 {remote ? (
                   <img src={city.image} alt="MicroSiteContent-photo" width={418} height={280} loading="lazy" />
                 ) : (

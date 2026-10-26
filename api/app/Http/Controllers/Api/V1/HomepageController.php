@@ -8,6 +8,7 @@ use App\Models\PropertyTranslation;
 use App\Models\SiteStat;
 use App\Services\ReonixCatalogue;
 use App\Support\Locale;
+use App\Support\MediaPath;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -33,6 +34,7 @@ class HomepageController extends Controller
                 'popularCities' => is_array($portfolios)
                     ? $this->citiesFromPortfolios($portfolios, $locale)
                     : $this->popularCities($locale),
+                'offices' => $this->catalogue->mapOffices($locale),
             ],
         ]);
     }
@@ -78,7 +80,7 @@ class HomepageController extends Controller
                 return [
                     'externalId' => $property?->external_id,
                     'urlPath' => $translation->url_path,
-                    'image' => $property?->image ?? '',
+                    'image' => MediaPath::absolute($property?->image ?? '', 'property'),
                     'processType' => $translation->process_type,
                     'adSubType' => $translation->ad_sub_type,
                     'adType' => $translation->ad_type,
@@ -177,7 +179,8 @@ class HomepageController extends Controller
 
         return array_map(function (array $city) use ($photos, $base) {
             $photo = $city['plate'] !== '' ? $photos->get($city['plate']) : null;
-            $image = is_string($photo?->image) && $photo->image !== '' ? $photo->image : $city['image'];
+            $stored = is_string($photo?->image) ? $photo->image : '';
+            $image = $stored !== '' ? MediaPath::absolute($stored, 'micrositecontent') : $city['image'];
 
             return [
                 'cityCode' => (string) $city['id'],
@@ -199,7 +202,7 @@ class HomepageController extends Controller
 
                 return [
                     'cityCode' => $city->city_code,
-                    'image' => $city->image,
+                    'image' => MediaPath::absolute($city->image, 'micrositecontent'),
                     'name' => $translation?->name ?? '',
                     'urlPath' => $translation?->url_path ?? '',
                 ];

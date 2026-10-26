@@ -7,6 +7,7 @@ import { Counters } from "@/components/home/Counters";
 import { Faq } from "@/components/home/Faq";
 import { FeaturedProperties } from "@/components/home/FeaturedProperties";
 import { HeroSearch } from "@/components/home/HeroSearch";
+import { OfficeMapSection } from "@/components/home/OfficeMapSection";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Newsletter } from "@/components/home/Newsletter";
 import { PopularCities } from "@/components/home/PopularCities";
@@ -35,6 +36,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
     <>
       <HeroSearch content={content.heroSearch} locale={locale} />
       <Counters stats={data.stats} />
+      <OfficeMapSection offices={data.offices} locale={locale} />
       <FeaturedProperties
         titleHtml={content.featured.titleHtml}
         properties={data.featuredProperties}

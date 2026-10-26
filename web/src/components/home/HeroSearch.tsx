@@ -7,6 +7,59 @@ import type { Locale } from "@/lib/locales";
 
 const HERO_IMAGE = "77078032-3159-4ef7-bb2a-0c88617c2eb0";
 
+const SEARCH_LABELS: Record<
+  Locale,
+  {
+    propertyType: string;
+    propertyTypeChoose: string;
+    process: string;
+    processChoose: string;
+    country: string;
+    countryChoose: string;
+    city: string;
+    cityChoose: string;
+    district: string;
+    districtChoose: string;
+  }
+> = {
+  tr: {
+    propertyType: "Portföy tipi",
+    propertyTypeChoose: "Portföy tipi seçiniz",
+    process: "Portföy durumu",
+    processChoose: "Portföy durumu seçiniz",
+    country: "Ülke",
+    countryChoose: "Ülke seçiniz",
+    city: "İl",
+    cityChoose: "İl seçiniz",
+    district: "İlçe",
+    districtChoose: "İlçe seçiniz",
+  },
+  en: {
+    propertyType: "Property type",
+    propertyTypeChoose: "Select property type",
+    process: "Property status",
+    processChoose: "Select property status",
+    country: "Country",
+    countryChoose: "Select a country",
+    city: "City",
+    cityChoose: "Select a city",
+    district: "District",
+    districtChoose: "Select a district",
+  },
+  de: {
+    propertyType: "Portfoliotyp",
+    propertyTypeChoose: "Portfoliotyp wählen",
+    process: "Portfoliostatus",
+    processChoose: "Portfoliostatus wählen",
+    country: "Land",
+    countryChoose: "Land wählen",
+    city: "Stadt",
+    cityChoose: "Stadt wählen",
+    district: "Bezirk",
+    districtChoose: "Bezirk wählen",
+  },
+};
+
 /**
  * Hero image plus the three-tab search bar. The `select2`/`bind-select2` classes and
  * the `bind-*` attributes are read by the theme runtime, which populates the
@@ -28,6 +81,7 @@ export function HeroSearch({
   const [officeNamePlaceholder, firstNamePlaceholder, lastNamePlaceholder] = content.placeholders;
   const lookup = (path: string) => `/${locale}/${path}`;
   const [activeTab, setActiveTab] = useState(0);
+  const labels = SEARCH_LABELS[locale];
 
   return (
     <section className="hero-bg">
@@ -76,40 +130,56 @@ export function HeroSearch({
             <div className={activeTab === 0 ? "block" : "hidden"} id="tab_1" role="tabpanel">
               <form method="get" className="flex flex-wrap max-md:bg-white max-md:[border-radius:calc(5px_*_var(--sk-scale,_1))]" action={propertyAction}>
                 <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className=""
-                    id="propertyType"
-                    name="FilterDTO.AdTypeId"
-                    bind-url={lookup("lookup/Adtypes")}
-                  />
+                  <label className="sk-search-label" htmlFor="propertyType">
+                    {labels.propertyType}
+                    <select
+                      className=""
+                      id="propertyType"
+                      name="FilterDTO.AdTypeId"
+                      data-placeholder={labels.propertyTypeChoose}
+                      bind-url={lookup("lookup/Adtypes")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className=""
-                    id="ProcessTypeId"
-                    name="FilterDTO.ProcessTypeId"
-                    bind-id="propertyType"
-                    bind-query="adType"
-                    bind-url={lookup("lookup/ProcessTypes")}
-                  />
+                  <label className="sk-search-label" htmlFor="ProcessTypeId">
+                    {labels.process}
+                    <select
+                      className=""
+                      id="ProcessTypeId"
+                      name="FilterDTO.ProcessTypeId"
+                      data-placeholder={labels.processChoose}
+                      bind-id="propertyType"
+                      bind-query="adType"
+                      bind-url={lookup("lookup/ProcessTypes")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full xl:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className=""
-                    id="propertyCountryId"
-                    name="FilterDTO.CountryId"
-                    bind-url={lookup("Lookup/EnteredCountries")}
-                  />
+                  <label className="sk-search-label" htmlFor="propertyCountryId">
+                    {labels.country}
+                    <select
+                      className=""
+                      id="propertyCountryId"
+                      name="FilterDTO.CountryId"
+                      data-placeholder={labels.countryChoose}
+                      bind-url={lookup("Lookup/EnteredCountries")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full xl:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className=""
-                    id="propertyCityId"
-                    name="FilterDTO.CityId"
-                    bind-query="countryId"
-                    bind-id="propertyCountryId"
-                    bind-url={lookup("Lookup/EnteredCitiesByCountryId")}
-                  />
+                  <label className="sk-search-label" htmlFor="propertyCityId">
+                    {labels.city}
+                    <select
+                      className=""
+                      id="propertyCityId"
+                      name="FilterDTO.CityId"
+                      data-placeholder={labels.cityChoose}
+                      bind-query="countryId"
+                      bind-id="propertyCountryId"
+                      bind-url={lookup("Lookup/EnteredCitiesByCountryId")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full lg:w-1/6 md:w-1/4 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]" style={{ textAlign: "center" }}>
                   <button
@@ -130,32 +200,44 @@ export function HeroSearch({
                   <input type="text" className="" name="SearchText" placeholder={officeNamePlaceholder} />
                 </div>
                 <div className="w-full lg:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className="slider-selection-height-"
-                    id="officeCountryId"
-                    name="FilterDTO.CountryId"
-                    bind-url={lookup("Lookup/EnteredOfficeCountries")}
-                  />
+                  <label className="sk-search-label" htmlFor="officeCountryId">
+                    {labels.country}
+                    <select
+                      className="slider-selection-height-"
+                      id="officeCountryId"
+                      name="FilterDTO.CountryId"
+                      data-placeholder={labels.countryChoose}
+                      bind-url={lookup("Lookup/EnteredOfficeCountries")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full lg:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className="slider-selection-height-"
-                    id="officeCityId"
-                    name="FilterDTO.CityId"
-                    bind-id="officeCountryId"
-                    bind-query="countryId"
-                    bind-url={lookup("Lookup/EnteredOfficeCitiesByCountryId")}
-                  />
+                  <label className="sk-search-label" htmlFor="officeCityId">
+                    {labels.city}
+                    <select
+                      className="slider-selection-height-"
+                      id="officeCityId"
+                      name="FilterDTO.CityId"
+                      data-placeholder={labels.cityChoose}
+                      bind-id="officeCountryId"
+                      bind-query="countryId"
+                      bind-url={lookup("Lookup/EnteredOfficeCitiesByCountryId")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full lg:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className="slider-selection-height-"
-                    id="officeCountyId"
-                    name="FilterDTO.CountyId"
-                    bind-id="officeCityId"
-                    bind-query="cityId"
-                    bind-url={lookup("lookup/Counties")}
-                  />
+                  <label className="sk-search-label" htmlFor="officeCountyId">
+                    {labels.district}
+                    <select
+                      className="slider-selection-height-"
+                      id="officeCountyId"
+                      name="FilterDTO.CountyId"
+                      data-placeholder={labels.districtChoose}
+                      bind-id="officeCityId"
+                      bind-query="cityId"
+                      bind-url={lookup("lookup/Counties")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full lg:w-1/6 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]" style={{ textAlign: "center" }}>
                   <button
@@ -178,22 +260,30 @@ export function HeroSearch({
                   <input type="text" className="" name="FilterDTO.Lastname" placeholder={lastNamePlaceholder} />
                 </div>
                 <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className=""
-                    id="userCountryId"
-                    name="FilterDTO.CountryId"
-                    bind-url={lookup("Lookup/EnteredConsultantCountries")}
-                  />
+                  <label className="sk-search-label" htmlFor="userCountryId">
+                    {labels.country}
+                    <select
+                      className=""
+                      id="userCountryId"
+                      name="FilterDTO.CountryId"
+                      data-placeholder={labels.countryChoose}
+                      bind-url={lookup("Lookup/EnteredConsultantCountries")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full xl:w-1/4 md:w-1/2 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
-                  <select
-                    className=""
-                    id="userCityId"
-                    name="FilterDTO.CityId"
-                    bind-id="userCountryId"
-                    bind-query="countryId"
-                    bind-url={lookup("Lookup/EnteredConsultantCitiesByCountryId")}
-                  />
+                  <label className="sk-search-label" htmlFor="userCityId">
+                    {labels.city}
+                    <select
+                      className=""
+                      id="userCityId"
+                      name="FilterDTO.CityId"
+                      data-placeholder={labels.cityChoose}
+                      bind-id="userCountryId"
+                      bind-query="countryId"
+                      bind-url={lookup("Lookup/EnteredConsultantCitiesByCountryId")}
+                    />
+                  </label>
                 </div>
                 <div className="w-full lg:w-1/6 md:w-1/6 [margin-bottom:calc(15px_*_var(--sk-scale,_1))]" style={{ textAlign: "center" }}>
                   <button

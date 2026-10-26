@@ -135,6 +135,10 @@ RECAPTCHA_SECRET_KEY=
 NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY=
 RECAPTCHA_V3_SECRET_KEY=
 RECAPTCHA_V3_MIN_SCORE=0.5
+# Office map. Empty keeps OpenStreetMap. satellite needs a tile URL (token only at deploy).
+NEXT_PUBLIC_MAP_STYLE=
+NEXT_PUBLIC_MAP_SATELLITE_URL=
+NEXT_PUBLIC_MAP_SATELLITE_ATTRIBUTION=
 ```
 
 `HOST_UID` / `HOST_GID` sunucudaki `id -u` / `id -g` (`deploy`).

@@ -22,7 +22,7 @@ class CorporateController extends Controller
     {
         $locale = Locale::fromRequest($request);
         $path = (string) $request->query('path', '');
-        $pageIndex = (int) $request->query('pageIndex', 1);
+        $pageIndex = (int) $request->query('page', $request->query('pageIndex', 1));
         $searchText = trim((string) $request->query('searchText', ''));
 
         $payload = $this->resolver->resolve($locale, $path, $pageIndex, $searchText, $this->listingFilters($request));
@@ -59,7 +59,7 @@ class CorporateController extends Controller
     private function listingFilters(Request $request): array
     {
         $query = $request->query();
-        unset($query['locale'], $query['path'], $query['pageIndex'], $query['searchText']);
+        unset($query['locale'], $query['path'], $query['pageIndex'], $query['page'], $query['searchText']);
 
         return is_array($query) ? $query : [];
     }

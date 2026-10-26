@@ -30,10 +30,20 @@ export interface ApiPopularCity {
   urlPath: string;
 }
 
+export interface MapOffice {
+  id: number;
+  name: string;
+  urlPath: string;
+  latitude: number;
+  longitude: number;
+  locationNeedsReview?: boolean;
+}
+
 export interface HomepageData {
   stats: ApiStat[];
   featuredProperties: ApiProperty[];
   popularCities: ApiPopularCity[];
+  offices: MapOffice[];
 }
 
 /**
@@ -52,5 +62,20 @@ export async function fetchHomepageData(locale: Locale): Promise<HomepageData> {
   }
 
   const payload = (await response.json()) as { data: HomepageData };
-  return payload.data;
+  return { ...payload.data, offices: payload.data.offices ?? [] };
+}
+
+/** Upcoming seminars, the first section of the public training list. */
+export async function fetchUpcomingSeminarCount(locale: Locale): Promise<number> {
+  const response = await fetch(`${config.apiBaseUrl}/api/v1/seminars/upcoming-count?locale=${locale}`, {
+    headers: { Accept: "application/json" },
+    next: { revalidate: 60 },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Seminar count API responded with ${response.status}`);
+  }
+
+  const payload = (await response.json()) as { data: { count: number } };
+  return payload.data.count;
 }

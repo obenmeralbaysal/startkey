@@ -562,6 +562,37 @@
   margin-left: calc(15px * var(--sk-scale, 1));
 }
 
+.agent-card {
+  position: relative;
+  margin-bottom: calc(25px * var(--sk-scale, 1));
+  border: 1px solid transparent;
+  border-radius: calc(5px * var(--sk-scale, 1));
+  box-shadow: 0 calc(6px * var(--sk-scale, 1)) calc(24px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.07);
+  transition: all 0.4s ease;
+}
+
+.agent-card::after {
+  position: absolute;
+  bottom: calc(-2px * var(--sk-scale, 1));
+  left: 50%;
+  width: 0;
+  height: calc(3px * var(--sk-scale, 1));
+  border-radius: 0 0 calc(5px * var(--sk-scale, 1)) calc(5px * var(--sk-scale, 1));
+  background: #002172;
+  content: "";
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease;
+}
+
+.agent-card:hover {
+  box-shadow: none;
+  transform: translateY(calc(-5px * var(--sk-scale, 1)));
+}
+
+.agent-card:hover::after {
+  width: 85%;
+}
+
 .agent-card .agent-img,
 .agent-details-wrap .agent-img {
   overflow: hidden;
@@ -713,9 +744,12 @@
 }
 
 .sk-photo-grid img {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #eee;
 }
 
 .cms .row,
@@ -825,7 +859,8 @@ article ol li {
 /* Consultant and training forms: .filter-widget fields in the reference theme. */
 .sk-filter-form input[type="text"],
 .sk-filter-form input[type="email"],
-.sk-filter-form input[type="tel"] {
+.sk-filter-form input[type="tel"],
+.sk-filter-form select {
   height: calc(55px * var(--sk-scale, 1));
   min-height: 0;
   padding: calc(15px * var(--sk-scale, 1));
@@ -1000,6 +1035,66 @@ article ol li {
   padding-bottom: calc(100px * var(--sk-scale, 1));
 }
 
+@media (max-width: 767px) {
+  .cms .pb-100 {
+    padding-bottom: calc(50px * var(--sk-scale, 1));
+  }
+
+  .cms .mb-40,
+  .cms .section-title.mb-40 {
+    margin-bottom: calc(25px * var(--sk-scale, 1));
+  }
+
+  .cms h2,
+  .cms .section-title h2,
+  .cms .content-title h2,
+  .sk-apply-title h2 {
+    font-size: calc(24px * var(--sk-scale, 1));
+    line-height: 1.3;
+  }
+
+  /* Franchise rows are stored as utilities. On the reference those rows are
+     .content-title / .hw-img, and the pasted chat classes do nothing. */
+  .cms .widget-item > .relative {
+    margin: 0;
+  }
+
+  .cms .widget-item h2 {
+    margin-bottom: 0;
+  }
+
+  .cms .widget-item p {
+    margin: calc(12px * var(--sk-scale, 1)) 0 0;
+  }
+
+  .cms .widget-item img {
+    display: block;
+  }
+
+  .cms .gizmo-bot-avatar,
+  .cms .gizmo-bot-avatar * {
+    display: block;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .cms .text-message,
+  .cms [class*="conversation-turn"],
+  .cms [class*="conversation-turn"] div {
+    display: block;
+    gap: 0;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-width: 100%;
+    overflow: visible;
+    white-space: normal;
+  }
+}
+
 .cms .mt-40 {
   margin-top: calc(40px * var(--sk-scale, 1));
 }
@@ -1011,6 +1106,7 @@ article ol li {
   padding: calc(25px * var(--sk-scale, 1));
   text-align: center;
   box-shadow: 0 0 calc(20px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.09);
+  transition: all 0.4s ease;
 }
 
 .contact-icon {
@@ -1021,15 +1117,27 @@ article ol li {
   height: calc(80px * var(--sk-scale, 1));
   margin: calc(-70px * var(--sk-scale, 1)) auto calc(20px * var(--sk-scale, 1));
   border-radius: 50%;
-  background: #002172;
+  background: #ec3323;
   color: #fff;
   box-shadow: 0 calc(5px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+}
+
+.contact-icon i {
+  color: #fff;
+  font-size: calc(36px * var(--sk-scale, 1));
+  line-height: 0.8;
+  transition: all 0.34s ease;
+}
+
+.contact-item:hover .contact-icon {
+  background: #002172;
 }
 
 .contact-map iframe {
   display: block;
   width: 100%;
-  height: calc(500px * var(--sk-scale, 1));
+  height: 500px;
   border: 0;
 }
 
@@ -1055,4 +1163,177 @@ article ol li {
   .related-grid > * {
     width: 33.333%;
   }
+}
+
+.sk-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sk-dir-search input {
+  width: 100%;
+  height: calc(55px * var(--sk-scale, 1));
+  border: none;
+  border-radius: calc(5px * var(--sk-scale, 1));
+  background: #f9f9f9;
+  padding: 0 calc(15px * var(--sk-scale, 1));
+}
+
+.sk-dir-results {
+  position: relative;
+}
+
+.sk-dir-results[data-pending="true"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ec3323;
+}
+
+.sk-dir-filter-btn {
+  position: fixed;
+  left: calc(20px * var(--sk-scale, 1));
+  bottom: calc(30px * var(--sk-scale, 1));
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(48px * var(--sk-scale, 1));
+  height: calc(48px * var(--sk-scale, 1));
+  border: 0;
+  border-radius: calc(8px * var(--sk-scale, 1));
+  background: #002172;
+  color: #fff;
+  box-shadow: 0 calc(5px * var(--sk-scale, 1)) calc(12px * var(--sk-scale, 1)) rgba(0, 33, 114, 0.25);
+  cursor: pointer;
+  font-size: calc(20px * var(--sk-scale, 1));
+}
+
+.sk-dir-badge {
+  position: absolute;
+  top: calc(-6px * var(--sk-scale, 1));
+  right: calc(-6px * var(--sk-scale, 1));
+  min-width: calc(18px * var(--sk-scale, 1));
+  height: calc(18px * var(--sk-scale, 1));
+  padding: 0 calc(4px * var(--sk-scale, 1));
+  border-radius: 999px;
+  background: #ec3323;
+  color: #fff;
+  font-size: calc(11px * var(--sk-scale, 1));
+  line-height: calc(18px * var(--sk-scale, 1));
+}
+
+.sk-dir-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  border: 0;
+  background: rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+}
+
+.sk-dir-sheet,
+.sk-dir-popover {
+  z-index: 1110;
+  background: #fff;
+  box-shadow: 0 0 calc(24px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.12);
+}
+
+.sk-dir-sheet {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-height: 80vh;
+  overflow: auto;
+  padding: calc(20px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) calc(28px * var(--sk-scale, 1));
+  border-radius: calc(16px * var(--sk-scale, 1)) calc(16px * var(--sk-scale, 1)) 0 0;
+}
+
+.sk-dir-popover {
+  position: fixed;
+  left: calc(20px * var(--sk-scale, 1));
+  bottom: calc(90px * var(--sk-scale, 1));
+  width: min(320px, calc(100vw - 40px));
+  padding: calc(18px * var(--sk-scale, 1));
+  border-radius: calc(10px * var(--sk-scale, 1));
+}
+
+.sk-dir-filter-title {
+  margin: 0 0 calc(14px * var(--sk-scale, 1));
+  font-size: calc(18px * var(--sk-scale, 1));
+}
+
+.sk-dir-field {
+  display: block;
+  margin-bottom: calc(12px * var(--sk-scale, 1));
+  font-size: calc(14px * var(--sk-scale, 1));
+}
+
+.sk-dir-field select,
+.sk-dir-field input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(48px * var(--sk-scale, 1));
+  margin-top: calc(6px * var(--sk-scale, 1));
+  border: 0;
+  border-radius: calc(5px * var(--sk-scale, 1));
+  background: #f9f9f9;
+  padding: 0 calc(12px * var(--sk-scale, 1));
+}
+
+.sk-search-label {
+  display: block;
+  margin-bottom: calc(4px * var(--sk-scale, 1));
+  color: #222;
+  font-size: calc(13px * var(--sk-scale, 1));
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.sk-search-label select,
+.sk-search-label input {
+  margin-top: calc(4px * var(--sk-scale, 1));
+}
+
+.sk-award-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: calc(6px * var(--sk-scale, 1)) 0 0;
+}
+
+.sk-award-badges li {
+  border-radius: 999px;
+  background: #fff6e8;
+  color: #8a5a00;
+  font-size: calc(11px * var(--sk-scale, 1));
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 3px 8px;
+}
+
+.sk-dir-clear,
+.sk-dir-clear-search {
+  border: 0;
+  background: transparent;
+  color: #ec3323;
+  cursor: pointer;
+  font-size: calc(15px * var(--sk-scale, 1));
+}
+
+.sk-dir-clear-search {
+  display: inline-block;
+  margin-top: calc(12px * var(--sk-scale, 1));
 }

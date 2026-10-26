@@ -397,7 +397,7 @@ Etiketler header içeriğiyle birlikte dil dosyasına (`web/src/content/homepage
 
 **Mevcut Durum:**
 
-Referans gövde satır yüksekliği Bootstrap’in 1.5’idir; 768px altında `p, input, textarea` 14px’tir; başlıklar telefonda küçülür. Yerelde bu kurallar iç sayfa sarmalayıcısına (`sk-inner`, `web/src/lib/content-offset.ts`) bağlıdır. Ana sayfa, header ve footer hâlâ 1.8 satır yüksekliği ve 16px paragraf ile çalışır. Yerel `@layer base` öğe kuralları Tailwind yardımcılarından sonra gelir.
+Referans gövde satır yüksekliği Bootstrap’in 1.5’idir; 768px altında `p, input, textarea` 14px’tir; başlıklar telefonda küçülür. 768px altında `body` ve `p` satır yüksekliği 1.5’tir (`web/src/styles/globals.css`). Masaüstünde gövde hâlâ 1.8’dir. 14px paragraf kuralı iç sayfa sarmalayıcısında (`sk-inner`) durur.
 
 **Geçici Olmasının Nedeni:**
 

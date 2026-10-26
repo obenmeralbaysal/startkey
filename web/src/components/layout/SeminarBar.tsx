@@ -25,7 +25,7 @@ export function SeminarBar({ content }: { content: HomepageContent["seminarBar"]
   }
 
   const className = [
-    "relative w-full overflow-hidden bg-seminar text-center text-white transition-all",
+    "sk-seminar relative w-full overflow-hidden bg-seminar text-center text-white transition-all",
     "px-0 py-[calc(10px*var(--sk-scale,1))] text-[calc(18px*var(--sk-scale,1))] tracking-[calc(2px*var(--sk-scale,1))]",
     state === "hidden" ? "hidden" : "",
     state === "visible" ? "top-0" : "top-[calc(-50px*var(--sk-scale,1))]",

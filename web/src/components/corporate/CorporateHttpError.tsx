@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
+import { MarkHttpError } from "@/components/corporate/MarkHttpError";
 import { errorPageCopy } from "@/content/error-pages";
 import type { Locale } from "@/lib/locales";
 
@@ -16,6 +17,7 @@ export function CorporateHttpErrorView({
 
   return (
     <>
+      <MarkHttpError code={code} />
       <Breadcrumb
         breadcrumb={{
           heading,

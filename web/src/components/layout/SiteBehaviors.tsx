@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { bindIntlPhones, writePhoneNumbers } from "@/components/forms/bindIntlPhones";
+
 type LookupItem = { id: string | number; text: string };
 
 function perView(): number {
@@ -18,11 +20,19 @@ async function fillSelect(select: HTMLSelectElement, url: string) {
   const items = payload.items ?? [];
   const current = select.value;
   select.replaceChildren();
+  const hint = select.getAttribute("data-placeholder") ?? "";
   for (const item of items) {
     const option = document.createElement("option");
     option.value = String(item.id);
-    option.textContent = item.text;
+    const bare = item.text === "Seçiniz" || item.text === "Select" || item.text === "Wählen";
+    option.textContent = hint !== "" && (String(item.id) === "" || bare) ? hint : item.text;
     select.appendChild(option);
+  }
+  if (hint !== "" && ![...select.options].some((option) => option.value === "")) {
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = hint;
+    select.prepend(empty);
   }
   if (current && [...select.options].some((option) => option.value === current)) {
     select.value = current;
@@ -239,7 +249,13 @@ function bindLightbox() {
 }
 
 function bindMotion() {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const nodes = document.querySelectorAll<HTMLElement>("[data-aos]");
+  if (reduce) {
+    nodes.forEach((node) => {
+      node.style.opacity = "1";
+    });
+  } else {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -257,6 +273,7 @@ function bindMotion() {
     node.style.opacity = "0";
     observer.observe(node);
   });
+  }
 
   document.querySelectorAll<HTMLElement>("[data-count]").forEach((node) => {
     const target = Number(node.dataset.count || "0");
@@ -303,8 +320,8 @@ function bindBackToTop() {
   if (!link) return;
   const onScroll = () => {
     const open = window.scrollY > 240;
-    link.classList.toggle("hidden", !open);
-    link.style.bottom = open ? "calc(30px * var(--sk-scale, 1))" : "calc(230px * var(--sk-scale, 1))";
+    link.classList.toggle("open", open);
+    link.style.display = open ? "block" : "none";
   };
   link.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   window.addEventListener("scroll", onScroll, { passive: true });
@@ -327,6 +344,18 @@ export function SiteBehaviors() {
     bindMotion();
     bindFaq();
     bindBackToTop();
+    bindIntlPhones(document);
+    const onSubmit = (event: Event) => {
+      const form = event.target;
+      if (form instanceof HTMLFormElement) writePhoneNumbers(form);
+    };
+    document.addEventListener("submit", onSubmit, true);
+    const observer = new MutationObserver(() => bindIntlPhones(document));
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      document.removeEventListener("submit", onSubmit, true);
+      observer.disconnect();
+    };
   }, []);
 
   return null;

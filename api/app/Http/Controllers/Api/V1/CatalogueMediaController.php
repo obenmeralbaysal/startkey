@@ -13,7 +13,7 @@ class CatalogueMediaController extends Controller
         $index = $index ?? 0;
         $base = rtrim((string) config('reonix.base_url'), '/');
         $key = (string) config('reonix.portal_key');
-        if ($base === '' || $key === '' || $index < 0 || $index > 20 || ! in_array($kind, ['offices', 'consultants', 'portfolios'], true)) {
+        if ($base === '' || $key === '' || $index < 0 || $index > 59 || ! in_array($kind, ['offices', 'consultants', 'portfolios'], true)) {
             return response()->json(['message' => __('messages.portal.unavailable')], 404);
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\MediaPath;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -17,24 +18,104 @@ class ReonixCatalogue
     /** @return list<array<string, mixed>>|null */
     public function collection(string $kind): ?array
     {
+        $listed = $this->listed($kind);
+
+        return $listed === null ? null : $listed['rows'];
+    }
+
+    /**
+     * Catalogue list plus city/district facets. `q`, `il`, and `ilce` are forwarded
+     * so Reonix can filter; an empty query keeps the previous unfiltered URL.
+     *
+     * @param  array<string, string>  $query
+     * @return array{rows: list<array<string, mixed>>, places: list<array{city: string, districts: list<string>}>, offices: list<array{id: string, name: string}>}|null
+     */
+    public function listed(string $kind, array $query = []): ?array
+    {
         if (! $this->configured()) {
             return null;
         }
 
+        $params = [];
+        foreach (['q', 'il', 'ilce', 'ofis'] as $key) {
+            $value = mb_substr(trim((string) ($query[$key] ?? '')), 0, 80);
+            if ($value !== '') {
+                $params[$key] = $value;
+            }
+        }
+
         try {
-            $body = $this->reonix->get('catalogue/'.$kind);
+            $body = $this->reonix->get('catalogue/'.$kind, $params);
         } catch (ReonixException $e) {
             Log::warning('Portal catalogue list failed.', ['kind' => $kind, 'status' => $e->status]);
 
-            return [];
+            return ['rows' => [], 'places' => [], 'offices' => []];
         }
 
         $rows = $body['data'] ?? [];
+        $offices = [];
+        foreach (is_array($body['offices'] ?? null) ? $body['offices'] : [] as $office) {
+            if (! is_array($office)) {
+                continue;
+            }
+            $id = trim((string) ($office['id'] ?? ''));
+            $name = trim((string) ($office['name'] ?? ''));
+            if ($id !== '' && $name !== '') {
+                $offices[] = ['id' => $id, 'name' => $name];
+            }
+        }
+        $places = [];
+        foreach (is_array($body['places'] ?? null) ? $body['places'] : [] as $place) {
+            if (! is_array($place)) {
+                continue;
+            }
+            $city = trim((string) ($place['city'] ?? ''));
+            if ($city === '') {
+                continue;
+            }
+            $districts = [];
+            foreach (is_array($place['districts'] ?? null) ? $place['districts'] : [] as $district) {
+                if (is_string($district) && trim($district) !== '') {
+                    $districts[] = trim($district);
+                }
+            }
+            $places[] = ['city' => $city, 'districts' => array_values(array_unique($districts))];
+        }
 
-        return is_array($rows) ? array_values(array_filter($rows, 'is_array')) : [];
+        return [
+            'rows' => is_array($rows) ? array_values(array_filter($rows, 'is_array')) : [],
+            'places' => $places,
+            'offices' => $offices,
+        ];
     }
 
     /** @return array<string, mixed>|null */
+    /** @return list<array{network: string, href: string}> */
+    public function socialLinks(array $office): array
+    {
+        $out = [];
+        foreach (is_array($office['social'] ?? null) ? $office['social'] : [] as $link) {
+            $href = is_array($link) ? (string) ($link['href'] ?? '') : '';
+            $network = is_array($link) ? strtolower((string) ($link['network'] ?? '')) : '';
+            if ($network !== '' && preg_match('#^https?://#i', $href)) {
+                $out[] = ['network' => $network, 'href' => $href];
+            }
+        }
+
+        return $out;
+    }
+
+    private function instagram(array $office): string
+    {
+        foreach ($this->socialLinks($office) as $link) {
+            if ($link['network'] === 'instagram') {
+                return $link['href'];
+            }
+        }
+
+        return '';
+    }
+
     public function officeDetail(string $locale, int $id): ?array
     {
         $body = $this->one('catalogue/offices/'.$id);
@@ -51,9 +132,15 @@ class ReonixCatalogue
         $card = $this->officeCard($office, $locale);
         $name = $card['name'];
         $address = (string) ($office['address'] ?? '');
-        $latitude = trim((string) ($office['latitude'] ?? ''));
-        $longitude = trim((string) ($office['longitude'] ?? ''));
-        $mapQuery = ($latitude !== '' && $longitude !== '') ? $latitude.','.$longitude : $address;
+        [$latitude, $longitude] = $this->coordinatePair($office['latitude'] ?? null, $office['longitude'] ?? null);
+        $pin = ($latitude !== null && $longitude !== null) ? [
+            'id' => (int) $office['id'],
+            'name' => $name,
+            'urlPath' => $card['urlPath'],
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+        ] : null;
+        $mapQuery = $pin === null ? '' : $latitude.','.$longitude;
 
         return [
             'kind' => 'office-detail',
@@ -67,7 +154,8 @@ class ReonixCatalogue
             'phoneLabel' => $card['phoneLabel'],
             'email' => $card['email'],
             'address' => $address,
-            'instagram' => '',
+            'instagram' => $this->instagram($office),
+            'social' => $this->socialLinks($office),
             'portfoliosHref' => $this->listPath('listings', $locale).'?FilterDTO.OfficeId='.(int) $office['id'],
             'portfoliosLabel' => $name.' '.match ($locale) {
                 'en' => 'All Portfolios',
@@ -96,9 +184,9 @@ class ReonixCatalogue
             'emptyListingsLabel' => $this->emptyListingsLabel($locale),
             'seeAllHref' => $this->listPath('listings', $locale),
             'seeAllLabel' => $this->seeAllLabel($locale),
+            'pin' => $pin,
             'map' => $mapQuery === '' ? [] : [
                 'query' => $mapQuery,
-                'iframeSrc' => 'https://maps.google.com/maps?q='.rawurlencode($mapQuery).'&output=embed',
                 'directionsLabel' => match ($locale) {
                     'en' => 'Directions',
                     'de' => 'Wegbeschreibung',
@@ -311,8 +399,9 @@ class ReonixCatalogue
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',
             'phoneLabel' => $this->phoneLabel($phone),
             'email' => (string) ($row['email'] ?? ''),
-            'location' => $this->cardLocation((string) ($row['address'] ?? '')),
+            'location' => $this->cardLocation((string) ($row['address'] ?? '')) ?: trim((string) ($row['city'] ?? '').(((string) ($row['district'] ?? '')) !== '' ? ' / '.$row['district'] : '')),
             'variant' => 'office',
+            'badges' => $this->badges($row),
         ];
     }
 
@@ -432,6 +521,11 @@ class ReonixCatalogue
     /** @param  array<string, mixed>  $row */
     public function consultantCard(array $row, string $locale): array
     {
+        if (($row['type'] ?? '') === 'office') {
+            $officeId = (int) ($row['office_id'] ?? 0);
+
+            return $this->officeCard(array_merge($row, ['id' => $officeId]), $locale);
+        }
         $id = (int) ($row['id'] ?? 0);
         $name = (string) ($row['name'] ?? '');
         $phone = (string) ($row['phone'] ?? '');
@@ -448,6 +542,7 @@ class ReonixCatalogue
             'email' => (string) ($row['email'] ?? ''),
             'location' => (string) ($row['office_name'] ?? ''),
             'variant' => 'consultant',
+            'badges' => $this->badges($row),
         ];
     }
 
@@ -478,6 +573,86 @@ class ReonixCatalogue
             'detailLabel' => '',
             'style' => 'style3',
         ];
+    }
+
+    /**
+     * Homepage map pins. Offices without a numeric latitude and longitude are skipped.
+     *
+     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float, locationNeedsReview: bool}>
+     */
+    public function mapOffices(string $locale): array
+    {
+        $rows = $this->collection('offices');
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        $pins = [];
+        $skipped = 0;
+        foreach ($rows as $row) {
+            [$latitude, $longitude] = $this->coordinatePair($row['latitude'] ?? null, $row['longitude'] ?? null);
+            if ($latitude === null || $longitude === null) {
+                $skipped++;
+
+                continue;
+            }
+            $card = $this->officeCard($row, $locale);
+            $pins[] = [
+                'id' => (int) $card['externalId'],
+                'name' => (string) $card['name'],
+                'urlPath' => (string) $card['urlPath'],
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'locationNeedsReview' => $this->locationNeedsReview($row),
+            ];
+        }
+
+        if ($skipped > 0) {
+            Log::info('Homepage map skipped offices without coordinates.', ['count' => $skipped]);
+        }
+
+        return $pins;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function locationNeedsReview(array $row): bool
+    {
+        $value = $row['location_needs_review'] ?? $row['locationNeedsReview'] ?? false;
+
+        return $value === true || $value === 1 || $value === '1' || $value === 'true';
+    }
+
+    /**
+     * @return array{0: ?float, 1: ?float}
+     */
+    private function coordinatePair(mixed $latitude, mixed $longitude): array
+    {
+        $lat = $this->coordinate($latitude);
+        $lng = $this->coordinate($longitude);
+        if ($lat === null || $lng === null || abs($lat) > 90) {
+            return [null, null];
+        }
+
+        return [$lat, $lng];
+    }
+
+    private function coordinate(mixed $value): ?float
+    {
+        if (is_string($value)) {
+            $value = trim($value);
+            if (preg_match('/^-?\d+,\d+$/', $value)) {
+                $value = str_replace(',', '.', $value);
+            }
+        }
+        if (! is_numeric($value)) {
+            return null;
+        }
+        $number = (float) $value;
+        if (! is_finite($number) || $number < -180 || $number > 180 || ($number === 0.0 && trim((string) $value) === '')) {
+            return null;
+        }
+
+        return $number;
     }
 
     /** @return array<string, mixed>|null */
@@ -557,6 +732,27 @@ class ReonixCatalogue
         return number_format((float) $price, 0, ',', '.').($currency !== '' ? ' '.$currency : '');
     }
 
+    /**
+     * @param  array<string, mixed>  $row
+     * @return list<array{title: string, period: string}>
+     */
+    private function badges(array $row): array
+    {
+        $out = [];
+        foreach (is_array($row['badges'] ?? null) ? $row['badges'] : [] as $badge) {
+            if (! is_array($badge)) {
+                continue;
+            }
+            $title = trim((string) ($badge['title'] ?? ''));
+            if ($title === '') {
+                continue;
+            }
+            $out[] = ['title' => $title, 'period' => trim((string) ($badge['period'] ?? ''))];
+        }
+
+        return $out;
+    }
+
     /** @param  array<string, mixed>  $row */
     private function catalogueImage(string $kind, array $row): string
     {
@@ -564,11 +760,33 @@ class ReonixCatalogue
         $count = array_key_exists('image_count', $row)
             ? (int) $row['image_count']
             : (! empty($row['has_image']) ? 1 : 0);
-        if ($id < 1 || $count < 1) {
-            return '/img/catalogue-mark.svg';
+        if ($id > 0 && $count > 0) {
+            return '/api/v1/catalogue/media/'.$kind.'/'.$id;
         }
 
-        return '/api/v1/catalogue/media/'.$kind.'/'.$id;
+        $raw = $this->rowImage($row);
+        if ($raw !== '') {
+            return MediaPath::absolute($raw, match ($kind) {
+                'offices' => 'officelogo',
+                'consultants' => 'user',
+                default => 'property',
+            });
+        }
+
+        return '/img/catalogue-mark.svg';
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function rowImage(array $row): string
+    {
+        foreach (['image', 'image_url', 'logo', 'avatar', 'avatar_path', 'photo', 'cover', 'thumbnail'] as $key) {
+            $value = $row[$key] ?? null;
+            if (is_string($value) && trim($value) !== '') {
+                return trim($value);
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -578,7 +796,7 @@ class ReonixCatalogue
     private function gallery(array $row): array
     {
         $id = (int) ($row['id'] ?? 0);
-        $count = min(12, max(0, (int) ($row['image_count'] ?? 0)));
+        $count = min(60, max(0, (int) ($row['image_count'] ?? 0)));
         $slides = [];
         for ($index = 0; $index < $count; $index++) {
             $url = '/api/v1/catalogue/media/portfolios/'.$id.'/'.$index;
