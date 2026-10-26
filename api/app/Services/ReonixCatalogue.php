@@ -18,21 +18,63 @@ class ReonixCatalogue
     /** @return list<array<string, mixed>>|null */
     public function collection(string $kind): ?array
     {
+        $listed = $this->listed($kind);
+
+        return $listed === null ? null : $listed['rows'];
+    }
+
+    /**
+     * Catalogue list plus city/district facets. `q`, `il`, and `ilce` are forwarded
+     * so Reonix can filter; an empty query keeps the previous unfiltered URL.
+     *
+     * @param  array<string, string>  $query
+     * @return array{rows: list<array<string, mixed>>, places: list<array{city: string, districts: list<string>}>}|null
+     */
+    public function listed(string $kind, array $query = []): ?array
+    {
         if (! $this->configured()) {
             return null;
         }
 
+        $params = [];
+        foreach (['q', 'il', 'ilce'] as $key) {
+            $value = mb_substr(trim((string) ($query[$key] ?? '')), 0, 80);
+            if ($value !== '') {
+                $params[$key] = $value;
+            }
+        }
+
         try {
-            $body = $this->reonix->get('catalogue/'.$kind);
+            $body = $this->reonix->get('catalogue/'.$kind, $params);
         } catch (ReonixException $e) {
             Log::warning('Portal catalogue list failed.', ['kind' => $kind, 'status' => $e->status]);
 
-            return [];
+            return ['rows' => [], 'places' => []];
         }
 
         $rows = $body['data'] ?? [];
+        $places = [];
+        foreach (is_array($body['places'] ?? null) ? $body['places'] : [] as $place) {
+            if (! is_array($place)) {
+                continue;
+            }
+            $city = trim((string) ($place['city'] ?? ''));
+            if ($city === '') {
+                continue;
+            }
+            $districts = [];
+            foreach (is_array($place['districts'] ?? null) ? $place['districts'] : [] as $district) {
+                if (is_string($district) && trim($district) !== '') {
+                    $districts[] = trim($district);
+                }
+            }
+            $places[] = ['city' => $city, 'districts' => array_values(array_unique($districts))];
+        }
 
-        return is_array($rows) ? array_values(array_filter($rows, 'is_array')) : [];
+        return [
+            'rows' => is_array($rows) ? array_values(array_filter($rows, 'is_array')) : [],
+            'places' => $places,
+        ];
     }
 
     /** @return array<string, mixed>|null */

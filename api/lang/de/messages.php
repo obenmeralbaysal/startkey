@@ -13,6 +13,19 @@ return [
     'consultants' => [
         'empty' => 'Es wurden noch keine Berater hinzugefügt.',
     ],
+    'directory' => [
+        'search_label' => 'Suche',
+        'placeholder' => 'Name, Büro, Stadt oder Bezirk',
+        'filter' => 'Filter',
+        'city' => 'Stadt',
+        'district' => 'Bezirk',
+        'clear' => 'Leeren',
+        'clear_search' => 'Suche löschen',
+        'empty_search' => 'Keine Einträge entsprechen Ihrer Suche.',
+        'loading' => 'Suche läuft',
+        'close' => 'Schließen',
+        'choose' => 'Wählen',
+    ],
     'portal' => [
         'unavailable' => 'Der Vorgang konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.',
         'forbidden' => 'Sie dürfen diesen Vorgang nicht ausführen.',

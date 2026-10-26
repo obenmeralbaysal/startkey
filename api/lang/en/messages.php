@@ -13,6 +13,19 @@ return [
     'consultants' => [
         'empty' => 'No consultants have been added yet.',
     ],
+    'directory' => [
+        'search_label' => 'Search',
+        'placeholder' => 'Name, office, city or district',
+        'filter' => 'Filter',
+        'city' => 'City',
+        'district' => 'District',
+        'clear' => 'Clear',
+        'clear_search' => 'Clear search',
+        'empty_search' => 'No records match your search.',
+        'loading' => 'Searching',
+        'close' => 'Close',
+        'choose' => 'Select',
+    ],
     'portal' => [
         'unavailable' => 'The request could not be completed. Please try again.',
         'forbidden' => 'You are not allowed to do this.',

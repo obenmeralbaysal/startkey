@@ -20,6 +20,7 @@ use App\Models\CmsTraining;
 use App\Models\CmsTrainingTranslation;
 use App\Models\LookupItem;
 use App\Services\ReonixCatalogue;
+use App\Support\TurkishFold;
 
 /**
  * Maps a public URL to the shared Kurumsal template payload. Superadmin-created
@@ -1302,14 +1303,14 @@ class CorporateResolver
             return null;
         }
 
-        $remote = app(ReonixCatalogue::class)->collection('offices');
+        $remote = app(ReonixCatalogue::class)->listed('offices', $this->catalogueSearchQuery($filters));
         if (is_array($remote)) {
-            return $this->remoteOfficeList($locale, $path, $pageIndex, $filters, $remote);
+            return $this->remoteOfficeList($locale, $path, $pageIndex, $filters, $remote['rows'], $remote['places']);
         }
 
         $list = CmsListPage::query()->where('type', 'office')->where('locale', $locale)->first();
         if ($list === null) {
-            return $this->emptyOfficeList($locale, $path, $filters);
+            return $this->withDirectorySearch($this->emptyOfficeList($locale, $path, $filters), $locale, $filters, []);
         }
 
         $perPage = max(1, $list->per_page);
@@ -1317,7 +1318,10 @@ class CorporateResolver
             ->published()
             ->whereHas('translations', fn ($builder) => $builder->where('locale', $locale));
 
-        $search = trim((string) ($this->filterScalar($filters, 'SearchText') ?? ''));
+        $search = $this->directoryTerm($filters, 'q');
+        if ($search === '') {
+            $search = $this->directoryTerm($filters, 'SearchText');
+        }
         if ($search !== '') {
             $like = '%'.$this->escapeLike($search).'%';
             $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
@@ -1341,11 +1345,11 @@ class CorporateResolver
             'office-list',
             'office',
             fn (CmsOffice $office) => $this->officeCardPayload($office, $locale, $office->translations->first()),
-            ['SearchText', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'],
+            ['SearchText', 'q', 'il', 'ilce', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'],
         );
         $payload['emptyLabel'] = $this->officeEmptyLabel($locale);
 
-        return $payload;
+        return $this->withDirectorySearch($payload, $locale, $filters, []);
     }
 
     /**
@@ -1353,17 +1357,17 @@ class CorporateResolver
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
-    private function remoteOfficeList(string $locale, string $path, int $pageIndex, array $filters, array $rows): array
+    private function remoteOfficeList(string $locale, string $path, int $pageIndex, array $filters, array $rows, array $places = []): array
     {
-        $search = mb_strtolower(trim((string) ($this->filterScalar($filters, 'SearchText') ?? '')));
         if (class_exists(\Collator::class)) {
             $collator = new \Collator('tr_TR');
             usort($rows, fn ($a, $b) => $collator->compare((string) ($a['name'] ?? ''), (string) ($b['name'] ?? '')));
         }
+        $query = $this->catalogueSearchQuery($filters);
+        $facetPlaces = $places !== [] ? $this->normalisePlaces($places) : $this->placesFromRows($rows);
         $items = [];
         foreach ($rows as $row) {
-            $name = mb_strtolower((string) ($row['name'] ?? ''));
-            if ($search !== '' && ! str_contains($name, $search)) {
+            if (! $this->catalogueRowMatches($row, $query)) {
                 continue;
             }
             $items[] = app(ReonixCatalogue::class)->officeCard($row, $locale);
@@ -1393,7 +1397,7 @@ class CorporateResolver
         $payload = $this->pageRemote($payload, $items, $pageIndex, $perPage, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
         $payload['foundLabel'] = str_replace('{count}', (string) $payload['pagination']['total'], $foundTemplate);
 
-        return $payload;
+        return $this->withDirectorySearch($payload, $locale, $filters, $facetPlaces);
     }
 
     /**
@@ -1458,6 +1462,229 @@ class CorporateResolver
         return $rows;
     }
 
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array{q?: string, il?: string, ilce?: string}
+     */
+    private function catalogueSearchQuery(array $filters): array
+    {
+        $q = $this->directoryTerm($filters, 'q');
+        if ($q === '') {
+            $q = $this->directoryTerm($filters, 'SearchText');
+        }
+        $query = [];
+        if ($q !== '') {
+            $query['q'] = $q;
+        }
+        $il = $this->directoryTerm($filters, 'il');
+        $ilce = $this->directoryTerm($filters, 'ilce');
+        if ($il !== '') {
+            $query['il'] = $il;
+        }
+        if ($ilce !== '') {
+            $query['ilce'] = $ilce;
+        }
+
+        return $query;
+    }
+
+    private function directoryTerm(array $filters, string $key): string
+    {
+        return mb_substr(trim((string) ($this->filterScalar($filters, $key) ?? '')), 0, 80);
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @param  array{q?: string, il?: string, ilce?: string}  $query
+     */
+    private function catalogueRowMatches(array $row, array $query): bool
+    {
+        $q = TurkishFold::fold((string) ($query['q'] ?? ''));
+        $il = TurkishFold::fold((string) ($query['il'] ?? ''));
+        $ilce = TurkishFold::fold((string) ($query['ilce'] ?? ''));
+        if ($q !== '') {
+            $parts = [(string) ($row['name'] ?? ''), (string) ($row['office_name'] ?? '')];
+            foreach (is_array($row['offices'] ?? null) ? $row['offices'] : [] as $office) {
+                if (is_array($office)) {
+                    $parts[] = (string) ($office['office_name'] ?? '');
+                }
+            }
+            foreach ($this->catalogueLocations($row) as $place) {
+                $parts[] = $place['city'];
+                $parts[] = $place['district'];
+            }
+            if (! str_contains(TurkishFold::fold(implode(' ', $parts)), $q)) {
+                return false;
+            }
+        }
+        if ($il === '' && $ilce === '') {
+            return true;
+        }
+        foreach ($this->catalogueLocations($row) as $place) {
+            $cityOk = $il === '' || TurkishFold::fold($place['city']) === $il;
+            $districtOk = $ilce === '' || TurkishFold::fold($place['district']) === $ilce;
+            if ($cityOk && $districtOk) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return list<array{city: string, district: string}>
+     */
+    private function catalogueLocations(array $row): array
+    {
+        $locations = [];
+        foreach (is_array($row['locations'] ?? null) ? $row['locations'] : [] as $place) {
+            if (! is_array($place)) {
+                continue;
+            }
+            $city = trim((string) ($place['city'] ?? ''));
+            $district = trim((string) ($place['district'] ?? ''));
+            if ($city !== '' || $district !== '') {
+                $locations[] = ['city' => $city, 'district' => $district];
+            }
+        }
+        if ($locations === []) {
+            $locations[] = $this->cataloguePlace($row);
+        }
+
+        return $locations;
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return array{city: string, district: string}
+     */
+    private function cataloguePlace(array $row): array
+    {
+        $city = trim((string) ($row['city'] ?? ''));
+        $district = trim((string) ($row['district'] ?? ''));
+        if ($city === '' && $district === '') {
+            $parts = array_values(array_filter(array_map('trim', explode('/', (string) ($row['address'] ?? ''))), fn ($part) => $part !== ''));
+            $city = $parts[0] ?? '';
+            $district = $parts[1] ?? '';
+        }
+
+        return ['city' => $city, 'district' => $district];
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $places
+     * @return list<array{city: string, districts: list<string>}>
+     */
+    private function normalisePlaces(array $places): array
+    {
+        $out = [];
+        foreach ($places as $place) {
+            if (! is_array($place)) {
+                continue;
+            }
+            $city = trim((string) ($place['city'] ?? ''));
+            if ($city === '') {
+                continue;
+            }
+            $districts = [];
+            foreach (is_array($place['districts'] ?? null) ? $place['districts'] : [] as $district) {
+                if (is_string($district) && trim($district) !== '') {
+                    $districts[] = trim($district);
+                }
+            }
+            $out[] = ['city' => $city, 'districts' => array_values(array_unique($districts))];
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rows
+     * @return list<array{city: string, districts: list<string>}>
+     */
+    private function placesFromRows(array $rows): array
+    {
+        $grouped = [];
+        foreach ($rows as $row) {
+            foreach ($this->catalogueLocations($row) as $place) {
+                if ($place['city'] === '') {
+                    continue;
+                }
+                $grouped[$place['city']][$place['district']] = $place['district'];
+            }
+        }
+        $places = [];
+        foreach ($grouped as $city => $districts) {
+            unset($districts['']);
+            $names = array_values($districts);
+            if (class_exists(\Collator::class)) {
+                $collator = new \Collator('tr_TR');
+                usort($names, fn ($a, $b) => $collator->compare($a, $b));
+            }
+            $places[] = ['city' => $city, 'districts' => $names];
+        }
+        if (class_exists(\Collator::class)) {
+            $collator = new \Collator('tr_TR');
+            usort($places, fn ($a, $b) => $collator->compare($a['city'], $b['city']));
+        }
+
+        return $places;
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, mixed>  $filters
+     * @param  list<array{city: string, districts: list<string>}>  $places
+     * @return array<string, mixed>
+     */
+    private function withDirectorySearch(array $payload, string $locale, array $filters, array $places): array
+    {
+        $values = is_array($payload['filter']['values'] ?? null) ? $payload['filter']['values'] : [];
+        $q = $this->directoryTerm($filters, 'q');
+        if ($q === '') {
+            $q = $this->directoryTerm($filters, 'SearchText');
+        }
+        $values['q'] = $q;
+        $values['il'] = $this->directoryTerm($filters, 'il');
+        $values['ilce'] = $this->directoryTerm($filters, 'ilce');
+        $payload['filter']['values'] = $values;
+        $payload['filter']['ui'] = $this->directoryUi($locale);
+        $payload['filter']['places'] = $places;
+        $payload['emptySearchLabel'] = __('messages.directory.empty_search', [], $locale);
+        if (is_array($payload['pagination'] ?? null)) {
+            $payload['pagination']['searchQuery'] = $this->simpleQueryString([
+                'q' => $q,
+                'il' => $values['il'],
+                'ilce' => $values['ilce'],
+            ]);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function directoryUi(string $locale): array
+    {
+        $label = fn (string $key) => __('messages.directory.'.$key, [], $locale);
+
+        return [
+            'searchLabel' => $label('search_label'),
+            'placeholder' => $label('placeholder'),
+            'filterLabel' => $label('filter'),
+            'cityLabel' => $label('city'),
+            'districtLabel' => $label('district'),
+            'clearLabel' => $label('clear'),
+            'clearSearchLabel' => $label('clear_search'),
+            'emptySearchLabel' => $label('empty_search'),
+            'loadingLabel' => $label('loading'),
+            'closeLabel' => $label('close'),
+            'chooseLabel' => $label('choose'),
+        ];
+    }
+
     /** @param  array<string, mixed>  $row */
     private function catalogueCityMatches(array $row, string $cityId): bool
     {
@@ -1474,10 +1701,12 @@ class CorporateResolver
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
-    private function remoteConsultantList(string $locale, string $path, int $pageIndex, array $filters, array $rows): array
+    private function remoteConsultantList(string $locale, string $path, int $pageIndex, array $filters, array $rows, array $places = []): array
     {
         $first = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Firstname') ?? '')));
         $last = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Lastname') ?? '')));
+        $query = $this->catalogueSearchQuery($filters);
+        $facetPlaces = $places !== [] ? $this->normalisePlaces($places) : $this->placesFromRows($rows);
         $rows = $this->turkishSortConsultants($rows);
         $items = [];
         foreach ($rows as $row) {
@@ -1488,12 +1717,15 @@ class CorporateResolver
             if ($last !== '' && ! str_contains($name, $last)) {
                 continue;
             }
+            if (! $this->catalogueRowMatches($row, $query)) {
+                continue;
+            }
             $items[] = app(ReonixCatalogue::class)->consultantCard($row, $locale);
         }
         $payload = $this->emptyConsultantList($locale, $path, $filters);
         $payload = $this->pageRemote($payload, $items, $pageIndex, 18, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
 
-        return $this->withConsultantHeading($payload, $locale);
+        return $this->withDirectorySearch($this->withConsultantHeading($payload, $locale), $locale, $filters, $facetPlaces);
     }
 
     /**
@@ -1551,7 +1783,7 @@ class CorporateResolver
         $canonical = is_array($lists[$locale] ?? null) ? ($lists[$locale][0] ?? $path) : $path;
         $defaults = $this->officeListDefaults($locale);
         $heading = $defaults['heading'];
-        $keys = ['SearchText', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'];
+        $keys = ['SearchText', 'q', 'il', 'ilce', 'FilterDTO.CountryId', 'FilterDTO.CityId', 'FilterDTO.CountyId'];
         $values = [];
         foreach ($keys as $key) {
             $values[$key] = $this->filterScalar($filters, $key) ?? '';
@@ -1913,7 +2145,7 @@ class CorporateResolver
         $canonical = $this->cataloguePath('consultants', $locale, $path);
         $defaults = $this->consultantListDefaults($locale);
         $heading = $defaults['heading'];
-        $keys = ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId'];
+        $keys = ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId', 'q', 'il', 'ilce'];
         $values = [];
         foreach ($keys as $key) {
             $values[$key] = $this->filterScalar($filters, $key) ?? '';
@@ -2002,14 +2234,19 @@ class CorporateResolver
             return null;
         }
 
-        $remote = app(ReonixCatalogue::class)->collection('consultants');
+        $remote = app(ReonixCatalogue::class)->listed('consultants', $this->catalogueSearchQuery($filters));
         if (is_array($remote)) {
-            return $this->remoteConsultantList($locale, $path, $pageIndex, $filters, $remote);
+            return $this->remoteConsultantList($locale, $path, $pageIndex, $filters, $remote['rows'], $remote['places']);
         }
 
         $list = CmsListPage::query()->where('type', 'consultant')->where('locale', $locale)->first();
         if ($list === null) {
-            return $this->withConsultantHeading($this->emptyConsultantList($locale, $path, $filters), $locale);
+            return $this->withDirectorySearch(
+                $this->withConsultantHeading($this->emptyConsultantList($locale, $path, $filters), $locale),
+                $locale,
+                $filters,
+                [],
+            );
         }
 
         $perPage = max(1, $list->per_page);
@@ -2038,6 +2275,17 @@ class CorporateResolver
                     });
             });
         }
+        $q = $this->directoryTerm($filters, 'q');
+        if ($q !== '') {
+            $like = '%'.$this->escapeLike($q).'%';
+            $query->where(function ($builder) use ($like, $operator, $locale) {
+                $builder->where('first_name', $operator, $like)
+                    ->orWhere('last_name', $operator, $like)
+                    ->orWhereHas('translations', function ($translation) use ($locale, $like, $operator) {
+                        $translation->where('locale', $locale)->where('name', $operator, $like);
+                    });
+            });
+        }
         $this->whereOptional($query, 'office_id', $this->filterScalar($filters, 'FilterDTO.OfficeId'));
         $this->whereOptional($query, 'city_id', $this->filterScalar($filters, 'FilterDTO.CityId'));
 
@@ -2053,11 +2301,11 @@ class CorporateResolver
             'consultant-list',
             'consultant',
             fn (CmsConsultant $consultant) => $this->consultantCardPayload($consultant, $locale, $consultant->translations->first()),
-            ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId'],
+            ['FilterDTO.Firstname', 'FilterDTO.Lastname', 'FilterDTO.OfficeId', 'FilterDTO.CityId', 'q', 'il', 'ilce'],
         );
         $payload['emptyLabel'] = $this->catalogueEmptyLabel('consultants', $locale);
 
-        return $this->withConsultantHeading($payload, $locale);
+        return $this->withDirectorySearch($this->withConsultantHeading($payload, $locale), $locale, $filters, []);
     }
 
     /**

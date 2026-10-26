@@ -13,6 +13,19 @@ return [
     'consultants' => [
         'empty' => 'Henüz eklenmiş danışman yok.',
     ],
+    'directory' => [
+        'search_label' => 'Ara',
+        'placeholder' => 'İsim, ofis, il veya ilçe',
+        'filter' => 'Filtre',
+        'city' => 'İl',
+        'district' => 'İlçe',
+        'clear' => 'Temizle',
+        'clear_search' => 'Aramayı temizle',
+        'empty_search' => 'Aramanızla eşleşen kayıt yok.',
+        'loading' => 'Aranıyor',
+        'close' => 'Kapat',
+        'choose' => 'Seçiniz',
+    ],
     'portal' => [
         'unavailable' => 'İşlem şu anda tamamlanamadı. Lütfen yeniden deneyin.',
         'forbidden' => 'Bu işlem için yetkiniz yok.',
