@@ -39,9 +39,9 @@ export function ConsultantList({ data }: { data: Extract<CorporatePayload, { kin
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap justify-center">
+            <div className="sk-dir-grid flex flex-wrap items-stretch justify-center">
               {data.items.map((item) => (
-                <div className="box-border w-full px-[calc(12px*var(--sk-scale,1))] md:w-1/2 xl:w-1/3" key={`${item.variant}-${item.externalId}-${item.urlPath}`}>
+                <div className="sk-dir-cell box-border w-full px-[calc(12px*var(--sk-scale,1))] md:w-1/2 xl:w-1/3" key={`${item.variant}-${item.externalId}-${item.urlPath}`}>
                   <DirectoryCard item={item} />
                 </div>
               ))}

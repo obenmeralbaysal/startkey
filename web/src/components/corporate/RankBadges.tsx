@@ -13,6 +13,9 @@ export function RankBadges({
 }) {
   const rows = (badges ?? []).filter((badge) => badge.imageUrl && badge.label);
   if (rows.length === 0) {
+    if (variant === "card") {
+      return <div className="sk-rank-badges" aria-hidden="true" />;
+    }
     return null;
   }
   const labels = rankBadgeCopy(locale);

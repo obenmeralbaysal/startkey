@@ -34,6 +34,27 @@ test("an empty office badge list renders nothing on the card", () => {
   assert.deepEqual(rankBadgesForCard([]), []);
 });
 
+test("a consultant list item keeps rankBadges and an empty list stays empty", () => {
+  const shown = rankBadgesOf({
+    variant: "consultant",
+    name: "Ada Yılmaz",
+    rankBadges: [
+      { year: 2024, category: "islem", label: "İşlem Birincisi", rank: 1, imageUrl: "https://cdnc.re-os.com/club/islem.png" },
+      { year: 2025, category: "club", label: "Ticari Kulüp", rank: 4, imageUrl: "https://cdnc.re-os.com/club/club.png" },
+      { year: 2025, category: "ciro", label: "Ciro Yedincisi", rank: 7, imageUrl: "https://cdnc.re-os.com/club/ciro.png" },
+    ],
+  });
+  assert.deepEqual(
+    shown.map((badge) => [badge.year, badge.category, badge.label, badge.rank, badge.imageUrl]),
+    [
+      [2025, "ciro", "Ciro Yedincisi", 7, "https://cdnc.re-os.com/club/ciro.png"],
+      [2025, "club", "Ticari Kulüp", null, "https://cdnc.re-os.com/club/club.png"],
+      [2024, "islem", "İşlem Birincisi", 1, "https://cdnc.re-os.com/club/islem.png"],
+    ],
+  );
+  assert.deepEqual(rankBadgesOf({ variant: "consultant", name: "Cevdet Kömürcüoğlu", rankBadges: [] }), []);
+});
+
 test("office_rank_badges with image_url reach the card when rankBadges is empty", () => {
   const shown = rankBadgesOf({
     rankBadges: [],

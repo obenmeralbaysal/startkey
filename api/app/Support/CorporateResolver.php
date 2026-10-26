@@ -1449,8 +1449,32 @@ class CorporateResolver
             }
             $kept['is_default'] = true;
         }
+        if (! $this->consultantRowHasRankBadges($kept) && $this->consultantRowHasRankBadges($extra)) {
+            foreach (['office_rank_badges', 'officeRankBadges', 'rankBadges', 'rank_badges'] as $key) {
+                if (array_key_exists($key, $extra)) {
+                    $kept[$key] = $extra[$key];
+                }
+            }
+        }
 
         return $kept;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function consultantRowHasRankBadges(array $row): bool
+    {
+        foreach (['office_rank_badges', 'officeRankBadges', 'rankBadges', 'rank_badges'] as $key) {
+            $value = $row[$key] ?? null;
+            if (is_string($value) && trim($value) !== '') {
+                $decoded = json_decode($value, true);
+                $value = is_array($decoded) ? $decoded : null;
+            }
+            if (is_array($value) && $value !== []) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

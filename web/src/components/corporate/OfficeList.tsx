@@ -38,9 +38,9 @@ export function OfficeList({ data }: { data: Extract<CorporatePayload, { kind: "
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap justify-center">
+            <div className="sk-dir-grid flex flex-wrap items-stretch justify-center">
               {data.items.map((item) => (
-                <div className="w-full xl:w-1/3 lg:w-1/2 md:w-1/2 box-border px-[12px]" key={`${item.variant}-${item.externalId}`}>
+                <div className="sk-dir-cell box-border w-full px-[12px] md:w-1/2 lg:w-1/2 xl:w-1/3" key={`${item.variant}-${item.externalId}`}>
                   <DirectoryCard item={item} />
                 </div>
               ))}

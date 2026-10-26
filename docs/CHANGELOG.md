@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Bugfix]**: Danışman listesindeki ciro, işlem ve kulüp rozetleri, kişinin birden fazla ofis üyeliği olsa da kartta kalır. Aynı satırdaki kartlar rozeti olsun olmasın eşit yüksekliktedir; rozetler kartın içinde yatayda ortalanır ve taşmaz. #2185
 - **[Bugfix]**: Katalog medya yüklemesi Reonix'in atladığı kayıtlara dosya göndermez; başarılı yüklemenin sha256'si durum dosyasına yazılır ve aynı dosya tekrar gönderilmez. Medya 404 satırı basılıp sürer, diğer HTTP hataları bir kez denenip `media_failed` sayılır. `--media-only` yalnız medyayı çalıştırır, `--no-media` medyayı atlar, `--dry-run` yüklenecek ve kayıtlı medya sayısını basar. #2185
 - **[Bugfix]**: Katalog içe aktarma her istekte `StartKey-Import/1.0` User-Agent gönderir. `--dry-run` ofis, danışman ve atlanan sayıları basar; REONIX ortamını okumaz ve HTTP yapmaz. 0 ofis ve danışman varken içe aktarma durur (`--allow-empty-offices` ile sürer). `/tr/ofisler` anasayfa dönerse ofis sırası en sonra de kısa slug birleşiminden kurulur; üç dil de boşsa tarama içe aktarmaya geçmeden çıkar. #2185
 - **[UI]**: Ofis ayarlarındaki LOGO kutusu kalktı; logo notu durur. Ekip listesinde rol TR/EN/DE etiketidir, şube GET şube listesindeki addır, bulunamazsa "—". Özet, role kapalı kartı basmaz; o rolde yalnız bekleyen iş sayısı ve bağlantısı durur. `/portal/office/team` ekip ayarına döner. #2182

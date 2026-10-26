@@ -109,10 +109,10 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
               {activeId === "tab_1" ? (
                 <div>
                   {data.teamGroups.map((group) => (
-                    <div className="flex flex-wrap justify-center" key={group.heading || "team"}>
+                    <div className="sk-dir-grid flex flex-wrap items-stretch justify-center" key={group.heading || "team"}>
                       {group.heading ? <h3 className="sk-highlight">{group.heading}</h3> : null}
                       {group.members.map((member) => (
-                        <div className="box-border w-full px-[12px] md:w-1/3" key={member.externalId}>
+                        <div className="sk-dir-cell box-border w-full px-[12px] md:w-1/3" key={member.externalId}>
                           <DirectoryCard item={member} />
                         </div>
                       ))}
