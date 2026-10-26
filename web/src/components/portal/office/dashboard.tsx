@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { canViewEarnings, isManager, officeLabel, roleOf } from "@/components/portal/office/access";
-import { isRecord, officeCall } from "@/components/portal/office/api";
+import { canViewEarnings, officeLabel, roleOf } from "@/components/portal/office/access";
+import { isRecord, OfficeError, officeCall } from "@/components/portal/office/api";
 import { useOffice } from "@/components/portal/office/ui";
 import { Icon } from "@/components/portal/shell";
 import { formatMoney, formatNumber } from "@/components/portal/charts";
@@ -13,9 +13,11 @@ import {
   QUICK_ACTIONS,
   appointmentLines,
   earningsDeepLink,
+  dashboardMeta,
   greetingTitle,
   officeCaption,
   pendingWorkLabel,
+  showPendingCard,
   summaryFigures,
   withLang,
 } from "@/lib/portal-ux";
@@ -25,38 +27,48 @@ type Row = Record<string, unknown>;
 function useOfficeData(path: string | null) {
   const { officeId } = useOffice();
   const [data, setData] = useState<Row | null | undefined>(undefined);
+  const [denied, setDenied] = useState(false);
   const [version, setVersion] = useState(0);
   useEffect(() => {
     if (path === null) {
       setData(null);
+      setDenied(false);
       return;
     }
     let cancelled = false;
     setData(undefined);
+    setDenied(false);
     officeCall(path, officeId)
       .then((payload) => {
         if (!cancelled) setData(isRecord(payload.data) ? payload.data : payload);
       })
-      .catch(() => {
-        if (!cancelled) setData(null);
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setDenied(error instanceof OfficeError && error.status === 403);
+        setData(null);
       });
     return () => {
       cancelled = true;
     };
   }, [path, officeId, version]);
-  return { data, reload: () => setVersion((value) => value + 1) };
+  return { data, denied, reload: () => setVersion((value) => value + 1) };
 }
 
 export function OfficeDashboard() {
   const { office, firstName, jobTitle, locale } = useOffice();
   const role = roleOf(office);
-  const manager = isManager(role);
   const showEarnings = canViewEarnings(role, office);
   const copy = PORTAL_UX_COPY[locale];
-  const stats = useOfficeData(manager ? "dashboard/stats" : "dashboard/agent-stats");
-  const pending = useOfficeData(manager ? "dashboard/pending-approvals" : null);
+  const officeStats = useOfficeData("dashboard/stats");
+  const personalStats = useOfficeData(officeStats.denied ? "dashboard/agent-stats" : null);
+  const stats = officeStats.denied ? personalStats : officeStats;
+  const meta = dashboardMeta(officeStats.data);
+  const pendingAllowed = showPendingCard(meta, role, officeStats.denied);
+  const pending = useOfficeData(pendingAllowed ? "dashboard/pending-approvals" : null);
+  const pendingClosed = officeStats.denied || pending.denied;
+  const showPending = pendingAllowed && !pending.denied;
   const appointments = useOfficeData("appointments");
-  const figures = summaryFigures(stats.data === undefined ? null : stats.data, pending.data === undefined ? null : pending.data, showEarnings);
+  const figures = summaryFigures(stats.data === undefined ? null : stats.data, showPending && pending.data !== undefined ? pending.data : null, showEarnings);
   const loading = stats.data === undefined;
   const today = appointmentLines(appointments.data, new Date(), locale);
   const pendingText = pendingWorkLabel(loading ? "—" : formatNumber(figures.pending), locale);
@@ -89,18 +101,20 @@ export function OfficeDashboard() {
         })}
       </div>
 
-      <div className="ux-kpis" data-count={showEarnings ? 4 : 3}>
+      <div className="ux-kpis" data-count={(showPending ? 1 : 0) + (showEarnings ? 1 : 0) + 2}>
         <Kpi label={copy.activePortfolios} value={loading ? "—" : formatNumber(figures.active)} hint={figures.activeDelta == null ? "" : `+${formatNumber(figures.activeDelta)} ${copy.thisMonth}`} tone={figures.activeDelta == null ? undefined : "up"} href={withLang("/portal/office/portfolios", locale)} />
-        <Kpi label={copy.pending} value={loading ? "—" : formatNumber(figures.pending)} hint={copy.review} href={withLang("/portal/office/portfolios", locale)} />
+        {showPending ? <Kpi label={copy.pending} value={loading ? "—" : formatNumber(figures.pending)} hint={copy.review} href={withLang("/portal/office/portfolios", locale)} /> : null}
         <Kpi label={copy.newMatches} value={loading ? "—" : formatNumber(figures.matches)} hint={figures.matchesAreWeek ? copy.last7 : ""} href={withLang("/portal/office/matches", locale)} />
         {showEarnings ? (
           <Kpi label={copy.monthEarnings} value={loading ? "—" : formatMoney(figures.earnings ?? 0)} hint={figures.closings == null ? "" : `${formatNumber(figures.closings)} ${copy.closings}`} href={withLang(earningsDeepLink(role), locale)} />
         ) : null}
       </div>
 
-      <p className="ux-pending-line">
-        <Link className="ux-pending" href={withLang("/portal/office/portfolios", locale)}>{pendingText}</Link>
-      </p>
+      {pendingClosed ? <p className="ux-muted">{copy.summaryClosed}</p> : showPending ? (
+        <p className="ux-pending-line">
+          <Link className="ux-pending" href={withLang("/portal/office/portfolios", locale)}>{pendingText}</Link>
+        </p>
+      ) : null}
 
       <div className="ux-split">
         <section className="ux-panel">

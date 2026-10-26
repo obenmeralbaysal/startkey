@@ -480,13 +480,16 @@ class OfficeProxyTest extends TestCase
                 ->assertOk();
         }
 
-        foreach ([$owner, $branched] as $cookie) {
-            $this->withCredentials()
-                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
-                ->withHeader('X-Portal-Office', '7')
-                ->putJson('/api/v1/portal/office/office/settings', ['name' => 'Ofis', 'ttbs_no' => '3501234'])
-                ->assertOk();
-        }
+        $this->withCredentials()
+            ->withUnencryptedCookie($owner->getName(), $owner->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->putJson('/api/v1/portal/office/office/settings', ['name' => 'Ofis', 'ttbs_no' => '3501234'])
+            ->assertOk();
+        $this->withCredentials()
+            ->withUnencryptedCookie($branched->getName(), $branched->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->putJson('/api/v1/portal/office/office/settings', ['name' => 'Ofis', 'ttbs_no' => '3501234'])
+            ->assertForbidden();
 
         Http::assertSent(fn ($request) => str_contains($request->url(), '/api/v1/earnings?')
             && str_contains($request->url(), 'from=2026-01-01')
@@ -674,6 +677,7 @@ class OfficeProxyTest extends TestCase
             'agent pending approvals' => ['agent', null, 'get', '/api/v1/portal/office/dashboard/pending-approvals'],
             'agent office settings write' => ['agent', null, 'put', '/api/v1/portal/office/office/settings'],
             'manager office settings write' => ['manager', null, 'put', '/api/v1/portal/office/office/settings'],
+            'branched office settings write' => ['office_manager', 4, 'put', '/api/v1/portal/office/office/settings'],
             'agent settings' => ['agent', null, 'get', '/api/v1/portal/office/settings'],
             'agent settings write' => ['agent', null, 'put', '/api/v1/portal/office/settings/office'],
             'agent bulk rate' => ['agent', null, 'post', '/api/v1/portal/office/commission-policy/changes'],

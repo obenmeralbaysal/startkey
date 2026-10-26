@@ -9,12 +9,10 @@ import { EmptyState, PageFrame, useOffice } from "@/components/portal/office/ui"
 import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import {
   isSafeHex,
-  matchmakingScoreBody,
   OFFICE_SETTINGS_PATH,
   officeFieldError,
   officeSettingsBody,
   officeSettingsOutcome,
-  readMinMatchScore,
   readOfficeSettings,
   type OfficeProfileInput,
   type OfficeRules,
@@ -48,8 +46,6 @@ export function OfficeSettingsForm() {
   const [rules, setRules] = useState<OfficeRules>(EMPTY_RULES);
   const [logoUrl, setLogoUrl] = useState("");
   const [brandColor, setBrandColor] = useState("");
-  const [score, setScore] = useState("");
-  const [weights, setWeights] = useState<unknown>(null);
   const [fieldError, setFieldError] = useState("");
   const [banner, setBanner] = useState("");
   const [pending, setPending] = useState(false);
@@ -59,7 +55,7 @@ export function OfficeSettingsForm() {
     let cancelled = false;
     (async () => {
       try {
-        const payload = await officeCall("settings", officeId);
+        const payload = await officeCall(OFFICE_SETTINGS_PATH, officeId);
         if (cancelled) return;
         const view = readOfficeSettings(payload);
         setProfile(view.profile);
@@ -71,16 +67,8 @@ export function OfficeSettingsForm() {
         if (error instanceof OfficeError && officeSettingsOutcome(error.status) === "missing") {
           setBanner(copy.officeSettingsMissing);
         } else {
-          notice(`${copy.savedError}`);
+          notice(copy.savedError);
         }
-      }
-      try {
-        const payload = await officeCall("office/matchmaking-weights", officeId);
-        if (cancelled) return;
-        setWeights(payload);
-        setScore(readMinMatchScore(payload));
-      } catch {
-        if (!cancelled) setScore("");
       }
     })();
     return () => {
@@ -121,10 +109,9 @@ export function OfficeSettingsForm() {
     setFieldError("");
     setPending(true);
     try {
-      // STUB until MD backlog 7
       const payload = await officeCall(OFFICE_SETTINGS_PATH, officeId, {
         method: "PUT",
-        body: officeSettingsBody(profile, rules),
+        body: officeSettingsBody(profile),
       });
       const view = readOfficeSettings(payload);
       if (view.profile.name) setProfile(view.profile);
@@ -139,48 +126,6 @@ export function OfficeSettingsForm() {
     } finally {
       setPending(false);
     }
-  }
-
-  async function saveRules(event: FormEvent) {
-    event.preventDefault();
-    if (!editable || pending) return;
-    setPending(true);
-    let missing = false;
-    try {
-      // STUB until MD backlog 7
-      await officeCall(OFFICE_SETTINGS_PATH, officeId, {
-        method: "PUT",
-        body: officeSettingsBody(profile, rules),
-      });
-      setBanner("");
-    } catch (error) {
-      if (error instanceof OfficeError && officeSettingsOutcome(error.status) === "missing") {
-        missing = true;
-        setBanner(copy.officeSettingsMissing);
-      } else {
-        notice(copy.savedError);
-        setPending(false);
-        return;
-      }
-    }
-    const parsed = Number(score);
-    if (score.trim() && Number.isFinite(parsed)) {
-      try {
-        await officeCall("office/matchmaking-weights", officeId, {
-          method: "POST",
-          body: matchmakingScoreBody(parsed, weights),
-        });
-      } catch {
-        notice(copy.savedError);
-        setPending(false);
-        return;
-      }
-    } else if (missing) {
-      setPending(false);
-      return;
-    }
-    notice(copy.saved);
-    setPending(false);
   }
 
   const color = isSafeHex(brandColor) ? brandColor : "";
@@ -214,7 +159,7 @@ export function OfficeSettingsForm() {
                 <input value={profile.name} disabled={!editable} onChange={(event) => setProfile({ ...profile, name: event.target.value })} />
               </Field>
               <Field label={copy.officePhone}>
-                <input value={profile.phone} disabled={!editable} onChange={(event) => setProfile({ ...profile, phone: event.target.value })} />
+                <input value={copy.comingSoon} disabled readOnly />
               </Field>
               <Field label={`${copy.officeAddress} *`} error={fieldError === copy.officeAddressRequired ? fieldError : ""}>
                 <input value={profile.address} disabled={!editable} onChange={(event) => setProfile({ ...profile, address: event.target.value })} />
@@ -231,14 +176,14 @@ export function OfficeSettingsForm() {
         ) : null}
 
         {tab === "rules" ? (
-          <form className="ux-office-form" onSubmit={saveRules}>
-            <Rule label={copy.ruleOwnerApproval} checked={rules.require_owner_approval} disabled={!editable} onChange={(checked) => setRules({ ...rules, require_owner_approval: checked })} />
-            <Rule label={copy.ruleClosing} checked={rules.requires_closing_verification} disabled={!editable} onChange={(checked) => setRules({ ...rules, requires_closing_verification: checked })} />
-            <Rule label={copy.ruleEarnings} checked={rules.managers_can_view_earnings} disabled={!editable} onChange={(checked) => setRules({ ...rules, managers_can_view_earnings: checked })} />
+          <form className="ux-office-form">
+            <p className="ux-muted">{copy.comingSoon}</p>
+            <Rule label={copy.ruleOwnerApproval} checked={rules.require_owner_approval} disabled onChange={() => undefined} />
+            <Rule label={copy.ruleClosing} checked={rules.requires_closing_verification} disabled onChange={() => undefined} />
+            <Rule label={copy.ruleEarnings} checked={rules.managers_can_view_earnings} disabled onChange={() => undefined} />
             <Field label={copy.ruleMinScore}>
-              <input value={score} type="number" min={0} max={100} disabled={!editable} onChange={(event) => setScore(event.target.value)} />
+              <input value={copy.comingSoon} disabled readOnly />
             </Field>
-            {editable ? <button className="ux-create" type="submit" disabled={pending}>{copy.save}</button> : null}
           </form>
         ) : null}
 

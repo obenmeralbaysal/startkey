@@ -11,6 +11,7 @@ import {
   assignableRoles,
   BULK_RATE_PATH,
   bulkRateBody,
+  bulkRateSent,
   duplicateTeamEmail,
   memberRoleLabel,
   officeSettingsOutcome,
@@ -143,9 +144,14 @@ export function TeamSettings() {
     }
     setPending(true);
     try {
-      await officeCall(BULK_RATE_PATH, officeId, { method: "POST", body: bulkRateBody(ids, value) });
-      setBanner(APPROVAL_SENT);
-      notice(copy.approvalSent);
+      const payload = await officeCall(BULK_RATE_PATH, officeId, { method: "POST", body: bulkRateBody(ids, value) });
+      if (bulkRateSent(payload)) {
+        setBanner(APPROVAL_SENT);
+        notice(copy.approvalSent);
+      } else {
+        setBanner("");
+        notice(copy.saved);
+      }
     } catch (error) {
       if (error instanceof OfficeError && officeSettingsOutcome(error.status) === "missing") {
         setBanner(copy.rateStub);

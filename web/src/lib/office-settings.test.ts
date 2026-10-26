@@ -18,6 +18,7 @@ import {
   matchmakingScoreBody,
   memberRoleLabel,
   officeFieldError,
+  bulkRateSent,
   officeSettingsBody,
   officeSettingsOutcome,
   readMinMatchScore,
@@ -49,15 +50,17 @@ test("office profile blocks an empty TTBS number and hides raw keys", () => {
   assert.equal(officeFieldError({ ...profile, name: "" }, messages)?.field, "name");
   assert.equal(officeFieldError({ ...profile, address: "" }, messages)?.field, "address");
   assert.equal(officeFieldError(profile, messages), null);
-  const body = officeSettingsBody(profile, {
-    require_owner_approval: true,
-    requires_closing_verification: false,
-    managers_can_view_earnings: true,
-  });
+  const body = officeSettingsBody(profile);
   assert.equal(OFFICE_SETTINGS_GROUP, "office");
-  assert.equal(OFFICE_SETTINGS_PATH, "settings/office");
-  assert.deepEqual(Object.keys(body).sort(), ["address", "name", "phone", "rules", "sahibinden_store_url", "ttbs_no"]);
-  assert.equal(JSON.stringify(body).includes("require_owner_approval"), true);
+  assert.equal(OFFICE_SETTINGS_PATH, "office/settings");
+  assert.deepEqual(body, {
+    name: "Lider",
+    address: "Bayraklı",
+    sahibinden_store_url: "https://www.sahibinden.com/magaza",
+    ttbs_no: "3500000",
+  });
+  assert.equal("phone" in body, false);
+  assert.equal("rules" in body, false);
   assert.equal(officeSettingsOutcome(404), "missing");
   assert.equal(officeSettingsOutcome(200), "saved");
   assert.equal(officeSettingsOutcome(422), "error");
@@ -88,6 +91,9 @@ test("office settings read logo and colour without treating them as inputs", () 
   assert.equal(view.profile.ttbs_no, "3500000");
   assert.equal(view.rules.require_owner_approval, true);
   assert.equal(view.rules.managers_can_view_earnings, true);
+  assert.equal(readOfficeSettings({
+    data: { name: "Lider", address: "Bayraklı", sahibinden_store_url: "https://www.sahibinden.com/magaza", ttbs_no: "3500000" },
+  }).profile.sahibinden_store_url, "https://www.sahibinden.com/magaza");
   assert.equal(view.logoUrl, "/portal/img/logo.png");
   assert.equal(isSafeHex(view.brandColor), true);
   assert.equal(isSafeHex("red"), false);
@@ -135,6 +141,10 @@ test("team create omits branch and licence until the backlog endpoint exists", (
 test("bulk rate is an approval request and table cells hide raw keys", () => {
   assert.equal(BULK_RATE_PATH, "commission-policy/changes");
   assert.equal(PORTAL_UX_COPY.tr.approvalSent, APPROVAL_SENT);
+  assert.equal(PORTAL_UX_COPY.en.approvalSent, "Sent for approval");
+  assert.equal(PORTAL_UX_COPY.de.approvalSent, "Zur Freigabe gesendet");
+  assert.equal(bulkRateSent({ data: { status: "pending_approval" } }), true);
+  assert.equal(bulkRateSent({ status: "applied" }), false);
   const body = bulkRateBody([4, 5], 12.5);
   assert.deepEqual(body, { user_ids: [4, 5], rate_percentage: 12.5 });
   assert.equal(JSON.stringify(body).includes("earning-rates"), false);

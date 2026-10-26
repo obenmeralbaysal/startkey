@@ -14,6 +14,10 @@ export type PortalUxCopy = {
   earnings: string;
   myEarnings: string;
   collaborations: string;
+  collaborationIn: string;
+  collaborationOut: string;
+  summaryClosed: string;
+  comingSoon: string;
   lease: string;
   leaseDescription: string;
   leaseEmpty: string;
@@ -118,6 +122,10 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     earnings: "Hakediş",
     myEarnings: "Hakedişim",
     collaborations: "İşbirlikleri",
+    collaborationIn: "Gelen",
+    collaborationOut: "Giden",
+    summaryClosed: "Bu kart rolünüz için kapalı.",
+    comingSoon: "Yakında",
     lease: "Kira takvimi",
     leaseDescription: "Kiralanan portföyün kira yıldönümünden 90, 60 ve 30 gün önce bildirim gönderilir.",
     leaseEmpty: "Kiralanan portföyünüz olduğunda kayıtlar burada görünür.",
@@ -225,6 +233,10 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     earnings: "Earnings",
     myEarnings: "My earnings",
     collaborations: "Collaborations",
+    collaborationIn: "Incoming",
+    collaborationOut: "Outgoing",
+    summaryClosed: "This card is closed for your role.",
+    comingSoon: "Soon",
     lease: "Lease calendar",
     leaseDescription: "A notification is sent 90, 60 and 30 days before the rent anniversary of a leased portfolio.",
     leaseEmpty: "Records appear here when you have a leased portfolio.",
@@ -332,6 +344,10 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     earnings: "Provision",
     myEarnings: "Meine Provision",
     collaborations: "Zusammenarbeit",
+    collaborationIn: "Eingehend",
+    collaborationOut: "Ausgehend",
+    summaryClosed: "Diese Karte ist für Ihre Rolle geschlossen.",
+    comingSoon: "Demnächst",
     lease: "Mietkalender",
     leaseDescription: "90, 60 und 30 Tage vor dem Mietjubiläum eines vermieteten Portfolios wird eine Benachrichtigung gesendet.",
     leaseEmpty: "Einträge erscheinen hier, sobald ein vermietetes Portfolio vorliegt.",

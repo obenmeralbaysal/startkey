@@ -3,9 +3,9 @@ export const DUPLICATE_EMAIL = "Bu e-posta ekipte zaten var.";
 export const APPROVAL_SENT = "Onaya gönderildi";
 export const LOGO_NOTE = "Logo ve marka rengini StartKey yönetimi belirler.";
 
-/** STUB until MD backlog 7. Contract: settings group `office`. */
+/** Portal path for GET/PUT /api/v1/office/settings. */
 export const OFFICE_SETTINGS_GROUP = "office";
-export const OFFICE_SETTINGS_PATH = "settings/office";
+export const OFFICE_SETTINGS_PATH = "office/settings";
 
 /** STUB until MD backlog 6. team POST does not accept these yet. */
 export const TEAM_EXTRAS_STUB = "branch-ttbs";
@@ -48,18 +48,17 @@ export function officeFieldError(input: OfficeProfileInput, messages: OfficeFiel
   return null;
 }
 
-export function officeSettingsBody(input: OfficeProfileInput, rules: OfficeRules): OfficeSettingsGroup {
+export function officeSettingsBody(input: OfficeProfileInput): {
+  name: string;
+  address: string;
+  sahibinden_store_url: string;
+  ttbs_no: string;
+} {
   return {
     name: input.name.trim(),
-    phone: input.phone.trim(),
     address: input.address.trim(),
     sahibinden_store_url: input.sahibinden_store_url.trim(),
     ttbs_no: input.ttbs_no.trim(),
-    rules: {
-      require_owner_approval: rules.require_owner_approval,
-      requires_closing_verification: rules.requires_closing_verification,
-      managers_can_view_earnings: rules.managers_can_view_earnings,
-    },
   };
 }
 
@@ -206,6 +205,17 @@ export function bulkRateBody(userIds: readonly number[], rate: number): { user_i
     user_ids: [...userIds],
     rate_percentage: rate,
   };
+}
+
+export function bulkRateSent(payload: unknown): boolean {
+  return bulkRateStatus(payload) === "pending_approval";
+}
+
+function bulkRateStatus(payload: unknown): string {
+  const root = unwrap(payload);
+  if (typeof root.status === "string") return root.status;
+  const nested = isRecord(root.data) ? root.data.status : undefined;
+  return typeof nested === "string" ? nested : "";
 }
 
 export function displayCell(value: unknown): string {

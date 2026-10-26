@@ -186,6 +186,30 @@ export function pendingWorkLabel(count: string, locale: Locale): string {
   return PORTAL_UX_COPY[locale].pendingWork.replace("{count}", count);
 }
 
+export function collaborationPath(direction: "in" | "out"): string {
+  return `collaboration-requests?direction=${direction}`;
+}
+
+export type DashboardMeta = { scope: string; role: string };
+
+export function dashboardMeta(payload: unknown): DashboardMeta {
+  const body = payloadBody(payload);
+  return {
+    scope: textAt(body ?? {}, ["scope"]),
+    role: textAt(body ?? {}, ["role"]),
+  };
+}
+
+/** Office pending card follows the stats payload. A consultant 403 hides it. */
+export function showPendingCard(meta: DashboardMeta, localRole: string, denied: boolean): boolean {
+  if (denied) return false;
+  const role = (meta.role || localRole).trim().toLowerCase();
+  const scope = meta.scope.trim().toLowerCase();
+  if (role === "agent") return false;
+  if (scope === "mine" || scope === "own") return false;
+  return true;
+}
+
 /** Logged-in office roles leave /portal. Franchise desk stays only for an admin without an office, or an admin who asked for it. */
 export function portalLandingHref(user: unknown, lang?: string | null, desk?: string | null): string | null {
   if (showNetworkPortal(user)) return networkHome(lang);

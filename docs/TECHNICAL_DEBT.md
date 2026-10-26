@@ -2,21 +2,21 @@
 
 Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
-### TD-024 — Ofis grubu, şube/TTBS ve toplu oran ucu eksik
+### TD-024 — Telefon, ofis kuralları ve ekip şube/TTBS alanı eksik
 
 **Alan:** Portal / Ofis ayarları ve ekip
 
 **Mevcut Durum:**
 
-Ofis adı, telefon, adres, Sahibinden mağaza bağlantısı, TTBS ve ofis kuralları `PUT settings/office` grubuna yazılır. Uç 404 dönerse form hata yerine "Ofis bilgisi kaydı henüz hazır değil." basar. Logo ve marka rengi yalnız okunur. Ekip formundaki şube ve TTBS/MYK üye gövdesine konmaz; doluysa "Şube ve TTBS/MYK kaydı henüz hazır değil." görünür. Toplu oran yalnız `POST commission-policy/changes` ile gider ve doğrudan uygulanmaz. Uç 404 ise "Toplu oran onay ucu henüz hazır değil. Oran uygulanmadı." basılır.
+Ofis adı, adres, Sahibinden mağaza bağlantısı ve TTBS `GET/PUT office/settings` ile gider (`name`, `address`, `sahibinden_store_url`, `ttbs_no`). Telefon ve ofis kuralları formda "Yakında" ve kapalıdır; istek gövdesine konmaz. Logo ve marka rengi yalnız okunur. Ekip formundaki şube ve TTBS/MYK üye gövdesine konmaz; doluysa "Şube ve TTBS/MYK kaydı henüz hazır değil." görünür. Toplu oran `POST commission-policy/changes` ile gider. Cevap `status: pending_approval` ise "Onaya gönderildi" basılır. Uç 404 ise "Toplu oran onay ucu henüz hazır değil. Oran uygulanmadı." basılır.
 
 **Geçici Olmasının Nedeni:**
 
-MD backlog 6 (üyede şube ve TTBS/MYK) ve backlog 7 (ofis ayar grubu) bu depoda yok. Toplu oran onay ucu da aynı listede eksik.
+`office/settings` telefon ve kural alanlarını taşımıyor. MD backlog 6 (üyede şube ve TTBS/MYK) bu depoda yok.
 
 **Gelecekteki Implementasyon:**
 
-`settings/office` kaydı aynı alanlarla durur. Şube ve TTBS/MYK üye oluşturma ve satır güncellemesine bağlanır. `commission-policy/changes` 2xx olunca durum "Onaya gönderildi" kalır.
+Telefon ve ofis kuralları aynı ofis ayarı ucuna bağlanır ve gönderilir. Şube ve TTBS/MYK üye oluşturma ve satır güncellemesine bağlanır.
 
 **Durum:** Açık
 

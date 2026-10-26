@@ -31,13 +31,11 @@ final class PortalSettings
         $officeWide = in_array($role, ['owner', 'manager'], true)
             || ($role === 'office_manager' && ! $branched);
 
-        $profile = in_array($role, ['owner', 'office_manager'], true);
-
         return match ($need) {
             'owner' => $role !== 'owner',
             'manager' => ! $manager,
             'office-wide' => ! $officeWide,
-            'office-settings' => ! $profile,
+            'office-settings' => ! ($role === 'owner' || ($role === 'office_manager' && ! $branched)),
             default => true,
         };
     }

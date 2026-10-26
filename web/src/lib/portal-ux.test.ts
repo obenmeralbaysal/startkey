@@ -27,6 +27,9 @@ import {
   pendingPortfolios,
   portalLandingHref,
   reportsHubTab,
+  collaborationPath,
+  dashboardMeta,
+  showPendingCard,
   summaryFigures,
 } from "./portal-ux.ts";
 
@@ -114,8 +117,8 @@ test("office menu follows role access and the mobile bar is the four work items"
 test("portal home sends office roles to the summary and network roles to the network", () => {
   assert.equal(portalLandingHref({ offices: [{ id: 3, role: "agent" }], role: "agent" }, "tr"), "/portal/office");
   assert.equal(portalLandingHref({ offices: [{ id: 3 }], role: "owner" }, "de"), "/portal/office?lang=de");
-  assert.equal(portalLandingHref({ context: "network", role: "franchise_staff" }, "en"), "/portal/network?lang=en");
-  assert.equal(portalLandingHref({ data: { user: { context: "network", role: "franchise_admin" } } }, null), "/portal/network");
+  assert.equal(portalLandingHref({ context: "network", role: "franchise_staff" }, "en"), "/portal/network/summary?lang=en");
+  assert.equal(portalLandingHref({ data: { user: { context: "network", role: "franchise_admin" } } }, null), "/portal/network/summary");
   assert.equal(portalLandingHref({ is_admin: true, offices: [{ id: 1 }] }, "tr"), "/portal/office");
   assert.equal(portalLandingHref({ is_admin: true, offices: [{ id: 1 }] }, "tr", "1"), null);
   assert.equal(portalLandingHref({ is_admin: true, offices: [] }, "tr"), null);
@@ -207,6 +210,14 @@ test("summary figures use numbers only and hide manager earnings without the fla
     { id: "1", title: "Portföy onay bekliyor", meta: "" },
   ]);
   assert.equal(JSON.stringify(empty).includes("unexpected"), false);
+  const meta = dashboardMeta({ data: { scope: "office", role: "owner", portfolios: { active: 1 } } });
+  assert.deepEqual(meta, { scope: "office", role: "owner" });
+  assert.equal(showPendingCard(meta, "owner", false), true);
+  assert.equal(showPendingCard(dashboardMeta({ data: { scope: "mine", role: "agent" } }), "owner", false), false);
+  assert.equal(showPendingCard({ scope: "", role: "" }, "agent", false), false);
+  assert.equal(showPendingCard({ scope: "office", role: "owner" }, "owner", true), false);
+  assert.equal(collaborationPath("in"), "collaboration-requests?direction=in");
+  assert.equal(collaborationPath("out"), "collaboration-requests?direction=out");
 });
 
 function countText(value: unknown, needle: string): number {

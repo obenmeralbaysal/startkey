@@ -22,7 +22,7 @@ import { TeamSettings } from "@/components/portal/office/team-settings";
 import { ConfirmButton, PageFrame, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 import { hasWatermarkedMedia, isWatermarkedImage, mediaThumb, portfolioMedia, WatermarkBadge, WatermarkBanner } from "@/components/portal/office/watermark";
 import { PORTAL_UX_COPY } from "@/content/portal-ux";
-import { officeSectionDenied, reportsHubTab, withLang } from "@/lib/portal-ux";
+import { collaborationPath, officeSectionDenied, reportsHubTab, withLang } from "@/lib/portal-ux";
 import {
   classifySahibindenImportFailure,
   parseSahibindenListing,
@@ -1201,7 +1201,8 @@ function Earnings({ heading }: { heading: string | null }) {
 function Collaborations() {
   const { officeId, notice, locale } = useOffice();
   const copy = PORTAL_UX_COPY[locale];
-  const list = useData("collaboration-requests");
+  const [direction, setDirection] = useState<"in" | "out">("in");
+  const list = useData(collaborationPath(direction));
   async function send(id: unknown, action: "accept" | "reject") {
     try {
       await officeCall(`collaboration-requests/${id}/${action}`, officeId, { method: "PUT", body: {} });
@@ -1212,6 +1213,10 @@ function Collaborations() {
   }
   return (
     <PageFrame title={copy.collaborations}>
+      <div className="ux-tabs" role="tablist">
+        <button type="button" role="tab" aria-selected={direction === "in"} onClick={() => setDirection("in")}>{copy.collaborationIn}</button>
+        <button type="button" role="tab" aria-selected={direction === "out"} onClick={() => setDirection("out")}>{copy.collaborationOut}</button>
+      </div>
       <RecordTable rows={rows(list.data)} loading={list.data === undefined} recordLabel={copy.record} summaryLabel={copy.summaryColumn} />
       {rows(list.data).map((row) => (
         <div className="glass-actions" key={String(row.id)}>
