@@ -9,6 +9,7 @@ use App\Support\PortalPath;
 use App\Support\PortalPayload;
 use App\Support\PortalReadCache;
 use App\Support\PortalSettings;
+use App\Support\WatermarkFlags;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -136,6 +137,12 @@ class OfficeProxyController extends Controller
         if (! is_array($body)) {
             return response()->json(['message' => __('messages.portal.unavailable')], 422);
         }
+        if ($this->portfolioPayload($path)) {
+            $ensured = WatermarkFlags::ensure($body, null, preg_match('#(^|/)media($|/)#', $path) === 1);
+            if (is_array($ensured)) {
+                $body = $ensured;
+            }
+        }
 
         if (is_string($sessionId) && $sessionId !== '') {
             if ($rotated !== null) {
@@ -183,6 +190,16 @@ class OfficeProxyController extends Controller
         $rows = $raw['data'] ?? $raw;
 
         return is_array($rows) && count($rows) > 2000;
+    }
+
+    private function portfolioPayload(string $path): bool
+    {
+        return $path === 'portfolios'
+            || str_starts_with($path, 'portfolios/')
+            || $path === 'dashboard'
+            || str_starts_with($path, 'dashboard/')
+            || $path === 'matches'
+            || str_starts_with($path, 'matches/');
     }
 
     private function binary(string $type): bool

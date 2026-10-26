@@ -98,6 +98,63 @@ class OfficeProxyTest extends TestCase
             && $request->hasHeader('X-Office-Id', '8'));
     }
 
+    public function test_watermark_flags_pass_through_and_default_false(): void
+    {
+        $cookie = $this->login();
+        Http::fake([
+            'http://reonix.test/api/v1/portfolios/5' => Http::response([
+                'data' => [
+                    'id' => 5,
+                    'title' => 'Ev',
+                    'status' => 'potential',
+                    'type' => 'sale',
+                    'price' => 1,
+                    'media' => [
+                        ['id' => 1, 'url' => 'http://reonix.test/storage/a.jpg', 'is_watermarked' => true],
+                        ['id' => 2, 'url' => 'http://reonix.test/storage/b.jpg'],
+                    ],
+                ],
+            ]),
+            'http://reonix.test/api/v1/portfolios' => Http::response([
+                'data' => [[
+                    'id' => 6,
+                    'title' => 'Arsa',
+                    'status' => 'potential',
+                    'type' => 'sale',
+                    'price' => 2,
+                ]],
+            ]),
+            'http://reonix.test/api/v1/portfolios/5/status' => Http::response([
+                'message' => 'Bu portföy filigranlı.',
+                'errors' => ['watermarked_media' => ['Bu portföy filigranlı.']],
+            ], 422),
+        ]);
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/portfolios/5')
+            ->assertOk()
+            ->assertJsonPath('data.has_watermarked_media', false)
+            ->assertJsonPath('data.media.0.is_watermarked', true)
+            ->assertJsonPath('data.media.1.is_watermarked', false)
+            ->assertJsonPath('data.media.0.url', '/api/v1/portal/media/storage/a.jpg');
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/portfolios')
+            ->assertOk()
+            ->assertJsonPath('data.0.has_watermarked_media', false);
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->postJson('/api/v1/portal/office/portfolios/5/status', ['status' => 'active'])
+            ->assertStatus(422)
+            ->assertJsonPath('errors.watermarked_media.0', 'Bu portföy filigranlı.');
+    }
+
     public function test_public_share_proxy_is_limited_to_customer_links(): void
     {
         config(['reonix.base_url' => 'http://reonix.test', 'reonix.portal_key' => 'test-key']);

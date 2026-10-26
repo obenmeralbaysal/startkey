@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Support\MediaPath;
+use App\Support\WatermarkFlags;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -387,6 +388,7 @@ class ReonixCatalogue
                 },
                 'captchaError' => 'Captcha boş bırakılamaz!',
             ],
+            'has_watermarked_media' => WatermarkFlags::flag($row['has_watermarked_media'] ?? false),
             'relatedHeading' => '',
             'related' => [],
             'breadcrumb' => ['heading' => $card['title'], 'trail' => []],
@@ -599,6 +601,7 @@ class ReonixCatalogue
             'features' => $this->cardFeatures($row),
             'detailLabel' => '',
             'style' => 'style3',
+            'has_watermarked_media' => WatermarkFlags::flag($row['has_watermarked_media'] ?? false),
         ];
     }
 
@@ -930,12 +933,13 @@ class ReonixCatalogue
 
     /**
      * @param  array<string, mixed>  $row
-     * @return list<array{original: string, image: string, imageWebp: string, thumb: string, caption: string}>
+     * @return list<array{original: string, image: string, imageWebp: string, thumb: string, caption: string, is_watermarked: bool}>
      */
     private function gallery(array $row): array
     {
         $id = (int) ($row['id'] ?? 0);
         $count = min(60, max(0, (int) ($row['image_count'] ?? 0)));
+        $flags = WatermarkFlags::imageFlags($row);
         $slides = [];
         for ($index = 0; $index < $count; $index++) {
             $url = '/api/v1/catalogue/media/portfolios/'.$id.'/'.$index;
@@ -945,6 +949,7 @@ class ReonixCatalogue
                 'imageWebp' => '',
                 'thumb' => $url,
                 'caption' => '',
+                'is_watermarked' => $flags[$index] ?? false,
             ];
         }
 

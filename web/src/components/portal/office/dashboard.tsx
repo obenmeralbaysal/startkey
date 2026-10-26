@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { canVerify, roleOf } from "@/components/portal/office/access";
 import { isRecord, officeCall, type OfficeRecord } from "@/components/portal/office/api";
 import { EmptyState, Skeleton, useOffice } from "@/components/portal/office/ui";
+import { hasWatermarkedMedia, WatermarkBadge } from "@/components/portal/office/watermark";
 import { ChartCard, ComboChart, formatMoney, formatNumber } from "@/components/portal/charts";
 import { Icon, Sheet, type IconName } from "@/components/portal/shell";
 
@@ -183,7 +184,7 @@ function AgentDashboard({ firstName }: { firstName: string }) {
                 <li key={str(row.id)}>
                   <Link className="glass-list-row" href={`/portal/office/portfolios/${str(row.id)}`}>
                     <strong>{str(row.title)}<small className="glass-row-sub">{row.type === "sale" ? "Satılık" : "Kiralık"}</small></strong>
-                    <span className="glass-list-num">{formatMoney(num(row.price))}<StatusBadge status={str(row.status)} /></span>
+                    <span className="glass-list-num">{formatMoney(num(row.price))}<StatusBadge status={str(row.status)} /><WatermarkBadge flagged={hasWatermarkedMedia(row)} compact /></span>
                     <Icon name="chevronRight" />
                   </Link>
                 </li>
@@ -334,6 +335,7 @@ function PendingApprovals() {
                     <strong>
                       {str(item.title)}
                       {item.self_approval_blocked ? <em className="glass-tag">Kendi İlanınız</em> : null}
+                      <WatermarkBadge flagged={hasWatermarkedMedia(item)} compact />
                       <small className="glass-row-sub">
                         {[
                           str(item.agent_name),

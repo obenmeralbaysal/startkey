@@ -601,4 +601,67 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.items.1.role', 'Immobilienberater')
             ->assertJsonPath('data.items.1.urlPath', '/de/anbieteren/4/burak');
     }
+
+    public function test_watermark_flags_pass_through_listing_cards_and_gallery(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios' => Http::response(['data' => [[
+                'id' => 9,
+                'title' => 'Filigranlı',
+                'type' => 'sale',
+                'has_watermarked_media' => true,
+                'image_count' => 1,
+            ], [
+                'id' => 10,
+                'title' => 'Temiz',
+                'type' => 'sale',
+            ]]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios/9' => Http::response(['data' => [
+                'portfolio' => [
+                    'id' => 9,
+                    'title' => 'Filigranlı',
+                    'type' => 'sale',
+                    'has_watermarked_media' => 1,
+                    'image_count' => 2,
+                    'images' => [
+                        ['is_watermarked' => true],
+                        ['is_watermarked' => 'false'],
+                    ],
+                    'media' => [
+                        ['index' => 1, 'is_watermarked' => true],
+                    ],
+                ],
+                'office' => [],
+                'agent' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios/10' => Http::response(['data' => [
+                'portfolio' => [
+                    'id' => 10,
+                    'title' => 'Temiz',
+                    'type' => 'sale',
+                    'image_count' => 1,
+                ],
+                'office' => [],
+                'agent' => [],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.has_watermarked_media', true)
+            ->assertJsonPath('data.items.1.has_watermarked_media', false);
+
+        $marked = $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy/9/satilik')
+            ->assertOk()
+            ->assertJsonPath('data.has_watermarked_media', true)
+            ->json('data.gallery');
+        $this->assertTrue($marked[0]['is_watermarked']);
+        $this->assertTrue($marked[1]['is_watermarked']);
+
+        $clean = $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy/10/satilik')
+            ->assertOk()
+            ->assertJsonPath('data.has_watermarked_media', false)
+            ->json('data.gallery');
+        $this->assertFalse($clean[0]['is_watermarked']);
+    }
 }

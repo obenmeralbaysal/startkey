@@ -1,3 +1,5 @@
+import { watermarkActivationMessage } from "./watermark";
+
 export type OfficeRecord = Record<string, unknown>;
 
 export class OfficeError extends Error {
@@ -143,6 +145,10 @@ function missingKinds(payload: OfficeRecord): string[] {
 }
 
 export function errorText(payload: OfficeRecord): string {
+  const watermark = watermarkActivationMessage(payload);
+  if (watermark) {
+    return watermark;
+  }
   const labels = missingLabels(payload);
   if (typeof payload.message === "string" && payload.message) {
     return labels.length > 0 ? `${payload.message} ${labels.join(", ")}` : payload.message;
