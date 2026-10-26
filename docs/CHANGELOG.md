@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: İlan detayındaki danışman fotoğrafı 72px yuvarlak yerine kartın tam genişliğinde, kendi oranıyla gösterilir; kırpılmaz, yüz kesilmez. Telefonda da kart genişliğindedir. #2185
 - **[UI]**: Üst menü, iyileştirme sunumundaki 72px beyaz çubuktur. Sıra Kurumsal, Portföyler, Danışmanlar, Ofisler, Akademi ve Medya’dır; İletişim Kurumsal’da, haber ve blog Medya’dadır. Kırmızı düğme Başvuru menüsüdür (Franchise ve Danışman). Telefonda menü soldan açılır; çubukta ☰ ve kısa Başvur kalır. Harita başlığı ofis ve ülke sayısı ile ülke etiketlerini canlı pinlerden üretir; pini olmayan listede başlık basılmaz. #2185
 - **[UI]**: Ana menüye tıklanınca açılan Başvuru listesi eklendi. Danışman ve Franchise, mevcut başvuru sayfalarına gider; alt satırdaki açıklama TR, EN ve DE sayfa metnidir. Esc ve dışarı tıklama listeyi kapatır. Telefonda aynı düğme çekmecedeki alt menüyü açar. Startkey Global haritası, pini olan ofis sayısını gösterir; veri yoksa sayı basılmaz. #2185
 - **[UI]**: Portföy listesinde üst başlık açık gri; fotoğrafı olmayan ilan kırık çerçeve yerine “Fotoğraf hazırlanıyor” gösterir. İlan detayında ana fotoğraf ve küçük resimler, beş ve üzeri fotoğrafta “+N”, lightbox, yapışkan fiyat ve danışman kartı ile telefonda alt iletişim çubuğu vardır. Yeni portföy seçenekleri ikon kartıdır. #2185

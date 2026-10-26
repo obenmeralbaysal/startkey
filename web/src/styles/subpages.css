@@ -1582,19 +1582,25 @@ article ol li {
   text-transform: uppercase;
 }
 
+/* Consultant photo spans the card width at its own aspect ratio, so the face is never cropped. */
 .listing-contact-avatar {
   display: block;
-  width: calc(72px * var(--sk-scale, 1));
-  height: calc(72px * var(--sk-scale, 1));
-  margin-bottom: 10px;
+  width: 100%;
+  margin-bottom: calc(12px * var(--sk-scale, 1));
   overflow: hidden;
-  border-radius: 50%;
+  border-radius: calc(12px * var(--sk-scale, 1));
+  background: #f4f4f5;
+}
+
+.listing-contact-avatar picture {
+  display: block;
 }
 
 .listing-contact-avatar img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
 }
 
 .listing-contact-mail {

@@ -213,9 +213,9 @@ function ContactCard({
     <div className="listing-contact-card" data-contact={consultant ? "consultant" : "office"}>
       {consultant && !isPlaceholderPhoto(agent.image) ? (
         <a className="listing-contact-avatar" href={agent.href || undefined}>
-          <Picture width={72} height={72}>
+          <Picture>
             {agent.imageWebp ? <source srcSet={agent.imageWebp} type="image/webp" /> : null}
-            <img src={agent.image} alt="" width={72} height={72} />
+            <img src={agent.image} alt={agent.name} width={400} height={500} loading="lazy" />
           </Picture>
         </a>
       ) : null}
