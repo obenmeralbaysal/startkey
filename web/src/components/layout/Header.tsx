@@ -47,7 +47,10 @@ const HEADER_STYLES = `
     max-width: none;
   }
   @media (max-width: 767px) {
-    .sk-logo img { width: calc(172.8px * var(--sk-scale, 1)); }
+    .sk-logo img {
+      width: 130px;
+      height: 53px;
+    }
   }
   .sk-nav {
     display: flex;
