@@ -509,9 +509,17 @@ class ReonixCatalogueTest extends TestCase
             'https://portal.test/api/v1/integrations/portal/catalogue/media/offices/7/0' => Http::response('png', 200, ['Content-Type' => 'image/png']),
         ]);
 
-        $this->get('/api/v1/catalogue/media/offices/7')
+        $photo = $this->get('/api/v1/catalogue/media/offices/7')
             ->assertOk()
-            ->assertHeader('content-type', 'image/png');
+            ->assertHeader('content-type', 'image/png')
+            ->assertHeader('cache-control', 'max-age=3600, public');
+        $etag = $photo->headers->get('ETag');
+        $this->assertNotSame('', (string) $etag);
+
+        $this->get('/api/v1/catalogue/media/offices/7', ['If-None-Match' => (string) $etag])
+            ->assertStatus(304)
+            ->assertHeader('etag', (string) $etag)
+            ->assertHeader('cache-control', 'max-age=3600, public');
     }
 
     public function test_the_consultant_list_is_one_card_per_person_and_labels_an_empty_result(): void
