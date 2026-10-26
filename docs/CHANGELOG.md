@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: “Filigranlı görsel” rozeti açık fotoğraflarda okunur: koyu zemin opaklığı yükseldi, yazıda gölge ve kontur var. Rozet public ilan kartında, ana sayfa vitrininde ve ilan galerisi küçük resminde de durur; yalnız portal stilinde kalmaz. #2184
 - **[Bugfix]**: Ofis haritası dünya sınırının soluna kaydırılınca gri şerit çıkmaz (`maxBounds`, `maxBoundsViscosity` 1, karo `noWrap`). Başvuru menüsü fare ayrılınca, odak dışarı çıkınca ve sayfa değişince kapanır. #2185
 - **[UI]**: Portföy küçük resmindeki “Filigranlı görsel” rozeti koyu yarı saydam zemin, açık yazı ve küçük köşe yarıçapı kullanır. Yerleşim aynı kalır. #2184
 - **[Bugfix]**: Başvuru ve diğer formlardaki reCAPTCHA bildirimi, reCAPTCHA betiği yüklenene kadar basılmaz. Betik yüklenince metin aynı kalır.

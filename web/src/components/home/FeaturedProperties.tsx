@@ -1,3 +1,4 @@
+import { WATERMARK_IMAGE_LABEL } from "@/components/portal/office/watermark";
 import type { ApiProperty } from "@/lib/api";
 
 export function FeaturedProperties({
@@ -35,6 +36,7 @@ export function FeaturedProperties({
                       </picture>
                     )}
                   </a>
+                  {property.has_watermarked_media ? <span className="sk-watermark-badge">{WATERMARK_IMAGE_LABEL}</span> : null}
                   <span className="sk-property-sale">{property.processType}</span>
                   <span className="sk-property-kind">{property.adSubType}</span>
                 </div>

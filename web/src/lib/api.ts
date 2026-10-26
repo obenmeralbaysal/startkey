@@ -21,6 +21,7 @@ export interface ApiProperty {
   rooms: string;
   area: string;
   detailLabel: string;
+  has_watermarked_media?: boolean;
 }
 
 export interface ApiPopularCity {

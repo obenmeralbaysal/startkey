@@ -498,6 +498,7 @@ export interface ListingCardData {
   detailLabel: string;
   style?: string;
   images?: string[];
+  has_watermarked_media?: boolean;
 }
 
 export interface ListingGallerySlide {
@@ -506,6 +507,7 @@ export interface ListingGallerySlide {
   imageWebp: string;
   thumb: string;
   caption: string;
+  is_watermarked?: boolean;
 }
 
 export interface ListingAgentData {

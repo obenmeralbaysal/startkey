@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
 
+import { WATERMARK_IMAGE_LABEL } from "@/components/portal/office/watermark";
 import type { ListingGallerySlide } from "@/lib/corporate";
 import {
   gallerySlots,
@@ -21,6 +22,7 @@ interface Photo {
   webp: string;
   thumb: string;
   caption: string;
+  watermarked: boolean;
 }
 
 function photosFromSlides(slides: ListingGallerySlide[]): Photo[] {
@@ -42,6 +44,7 @@ function photosFromSlides(slides: ListingGallerySlide[]): Photo[] {
       webp: isPlaceholderPhoto(slide.imageWebp) ? "" : slide.imageWebp,
       thumb: !isPlaceholderPhoto(slide.thumb) ? slide.thumb : image,
       caption: slide.caption || "",
+      watermarked: slide.is_watermarked === true,
     });
   }
   return photos;
@@ -222,6 +225,7 @@ export function ListingGallery({
             failed={false}
             onFail={() => setFailed((current) => ({ ...current, [available.indexOf(main)]: true }))}
           />
+          {main.watermarked ? <span className="sk-watermark-badge">{WATERMARK_IMAGE_LABEL}</span> : null}
         </button>
         {slots.thumbs.length > 0 ? (
           <div className="sk-photo-thumbs" style={{ ["--thumb-n" as string]: String(slots.thumbs.length) }}>
@@ -241,6 +245,7 @@ export function ListingGallery({
                   onClick={(event) => openAt(slot.index, event.currentTarget)}
                 >
                   <img src={photo.thumb || photo.image} alt="" loading="lazy" decoding="async" onError={() => setFailed((current) => ({ ...current, [available.indexOf(photo)]: true }))} />
+                  {photo.watermarked ? <span className="sk-watermark-badge">{WATERMARK_IMAGE_LABEL}</span> : null}
                   {slot.kind === "more" ? <span className="sk-photo-more">{label}</span> : null}
                 </button>
               );

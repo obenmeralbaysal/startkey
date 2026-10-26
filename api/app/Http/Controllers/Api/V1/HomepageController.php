@@ -192,6 +192,7 @@ class HomepageController extends Controller
             'rooms' => (string) ($row['rooms'] ?? ''),
             'area' => (string) ($row['area'] ?? ''),
             'detailLabel' => $locale === 'tr' ? 'Detay' : 'Detail',
+            'has_watermarked_media' => $card['has_watermarked_media'],
         ];
     }
 
