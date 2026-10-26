@@ -1,3 +1,7 @@
+## [2026-10-26]
+
+- **[UI]**: Telefonda header logosu 130×53 px. Franchise başvurusu bölüm aralıkları, başlık ve paragraf boşlukları referansla aynı; Akademi metnindeki sohbet sınıfları yerleşimi büyütmez. Form alanları ve doğrulama aynı kalır. #2178
+
 ## [2026-10-25]
 
 - **[UI]**: Ana sayfa kaydırma animasyonu haritayı da kapsar; telefonda paragraf 14px. Danışman ve franchise başvurusu telefonda daha sıkı aralık ve 55px alan yüksekliği kullanır. Ofis kartı 0.4s hover, iletişim haritası 500px, ofis detay haritası masaüstünde 500px ve telefonda konteyner genişliğindedir. Header geçişi 0.4s. #2178
