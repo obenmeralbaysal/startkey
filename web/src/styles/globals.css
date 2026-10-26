@@ -2169,6 +2169,7 @@ a.btn.style2::after {
     background: #fff; border: 1px solid #e3e6ec; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08);
   }
   .sk-office-map-card h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #002172; }
+  .sk-office-map-card-line { margin: -4px 0 10px; font-size: 13px; color: #6b7280; }
   .sk-office-map-card a { color: #ec3323; font-weight: 700; text-decoration: none; }
   .sk-office-map-card a:hover { text-decoration: underline; }
 }

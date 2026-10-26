@@ -37,6 +37,11 @@ export interface MapOffice {
   latitude: number;
   longitude: number;
   locationNeedsReview?: boolean;
+  /** Office card line; empty or missing when Reonix has no value. */
+  city?: string;
+  district?: string;
+  /** People only; null when the consultant list could not be read. */
+  consultantCount?: number | null;
 }
 
 export interface HomepageData {

@@ -11,7 +11,11 @@ import {
 import type { MapOffice } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
 import { mapPinPosition, officeCountrySummary } from "@/lib/map-coordinates";
-import { officeCardHref, officeForCard } from "@/lib/office-map-card";
+import {
+  officeCardHref,
+  officeCardLine,
+  officeForCard,
+} from "@/lib/office-map-card";
 
 const CARD_LINK: Record<Locale, string> = {
   tr: "Ofisi gör →",
@@ -45,7 +49,13 @@ export function OfficeMapSection({
     latitude: number;
     longitude: number;
   } | null>(null);
-  const cardOffice = officeForCard(offices ?? [], selectedId, center, mapPinPosition);
+  const cardOffice = officeForCard(
+    offices ?? [],
+    selectedId,
+    center,
+    mapPinPosition,
+  );
+  const cardLine = cardOffice ? officeCardLine(cardOffice, locale) : null;
   const heading = summary
     ? officeMapHeading(locale, summary.officeCount, summary.countries.length)
     : null;
@@ -79,6 +89,9 @@ export function OfficeMapSection({
         {cardOffice ? (
           <div className="sk-office-map-card" data-office-id={cardOffice.id}>
             <h4>{cardOffice.name}</h4>
+            {cardLine ? (
+              <p className="sk-office-map-card-line">{cardLine}</p>
+            ) : null}
             <a href={officeCardHref(cardOffice)}>{CARD_LINK[locale]}</a>
           </div>
         ) : null}
