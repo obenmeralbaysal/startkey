@@ -71,6 +71,16 @@ export function networkHome(lang: string | null | undefined): string {
   return networkHref("summary", { lang: networkLang(lang) });
 }
 
+export const NETWORK_OFFICE_MISSING = "Ofis bulunamadı";
+
+/** `/portal/network/offices/{id}` — a franchise office detail id, or null. */
+export function networkOfficeId(parts: readonly string[]): number | null {
+  if (parts.length !== 2 || parts[0] !== "offices") return null;
+  if (!/^[1-9]\d*$/.test(parts[1])) return null;
+  const id = Number(parts[1]);
+  return Number.isSafeInteger(id) ? id : null;
+}
+
 export function sectionFromParts(parts: readonly string[]): NetworkSection | null {
   if (parts.length === 0) return "summary";
   if (parts.length !== 1) return null;

@@ -13,8 +13,10 @@ import {
   emptyLimitPayload,
   isPortalLimitRequest,
   localePortalRedirect,
+  NETWORK_OFFICE_MISSING,
   networkApiUrl,
   networkHref,
+  networkOfficeId,
   networkRole,
   networkUsesMock,
   networkWriteControls,
@@ -104,6 +106,17 @@ test("franchise roles do not call the super-admin limit queue", () => {
   assert.deepEqual(emptyLimitPayload(403), { data: [] });
   assert.equal(emptyLimitPayload(404), null);
   assert.equal(emptyLimitPayload(200), null);
+});
+
+test("a missing franchise office id is the office-not-found route", () => {
+  assert.equal(NETWORK_OFFICE_MISSING, "Ofis bulunamadı");
+  assert.equal(networkOfficeId(["offices", "999999"]), 999999);
+  assert.equal(networkOfficeId(["offices"]), null);
+  assert.equal(networkOfficeId(["offices", "0"]), null);
+  assert.equal(networkOfficeId(["offices", "nope"]), null);
+  assert.equal(networkOfficeId(["consultants", "4"]), null);
+  assert.equal(sectionFromPath("/portal/network/offices/999999"), null);
+  assert.equal(sectionFromParts(["offices", "999999"]), null);
 });
 
 test("opening an office filters consultants by office_id", () => {

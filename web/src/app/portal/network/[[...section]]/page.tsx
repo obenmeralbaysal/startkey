@@ -1,6 +1,8 @@
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 
 import { NetworkApp } from "@/components/portal/network/NetworkApp";
+import { networkOfficeId } from "@/lib/portal-network";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +12,8 @@ export default async function NetworkPage({
   params: Promise<{ section?: string[] }>;
 }) {
   const { section } = await params;
+  const parts = section ?? [];
+  if (networkOfficeId(parts) !== null) notFound();
   return (
     <Suspense
       fallback={
@@ -19,7 +23,7 @@ export default async function NetworkPage({
         </main>
       }
     >
-      <NetworkApp parts={section ?? []} />
+      <NetworkApp parts={parts} />
     </Suspense>
   );
 }

@@ -16,6 +16,7 @@ import {
   settingsPageAccess,
 } from "@/components/portal/office/access";
 import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
+import { matchedFieldErrors, withFieldErrors } from "@/components/portal/office/field-errors";
 import { OfficeDashboard } from "@/components/portal/office/dashboard";
 import { ConfirmButton, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 import { hasWatermarkedMedia, isWatermarkedImage, mediaThumb, portfolioMedia, WatermarkBadge, WatermarkBanner } from "@/components/portal/office/watermark";
@@ -1659,16 +1660,36 @@ function Sellers() {
 function Form({ title, onSubmit, children }: { title: string; onSubmit: (form: FormData) => Promise<void>; children: ReactNode }) {
   const { notice } = useOffice();
   const [pending, setPending] = useState(false);
+  const [fields, setFields] = useState<Record<string, string>>({});
   return (
     <form className="glass-form" onSubmit={(event) => {
       event.preventDefault();
       if (pending) return;
+      const form = event.currentTarget;
       setPending(true);
-      onSubmit(new FormData(event.currentTarget)).catch((error: Error) => notice(`Hata: ${error.message}`)).finally(() => setPending(false));
+      setFields({});
+      onSubmit(new FormData(form)).catch((error: Error) => {
+        const matched = error instanceof OfficeError ? matchedFieldErrors(controlNames(form), error.fields) : {};
+        if (Object.keys(matched).length > 0) {
+          setFields(matched);
+          return;
+        }
+        notice(`Hata: ${error.message}`);
+      }).finally(() => setPending(false));
     }}>
       <h3>{title}</h3>
-      {children}
+      {withFieldErrors(children, fields)}
       <button className="glass-btn" type="submit" disabled={pending} aria-busy={pending}>{pending ? "Kaydediliyor" : "Kaydet"}</button>
     </form>
   );
+}
+
+function controlNames(form: HTMLFormElement): string[] {
+  const names: string[] = [];
+  for (const element of Array.from(form.elements)) {
+    if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement || element instanceof HTMLTextAreaElement) {
+      if (element.name) names.push(element.name);
+    }
+  }
+  return names;
 }

@@ -1,6 +1,10 @@
 import { emptyLimitPayload, isPortalLimitRequest, skipPortalLimitRequests } from "@/lib/portal-network";
 
 import { watermarkActivationMessage } from "./watermark";
+import { errorText as portalErrorText, fieldErrors, type FieldErrors } from "./api-error";
+
+export type { FieldErrors } from "./api-error";
+export { fieldErrors } from "./api-error";
 
 export type OfficeRecord = Record<string, unknown>;
 
@@ -8,12 +12,14 @@ export class OfficeError extends Error {
   labels: string[];
   kinds: string[];
   status: number;
+  fields: FieldErrors;
 
-  constructor(message: string, labels: string[] = [], kinds: string[] = [], status = 0) {
+  constructor(message: string, labels: string[] = [], kinds: string[] = [], status = 0, fields: FieldErrors = {}) {
     super(message);
     this.labels = labels;
     this.kinds = kinds;
     this.status = status;
+    this.fields = fields;
   }
 }
 
@@ -74,7 +80,8 @@ export async function officeCall(
     if (isPortalLimitRequest(path) && emptyLimitPayload(response.status)) {
       return { data: [] };
     }
-    throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload), response.status);
+    const fields = fieldErrors(payload);
+    throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload), response.status, fields);
   }
   if (cacheable) {
     const entry = { at: Date.now(), body: payload };
@@ -135,7 +142,7 @@ export async function publicCall(path: string, init?: { method?: string; body?: 
   });
   const payload = (await response.json().catch(() => ({}))) as OfficeRecord;
   if (!response.ok) {
-    throw new OfficeError(errorText(payload), [], [], response.status);
+    throw new OfficeError(errorText(payload), [], [], response.status, fieldErrors(payload));
   }
   return payload;
 }
@@ -154,22 +161,8 @@ function missingKinds(payload: OfficeRecord): string[] {
 
 export function errorText(payload: OfficeRecord): string {
   const watermark = watermarkActivationMessage(payload);
-  if (watermark) {
-    return watermark;
-  }
-  const labels = missingLabels(payload);
-  if (typeof payload.message === "string" && payload.message) {
-    return labels.length > 0 ? `${payload.message} ${labels.join(", ")}` : payload.message;
-  }
-  const errors = payload.errors;
-  if (errors && typeof errors === "object") {
-    for (const value of Object.values(errors as Record<string, unknown>)) {
-      if (Array.isArray(value) && typeof value[0] === "string") {
-        return value[0];
-      }
-    }
-  }
-  return "İşlem tamamlanamadı.";
+  if (watermark) return watermark;
+  return portalErrorText(payload, missingLabels(payload));
 }
 
 export function isRecord(value: unknown): value is OfficeRecord {
