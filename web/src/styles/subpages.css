@@ -744,9 +744,12 @@
 }
 
 .sk-photo-grid img {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #eee;
 }
 
 .cms .row,
@@ -1277,8 +1280,10 @@ article ol li {
   font-size: calc(14px * var(--sk-scale, 1));
 }
 
-.sk-dir-field select {
+.sk-dir-field select,
+.sk-dir-field input {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   height: calc(48px * var(--sk-scale, 1));
   margin-top: calc(6px * var(--sk-scale, 1));
@@ -1286,6 +1291,37 @@ article ol li {
   border-radius: calc(5px * var(--sk-scale, 1));
   background: #f9f9f9;
   padding: 0 calc(12px * var(--sk-scale, 1));
+}
+
+.sk-search-label {
+  display: block;
+  margin-bottom: calc(4px * var(--sk-scale, 1));
+  color: #222;
+  font-size: calc(13px * var(--sk-scale, 1));
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.sk-search-label select,
+.sk-search-label input {
+  margin-top: calc(4px * var(--sk-scale, 1));
+}
+
+.sk-award-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: calc(6px * var(--sk-scale, 1)) 0 0;
+}
+
+.sk-award-badges li {
+  border-radius: 999px;
+  background: #fff6e8;
+  color: #8a5a00;
+  font-size: calc(11px * var(--sk-scale, 1));
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 3px 8px;
 }
 
 .sk-dir-clear,

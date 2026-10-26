@@ -28,7 +28,7 @@ class ReonixCatalogue
      * so Reonix can filter; an empty query keeps the previous unfiltered URL.
      *
      * @param  array<string, string>  $query
-     * @return array{rows: list<array<string, mixed>>, places: list<array{city: string, districts: list<string>}>}|null
+     * @return array{rows: list<array<string, mixed>>, places: list<array{city: string, districts: list<string>}>, offices: list<array{id: string, name: string}>}|null
      */
     public function listed(string $kind, array $query = []): ?array
     {
@@ -37,7 +37,7 @@ class ReonixCatalogue
         }
 
         $params = [];
-        foreach (['q', 'il', 'ilce'] as $key) {
+        foreach (['q', 'il', 'ilce', 'ofis'] as $key) {
             $value = mb_substr(trim((string) ($query[$key] ?? '')), 0, 80);
             if ($value !== '') {
                 $params[$key] = $value;
@@ -49,10 +49,21 @@ class ReonixCatalogue
         } catch (ReonixException $e) {
             Log::warning('Portal catalogue list failed.', ['kind' => $kind, 'status' => $e->status]);
 
-            return ['rows' => [], 'places' => []];
+            return ['rows' => [], 'places' => [], 'offices' => []];
         }
 
         $rows = $body['data'] ?? [];
+        $offices = [];
+        foreach (is_array($body['offices'] ?? null) ? $body['offices'] : [] as $office) {
+            if (! is_array($office)) {
+                continue;
+            }
+            $id = trim((string) ($office['id'] ?? ''));
+            $name = trim((string) ($office['name'] ?? ''));
+            if ($id !== '' && $name !== '') {
+                $offices[] = ['id' => $id, 'name' => $name];
+            }
+        }
         $places = [];
         foreach (is_array($body['places'] ?? null) ? $body['places'] : [] as $place) {
             if (! is_array($place)) {
@@ -74,6 +85,7 @@ class ReonixCatalogue
         return [
             'rows' => is_array($rows) ? array_values(array_filter($rows, 'is_array')) : [],
             'places' => $places,
+            'offices' => $offices,
         ];
     }
 
@@ -388,8 +400,9 @@ class ReonixCatalogue
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',
             'phoneLabel' => $this->phoneLabel($phone),
             'email' => (string) ($row['email'] ?? ''),
-            'location' => $this->cardLocation((string) ($row['address'] ?? '')),
+            'location' => $this->cardLocation((string) ($row['address'] ?? '')) ?: trim((string) ($row['city'] ?? '').(((string) ($row['district'] ?? '')) !== '' ? ' / '.$row['district'] : '')),
             'variant' => 'office',
+            'badges' => $this->badges($row),
         ];
     }
 
@@ -509,6 +522,11 @@ class ReonixCatalogue
     /** @param  array<string, mixed>  $row */
     public function consultantCard(array $row, string $locale): array
     {
+        if (($row['type'] ?? '') === 'office') {
+            $officeId = (int) ($row['office_id'] ?? 0);
+
+            return $this->officeCard(array_merge($row, ['id' => $officeId]), $locale);
+        }
         $id = (int) ($row['id'] ?? 0);
         $name = (string) ($row['name'] ?? '');
         $phone = (string) ($row['phone'] ?? '');
@@ -525,6 +543,7 @@ class ReonixCatalogue
             'email' => (string) ($row['email'] ?? ''),
             'location' => (string) ($row['office_name'] ?? ''),
             'variant' => 'consultant',
+            'badges' => $this->badges($row),
         ];
     }
 
@@ -693,6 +712,27 @@ class ReonixCatalogue
         }
 
         return number_format((float) $price, 0, ',', '.').($currency !== '' ? ' '.$currency : '');
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return list<array{title: string, period: string}>
+     */
+    private function badges(array $row): array
+    {
+        $out = [];
+        foreach (is_array($row['badges'] ?? null) ? $row['badges'] : [] as $badge) {
+            if (! is_array($badge)) {
+                continue;
+            }
+            $title = trim((string) ($badge['title'] ?? ''));
+            if ($title === '') {
+                continue;
+            }
+            $out[] = ['title' => $title, 'period' => trim((string) ($badge['period'] ?? ''))];
+        }
+
+        return $out;
     }
 
     /** @param  array<string, mixed>  $row */

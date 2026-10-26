@@ -423,6 +423,12 @@ export interface DirectoryUi {
   filterLabel: string;
   cityLabel: string;
   districtLabel: string;
+  officeLabel: string;
+  cityChoose: string;
+  districtChoose: string;
+  officeChoose: string;
+  officeSearch: string;
+  pageStatus: string;
   clearLabel: string;
   clearSearchLabel: string;
   emptySearchLabel: string;
@@ -441,6 +447,7 @@ export interface DirectoryFilterData {
   values: Record<string, string>;
   selectedLabels: Record<string, string>;
   places?: DirectoryPlace[];
+  offices?: { id: string; name: string }[];
   ui?: DirectoryUi;
 }
 
@@ -457,6 +464,7 @@ export interface DirectoryCardData {
   location?: string;
   instagram?: string;
   variant: "office" | "consultant";
+  badges?: { title: string; period: string }[];
 }
 
 export interface ListingCardData {

@@ -12,6 +12,7 @@ export function OfficeList({ data }: { data: Extract<CorporatePayload, { kind: "
     q: data.filter.values.q ?? "",
     il: data.filter.values.il ?? "",
     ilce: data.filter.values.ilce ?? "",
+    ofis: "",
   };
 
   return (
@@ -39,11 +40,16 @@ export function OfficeList({ data }: { data: Extract<CorporatePayload, { kind: "
             </div>
             <div className="flex flex-wrap justify-center">
               {data.items.map((item) => (
-                <div className="w-full xl:w-1/3 lg:w-1/2 md:w-1/2 box-border px-[12px]" key={item.externalId}>
+                <div className="w-full xl:w-1/3 lg:w-1/2 md:w-1/2 box-border px-[12px]" key={`${item.variant}-${item.externalId}`}>
                   <DirectoryCard item={item} />
                 </div>
               ))}
             </div>
+            {data.pagination.totalPages > 1 ? (
+              <p className="sk-page-status">
+                {ui.pageStatus.replace("{page}", String(data.pagination.pageIndex)).replace("{pages}", String(data.pagination.totalPages))}
+              </p>
+            ) : null}
             <DirectoryPagination
               pageIndex={data.pagination.pageIndex}
               totalPages={data.pagination.totalPages}

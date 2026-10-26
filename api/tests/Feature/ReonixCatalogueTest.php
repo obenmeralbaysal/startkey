@@ -384,4 +384,35 @@ class ReonixCatalogueTest extends TestCase
             ->assertOk()
             ->assertHeader('content-type', 'image/png');
     }
+
+    public function test_an_office_card_in_the_consultant_list_uses_the_office_media_id(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants*' => Http::response([
+                'data' => [
+                    ['type' => 'consultant', 'id' => 3, 'name' => 'Ada Yilmaz', 'role' => 'agent', 'office_id' => 2, 'office_name' => 'Zirve'],
+                    ['type' => 'office', 'id' => 'office-9', 'office_id' => 9, 'name' => 'Çapa', 'has_image' => true, 'address' => 'İstanbul / Fatih', 'badges' => [['title' => 'Ayın Ofisi', 'period' => '2026-09']]],
+                ],
+                'offices' => [
+                    ['id' => '9', 'name' => 'Çapa'],
+                    ['id' => '2', 'name' => 'Zirve'],
+                ],
+            ]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
+            ->assertOk()
+            ->assertJsonPath('data.items.1.variant', 'office')
+            ->assertJsonPath('data.items.1.name', 'Çapa')
+            ->assertJsonPath('data.items.1.image', '/api/v1/catalogue/media/offices/9')
+            ->assertJsonPath('data.items.1.badges.0.title', 'Ayın Ofisi')
+            ->assertJsonPath('data.filter.offices.0.name', 'Çapa')
+            ->assertJsonPath('data.filter.ui.officeChoose', 'Ofis seçiniz')
+            ->assertJsonPath('data.pagination.totalPages', 1);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar&ofis=9')
+            ->assertOk()
+            ->assertJsonPath('data.pagination.total', 1)
+            ->assertJsonPath('data.items.0.name', 'Çapa');
+    }
 }

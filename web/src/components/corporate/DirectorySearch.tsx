@@ -12,6 +12,7 @@ export function DirectorySearch({
   basePath,
   query,
   places,
+  offices,
   ui,
   foundLabel,
   hasResults,
@@ -21,6 +22,7 @@ export function DirectorySearch({
   basePath: string;
   query: DirectoryQueryState;
   places: DirectoryPlace[];
+  offices?: { id: string; name: string }[];
   ui: DirectoryUi;
   foundLabel: string;
   hasResults: boolean;
@@ -32,12 +34,17 @@ export function DirectorySearch({
   const [text, setText] = useState(query.q);
   const [open, setOpen] = useState(false);
   const [wide, setWide] = useState(false);
+  const [officeQuery, setOfficeQuery] = useState("");
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const dialogId = useId();
   const titleId = useId();
-  const active = (query.il ? 1 : 0) + (query.ilce ? 1 : 0);
-  const searching = query.q !== "" || query.il !== "" || query.ilce !== "";
+  const active = (query.il ? 1 : 0) + (query.ilce ? 1 : 0) + (query.ofis ? 1 : 0);
+  const searching = query.q !== "" || query.il !== "" || query.ilce !== "" || query.ofis !== "";
+  const officeChoices = [...(offices ?? [])].sort((a, b) => a.name.localeCompare(b.name, "tr"));
+  const visibleOffices = officeChoices.filter((office) =>
+    office.name.toLocaleLowerCase("tr").includes(officeQuery.trim().toLocaleLowerCase("tr")),
+  );
   const districts = query.il
     ? (places.find((place) => place.city === query.il)?.districts ?? [])
     : [...new Set(places.flatMap((place) => place.districts))];
@@ -59,13 +66,13 @@ export function DirectorySearch({
       return;
     }
     const handle = window.setTimeout(() => {
-      const href = directoryHref(basePath, { q: text.trim(), il: query.il, ilce: query.ilce });
+      const href = directoryHref(basePath, { q: text.trim(), il: query.il, ilce: query.ilce, ofis: query.ofis });
       startTransition(() => {
         router.replace(href, { scroll: false });
       });
     }, 275);
     return () => window.clearTimeout(handle);
-  }, [text, query.q, query.il, query.ilce, basePath, router]);
+  }, [text, query.q, query.il, query.ilce, query.ofis, basePath, router]);
 
   useEffect(() => {
     if (!open) {
@@ -95,10 +102,10 @@ export function DirectorySearch({
     buttonRef.current?.focus();
   }
 
-  function apply(il: string, ilce: string) {
+  function apply(il: string, ilce: string, ofis = query.ofis) {
     const place = places.find((item) => item.city === il);
     const nextDistrict = il && place && !place.districts.includes(ilce) ? "" : ilce;
-    const href = directoryHref(basePath, { q: query.q, il, ilce: nextDistrict });
+    const href = directoryHref(basePath, { q: query.q, il, ilce: nextDistrict, ofis });
     startTransition(() => {
       router.push(href, { scroll: false });
     });
@@ -194,7 +201,7 @@ export function DirectorySearch({
             <label className="sk-dir-field" htmlFor="directory-il">
               {ui.cityLabel}
               <select id="directory-il" value={query.il} onChange={(event) => apply(event.target.value, query.ilce)}>
-                <option value="">{ui.chooseLabel}</option>
+                <option value="">{ui.cityChoose}</option>
                 {places.map((place) => (
                   <option key={place.city} value={place.city}>
                     {place.city}
@@ -205,7 +212,7 @@ export function DirectorySearch({
             <label className="sk-dir-field" htmlFor="directory-ilce">
               {ui.districtLabel}
               <select id="directory-ilce" value={query.ilce} onChange={(event) => apply(query.il, event.target.value)}>
-                <option value="">{ui.chooseLabel}</option>
+                <option value="">{ui.districtChoose}</option>
                 {districts.map((district) => (
                   <option key={district} value={district}>
                     {district}
@@ -213,7 +220,28 @@ export function DirectorySearch({
                 ))}
               </select>
             </label>
-            <button type="button" className="sk-dir-clear" onClick={() => apply("", "")}>
+            {offices ? (
+              <label className="sk-dir-field" htmlFor="directory-ofis">
+                {ui.officeLabel}
+                <input
+                  id="directory-ofis-search"
+                  type="search"
+                  value={officeQuery}
+                  placeholder={ui.officeSearch}
+                  autoComplete="off"
+                  onChange={(event) => setOfficeQuery(event.target.value)}
+                />
+                <select id="directory-ofis" value={query.ofis} onChange={(event) => apply(query.il, query.ilce, event.target.value)}>
+                  <option value="">{ui.officeChoose}</option>
+                  {visibleOffices.map((office) => (
+                    <option key={office.id} value={office.id}>
+                      {office.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            <button type="button" className="sk-dir-clear" onClick={() => apply("", "", "")}>
               {ui.clearLabel}
             </button>
           </div>

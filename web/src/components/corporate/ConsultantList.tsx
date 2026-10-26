@@ -12,6 +12,7 @@ export function ConsultantList({ data }: { data: Extract<CorporatePayload, { kin
     q: data.filter.values.q ?? "",
     il: data.filter.values.il ?? "",
     ilce: data.filter.values.ilce ?? "",
+    ofis: data.filter.values.ofis ?? "",
   };
 
   return (
@@ -23,6 +24,7 @@ export function ConsultantList({ data }: { data: Extract<CorporatePayload, { kin
             basePath={data.pagination.basePath}
             query={query}
             places={data.filter.places ?? []}
+            offices={data.filter.offices ?? []}
             ui={ui}
             foundLabel={data.foundLabel}
             hasResults={data.hasResults}
@@ -39,11 +41,16 @@ export function ConsultantList({ data }: { data: Extract<CorporatePayload, { kin
             </div>
             <div className="flex flex-wrap justify-center">
               {data.items.map((item) => (
-                <div className="box-border w-full px-[calc(12px*var(--sk-scale,1))] md:w-1/2 xl:w-1/3" key={item.externalId}>
+                <div className="box-border w-full px-[calc(12px*var(--sk-scale,1))] md:w-1/2 xl:w-1/3" key={`${item.variant}-${item.externalId}-${item.urlPath}`}>
                   <DirectoryCard item={item} />
                 </div>
               ))}
             </div>
+            {data.pagination.totalPages > 1 ? (
+              <p className="sk-page-status">
+                {ui.pageStatus.replace("{page}", String(data.pagination.pageIndex)).replace("{pages}", String(data.pagination.totalPages))}
+              </p>
+            ) : null}
             <DirectoryPagination
               pageIndex={data.pagination.pageIndex}
               totalPages={data.pagination.totalPages}

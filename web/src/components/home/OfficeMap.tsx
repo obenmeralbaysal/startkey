@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import type { MapOffice } from "@/lib/api";
 import { officeMapTiles } from "@/lib/config";
+import { pinClickMovesMap, popupHost, stickyPopupOptions } from "@/lib/office-map-popup";
 
 /** Pixel inset so every pin, including the corner ones, stays inside the frame. */
 const BOUNDS_PADDING = 40;
@@ -41,14 +42,16 @@ export function OfficeMap({
   offices,
   zoom = 8,
   label = "Startkey Global",
+  resetLabel = "Tümünü göster",
   className = "",
   overview = false,
 }: {
   offices: MapOffice[];
   zoom?: number;
   label?: string;
+  resetLabel?: string;
   className?: string;
-  /** Homepage: cluster pins, fit every office, fly to a pin, and offer reset. */
+  /** Homepage: cluster pins, fit every office, and offer a labeled reset. A pin opens its popup without zooming. */
   overview?: boolean;
 }) {
   const node = useRef<HTMLDivElement>(null);
@@ -94,11 +97,26 @@ export function OfficeMap({
 
       const bounds = L.latLngBounds([]);
       let placed = 0;
+      let sticky: import("leaflet").Popup | undefined;
+      const hold = (latlng: import("leaflet").LatLng, html: string, markerOnMap: boolean) => {
+        if (!map) return;
+        const host = popupHost(markerOnMap);
+        if (!sticky) sticky = L.popup({ ...stickyPopupOptions(), closeButton: true });
+        sticky.setLatLng(host === "latlng" || !markerOnMap ? latlng : latlng).setContent(html);
+        if (!sticky.isOpen()) sticky.openOn(map);
+        else sticky.update();
+      };
+      const reopen = () => {
+        if (!map || !sticky) return;
+        const markerOnMap = sticky.getLatLng() !== undefined;
+        if (!sticky.isOpen() && markerOnMap) sticky.openOn(map);
+      };
       for (const office of offices) {
         if (!Number.isFinite(office.latitude) || !Number.isFinite(office.longitude)) continue;
         placed += 1;
         const latlng = L.latLng(office.latitude, office.longitude);
         const href = office.urlPath.startsWith("/") ? office.urlPath : "/";
+        const html = `<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`;
         const marker = L.circleMarker(latlng, {
           radius: 7,
           color: "#ffffff",
@@ -106,18 +124,27 @@ export function OfficeMap({
           fillColor: "#ec3323",
           fillOpacity: 1,
           className: "sk-office-pin",
-        }).bindPopup(`<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`);
+        });
         if (overview) {
-          marker.on("click", () => {
-            map?.flyTo(marker.getLatLng(), 13);
-            map?.once("moveend", () => {
-              marker.openPopup();
-            });
+          marker.on("click", (event) => {
+            L.DomEvent.stopPropagation(event);
+            if (pinClickMovesMap("pin") && map) {
+              map.flyTo(latlng, 13);
+            }
+            const onMap = group ? group.hasLayer(marker) : map?.hasLayer(marker) === true;
+            hold(latlng, html, onMap);
           });
+        } else {
+          marker.bindPopup(html);
         }
         if (group) group.addLayer(marker);
         else marker.addTo(map);
         bounds.extend(latlng);
+      }
+      if (overview && map) {
+        map.on("zoomend", reopen);
+        map.on("moveend", reopen);
+        group?.on("animationend", reopen);
       }
 
       const fit = () => {
@@ -142,11 +169,13 @@ export function OfficeMap({
             const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
             const button = L.DomUtil.create("a", "sk-office-map-reset", container) as HTMLAnchorElement;
             button.href = "#";
-            button.title = "Tümünü göster";
+            button.title = resetLabel;
             button.setAttribute("role", "button");
-            button.setAttribute("aria-label", "Tümünü göster");
+            button.setAttribute("aria-label", resetLabel);
             button.innerHTML =
               '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg>';
+            const caption = L.DomUtil.create("span", "sk-office-map-reset-label", button);
+            caption.textContent = resetLabel;
             L.DomEvent.disableClickPropagation(container);
             L.DomEvent.on(button, "click", (event) => {
               L.DomEvent.preventDefault(event);
@@ -169,7 +198,7 @@ export function OfficeMap({
       cancelled = true;
       map?.remove();
     };
-  }, [offices, overview, zoom]);
+  }, [offices, overview, resetLabel, zoom]);
 
   const classes = className === "" ? "sk-office-map" : `sk-office-map ${className}`;
 

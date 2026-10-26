@@ -656,14 +656,21 @@ class CorporateResolver
             ->get()
             ->map(function (CmsChampionGroup $group) {
                 $translation = $group->translations->first();
+                $photos = $group->photos
+                    ->map(fn ($photo) => is_string($photo->image) ? $photo->image : '')
+                    ->filter(fn ($image) => $image !== '')
+                    ->values()
+                    ->all();
 
                 return [
                     'kicker' => $translation?->kicker ?? '',
                     'title' => $translation?->title ?? '',
-                    'photos' => $group->photos->map(fn ($photo) => $photo->image)->all(),
+                    'photos' => $photos,
                 ];
             })
             ->all();
+
+        $groups = $this->fillChampionPhotos($groups, $locale);
 
         return [
             'kind' => 'champions',
@@ -673,6 +680,47 @@ class CorporateResolver
             'groups' => $groups,
             'alternates' => $this->listAlternates('champions'),
         ];
+    }
+
+    /**
+     * Groups stored with a title and no photos still render as headings only.
+     * The reference photo set in the corporate seed fills those empty groups.
+     *
+     * @param  list<array{kicker: string, title: string, photos: list<string>}>  $groups
+     * @return list<array{kicker: string, title: string, photos: list<string>}>
+     */
+    private function fillChampionPhotos(array $groups, string $locale): array
+    {
+        $missing = false;
+        foreach ($groups as $group) {
+            if (($group['photos'] ?? []) === []) {
+                $missing = true;
+                break;
+            }
+        }
+        if (! $missing) {
+            return $groups;
+        }
+        $path = database_path('data/corporate-seed.json');
+        if (! is_file($path)) {
+            return $groups;
+        }
+        $data = json_decode((string) file_get_contents($path), true);
+        $seed = is_array($data['championGroups'][$locale] ?? null) ? $data['championGroups'][$locale] : [];
+        foreach ($groups as $index => $group) {
+            if (($group['photos'] ?? []) !== []) {
+                continue;
+            }
+            $photos = [];
+            foreach (is_array($seed[$index]['photos'] ?? null) ? $seed[$index]['photos'] : [] as $photo) {
+                if (is_string($photo) && $photo !== '') {
+                    $photos[] = $photo;
+                }
+            }
+            $groups[$index]['photos'] = $photos;
+        }
+
+        return $groups;
     }
 
     private function blogSidebar(string $locale, ?CmsListPage $list): ?array
@@ -908,9 +956,9 @@ class CorporateResolver
                 'mobileOpenLabel' => $sidebar['mobileFilterOpen'] ?? '',
                 'submitLabel' => $sidebar['submitLabel'] ?? '',
                 'labels' => $sidebar['labels'] ?? [],
-                'placeholders' => $sidebar['placeholders'] ?? [],
-                'adTypes' => $sidebar['adTypes'] ?? [],
-                'sortOptions' => $sidebar['sortOptions'] ?? [],
+                'placeholders' => array_merge($this->listingFilterChrome($locale)['placeholders'], is_array($sidebar['placeholders'] ?? null) ? $sidebar['placeholders'] : []),
+                'adTypes' => $this->replaceBareChoose($sidebar['adTypes'] ?? [], $this->listingFilterChrome($locale)['placeholders']['adType']),
+                'sortOptions' => $this->replaceBareChoose($sidebar['sortOptions'] ?? [], $this->listingFilterChrome($locale)['placeholders']['sort']),
                 'bindUrls' => $sidebar['bindUrls'] ?? [],
                 'values' => $this->listingFilterValues($filters),
             ],
@@ -1484,6 +1532,10 @@ class CorporateResolver
         if ($ilce !== '') {
             $query['ilce'] = $ilce;
         }
+        $ofis = $this->directoryTerm($filters, 'ofis');
+        if ($ofis !== '') {
+            $query['ofis'] = $ofis;
+        }
 
         return $query;
     }
@@ -1495,13 +1547,17 @@ class CorporateResolver
 
     /**
      * @param  array<string, mixed>  $row
-     * @param  array{q?: string, il?: string, ilce?: string}  $query
+     * @param  array{q?: string, il?: string, ilce?: string, ofis?: string}  $query
      */
     private function catalogueRowMatches(array $row, array $query): bool
     {
         $q = TurkishFold::fold((string) ($query['q'] ?? ''));
         $il = TurkishFold::fold((string) ($query['il'] ?? ''));
         $ilce = TurkishFold::fold((string) ($query['ilce'] ?? ''));
+        $ofis = trim((string) ($query['ofis'] ?? ''));
+        if ($ofis !== '' && ! $this->catalogueOfficeMatches($row, $ofis)) {
+            return false;
+        }
         if ($q !== '') {
             $parts = [(string) ($row['name'] ?? ''), (string) ($row['office_name'] ?? '')];
             foreach (is_array($row['offices'] ?? null) ? $row['offices'] : [] as $office) {
@@ -1524,6 +1580,38 @@ class CorporateResolver
             $cityOk = $il === '' || TurkishFold::fold($place['city']) === $il;
             $districtOk = $ilce === '' || TurkishFold::fold($place['district']) === $ilce;
             if ($cityOk && $districtOk) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function catalogueOfficeMatches(array $row, string $ofis): bool
+    {
+        $needle = TurkishFold::fold($ofis);
+        $ids = [];
+        $names = [];
+        if (($row['type'] ?? '') === 'office') {
+            $ids[] = (string) ($row['office_id'] ?? '');
+            $names[] = (string) ($row['name'] ?? '');
+        } else {
+            $ids[] = (string) ($row['office_id'] ?? '');
+            $names[] = (string) ($row['office_name'] ?? '');
+            foreach (is_array($row['offices'] ?? null) ? $row['offices'] : [] as $office) {
+                if (! is_array($office)) {
+                    continue;
+                }
+                $ids[] = (string) ($office['office_id'] ?? '');
+                $names[] = (string) ($office['office_name'] ?? '');
+            }
+        }
+        if (in_array($ofis, $ids, true)) {
+            return true;
+        }
+        foreach ($names as $name) {
+            if ($name !== '' && (TurkishFold::fold($name) === $needle || \Illuminate\Support\Str::slug($name) === \Illuminate\Support\Str::slug($ofis))) {
                 return true;
             }
         }
@@ -1648,6 +1736,7 @@ class CorporateResolver
         $values['q'] = $q;
         $values['il'] = $this->directoryTerm($filters, 'il');
         $values['ilce'] = $this->directoryTerm($filters, 'ilce');
+        $values['ofis'] = $this->directoryTerm($filters, 'ofis');
         $payload['filter']['values'] = $values;
         $payload['filter']['ui'] = $this->directoryUi($locale);
         $payload['filter']['places'] = $places;
@@ -1657,6 +1746,7 @@ class CorporateResolver
                 'q' => $q,
                 'il' => $values['il'],
                 'ilce' => $values['ilce'],
+                'ofis' => $values['ofis'],
             ]);
         }
 
@@ -1676,6 +1766,12 @@ class CorporateResolver
             'filterLabel' => $label('filter'),
             'cityLabel' => $label('city'),
             'districtLabel' => $label('district'),
+            'officeLabel' => $label('office'),
+            'cityChoose' => $label('city_choose'),
+            'districtChoose' => $label('district_choose'),
+            'officeChoose' => $label('office_choose'),
+            'officeSearch' => $label('office_search'),
+            'pageStatus' => $label('page_status'),
             'clearLabel' => $label('clear'),
             'clearSearchLabel' => $label('clear_search'),
             'emptySearchLabel' => $label('empty_search'),
@@ -1701,7 +1797,7 @@ class CorporateResolver
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
-    private function remoteConsultantList(string $locale, string $path, int $pageIndex, array $filters, array $rows, array $places = []): array
+    private function remoteConsultantList(string $locale, string $path, int $pageIndex, array $filters, array $rows, array $places = [], array $offices = []): array
     {
         $first = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Firstname') ?? '')));
         $last = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Lastname') ?? '')));
@@ -1725,7 +1821,36 @@ class CorporateResolver
         $payload = $this->emptyConsultantList($locale, $path, $filters);
         $payload = $this->pageRemote($payload, $items, $pageIndex, 18, (string) $payload['pagination']['basePath'], (string) $payload['pagination']['searchQuery']);
 
-        return $this->withDirectorySearch($this->withConsultantHeading($payload, $locale), $locale, $filters, $facetPlaces);
+        $payload = $this->withDirectorySearch($this->withConsultantHeading($payload, $locale), $locale, $filters, $facetPlaces);
+        $payload['filter']['offices'] = $this->normaliseOffices($offices);
+
+        return $payload;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $offices
+     * @return list<array{id: string, name: string}>
+     */
+    private function normaliseOffices(array $offices): array
+    {
+        $out = [];
+        foreach ($offices as $office) {
+            if (! is_array($office)) {
+                continue;
+            }
+            $id = trim((string) ($office['id'] ?? ''));
+            $name = trim((string) ($office['name'] ?? ''));
+            if ($id === '' || $name === '') {
+                continue;
+            }
+            $out[] = ['id' => $id, 'name' => $name];
+        }
+        if (class_exists(\Collator::class)) {
+            $collator = new \Collator('tr_TR');
+            usort($out, fn ($a, $b) => $collator->compare($a['name'], $b['name']));
+        }
+
+        return $out;
     }
 
     /**
@@ -1747,6 +1872,7 @@ class CorporateResolver
         $people = array_values(array_filter($rows, fn ($row) => ($row['type'] ?? 'consultant') !== 'office'));
         $offices = array_values(array_filter($rows, fn ($row) => ($row['type'] ?? 'consultant') === 'office'));
         usort($people, fn ($a, $b) => $collator ? $collator->compare($key($a), $key($b)) : strcmp(mb_strtolower($key($a)), mb_strtolower($key($b))));
+        usort($offices, fn ($a, $b) => $collator ? $collator->compare($key($a), $key($b)) : strcmp(mb_strtolower($key($a)), mb_strtolower($key($b))));
 
         return array_merge($people, $offices);
     }
@@ -2006,14 +2132,14 @@ class CorporateResolver
             ],
         };
         $choose = match ($locale) {
-            'en' => 'Select',
-            'de' => 'Wählen',
-            default => 'Seçiniz',
+            'en' => 'Select property type',
+            'de' => 'Portfoliotyp wählen',
+            default => 'Portföy tipi seçiniz',
         };
         $sort = match ($locale) {
-            'en' => ['Select', 'Descending by price', 'Increased by price', 'Descending by date', 'Increased by date'],
-            'de' => ['Wählen', 'Preis sinkt', 'Preis erhöht', 'Geschichte abnehmend', 'Geschichte zunimmt'],
-            default => ['Seçiniz', 'Fiyat Azalan', 'Fiyat Artan', 'Tarih Azalan', 'Tarih Artan'],
+            'en' => ['Select a sort', 'Descending by price', 'Increased by price', 'Descending by date', 'Increased by date'],
+            'de' => ['Sortierung wählen', 'Preis sinkt', 'Preis erhöht', 'Geschichte abnehmend', 'Geschichte zunimmt'],
+            default => ['Sıralama seçiniz', 'Fiyat Azalan', 'Fiyat Artan', 'Tarih Azalan', 'Tarih Artan'],
         };
 
         return [
@@ -2025,6 +2151,17 @@ class CorporateResolver
                     'maxPrice' => 'Max',
                     'minArea' => 'Min',
                     'maxArea' => 'Max',
+                    'adType' => 'Select property type',
+                    'process' => 'Select property status',
+                    'currency' => 'Select a currency',
+                    'country' => 'Select a country',
+                    'city' => 'Select a city',
+                    'county' => 'Select a district',
+                    'district' => 'Select a neighbourhood',
+                    'office' => 'Select an office',
+                    'agent' => 'Select a consultant',
+                    'sort' => 'Select a sort',
+                    'sortLabel' => 'Sort',
                 ],
                 'de' => [
                     'keyword' => 'Geben Sie den Portfolionamen oder die ID ein',
@@ -2032,6 +2169,17 @@ class CorporateResolver
                     'maxPrice' => 'Max',
                     'minArea' => 'Min',
                     'maxArea' => 'Max',
+                    'adType' => 'Portfoliotyp wählen',
+                    'process' => 'Portfoliostatus wählen',
+                    'currency' => 'Währung wählen',
+                    'country' => 'Land wählen',
+                    'city' => 'Stadt wählen',
+                    'county' => 'Bezirk wählen',
+                    'district' => 'Viertel wählen',
+                    'office' => 'Büro wählen',
+                    'agent' => 'Berater wählen',
+                    'sort' => 'Sortierung wählen',
+                    'sortLabel' => 'Sortierung',
                 ],
                 default => [
                     'keyword' => 'Portföy Adı Veya İd Giriniz',
@@ -2039,6 +2187,17 @@ class CorporateResolver
                     'maxPrice' => 'Max',
                     'minArea' => 'Min',
                     'maxArea' => 'Max',
+                    'adType' => 'Portföy tipi seçiniz',
+                    'process' => 'Portföy durumu seçiniz',
+                    'currency' => 'Para birimi seçiniz',
+                    'country' => 'Ülke seçiniz',
+                    'city' => 'İl seçiniz',
+                    'county' => 'İlçe seçiniz',
+                    'district' => 'Mahalle seçiniz',
+                    'office' => 'Ofis seçiniz',
+                    'agent' => 'Danışman seçiniz',
+                    'sort' => 'Sıralama seçiniz',
+                    'sortLabel' => 'Sıralama',
                 ],
             },
             'adTypes' => [
@@ -2066,6 +2225,30 @@ class CorporateResolver
                 'users' => '/'.$locale.'/lookup/Users',
             ],
         ];
+    }
+
+    /**
+     * @param  list<array<string, mixed>>|mixed  $options
+     * @return list<array<string, mixed>>
+     */
+    private function replaceBareChoose(mixed $options, string $placeholder): array
+    {
+        if (! is_array($options)) {
+            return [];
+        }
+        $out = [];
+        foreach ($options as $option) {
+            if (! is_array($option)) {
+                continue;
+            }
+            $label = (string) ($option['label'] ?? '');
+            if (($option['value'] ?? null) === '' && in_array($label, ['Seçiniz', 'Select', 'Wählen'], true)) {
+                $option['label'] = $placeholder;
+            }
+            $out[] = $option;
+        }
+
+        return $out;
     }
 
     private function catalogueEmptyLabel(string $group, string $locale): string
@@ -2236,7 +2419,7 @@ class CorporateResolver
 
         $remote = app(ReonixCatalogue::class)->listed('consultants', $this->catalogueSearchQuery($filters));
         if (is_array($remote)) {
-            return $this->remoteConsultantList($locale, $path, $pageIndex, $filters, $remote['rows'], $remote['places']);
+            return $this->remoteConsultantList($locale, $path, $pageIndex, $filters, $remote['rows'], $remote['places'], $remote['offices'] ?? []);
         }
 
         $list = CmsListPage::query()->where('type', 'consultant')->where('locale', $locale)->first();
