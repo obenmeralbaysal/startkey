@@ -310,7 +310,7 @@ class ReonixCatalogueTest extends TestCase
         $names = collect($this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')->assertOk()->json('data.items'))
             ->pluck('name')->map(fn ($n) => trim((string) $n))->all();
 
-        $this->assertSame(['Ahmet Su', 'ayşe Tan', 'Burak Kaya', 'Can Bal', 'Çağla Er', 'Ilgın Ak', 'İrem Ok', 'Zeki Ay'], $names);
+        $this->assertSame(['Ahmet Su', 'Alfa', 'ayşe Tan', 'Burak Kaya', 'Can Bal', 'Çağla Er', 'Ilgın Ak', 'İrem Ok', 'Zeki Ay'], $names);
     }
 
     public function test_a_listing_inquiry_is_sent_to_the_portal(): void
@@ -522,7 +522,7 @@ class ReonixCatalogueTest extends TestCase
                     ['type' => 'consultant', 'id' => '4-1', 'user_id' => 4, 'name' => 'Adnan Bulu', 'role' => 'agent', 'office_id' => 1, 'office_name' => 'A', 'is_default' => true],
                     ['type' => 'consultant', 'id' => '4-2', 'user_id' => 4, 'name' => 'Adnan Bulu', 'role' => 'agent', 'office_id' => 2, 'office_name' => 'B'],
                     ['type' => 'consultant', 'id' => '8-2', 'user_id' => 8, 'name' => 'Cevdet Kömürcüoğlu', 'role' => 'agent', 'office_id' => 2, 'office_name' => 'B'],
-                    ['type' => 'office', 'id' => 'office-9', 'office_id' => 9, 'name' => 'Cevdet Kömürcüoğlu', 'has_image' => true, 'address' => 'İstanbul / Fatih'],
+                    ['type' => 'office', 'id' => 'office-9', 'office_id' => 9, 'name' => 'Çapa', 'has_image' => true, 'address' => 'İstanbul / Fatih', 'badges' => [['title' => 'Ayın Ofisi', 'period' => '2026-09']]],
                 ],
                 'offices' => [
                     ['id' => '9', 'name' => 'Çapa'],
@@ -542,9 +542,15 @@ class ReonixCatalogueTest extends TestCase
 
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
             ->assertOk()
-            ->assertJsonPath('data.pagination.total', 2)
-            ->assertJsonCount(2, 'data.items')
-            ->assertJsonPath('data.foundLabel', '2 Danışman Bulundu')
+            ->assertJsonPath('data.pagination.total', 3)
+            ->assertJsonCount(3, 'data.items')
+            ->assertJsonPath('data.foundLabel', '3 Danışman Bulundu')
+            ->assertJsonPath('data.items.2.variant', 'office')
+            ->assertJsonPath('data.items.2.name', 'Çapa')
+            ->assertJsonPath('data.items.2.role', 'Gayrimenkul Danışmanı')
+            ->assertJsonPath('data.items.2.image', '/api/v1/catalogue/media/offices/9')
+            ->assertJsonPath('data.items.2.urlPath', '/tr/ofisler/9/capa')
+            ->assertJsonPath('data.items.2.badges.0.title', 'Ayın Ofisi')
             ->assertJsonPath('data.filter.offices.0.name', 'Çapa');
 
         Http::fake([
@@ -557,5 +563,42 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.pagination.total', 0)
             ->assertJsonCount(0, 'data.items')
             ->assertJsonPath('data.hasResults', false);
+    }
+
+    public function test_office_cards_share_the_consultant_list_order_and_counter(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants*' => Http::response(['data' => [
+                ['type' => 'consultant', 'id' => '1-1', 'user_id' => 1, 'name' => 'Zeki Ay', 'role' => 'agent', 'office_id' => 1, 'office_name' => 'A'],
+                ['type' => 'office', 'id' => 'office-4', 'office_id' => 4, 'name' => 'Burak', 'has_image' => true],
+                ['type' => 'consultant', 'id' => '2-1', 'user_id' => 2, 'name' => 'Ada Yılmaz', 'role' => 'agent', 'office_id' => 1, 'office_name' => 'A'],
+                ['type' => 'office', 'id' => 'office-9', 'office_id' => 9, 'name' => 'Çapa', 'has_image' => true],
+                ['type' => 'consultant', 'id' => '2-2', 'user_id' => 2, 'name' => 'Ada Yılmaz', 'role' => 'agent', 'office_id' => 4, 'office_name' => 'Burak'],
+            ]]),
+        ]);
+
+        $page = $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')->assertOk();
+        $items = $page->json('data.items');
+        $this->assertSame(['Ada Yılmaz', 'Burak', 'Çapa', 'Zeki Ay'], array_column($items, 'name'));
+        $this->assertSame(['consultant', 'office', 'office', 'consultant'], array_column($items, 'variant'));
+        $this->assertSame(4, $page->json('data.pagination.total'));
+        $this->assertSame('4 Danışman Bulundu', $page->json('data.foundLabel'));
+        $this->assertSame('Gayrimenkul Danışmanı', $items[1]['role']);
+        $this->assertSame('/api/v1/catalogue/media/offices/4', $items[1]['image']);
+        $this->assertSame('/tr/ofisler/4/burak', $items[1]['urlPath']);
+        $this->assertSame('/tr/ofisler/9/capa', $items[2]['urlPath']);
+
+        $this->getJson('/api/v1/corporate?locale=en&path=/en/agents')
+            ->assertOk()
+            ->assertJsonPath('data.foundLabel', '4 Consultant Found')
+            ->assertJsonPath('data.items.1.role', 'Real Estate Consultant')
+            ->assertJsonPath('data.items.1.urlPath', '/en/offices/4/burak')
+            ->assertJsonPath('data.items.2.urlPath', '/en/offices/9/capa');
+
+        $this->getJson('/api/v1/corporate?locale=de&path=/de/immobilienmakleren')
+            ->assertOk()
+            ->assertJsonPath('data.foundLabel', '4 Berater gefunden')
+            ->assertJsonPath('data.items.1.role', 'Immobilienberater')
+            ->assertJsonPath('data.items.1.urlPath', '/de/anbieteren/4/burak');
     }
 }

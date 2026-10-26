@@ -456,6 +456,16 @@ class ReonixCatalogue
         };
     }
 
+    /** Role line on an office card inside the consultant directory. */
+    private function officeConsultantTitle(string $locale): string
+    {
+        return match ($locale) {
+            'en' => 'Real Estate Consultant',
+            'de' => 'Immobilienberater',
+            default => 'Gayrimenkul Danışmanı',
+        };
+    }
+
     private function emptyListingsLabel(string $locale): string
     {
         return match ($locale) {
@@ -527,8 +537,13 @@ class ReonixCatalogue
     {
         if (($row['type'] ?? '') === 'office') {
             $officeId = (int) ($row['office_id'] ?? 0);
+            if ($officeId <= 0) {
+                $officeId = (int) ($row['id'] ?? 0);
+            }
+            $card = $this->officeCard(array_merge($row, ['id' => $officeId]), $locale);
+            $card['role'] = $this->officeConsultantTitle($locale);
 
-            return $this->officeCard(array_merge($row, ['id' => $officeId]), $locale);
+            return $card;
         }
         $id = (int) ($row['id'] ?? 0);
         $name = (string) ($row['name'] ?? '');

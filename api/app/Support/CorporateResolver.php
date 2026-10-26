@@ -1370,7 +1370,7 @@ class CorporateResolver
      * @return array<string, mixed>
      */
     /**
-     * One card per person. Office rows are dropped; offices stay on the office list.
+     * One card per person. Office rows stay as their own cards and are not merged.
      *
      * @param  list<array<string, mixed>>  $rows
      * @return list<array<string, mixed>>
@@ -1380,7 +1380,12 @@ class CorporateResolver
         $index = [];
         $out = [];
         foreach ($rows as $row) {
-            if (! is_array($row) || ($row['type'] ?? 'consultant') === 'office') {
+            if (! is_array($row)) {
+                continue;
+            }
+            if (($row['type'] ?? 'consultant') === 'office') {
+                $out[] = $row;
+
                 continue;
             }
             $key = $this->consultantPersonKey($row);
@@ -1471,7 +1476,7 @@ class CorporateResolver
     }
 
     /**
-     * Consultants A-Z in Turkish order. Office cards are not part of this list.
+     * People and office cards share one A-Z order (Turkish collation).
      *
      * @param  list<array<string, mixed>>  $rows
      * @return list<array<string, mixed>>
@@ -1481,10 +1486,10 @@ class CorporateResolver
         $collator = class_exists(\Collator::class) ? new \Collator('tr_TR') : null;
         $collator?->setStrength(\Collator::SECONDARY);
         $key = fn (array $row) => trim((string) preg_replace('/\s+/u', ' ', (string) ($row['name'] ?? '')));
-        $people = array_values(array_filter($rows, fn ($row) => is_array($row) && ($row['type'] ?? 'consultant') !== 'office'));
-        usort($people, fn ($a, $b) => $collator ? $collator->compare($key($a), $key($b)) : strcmp(mb_strtolower($key($a)), mb_strtolower($key($b))));
+        $rows = array_values(array_filter($rows, fn ($row) => is_array($row)));
+        usort($rows, fn ($a, $b) => $collator ? $collator->compare($key($a), $key($b)) : strcmp(mb_strtolower($key($a)), mb_strtolower($key($b))));
 
-        return $people;
+        return $rows;
     }
 
     private function pageRemote(array $payload, array $items, int $pageIndex, int $perPage, string $basePath, string $searchQuery): array
