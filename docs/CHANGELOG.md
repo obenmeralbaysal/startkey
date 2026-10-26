@@ -1,7 +1,7 @@
 ## [2026-10-26]
 
 - **[Bugfix]**: Ofis portföy detayı ham alan dökümü yerine başlık, durum, fiyat, konum, oda, alan, kat ve kişi özetini gösterir. Düzenle formu yalnızca değişen başlık, açıklama, fiyat ve para birimini kaydeder. #2185
-- **[Bugfix]**: Yeni portföy formundaki kategori ve mahalle listeleri boş kalmıyordu; tarayıcı kategori yanıtını ofis başlığından, mahalle yanıtını sorgu dizesinden bağımsız önbelleğe alabiliyordu. 2000 satırı aşan ilçe listesi de boşaltılıyordu. Bu okumalar tarayıcıda saklanmaz; boş liste ve farklı ilçe kimlikleri birbirine karışmaz. #2185
+- **[Bugfix]**: Yeni portföy formundaki kategori ve mahalle listeleri boş kalıyordu. Tarayıcı kategori yanıtını ofis başlığından bağımsız saklayabiliyor, 2000 satırı aşan mahalle listesi boşaltılıyor ve boş yanıt on dakika tutuluyordu. Bu okumalar artık tarayıcıda saklanmaz; boş liste ve farklı ilçe kimlikleri birbirine karışmaz. #2185
 - **[Bugfix]**: Portföy galerisi ikinci açılışta hızlanmıyordu. Katalog görseli `Cache-Control: public, max-age=3600` ve `ETag` döner; `If-None-Match` 304 olur. Bu başlıklar Next yeniden yazımı yerine görsel yolu üzerinden tarayıcıya ulaşır. #2185
 - **[UI]**: İlan detayındaki danışman fotoğrafı 72px yuvarlak yerine kartın tam genişliğinde, kendi oranıyla gösterilir; kırpılmaz, yüz kesilmez. Telefonda da kart genişliğindedir. #2185
 - **[UI]**: Danışman listesinde ofis kartları yeniden durur. Kişi başına bir kart kalır; ofis satırları aynen geçer ve kişilerle tek Türkçe A-Z sırada karışır. Ofis kartının alt satırı Gayrimenkul Danışmanı (EN Real Estate Consultant, DE Immobilienberater), görseli ofis logosu, bağlantısı ofis detayıdır. Liste sayacı ofisleri de sayar; boş sonuç “0 Danışman Bulundu” kalır. Üst sayaç yalnız kişileri sayar. #2178
