@@ -38,7 +38,6 @@ return [
         'settings_forbidden' => 'You do not have access to this setting.',
         'city_required' => 'Select a city.',
         'district_required' => 'Select a district.',
-        'location_too_large' => 'The location list is too large.',
         'invalid_credentials' => 'The email or password is incorrect.',
         'package_user_limit' => 'This office has reached its user limit.',
         'package_not_allowed' => 'That package cannot be assigned to this office.',

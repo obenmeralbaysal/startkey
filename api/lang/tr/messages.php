@@ -38,7 +38,6 @@ return [
         'settings_forbidden' => 'Bu ayara erişim yetkiniz yok.',
         'city_required' => 'İl seçin.',
         'district_required' => 'İlçe seçin.',
-        'location_too_large' => 'Konum listesi çok büyük.',
         'invalid_credentials' => 'E-posta veya şifre hatalı.',
         'package_user_limit' => 'Paketinizin kullanıcı limitine ulaştınız.',
         'package_not_allowed' => 'Bu paket bu ofise yazılamaz.',
