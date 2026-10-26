@@ -200,7 +200,12 @@ export function OfficeSettingsForm() {
           <form className="ux-office-form" onSubmit={saveProfile}>
             <div className="ux-brand">
               {logoUrl ? <img alt="" src={logoUrl} /> : <span className="ux-logo-placeholder">LOGO</span>}
-              {color ? <span className="ux-swatch" style={{ background: color }}>{brandColor}</span> : brandColor ? <span className="ux-swatch-text">{brandColor}</span> : null}
+              {color ? (
+                <span className="ux-swatch-row">
+                  <span className="ux-swatch" style={{ background: color }} aria-hidden="true" />
+                  <span className="ux-swatch-text">{brandColor}</span>
+                </span>
+              ) : brandColor ? <span className="ux-swatch-text">{brandColor}</span> : null}
               <p className="ux-logo-note">{copy.logoNote}</p>
             </div>
             <div className="ux-form-grid">

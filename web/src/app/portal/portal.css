@@ -3199,13 +3199,22 @@ button.glass-chip {
   letter-spacing: 0.08em;
 }
 
+.glass-page .glass-app-ux a.glass-nav-item,
 .glass-app-ux .glass-nav-item {
   min-height: 44px;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.82);
   border-radius: 10px;
 }
 
+.glass-page .glass-app-ux a.glass-nav-item .glass-icon,
 .glass-app-ux .glass-nav-item .glass-icon {
+  color: inherit;
+}
+
+.glass-page .glass-app-ux a.glass-nav-item:hover,
+.glass-app-ux .glass-nav-item:hover:not([aria-current="page"]),
+.glass-page .glass-app-ux a.glass-nav-item[aria-current="page"],
+.glass-app-ux .glass-nav-item[aria-current="page"] {
   color: #fff;
 }
 
@@ -3216,9 +3225,9 @@ button.glass-chip {
 .glass-app-ux .glass-nav-item[aria-current="page"] {
   background: rgba(255, 255, 255, 0.12);
   box-shadow: inset 3px 0 0 var(--ux-red);
-  color: #fff;
 }
 
+.glass-page .glass-app-ux a.glass-nav-item[aria-current="page"] .glass-icon,
 .glass-app-ux .glass-nav-item[aria-current="page"] .glass-icon {
   color: #fff;
 }
@@ -3425,6 +3434,28 @@ button.glass-chip {
   color: #fff;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.glass-page a.ux-create,
+.glass-page a.ux-create:hover,
+.glass-page a.ux-create:focus-visible {
+  color: #fff;
+}
+
+.glass-page a.ux-action,
+.glass-page a.ux-action:hover,
+.glass-page a.ux-action:focus-visible,
+.glass-page a.ux-action strong,
+.glass-page a.ux-kpi,
+.glass-page a.ux-kpi:hover,
+.glass-page a.ux-row,
+.glass-page a.ux-row:hover,
+.glass-page a.ux-card,
+.glass-page a.ux-card:hover,
+.glass-page .glass-app-ux .ux-plain a,
+.glass-page .glass-app-ux .ux-note a,
+.glass-page .glass-app-ux .ux-table a {
+  color: var(--ux-navy, #002172);
 }
 
 .ux-actions,
@@ -3859,14 +3890,23 @@ button.glass-chip {
   font-weight: 700;
 }
 
-.ux-swatch,
-.ux-swatch-text {
+.ux-swatch-row {
   display: inline-flex;
+  gap: 8px;
   align-items: center;
-  min-height: 36px;
   width: fit-content;
-  padding: 0 12px;
-  border-radius: 999px;
+}
+
+.ux-swatch {
+  display: block;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(0, 33, 114, 0.16);
+  border-radius: 8px;
+}
+
+.ux-swatch-text {
   color: var(--ux-navy, #002172);
   font-size: 13px;
   font-weight: 700;

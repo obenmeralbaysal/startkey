@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: Portal kenar menüsü, kırmızı oluştur düğmesi ve kısayol başlıkları bağlantı mavisini almaz. Marka rengi küçük örnek ve yanındaki hex olarak okunur. Karşılama alt satırı rol adı (Broker dahil) taşımaz; rol yalnız rozettedir. #2182
 - **[UI]**: Ofis ayarları Genel ve Kurallar sekmelerinde Türkçe formdur. Logo ve marka rengi salt okunurdur. Ekip ekleme, satırdan rol ve çıkarma ile toplu oran onay akışı Ekip sekmesindedir. Kira takvimi adı, tanımı ve boş metni menü ve sayfadadır. Ofis ve ağ listeleri aynı sayfa başlığı ve kart tabloyu kullanır; dar ekranda satır kart olur. #2182
 - **[UI]**: Portal ofis ve ağ ekranları lacivert kenar çubuğu, üst arama ve zil, rol rozeti ve 900px altında çekmece ile alt menü kullanır. Girişten sonra ofis rolleri `/portal/office` özetine, ağ rolleri `/portal/network` adresine iner. Özet karşılama, dört kısayol, KPI kartları ve onay listesini mevcut portal okumalarından basar. #2182
 

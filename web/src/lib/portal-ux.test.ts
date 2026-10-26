@@ -16,6 +16,7 @@ import {
   officeBottomNav,
   officeCaption,
   officeMenu,
+  personTitle,
   officeRoleBadge,
   officeSectionDenied,
   pendingPortfolios,
@@ -114,11 +115,17 @@ test("greeting and office line drop an empty title instead of leaving a dash", (
   assert.equal(greetingTitle(8, "", "tr"), "Günaydın");
   assert.equal(greetingTitle(8, "Ada", "en"), "Good morning, Ada");
   assert.equal(greetingTitle(20, "Ada", "de"), "Guten Abend, Ada");
-  assert.equal(officeCaption("Lider · Bayraklı", "Broker", "tr"), "Broker · Lider · Bayraklı ofisi");
+  assert.equal(officeCaption("Lider · Bayraklı", "Broker", "tr"), "Lider · Bayraklı ofisi");
+  assert.equal(officeCaption("Lider · Bayraklı", "Lider", "tr"), "Lider · Lider · Bayraklı ofisi");
   assert.equal(officeCaption("Lider · Bayraklı", "", "tr"), "Lider · Bayraklı ofisi");
   assert.equal(officeCaption("Lider · Bayraklı", " - ", "tr"), "Lider · Bayraklı ofisi");
   assert.equal(officeCaption("", "", "en"), "");
   assert.equal(officeCaption("Kadıköy", "owner", "tr"), "Kadıköy ofisi");
+  assert.equal(officeCaption("Kadıköy", "office-manager", "en"), "Kadıköy office");
+  assert.equal(officeCaption("Kadıköy", "AGENT", "de"), "Büro Kadıköy");
+  assert.equal(personTitle({ title: "Broker" }), "");
+  assert.equal(personTitle({ job_title: "manager" }), "");
+  assert.equal(personTitle({ unvan: "Lider" }), "Lider");
 });
 
 test("summary figures use numbers only and hide manager earnings without the flag", () => {

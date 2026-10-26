@@ -25,6 +25,9 @@ export const QUICK_ACTIONS = [
 const ROLE_KEYS = ["owner", "manager", "office_manager", "agent"] as const;
 type RoleKey = (typeof ROLE_KEYS)[number];
 
+/** Raw role slugs are not a job title (633 A). Broker is the owner slug some payloads still send. */
+const ROLE_NAMES = new Set<string>(["broker", ...ROLE_KEYS]);
+
 const BOTTOM_IDS = ["summary", "contacts", "portfolios", "demands"] as const;
 
 export type OfficeMenuIcon =
@@ -78,7 +81,7 @@ export function greetingTitle(hour: number, name: string, locale: Locale): strin
 
 export function officeCaption(officeName: string, title: string, locale: Locale): string {
   const rank = cleanTitle(title);
-  const safeRank = rank && !isRoleKey(rank.toLowerCase()) ? rank : "";
+  const safeRank = rank && !isRoleName(rank) ? rank : "";
   const office = officeName.trim();
   const officeText = office ? PORTAL_UX_COPY[locale].officeOf.replace("{name}", office) : "";
   if (safeRank && officeText) return `${safeRank} · ${officeText}`;
@@ -91,7 +94,7 @@ export function personTitle(source: unknown): string {
     const value = user[key];
     if (typeof value !== "string") continue;
     const clean = cleanTitle(value);
-    if (clean && !isRoleKey(clean.toLowerCase())) return clean;
+    if (clean && !isRoleName(clean)) return clean;
   }
   return "";
 }
@@ -304,6 +307,11 @@ function item(
 
 function isRoleKey(value: string): value is RoleKey {
   return (ROLE_KEYS as readonly string[]).includes(value);
+}
+
+function isRoleName(value: string): boolean {
+  const key = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  return ROLE_NAMES.has(key);
 }
 
 function cleanTitle(value: string): string {
