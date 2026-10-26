@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Security]**: Portal vekili F1 okumalarını iletir. Danışman `dashboard/stats` ve `dashboard/pending-approvals` için 403 alır; `dashboard/agent-stats` her üyeye açıktır. Ofis ayarı yazması yalnız sahip ve ofis yöneticisindedir; logo ve renk alanları vekilde düşer. Hakediş, kapanış raporu ve işbirliği sorguları (`from`, `to`, `result`, `status`, `source`, `direction`) geçer. Ofis ayarı okuması 15 saniye tutulur ve yazınca düşer. Pano önbelleği oturum ve ofise bağlıdır; hakediş önbelleğe alınmaz. #2182
 - **[Bugfix]**: Ofis ciro, işlem ve kulüp rozetleri ofis kartında ve ofis sayfası başlığında görünür. Reonix `office_rank_badges` (ve `image_url`) boş `rankBadges` yüzünden düşmez. Arayüz `imageUrl`, `label`, `category`, `year` ve `rank` bekler. #2178
 - **[UI]**: “Filigranlı görsel” rozeti açık fotoğraflarda okunur: koyu zemin opaklığı yükseldi, yazıda gölge ve kontur var. Rozet public ilan kartında, ana sayfa vitrininde ve ilan galerisi küçük resminde de durur; yalnız portal stilinde kalmaz. #2184
 - **[Bugfix]**: Ofis haritası dünya sınırının soluna kaydırılınca gri şerit çıkmaz (`maxBounds`, `maxBoundsViscosity` 1, karo `noWrap`). Başvuru menüsü fare ayrılınca, odak dışarı çıkınca ve sayfa değişince kapanır. #2185

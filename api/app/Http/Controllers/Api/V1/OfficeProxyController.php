@@ -52,6 +52,13 @@ class OfficeProxyController extends Controller
         }
 
         $query = $request->query();
+        $json = $this->jsonBody($request);
+        $files = $this->files($request);
+        if (in_array(strtoupper($request->method()), ['PUT', 'PATCH'], true) && $remotePath === 'office/settings') {
+            $query = $this->withoutBranding($query);
+            $json = $json === null ? null : $this->withoutBranding($json);
+            $files = $this->withoutBrandingFiles($files);
+        }
         if ($request->isMethod('GET') && is_string($sessionId) && $sessionId !== '') {
             $cached = PortalReadCache::get($sessionId, $officeId, $remotePath, $query);
             if ($cached !== null) {
@@ -64,8 +71,8 @@ class OfficeProxyController extends Controller
                 strtolower($request->method()),
                 $remotePath,
                 $query,
-                $this->jsonBody($request),
-                $this->files($request),
+                $json,
+                $files,
                 $session['token'],
                 $officeId,
             );
@@ -231,6 +238,51 @@ class OfficeProxyController extends Controller
         }
 
         return $value;
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    private function withoutBranding(array $payload): array
+    {
+        foreach (array_keys($payload) as $key) {
+            if ($this->brandingKey((string) $key)) {
+                unset($payload[$key]);
+            }
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param  array<string, array{contents: string, filename: string, type: string}>  $files
+     * @return array<string, array{contents: string, filename: string, type: string}>
+     */
+    private function withoutBrandingFiles(array $files): array
+    {
+        foreach (array_keys($files) as $name) {
+            if ($this->brandingKey((string) $name)) {
+                unset($files[$name]);
+            }
+        }
+
+        return $files;
+    }
+
+    private function brandingKey(string $key): bool
+    {
+        $normalized = strtolower((string) preg_replace('/[^a-z0-9]/i', '', $key));
+
+        return in_array($normalized, [
+            'logo',
+            'logourl',
+            'removelogo',
+            'primarycolor',
+            'secondarycolor',
+            'brandcolor',
+            'brandcolour',
+        ], true);
     }
 
     /**

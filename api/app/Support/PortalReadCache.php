@@ -84,7 +84,8 @@ final class PortalReadCache
             $path === 'dashboard/pending-approvals',
             $path === 'dashboard/my-revisions',
             str_starts_with($path, 'dashboard/visuals'),
-            $path === 'duty-roster/today' => 15,
+            $path === 'duty-roster/today',
+            $path === 'office/settings' => 15,
             $path === 'portfolios' => 20,
             default => null,
         };

@@ -31,10 +31,13 @@ final class PortalSettings
         $officeWide = in_array($role, ['owner', 'manager'], true)
             || ($role === 'office_manager' && ! $branched);
 
+        $profile = in_array($role, ['owner', 'office_manager'], true);
+
         return match ($need) {
             'owner' => $role !== 'owner',
             'manager' => ! $manager,
             'office-wide' => ! $officeWide,
+            'office-settings' => ! $profile,
             default => true,
         };
     }
@@ -69,6 +72,12 @@ final class PortalSettings
         }
         if ($write && preg_match('#^offices/\d+$#', $path) === 1) {
             return 'office-wide';
+        }
+        if ($method === 'GET' && ($path === 'dashboard/stats' || $path === 'dashboard/pending-approvals')) {
+            return 'manager';
+        }
+        if (in_array($method, ['PUT', 'PATCH'], true) && $path === 'office/settings') {
+            return 'office-settings';
         }
         if ($write && $path === 'duty-roster') {
             return 'manager';

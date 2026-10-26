@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Factory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -359,6 +361,246 @@ class OfficeProxyTest extends TestCase
         $this->assertLessThan($coldList / 2, $warmList, "portfolios cold={$coldList}ms warm={$warmList}ms");
     }
 
+    public function test_f1_paths_follow_role_rules_and_forward_query(): void
+    {
+        $owner = $this->login();
+        $agent = $this->login(['role' => 'agent', 'role_slug' => 'agent']);
+        $manager = $this->login(['role' => 'manager', 'role_slug' => 'manager']);
+        $branched = $this->login([
+            'role' => 'office_manager',
+            'role_slug' => 'office_manager',
+            'branch_id' => 4,
+        ]);
+        Http::fake([
+            'http://reonix.test/api/v1/*' => Http::response(['data' => ['ok' => true]]),
+        ]);
+
+        $reads = [
+            '/api/v1/portal/office/dashboard/agent-stats',
+            '/api/v1/portal/office/categories/tree',
+            '/api/v1/portal/office/categories/12/attributes',
+            '/api/v1/portal/office/portfolio-attributes?portfolio_id=3',
+            '/api/v1/portal/office/office/settings',
+            '/api/v1/portal/office/earnings?from=2026-01-01&to=2026-01-31&result=success&status=success&source=portal&direction=in',
+            '/api/v1/portal/office/earnings/9?from=2026-01-01&to=2026-01-31',
+            '/api/v1/portal/office/earnings/summary?from=2026-01-01&to=2026-01-31&status=success',
+            '/api/v1/portal/office/earnings/balance?from=2026-01-01&to=2026-01-31',
+            '/api/v1/portal/office/reports/closings?from=2026-01-01&to=2026-01-31&result=success&status=success&source=portal&direction=in',
+            '/api/v1/portal/office/reports/closings/export?from=2026-01-01&to=2026-01-31&result=success&status=success&source=portal&direction=out',
+            '/api/v1/portal/office/collaboration-requests?direction=in',
+            '/api/v1/portal/office/collaboration-requests?direction=out',
+        ];
+
+        foreach ([$owner, $agent, $manager, $branched] as $cookie) {
+            foreach ($reads as $url) {
+                $this->withCredentials()
+                    ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                    ->withHeader('X-Portal-Office', '7')
+                    ->getJson($url)
+                    ->assertOk();
+            }
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7')
+                ->postJson('/api/v1/portal/office/portfolios/quick', ['title' => 'Hizli'])
+                ->assertOk();
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7')
+                ->postJson('/api/v1/portal/office/portfolio-attributes', ['portfolio_id' => 3])
+                ->assertOk();
+        }
+
+        foreach ([$owner, $manager, $branched] as $cookie) {
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7')
+                ->getJson('/api/v1/portal/office/dashboard/stats')
+                ->assertOk();
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7')
+                ->getJson('/api/v1/portal/office/dashboard/pending-approvals')
+                ->assertOk();
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7')
+                ->putJson('/api/v1/portal/office/duty-roster', ['date' => '2026-10-26'])
+                ->assertOk();
+        }
+
+        foreach ([$owner, $branched] as $cookie) {
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7')
+                ->putJson('/api/v1/portal/office/office/settings', ['name' => 'Ofis', 'ttbs_no' => '3501234'])
+                ->assertOk();
+        }
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/api/v1/earnings?')
+            && str_contains($request->url(), 'from=2026-01-01')
+            && str_contains($request->url(), 'to=2026-01-31')
+            && str_contains($request->url(), 'result=success')
+            && str_contains($request->url(), 'status=success')
+            && str_contains($request->url(), 'source=portal')
+            && str_contains($request->url(), 'direction=in'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/api/v1/reports/closings?')
+            && str_contains($request->url(), 'from=2026-01-01')
+            && str_contains($request->url(), 'result=success')
+            && str_contains($request->url(), 'status=success')
+            && str_contains($request->url(), 'source=portal')
+            && str_contains($request->url(), 'direction=in'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/api/v1/reports/closings/export?')
+            && str_contains($request->url(), 'direction=out'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/api/v1/collaboration-requests?')
+            && str_contains($request->url(), 'direction=in'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/api/v1/collaboration-requests?')
+            && str_contains($request->url(), 'direction=out'));
+        Http::assertSent(fn ($request) => str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/api/v1/categories/tree'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), '/api/v1/categories/12/attributes'));
+        Http::assertSent(fn ($request) => $request->method() === 'POST' && str_contains($request->url(), '/api/v1/portfolios/quick'));
+        Http::assertSent(fn ($request) => $request->method() === 'PUT' && str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/api/v1/duty-roster'));
+    }
+
+    public function test_office_settings_write_strips_branding_and_cache_drops_after_put(): void
+    {
+        $cookie = $this->login();
+        $calls = 0;
+        Http::fake(function () use (&$calls) {
+            $calls++;
+
+            return Http::response(['data' => ['name' => 'Ofis', 'n' => $calls]]);
+        });
+        $call = fn () => $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7');
+
+        $call()->getJson('/api/v1/portal/office/office/settings')
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=15, private')
+            ->assertJsonPath('data.n', 1);
+        $call()->getJson('/api/v1/portal/office/office/settings')
+            ->assertOk()
+            ->assertJsonPath('data.n', 1);
+        $this->assertSame(1, $calls);
+
+        $call()->putJson('/api/v1/portal/office/office/settings', [
+            'name' => 'Yeni',
+            'ttbs_no' => '3501234',
+            'logo' => 'logo-bytes',
+            'logo_url' => 'https://example.test/logo.png',
+            'primary_color' => '#aabbcc',
+            'secondary_color' => '#112233',
+            'brand_color' => '#ffffff',
+            'brand_colour' => '#000000',
+            'primaryColor' => '#abcdef',
+        ])->assertOk();
+
+        $call()->put('/api/v1/portal/office/office/settings', [
+            'name' => 'Dosya',
+            'ttbs_no' => '3501234',
+            'primary_color' => '#aabbcc',
+            'logo' => UploadedFile::fake()->create('logo.png', 10, 'image/png'),
+        ])->assertOk();
+
+        $call()->getJson('/api/v1/portal/office/office/settings')
+            ->assertOk()
+            ->assertJsonPath('data.n', 4);
+        $this->assertSame(4, $calls);
+
+        Http::assertSent(function ($request) {
+            if ($request->method() !== 'PUT') {
+                return false;
+            }
+            $data = $request->data();
+            foreach (['logo', 'logo_url', 'primary_color', 'secondary_color', 'brand_color', 'brand_colour', 'primaryColor'] as $key) {
+                if (array_key_exists($key, $data)) {
+                    return false;
+                }
+            }
+
+            return ($data['name'] ?? null) === 'Yeni'
+                && ($data['ttbs_no'] ?? null) === '3501234';
+        });
+        Http::assertSent(function ($request) {
+            if ($request->method() !== 'PUT') {
+                return false;
+            }
+            $data = $request->data();
+
+            return ($data['name'] ?? null) === 'Dosya'
+                && ! array_key_exists('logo', $data)
+                && ! array_key_exists('primary_color', $data);
+        });
+    }
+
+    public function test_cached_dashboard_does_not_cross_session_or_office_and_earnings_are_not_cached(): void
+    {
+        $owner = $this->login([], [[
+            'id' => 8,
+            'office_id' => 8,
+            'name' => 'Sube',
+            'role' => 'office_manager',
+            'role_slug' => 'office_manager',
+            'branch_id' => 4,
+        ]]);
+        $agent = $this->login(['role' => 'agent', 'role_slug' => 'agent']);
+        $calls = 0;
+        Http::fake(function ($request) use (&$calls) {
+            $calls++;
+            $office = $request->header('X-Office-Id');
+            $office = is_array($office) ? (string) ($office[0] ?? '') : (string) $office;
+
+            return Http::response(['data' => [
+                'office' => $office,
+                'n' => $calls,
+            ]]);
+        });
+        $call = fn ($cookie, int $office) => $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', (string) $office);
+
+        $call($owner, 7)->getJson('/api/v1/portal/office/dashboard/stats')
+            ->assertOk()
+            ->assertJsonPath('data.office', '7')
+            ->assertJsonPath('data.n', 1);
+        $call($owner, 7)->getJson('/api/v1/portal/office/dashboard/stats')
+            ->assertOk()
+            ->assertJsonPath('data.n', 1);
+        $this->assertSame(1, $calls);
+
+        $call($owner, 8)->getJson('/api/v1/portal/office/dashboard/stats')
+            ->assertOk()
+            ->assertJsonPath('data.office', '8')
+            ->assertJsonPath('data.n', 2);
+
+        $call($agent, 7)->getJson('/api/v1/portal/office/dashboard/stats')->assertForbidden();
+        $call($agent, 7)->getJson('/api/v1/portal/office/dashboard/pending-approvals')->assertForbidden();
+        $this->assertSame(2, $calls);
+
+        $call($agent, 7)->getJson('/api/v1/portal/office/dashboard/agent-stats')
+            ->assertOk()
+            ->assertJsonPath('data.n', 3);
+        $call($owner, 7)->getJson('/api/v1/portal/office/dashboard/agent-stats')
+            ->assertOk()
+            ->assertJsonPath('data.n', 4);
+        $call($agent, 7)->getJson('/api/v1/portal/office/dashboard/agent-stats')
+            ->assertOk()
+            ->assertJsonPath('data.n', 3);
+        $this->assertSame(4, $calls);
+
+        $before = $calls;
+        $call($owner, 7)->getJson('/api/v1/portal/office/earnings?from=2026-01-01&to=2026-01-31&result=success&status=success&source=portal&direction=in')->assertOk();
+        $call($owner, 7)->getJson('/api/v1/portal/office/earnings?from=2026-01-01&to=2026-01-31&result=success&status=success&source=portal&direction=in')->assertOk();
+        $call($agent, 7)->getJson('/api/v1/portal/office/earnings/9')->assertOk();
+        $call($owner, 8)->getJson('/api/v1/portal/office/earnings/summary')->assertOk();
+        $call($owner, 7)->getJson('/api/v1/portal/office/earnings/balance')->assertOk();
+        $call($owner, 7)->getJson('/api/v1/portal/office/reports/closings?from=2026-01-01&to=2026-01-31&status=success&direction=in')->assertOk();
+        $call($owner, 7)->getJson('/api/v1/portal/office/reports/closings?from=2026-01-01&to=2026-01-31&status=success&direction=in')->assertOk();
+        $call($owner, 7)->getJson('/api/v1/portal/office/reports/closings/export?source=portal&direction=out')->assertOk();
+        $this->assertSame(8, $calls - $before);
+    }
+
     /**
      * @return array<string, array{0: string, 1: int|null, 2: string, 3: string}>
      */
@@ -377,15 +619,22 @@ class OfficeProxyTest extends TestCase
             'manager badges' => ['office_manager', null, 'post', '/api/v1/portal/office/badges'],
             'branched matchmaking' => ['office_manager', 4, 'post', '/api/v1/portal/office/office/matchmaking-weights'],
             'branched office' => ['office_manager', 4, 'put', '/api/v1/portal/office/offices/7'],
+            'agent dashboard stats' => ['agent', null, 'get', '/api/v1/portal/office/dashboard/stats'],
+            'agent pending approvals' => ['agent', null, 'get', '/api/v1/portal/office/dashboard/pending-approvals'],
+            'agent office settings write' => ['agent', null, 'put', '/api/v1/portal/office/office/settings'],
+            'manager office settings write' => ['manager', null, 'put', '/api/v1/portal/office/office/settings'],
         ];
     }
 
     /**
      * @param  array<string, mixed>  $office
+     * @param  list<array<string, mixed>>  $extraOffices
      */
-    private function login(array $office = []): \Symfony\Component\HttpFoundation\Cookie
+    private function login(array $office = [], array $extraOffices = []): \Symfony\Component\HttpFoundation\Cookie
     {
         config(['reonix.base_url' => 'http://reonix.test', 'reonix.portal_key' => 'test-key']);
+        $this->app->forgetInstance(Factory::class);
+        Http::clearResolvedInstances();
         Http::fake([
             'http://reonix.test/api/v1/integrations/portal/session' => Http::response([
                 'data' => [
@@ -394,13 +643,13 @@ class OfficeProxyTest extends TestCase
                         'id' => 1,
                         'first_name' => 'Ada',
                         'is_admin' => false,
-                        'offices' => [array_merge([
+                        'offices' => array_merge([array_merge([
                             'id' => 7,
                             'name' => 'Merkez',
                             'role' => 'owner',
                             'role_slug' => 'owner',
                             'branch_id' => null,
-                        ], $office)],
+                        ], $office)], $extraOffices),
                     ],
                 ],
             ]),
