@@ -71,6 +71,70 @@ export function canManageMatchmaking(role: OfficeRole, office: OfficeMembership 
   return role === "office_manager" && !office?.branch_id;
 }
 
+export function canManageOffice(role: OfficeRole, office: OfficeMembership | undefined): boolean {
+  return canManageMatchmaking(role, office);
+}
+
+export const SETTINGS_DENIED = "Bu ayara erişim yetkiniz yok";
+
+const SETTINGS_PAGES = [
+  ["profile", "Profil"],
+  ["notifications", "Bildirimler"],
+  ["duty", "Nöbet"],
+  ["team", "Ekip"],
+  ["office", "Ofis"],
+  ["subscription", "Abonelik"],
+  ["whatsapp", "WhatsApp"],
+  ["email", "E-posta"],
+  ["billing", "Faturalama"],
+  ["sellers", "Sahibinden satıcıları"],
+  ["matchmaking", "Eşleşme"],
+  ["badges", "Rozetler"],
+  ["commission", "Hizmet bedeli"],
+  ["rates", "Hakediş oranları"],
+] as const;
+
+export function settingsAllowed(page: string, role: OfficeRole, office: OfficeMembership | undefined): boolean {
+  switch (page) {
+    case "profile":
+    case "notifications":
+      return true;
+    case "duty":
+      return canManageDuty(role);
+    case "team":
+      return canManageTeam(role);
+    case "office":
+      return canManageOffice(role, office);
+    case "subscription":
+    case "whatsapp":
+    case "email":
+    case "billing":
+    case "sellers":
+      return isManager(role);
+    case "matchmaking":
+      return canManageMatchmaking(role, office);
+    case "badges":
+      return canManageBadges(role);
+    case "commission":
+      return canManageCommission(role);
+    case "rates":
+      return canManageRates(role);
+    default:
+      return false;
+  }
+}
+
+export function settingsPageAccess(page: string | undefined, role: OfficeRole, office: OfficeMembership | undefined): "index" | "allow" | "deny" {
+  if (!page) {
+    return "index";
+  }
+  return settingsAllowed(page, role, office) ? "allow" : "deny";
+}
+
+export function settingsLinks(role: OfficeRole, office: OfficeMembership | undefined): { slug: string; label: string }[] {
+  return SETTINGS_PAGES.filter(([slug]) => settingsAllowed(slug, role, office)).map(([slug, label]) => ({ slug, label }));
+}
+
 export function canVerify(office: OfficeMembership | undefined): boolean {
   return Boolean(office?.can_verify_activations || office?.can_verify_closings || roleOf(office) === "owner");
 }

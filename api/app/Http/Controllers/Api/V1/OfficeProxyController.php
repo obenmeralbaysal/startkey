@@ -7,6 +7,8 @@ use App\Services\ReonixClient;
 use App\Services\ReonixException;
 use App\Support\PortalPath;
 use App\Support\PortalPayload;
+use App\Support\PortalReadCache;
+use App\Support\PortalSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
@@ -38,11 +40,28 @@ class OfficeProxyController extends Controller
             $officeId = null;
         }
 
+        if (PortalSettings::denies($request->method(), $remotePath, $session['user'], $officeId)) {
+            return response()->json(['message' => PortalSettings::message()], 403);
+        }
+
+        $location = $this->locationQuery($remotePath, $request->query());
+        if ($location !== null) {
+            return $location;
+        }
+
+        $query = $request->query();
+        if ($request->isMethod('GET') && is_string($sessionId) && $sessionId !== '') {
+            $cached = PortalReadCache::get($sessionId, $officeId, $remotePath, $query);
+            if ($cached !== null) {
+                return response()->json($cached);
+            }
+        }
+
         try {
             $upstream = $this->reonix->exchange(
                 strtolower($request->method()),
                 $remotePath,
-                $request->query(),
+                $query,
                 $this->jsonBody($request),
                 $this->files($request),
                 $session['token'],
@@ -52,13 +71,43 @@ class OfficeProxyController extends Controller
             return response()->json(['message' => __('messages.portal.unavailable')], 422);
         }
 
-        return $this->reply($upstream, $remotePath, $session, $sessionId);
+        return $this->reply($upstream, $remotePath, $session, $sessionId, $request->method(), $officeId, $query);
+    }
+
+    /**
+     * @param  array<string, mixed>  $query
+     */
+    private function locationQuery(string $path, array $query): ?Response
+    {
+        $key = match ($path) {
+            'locations/districts' => 'city_id',
+            'locations/neighborhoods' => 'district_id',
+            default => null,
+        };
+        if ($key === null) {
+            return null;
+        }
+        $value = $query[$key] ?? null;
+        if (is_string($value) && preg_match('/^[1-9]\d*$/', $value) === 1) {
+            return null;
+        }
+        if (is_int($value) && $value >= 1) {
+            return null;
+        }
+
+        return response()->json([
+            'message' => $key === 'city_id'
+                ? __('messages.portal.city_required')
+                : __('messages.portal.district_required'),
+            'data' => [],
+        ], 422);
     }
 
     /**
      * @param  array{token: string, user: array<string, mixed>}  $session
+     * @param  array<string, mixed>  $query
      */
-    private function reply(\Illuminate\Http\Client\Response $upstream, string $path, array $session, ?string $sessionId): Response
+    private function reply(\Illuminate\Http\Client\Response $upstream, string $path, array $session, ?string $sessionId, string $method, ?string $officeId, array $query): Response
     {
         $type = strtolower((string) $upstream->header('Content-Type'));
         $raw = $upstream->json();
@@ -71,6 +120,13 @@ class OfficeProxyController extends Controller
             }
 
             return response()->json(['message' => __('messages.portal.unavailable')], $upstream->status() >= 400 ? $upstream->status() : 422);
+        }
+
+        if (str_starts_with($path, 'locations/') && $this->oversized($raw)) {
+            return response()->json([
+                'message' => __('messages.portal.location_too_large'),
+                'data' => [],
+            ], 422);
         }
 
         $rotated = $path === 'auth/switch-office' && is_string($raw['data']['token'] ?? null)
@@ -92,9 +148,26 @@ class OfficeProxyController extends Controller
             if ($rotated !== null || ($path === 'me' && is_array($offices))) {
                 Cache::put('portal-session:'.$sessionId, $session, now()->addHours(12));
             }
+            if (! in_array(strtoupper($method), ['GET', 'HEAD'], true) && $upstream->successful()) {
+                PortalReadCache::bump($sessionId);
+            }
+        }
+
+        if ($upstream->status() === 200 && is_string($sessionId) && $sessionId !== '' && strtoupper($method) === 'GET') {
+            PortalReadCache::put($sessionId, $officeId, $path, $query, $body);
         }
 
         return response()->json($body, $upstream->status());
+    }
+
+    /**
+     * @param  array<string, mixed>  $raw
+     */
+    private function oversized(array $raw): bool
+    {
+        $rows = $raw['data'] ?? $raw;
+
+        return is_array($rows) && count($rows) > 2000;
     }
 
     private function binary(string $type): bool

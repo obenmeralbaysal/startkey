@@ -35,6 +35,10 @@ return [
     'portal' => [
         'unavailable' => 'Der Vorgang konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.',
         'forbidden' => 'Sie dürfen diesen Vorgang nicht ausführen.',
+        'settings_forbidden' => 'Sie haben keinen Zugriff auf diese Einstellung.',
+        'city_required' => 'Wählen Sie eine Stadt.',
+        'district_required' => 'Wählen Sie einen Landkreis.',
+        'location_too_large' => 'Die Standortliste ist zu groß.',
         'invalid_credentials' => 'E-Mail oder Passwort ist falsch.',
         'package_user_limit' => 'Das Büro hat sein Benutzerlimit erreicht.',
         'package_not_allowed' => 'Dieses Paket kann diesem Büro nicht zugewiesen werden.',

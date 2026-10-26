@@ -23,6 +23,10 @@ final class PortalPayload
             return is_string($value) ? self::rewrite($value, $key) : $value;
         }
 
+        if (self::unchanged($value, $stripToken)) {
+            return $value;
+        }
+
         $out = [];
         foreach ($value as $childKey => $child) {
             $name = is_string($childKey) ? $childKey : null;
@@ -33,6 +37,64 @@ final class PortalPayload
         }
 
         return $out;
+    }
+
+    /**
+     * A list of scalar rows needs no secret stripping and no URL rewrite.
+     * Returning it avoids a second copy of a large location catalogue.
+     *
+     * @param  array<mixed>  $value
+     */
+    private static function unchanged(array $value, bool $stripToken): bool
+    {
+        if ($value === []) {
+            return true;
+        }
+        if (! array_is_list($value)) {
+            return false;
+        }
+        foreach ($value as $row) {
+            if (is_array($row)) {
+                if (array_is_list($row) || ! self::flatClean($row, $stripToken)) {
+                    return false;
+                }
+                continue;
+            }
+            if (is_string($row) && self::needsRewrite($row, null)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param  array<mixed>  $row
+     */
+    private static function flatClean(array $row, bool $stripToken): bool
+    {
+        foreach ($row as $key => $child) {
+            if (is_array($child)) {
+                return false;
+            }
+            if (is_string($key) && self::hidden($key, $stripToken)) {
+                return false;
+            }
+            if (is_string($child) && self::needsRewrite($child, is_string($key) ? $key : null)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function needsRewrite(string $value, ?string $key): bool
+    {
+        if (($key === 'message' || $key === 'error') && stripos($value, 'reonix') !== false) {
+            return true;
+        }
+
+        return str_contains($value, '://');
     }
 
     private static function hidden(string $key, bool $stripToken): bool
@@ -46,6 +108,10 @@ final class PortalPayload
 
     private static function rewrite(string $value, ?string $key): string
     {
+        if (! self::needsRewrite($value, $key)) {
+            return $value;
+        }
+
         if ($key === 'message' || $key === 'error') {
             $value = str_ireplace('Reonix', 'Portal', $value);
         }

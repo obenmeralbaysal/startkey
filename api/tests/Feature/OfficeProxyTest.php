@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class OfficeProxyTest extends TestCase
@@ -110,7 +111,189 @@ class OfficeProxyTest extends TestCase
         $this->getJson('/api/v1/portal/public/blog')->assertNotFound();
     }
 
-    private function login(): \Symfony\Component\HttpFoundation\Cookie
+    public function test_missing_location_filters_do_not_call_upstream(): void
+    {
+        $cookie = $this->login();
+        Http::fake();
+
+        foreach ([
+            '/api/v1/portal/office/locations/districts',
+            '/api/v1/portal/office/locations/districts?city_id=0',
+            '/api/v1/portal/office/locations/neighborhoods',
+            '/api/v1/portal/office/locations/neighborhoods?district_id=0',
+        ] as $url) {
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7')
+                ->getJson($url)
+                ->assertStatus(422)
+                ->assertJsonPath('data', []);
+        }
+
+        Http::assertNothingSent();
+    }
+
+    public function test_a_real_district_filter_is_forwarded(): void
+    {
+        $cookie = $this->login();
+        Http::fake([
+            'http://reonix.test/api/v1/locations/neighborhoods*' => Http::response([
+                'data' => [['id' => 3, 'name' => 'Alsancak', 'district_id' => 9]],
+            ]),
+        ]);
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/locations/neighborhoods?district_id=9')
+            ->assertOk()
+            ->assertJsonPath('data.0.name', 'Alsancak');
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'district_id=9'));
+    }
+
+    #[DataProvider('deniedSettings')]
+    public function test_settings_the_role_cannot_open_are_forbidden(string $role, ?int $branchId, string $method, string $url): void
+    {
+        $cookie = $this->login([
+            'role' => $role,
+            'role_slug' => $role,
+            'branch_id' => $branchId,
+        ]);
+        Http::fake();
+        $call = $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7');
+        $response = match ($method) {
+            'put' => $call->putJson($url, []),
+            'post' => $call->postJson($url, []),
+            default => $call->getJson($url),
+        };
+
+        $response->assertForbidden()->assertJsonPath('message', 'Bu ayara erişim yetkiniz yok.');
+        Http::assertNothingSent();
+    }
+
+    public function test_owner_settings_are_forwarded_including_upstream_forbidden(): void
+    {
+        $cookie = $this->login();
+        Http::fake([
+            'http://reonix.test/api/v1/commission-policy' => Http::response(['message' => 'Yetkiniz yok.'], 403),
+            'http://reonix.test/api/v1/team' => Http::response(['data' => []]),
+            'http://reonix.test/api/v1/duty-roster/today' => Http::response(['data' => []]),
+        ]);
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/commission-policy')
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Yetkiniz yok.');
+
+        $manager = $this->login([
+            'role' => 'office_manager',
+            'role_slug' => 'office_manager',
+            'branch_id' => null,
+        ]);
+        Http::fake([
+            'http://reonix.test/api/v1/team' => Http::response(['data' => []]),
+            'http://reonix.test/api/v1/duty-roster/today' => Http::response(['data' => []]),
+        ]);
+        $this->withCredentials()
+            ->withUnencryptedCookie($manager->getName(), $manager->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/team')
+            ->assertOk();
+        $agent = $this->login([
+            'role' => 'agent',
+            'role_slug' => 'agent',
+        ]);
+        Http::fake([
+            'http://reonix.test/api/v1/duty-roster/today' => Http::response(['data' => ['date' => '2026-10-26']]),
+        ]);
+        $this->withCredentials()
+            ->withUnencryptedCookie($agent->getName(), $agent->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/duty-roster/today')
+            ->assertOk();
+    }
+
+    public function test_catalogue_and_dashboard_reads_hit_upstream_once(): void
+    {
+        $cookie = $this->login();
+        $calls = 0;
+        Http::fake(function () use (&$calls) {
+            $calls++;
+            usleep(120000);
+
+            return Http::response(['data' => [['id' => 1, 'name' => 'İzmir']]]);
+        });
+        $call = fn () => $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7');
+
+        $started = microtime(true);
+        $call()->getJson('/api/v1/portal/office/locations/cities')->assertOk();
+        $firstMs = (microtime(true) - $started) * 1000;
+
+        $started = microtime(true);
+        $call()->getJson('/api/v1/portal/office/locations/cities')->assertOk();
+        $secondMs = (microtime(true) - $started) * 1000;
+
+        $this->assertSame(1, $calls);
+        $this->assertGreaterThan(80, $firstMs);
+        $this->assertLessThan($firstMs / 2, $secondMs, "cities first={$firstMs}ms second={$secondMs}ms");
+
+        $pages = [
+            '/api/v1/portal/office/me',
+            '/api/v1/portal/office/dashboard/stats',
+            '/api/v1/portal/office/dashboard/pending-approvals',
+            '/api/v1/portal/office/dashboard/my-revisions',
+            '/api/v1/portal/office/duty-roster/today',
+            '/api/v1/portal/office/dashboard/visuals?period=month&sort_by=score&limit=10',
+        ];
+        $before = $calls;
+        $started = microtime(true);
+        foreach ($pages as $url) {
+            $call()->getJson($url)->assertOk();
+        }
+        $coldMs = (microtime(true) - $started) * 1000;
+        $started = microtime(true);
+        foreach ($pages as $url) {
+            $call()->getJson($url)->assertOk();
+        }
+        $warmMs = (microtime(true) - $started) * 1000;
+
+        $this->assertSame(count($pages), $calls - $before);
+        $this->assertGreaterThan(400, $coldMs);
+        $this->assertLessThan($coldMs / 3, $warmMs, "dashboard cold={$coldMs}ms warm={$warmMs}ms upstream=".($calls - $before));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: int|null, 2: string, 3: string}>
+     */
+    public static function deniedSettings(): array
+    {
+        return [
+            'agent commission' => ['agent', null, 'get', '/api/v1/portal/office/commission-policy'],
+            'agent rates' => ['agent', null, 'get', '/api/v1/portal/office/earning-rates'],
+            'agent duty write' => ['agent', null, 'put', '/api/v1/portal/office/duty-roster'],
+            'agent team' => ['agent', null, 'get', '/api/v1/portal/office/team'],
+            'agent email' => ['agent', null, 'put', '/api/v1/portal/office/office/imap-settings'],
+            'agent subscription' => ['agent', null, 'post', '/api/v1/portal/office/office/subscription/upgrade'],
+            'agent billing' => ['agent', null, 'get', '/api/v1/portal/office/hq/office/billing'],
+            'manager commission' => ['office_manager', null, 'get', '/api/v1/portal/office/commission-policy'],
+            'manager rates' => ['office_manager', null, 'get', '/api/v1/portal/office/earning-rates'],
+            'manager badges' => ['office_manager', null, 'post', '/api/v1/portal/office/badges'],
+            'branched matchmaking' => ['office_manager', 4, 'post', '/api/v1/portal/office/office/matchmaking-weights'],
+            'branched office' => ['office_manager', 4, 'put', '/api/v1/portal/office/offices/7'],
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $office
+     */
+    private function login(array $office = []): \Symfony\Component\HttpFoundation\Cookie
     {
         config(['reonix.base_url' => 'http://reonix.test', 'reonix.portal_key' => 'test-key']);
         Http::fake([
@@ -121,7 +304,13 @@ class OfficeProxyTest extends TestCase
                         'id' => 1,
                         'first_name' => 'Ada',
                         'is_admin' => false,
-                        'offices' => [['id' => 7, 'name' => 'Merkez', 'role' => 'owner']],
+                        'offices' => [array_merge([
+                            'id' => 7,
+                            'name' => 'Merkez',
+                            'role' => 'owner',
+                            'role_slug' => 'owner',
+                            'branch_id' => null,
+                        ], $office)],
                     ],
                 ],
             ]),

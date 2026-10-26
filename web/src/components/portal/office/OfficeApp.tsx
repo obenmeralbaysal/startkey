@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { isRecord, officeCall, type OfficeRecord } from "@/components/portal/office/api";
+import { clearOfficeReads, isRecord, officeCall, type OfficeRecord } from "@/components/portal/office/api";
 import {
   officeLabel,
   officeNumber,
@@ -14,6 +14,18 @@ import {
 import { EmptyState, OfficeProvider } from "@/components/portal/office/ui";
 import { OfficeWork } from "@/components/portal/office/work";
 import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
+
+type OfficeBoot = {
+  at: number;
+  isAdmin: boolean;
+  first: string;
+  last: string;
+  offices: OfficeMembership[];
+  officeId: number;
+};
+
+let officeBoot: OfficeBoot | null = null;
+const OFFICE_BOOT_MS = 20_000;
 
 export function OfficeApp({ parts }: { parts: string[] }) {
   return (
@@ -35,6 +47,8 @@ function OfficeScreen({ parts }: { parts: string[] }) {
   const [userName, setUserName] = useState({ first: "", last: "" });
   const toast = useToast();
   const notice = useCallback((value: string) => toast(value), [toast]);
+  const noticeRef = useRef(notice);
+  noticeRef.current = notice;
 
   useEffect(() => {
     setSection(route === "" ? [] : route.split("/"));
@@ -42,6 +56,18 @@ function OfficeScreen({ parts }: { parts: string[] }) {
 
   useEffect(() => {
     let cancelled = false;
+    const apply = (boot: OfficeBoot) => {
+      if (cancelled) return;
+      setIsAdmin(boot.isAdmin);
+      setUserName({ first: boot.first, last: boot.last });
+      setOffices(boot.offices);
+      setOfficeId(boot.officeId);
+      setReady(true);
+    };
+    if (officeBoot && Date.now() - officeBoot.at < OFFICE_BOOT_MS) {
+      apply(officeBoot);
+      return;
+    }
     (async () => {
       const session = await fetch("/api/v1/portal/session", { credentials: "include", headers: { Accept: "application/json" } });
       if (!session.ok) {
@@ -50,30 +76,34 @@ function OfficeScreen({ parts }: { parts: string[] }) {
       }
       const sessionBody = (await session.json()) as OfficeRecord;
       const loginUser = isRecord(sessionBody.data) && isRecord(sessionBody.data.user) ? sessionBody.data.user : {};
+      const first = typeof loginUser.first_name === "string" ? loginUser.first_name : "";
+      const last = typeof loginUser.last_name === "string" ? loginUser.last_name : "";
       if (!cancelled) {
         setIsAdmin(Boolean(loginUser.is_admin));
-        setUserName({
-          first: typeof loginUser.first_name === "string" ? loginUser.first_name : "",
-          last: typeof loginUser.last_name === "string" ? loginUser.last_name : "",
-        });
+        setUserName({ first, last });
       }
       try {
         const me = await officeCall("me", null);
         const list = memberships(me.offices ?? loginUser.offices);
-        if (cancelled) return;
-        setOffices(list);
         const current = Number(isRecord(me.user) ? me.user.office_id ?? 0 : 0);
-        setOfficeId(current || (list[0] ? officeNumber(list[0]) : 0));
+        officeBoot = {
+          at: Date.now(),
+          isAdmin: Boolean(loginUser.is_admin),
+          first,
+          last,
+          offices: list,
+          officeId: current || (list[0] ? officeNumber(list[0]) : 0),
+        };
+        apply(officeBoot);
       } catch (error) {
-        if (!cancelled) notice(`Hata: ${error instanceof Error ? error.message : "Oturum açılmadı."}`);
-      } finally {
+        if (!cancelled) noticeRef.current(`Hata: ${error instanceof Error ? error.message : "Oturum açılmadı."}`);
         if (!cancelled) setReady(true);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [notice]);
+  }, []);
 
   const office = offices.find((item) => officeNumber(item) === officeId) ?? offices[0];
   const role = roleOf(office);
@@ -103,6 +133,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
     setSwitching(true);
     try {
       await officeCall("auth/switch-office", null, { method: "POST", body: { office_id: next } });
+      officeBoot = null;
       setOfficeId(next);
       setSection([]);
       notice("");
@@ -115,6 +146,8 @@ function OfficeScreen({ parts }: { parts: string[] }) {
   }
 
   async function logout() {
+    officeBoot = null;
+    clearOfficeReads();
     await fetch("/api/v1/portal/session", { method: "DELETE", credentials: "include" });
     window.location.href = "/portal";
   }

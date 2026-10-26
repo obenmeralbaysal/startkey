@@ -11,11 +11,29 @@ export class OfficeError extends Error {
   }
 }
 
+const readCache = new Map<string, { at: number; body: OfficeRecord }>();
+const READ_TTL_MS = 20_000;
+const CACHED_GET = /^(me$|categories(?:[/?]|$)|locations\/(?:cities$|districts\?|neighborhoods\?)|dashboard\/|duty-roster\/today$)/;
+
+export function clearOfficeReads(): void {
+  readCache.clear();
+}
+
 export async function officeCall(
   path: string,
   officeId: number | null,
   init?: { method?: string; body?: unknown; form?: FormData },
 ): Promise<OfficeRecord> {
+  const method = (init?.method ?? "GET").toUpperCase();
+  const cacheKey = `${officeId ?? 0}:${path}`;
+  if (method === "GET" && CACHED_GET.test(path)) {
+    const hit = readCache.get(cacheKey);
+    if (hit && Date.now() - hit.at < READ_TTL_MS) {
+      return hit.body;
+    }
+  } else if (method !== "GET") {
+    readCache.clear();
+  }
   const headers: Record<string, string> = { Accept: "application/json" };
   if (officeId) {
     headers["X-Portal-Office"] = String(officeId);
@@ -28,7 +46,7 @@ export async function officeCall(
     body = JSON.stringify(init.body);
   }
   const response = await fetch(`/api/v1/portal/office/${path.replace(/^\//, "")}`, {
-    method: init?.method ?? "GET",
+    method,
     credentials: "include",
     headers,
     body,
@@ -36,6 +54,9 @@ export async function officeCall(
   const payload = (await response.json().catch(() => ({}))) as OfficeRecord;
   if (!response.ok) {
     throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload));
+  }
+  if (method === "GET" && CACHED_GET.test(path)) {
+    readCache.set(cacheKey, { at: Date.now(), body: payload });
   }
   return payload;
 }

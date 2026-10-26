@@ -7,15 +7,12 @@ import {
   canApproveEarnings,
   canDeleteRecords,
   canDeleteTeam,
-  canManageBadges,
-  canManageCommission,
-  canManageDuty,
-  canManageMatchmaking,
   canManageRates,
-  canManageTeam,
   canVerify,
-  isManager,
   roleOf,
+  SETTINGS_DENIED,
+  settingsLinks,
+  settingsPageAccess,
 } from "@/components/portal/office/access";
 import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
 import { OfficeDashboard } from "@/components/portal/office/dashboard";
@@ -44,7 +41,7 @@ function useData(path: string) {
   const [data, setData] = useState<unknown>(undefined);
   const [version, setVersion] = useState(0);
   useEffect(() => {
-    if (path === "") {
+    if (path === "" || /(?:^|[?&])(?:city_id|district_id)=0(?:&|$)/.test(path)) {
       return;
     }
     let cancelled = false;
@@ -292,8 +289,8 @@ function PortfolioForm() {
   const cities = useData("locations/cities");
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
-  const districts = useData(city ? `locations/districts?city_id=${city}` : "locations/districts?city_id=0");
-  const neighborhoods = useData(district ? `locations/neighborhoods?district_id=${district}` : "locations/neighborhoods?district_id=0");
+  const districts = useData(city ? `locations/districts?city_id=${city}` : "");
+  const neighborhoods = useData(district ? `locations/neighborhoods?district_id=${district}` : "");
   return (
     <>
     <VoiceDraft kind="portfolio" />
@@ -1293,36 +1290,41 @@ function SimpleList({ title, path }: { title: string; path: string }) {
 function Settings({ page }: { page?: string }) {
   const { office } = useOffice();
   const role = roleOf(office);
+  if (!page) {
+    return (
+      <section className="glass-grid">
+        {settingsLinks(role, office).map(({ slug, label }) => (
+          <Link key={slug} className="glass-card" href={`/portal/office/settings/${slug}`}>{label}</Link>
+        ))}
+      </section>
+    );
+  }
+  if (settingsPageAccess(page, role, office) === "deny") {
+    return (
+      <section className="glass-card">
+        <h2>Ayarlar</h2>
+        <p>{SETTINGS_DENIED}</p>
+      </section>
+    );
+  }
   if (page === "profile") return <ProfileForm />;
   if (page === "notifications") return <SimpleList title="Bildirimler" path="notifications" />;
-  if (page === "duty" && canManageDuty(role)) return <DutyForm />;
-  if (page === "team" && canManageTeam(role)) return <Team />;
-  if (page === "office" && isManager(role)) return <OfficeForm />;
-  if (page === "matchmaking" && canManageMatchmaking(role, office)) return <MatchmakingForm />;
-  if (page === "badges" && canManageBadges(role)) return <BadgeForm />;
-  if (page === "commission" && canManageCommission(role)) return <CommissionForm />;
-  if (page === "rates" && canManageRates(role)) return <RateForm />;
-  if (page === "subscription" && isManager(role)) return <SubscriptionForm />;
-  if (page === "whatsapp" && isManager(role)) return <WhatsappForm />;
-  if (page === "email" && isManager(role)) return <EmailForm />;
-  if (page === "billing" && isManager(role)) return <BillingForm />;
-  if (page === "sellers" && isManager(role)) return <Sellers />;
-  const links = [
-    ["profile", "Profil"],
-    ["notifications", "Bildirimler"],
-    ...(canManageDuty(role) ? [["duty", "Nöbet"]] : []),
-    ...(canManageTeam(role) ? [["team", "Ekip"]] : []),
-    ...(isManager(role) ? [["office", "Ofis"], ["subscription", "Abonelik"], ["whatsapp", "WhatsApp"], ["email", "E-posta"], ["billing", "Faturalama"], ["sellers", "Sahibinden satıcıları"]] : []),
-    ...(canManageMatchmaking(role, office) ? [["matchmaking", "Eşleşme"]] : []),
-    ...(canManageBadges(role) ? [["badges", "Rozetler"]] : []),
-    ...(canManageCommission(role) ? [["commission", "Hizmet bedeli"]] : []),
-    ...(canManageRates(role) ? [["rates", "Hakediş oranları"]] : []),
-  ];
+  if (page === "duty") return <DutyForm />;
+  if (page === "team") return <Team />;
+  if (page === "office") return <OfficeForm />;
+  if (page === "matchmaking") return <MatchmakingForm />;
+  if (page === "badges") return <BadgeForm />;
+  if (page === "commission") return <CommissionForm />;
+  if (page === "rates") return <RateForm />;
+  if (page === "subscription") return <SubscriptionForm />;
+  if (page === "whatsapp") return <WhatsappForm />;
+  if (page === "email") return <EmailForm />;
+  if (page === "billing") return <BillingForm />;
+  if (page === "sellers") return <Sellers />;
   return (
-    <section className="glass-grid">
-      {links.map(([slug, label]) => (
-        <Link key={slug} className="glass-card" href={`/portal/office/settings/${slug}`}>{label}</Link>
-      ))}
+    <section className="glass-card">
+      <h2>Ayarlar</h2>
+      <p>{SETTINGS_DENIED}</p>
     </section>
   );
 }

@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use GuzzleHttp\Client;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 class ReonixClient
 {
+    private static ?Client $http = null;
     public function get(string $path, array $data = [], ?string $token = null): array
     {
         return $this->send('get', $path, $data, $token);
@@ -29,9 +32,8 @@ class ReonixClient
             throw new ReonixException('unavailable');
         }
 
-        $request = Http::acceptJson()
+        $request = $this->pending(15)
             ->asJson()
-            ->timeout(15)
             ->withHeaders(['X-Portal-Key' => $key]);
         if ($token) {
             $request = $request->withToken($token);
@@ -58,7 +60,7 @@ class ReonixClient
             throw new ReonixException('unavailable');
         }
 
-        $pending = Http::acceptJson()->timeout($files === [] ? 20 : 60);
+        $pending = $this->pending($files === [] ? 20 : 60);
         if ($token) {
             $pending = $pending->withToken($token);
         }
@@ -96,6 +98,26 @@ class ReonixClient
         } catch (\Throwable $e) {
             throw new ReonixException('unavailable');
         }
+    }
+
+    private function pending(int $timeout): PendingRequest
+    {
+        $pending = Http::acceptJson()->connectTimeout(3)->timeout($timeout);
+        if (app()->runningUnitTests()) {
+            return $pending;
+        }
+
+        self::$http ??= new Client([
+            'http_errors' => false,
+            'connect_timeout' => 3,
+            'curl' => [
+                CURLOPT_TCP_KEEPALIVE => 1,
+                CURLOPT_TCP_KEEPIDLE => 20,
+                CURLOPT_TCP_KEEPINTVL => 10,
+            ],
+        ]);
+
+        return $pending->setClient(self::$http);
     }
 
     /**
