@@ -1,3 +1,25 @@
+export interface OfficePinSource {
+  latitude: unknown;
+  longitude: unknown;
+}
+
+/**
+ * Count of offices that become map markers, with the locale unit already chosen.
+ * Missing, empty, or unplottable data returns null so the count can be omitted.
+ */
+export function officeMapCountText(
+  unit: string,
+  offices: readonly OfficePinSource[] | null | undefined,
+): string | null {
+  if (!offices || offices.length === 0) return null;
+  let count = 0;
+  for (const office of offices) {
+    if (mapPinPosition(office.latitude, office.longitude)) count += 1;
+  }
+  if (count < 1) return null;
+  return `${count} ${unit}`;
+}
+
 /** Accepts numeric strings and Turkish comma decimals. A latitude outside ±90 is not a pin. */
 export function mapPinPosition(
   latitude: unknown,

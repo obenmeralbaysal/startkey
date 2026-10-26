@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: Ana menüye tıklanınca açılan Başvuru listesi eklendi. Danışman ve Franchise, mevcut başvuru sayfalarına gider; alt satırdaki açıklama TR, EN ve DE sayfa metnidir. Esc ve dışarı tıklama listeyi kapatır. Telefonda aynı düğme çekmecedeki alt menüyü açar. Startkey Global haritası, pini olan ofis sayısını gösterir; veri yoksa sayı basılmaz. #2185
 - **[Security]**: Rozet, ofis kaydı, nöbet listesi ve WhatsApp okumaları yeniden önceki erişime alındı. Bu uçlarda yalnızca yazma 403 olur. Kapalı ayar sayfası HTTP 403 kalır. #2185
 - **[Security]**: Yetkisiz bir ayar sekmesi artık HTTP 403 döner ve "Bu ayara erişim yetkiniz yok" metnini basar. Aynı sekmenin okuma API'leri de rol yetmezse 403 JSON döner. #2185
 - **[Backend]**: Portföy listesi 20 saniye önbelleğe alınır. Önbelleğe giren okumalar `Cache-Control: private, max-age` ile gelir; tarayıcı aynı süre içinde ikinci açılışı yeniden Reonix'e götürmez. Sorgu sırası ve `_` gibi tek kullanımlık parametreler anahtarı bozmaz. #2185

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
+import { applicationMenu } from "@/content/application-menu";
 import type { HomepageContent, NavItem } from "@/content/types";
 import type { Locale } from "@/lib/locales";
 import { portalLoginHref } from "@/lib/portal";
@@ -276,11 +277,81 @@ const HEADER_STYLES = `
     .sk-drawer .sk-actions .sk-btn { justify-content: center; width: 100%; box-sizing: border-box; text-align: center; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sk-drawer, .sk-drawer.is-open, .sk-drawer .sk-drop, .sk-expand i, .sk-header, .sk-header.sticky, .sk-nav > li > a { transition: none; animation: none; }
+    .sk-drawer, .sk-drawer.is-open, .sk-drawer .sk-drop, .sk-expand i, .sk-apply-trigger .ri-arrow-down-s-line, .sk-header, .sk-header.sticky, .sk-nav > li > a { transition: none; animation: none; }
   }
   @media (min-width: 992px) and (max-width: 1199px) {
     .sk-nav > li { margin: 0 calc(7px * var(--sk-scale, 1)); }
     .sk-nav > li > a { font-size: calc(15px * var(--sk-scale, 1)); }
+  }
+  .sk-apply-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(6px * var(--sk-scale, 1));
+    padding: calc(8px * var(--sk-scale, 1)) calc(16px * var(--sk-scale, 1));
+    border: 0;
+    border-radius: calc(5px * var(--sk-scale, 1));
+    background: #EC3323;
+    color: #fff;
+    font-size: calc(17px * var(--sk-scale, 1));
+    font-weight: 500;
+    line-height: 1.5;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .sk-apply-trigger:hover,
+  .sk-apply-trigger[aria-expanded="true"] {
+    background: #C9291B;
+    color: #fff;
+  }
+  .sk-apply-trigger:focus-visible {
+    outline: calc(2px * var(--sk-scale, 1)) solid #002172;
+    outline-offset: calc(2px * var(--sk-scale, 1));
+  }
+  .sk-apply-trigger .ri-arrow-down-s-line {
+    font-size: calc(18px * var(--sk-scale, 1));
+    line-height: 1;
+    transition: transform 0.4s;
+  }
+  .sk-apply.is-open > .sk-apply-trigger .ri-arrow-down-s-line { transform: rotate(180deg); }
+  .sk-apply .sk-apply-label,
+  .sk-apply .sk-apply-desc { display: block; }
+  .sk-apply .sk-apply-label {
+    color: inherit;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .sk-apply .sk-apply-desc {
+    margin-top: calc(2px * var(--sk-scale, 1));
+    color: #4b5563;
+    font-size: calc(13px * var(--sk-scale, 1));
+    font-weight: 400;
+    line-height: 1.35;
+    white-space: normal;
+  }
+  .sk-apply .sk-drop a:hover .sk-apply-desc { color: #C9291B; }
+  @media (min-width: 992px) and (max-width: 1199px) {
+    .sk-apply-trigger { font-size: calc(15px * var(--sk-scale, 1)); }
+  }
+  @media (min-width: 992px) {
+    .sk-apply { position: relative; }
+    .sk-apply > .sk-drop {
+      top: 100%;
+      left: 0;
+      min-width: calc(240px * var(--sk-scale, 1));
+    }
+    .sk-nav > li.sk-apply.is-open > .sk-drop { display: block; }
+  }
+  @media (max-width: 991px) {
+    .sk-drawer .sk-apply-trigger {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin: calc(8px * var(--sk-scale, 1)) 0;
+      box-sizing: border-box;
+      font-size: calc(16px * var(--sk-scale, 1));
+      text-align: left;
+    }
+    .sk-drawer .sk-apply .sk-drop a { white-space: normal; }
   }
 `;
 
@@ -370,6 +441,82 @@ function NavEntry({
               {...(child.target ? { target: child.target, rel: "noopener noreferrer" } : {})}
             >
               {child.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </li>
+  );
+}
+
+function ApplicationMenu({
+  locale,
+  consultantHref,
+  franchiseHref,
+}: {
+  locale: Locale;
+  consultantHref: string;
+  franchiseHref: string;
+}) {
+  const menu = applicationMenu[locale];
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLLIElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const items = [
+    { ...menu.consultant, href: consultantHref },
+    { ...menu.franchise, href: franchiseHref },
+  ];
+
+  const close = useCallback(() => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      close();
+    };
+    const onPointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown, true);
+    document.addEventListener("mousedown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown, true);
+      document.removeEventListener("mousedown", onPointerDown);
+    };
+  }, [open, close]);
+
+  return (
+    <li ref={rootRef} className={`sk-apply${open ? " is-open menu-open" : ""}`}>
+      <button
+        ref={triggerRef}
+        type="button"
+        id="sk-apply-trigger"
+        className="sk-apply-trigger"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls="sk-apply-menu"
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span>{menu.label}</span>
+        <i className="ri-arrow-down-s-line" aria-hidden="true" />
+      </button>
+      <ul id="sk-apply-menu" className="sk-drop" role="menu" hidden={!open}>
+        {items.map((item) => (
+          <li key={item.href} role="none">
+            <a href={item.href} role="menuitem">
+              <span className="sk-apply-label">{item.label}</span>
+              <span className="sk-apply-desc">{item.description}</span>
             </a>
           </li>
         ))}
@@ -496,6 +643,11 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
                   onToggle={() => setOpenIndex((current) => (current === index ? null : index))}
                 />
               ))}
+              <ApplicationMenu
+                locale={locale}
+                consultantHref={headerButtons.consultant.href}
+                franchiseHref={headerButtons.franchise.href}
+              />
             </ul>
             <div className="sk-actions">
               <div className="sk-lang-desktop">
