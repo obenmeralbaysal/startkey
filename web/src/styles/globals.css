@@ -2159,3 +2159,16 @@ a.btn.style2::after {
     color: #666;
   }
 }
+
+/* #2185 654 A: fixed office card, desktop map only; phones keep the pin popup. */
+.sk-office-map-frame { position: relative; }
+.sk-office-map-card { display: none; }
+@media (min-width: 768px) {
+  .sk-office-map-card {
+    display: block; position: absolute; top: 24px; right: 24px; z-index: 500; width: 300px; padding: 16px;
+    background: #fff; border: 1px solid #e3e6ec; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08);
+  }
+  .sk-office-map-card h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #002172; }
+  .sk-office-map-card a { color: #ec3323; font-weight: 700; text-decoration: none; }
+  .sk-office-map-card a:hover { text-decoration: underline; }
+}

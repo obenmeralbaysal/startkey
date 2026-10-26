@@ -1,11 +1,23 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useState } from "react";
 
-import { countryChipLabel, officeMapHeading, officeMapSubtitle } from "@/content/office-map";
+import {
+  countryChipLabel,
+  officeMapHeading,
+  officeMapSubtitle,
+} from "@/content/office-map";
 import type { MapOffice } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
-import { officeCountrySummary } from "@/lib/map-coordinates";
+import { mapPinPosition, officeCountrySummary } from "@/lib/map-coordinates";
+import { officeCardHref, officeForCard } from "@/lib/office-map-card";
+
+const CARD_LINK: Record<Locale, string> = {
+  tr: "Ofisi gör →",
+  en: "View office →",
+  de: "Büro ansehen →",
+};
 
 const RESET_LABEL: Record<Locale, string> = {
   tr: "Tümünü göster",
@@ -13,9 +25,12 @@ const RESET_LABEL: Record<Locale, string> = {
   de: "Alle anzeigen",
 };
 
-const OfficeMap = dynamic(() => import("@/components/home/OfficeMap").then((mod) => mod.OfficeMap), {
-  ssr: false,
-});
+const OfficeMap = dynamic(
+  () => import("@/components/home/OfficeMap").then((mod) => mod.OfficeMap),
+  {
+    ssr: false,
+  },
+);
 
 export function OfficeMapSection({
   offices,
@@ -25,7 +40,15 @@ export function OfficeMapSection({
   locale: Locale;
 }) {
   const summary = officeCountrySummary(offices);
-  const heading = summary ? officeMapHeading(locale, summary.officeCount, summary.countries.length) : null;
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [center, setCenter] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const cardOffice = officeForCard(offices ?? [], selectedId, center, mapPinPosition);
+  const heading = summary
+    ? officeMapHeading(locale, summary.officeCount, summary.countries.length)
+    : null;
   return (
     <section className="sk-office-map-section" id="sk-office-map-section">
       {summary && heading ? (
@@ -43,13 +66,23 @@ export function OfficeMapSection({
           </div>
         </div>
       ) : null}
-      <OfficeMap
-        offices={offices ? [...offices] : []}
-        className="is-bleed"
-        overview
-        label={heading ?? "Startkey Global"}
-        resetLabel={RESET_LABEL[locale]}
-      />
+      <div className="sk-office-map-frame">
+        <OfficeMap
+          offices={offices ? [...offices] : []}
+          className="is-bleed"
+          overview
+          label={heading ?? "Startkey Global"}
+          resetLabel={RESET_LABEL[locale]}
+          onSelect={setSelectedId}
+          onCenter={setCenter}
+        />
+        {cardOffice ? (
+          <div className="sk-office-map-card" data-office-id={cardOffice.id}>
+            <h4>{cardOffice.name}</h4>
+            <a href={officeCardHref(cardOffice)}>{CARD_LINK[locale]}</a>
+          </div>
+        ) : null}
+      </div>
     </section>
   );
 }
