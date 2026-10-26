@@ -29,7 +29,7 @@ export function ChampionsPage({ data }: { data: Extract<CorporatePayload, { kind
                   {group.photos.map((photo) => (
                     <div className="photo" key={photo}>
                       <a data-fslightbox="gallery" data-type="image" href={photo}>
-                        <img src={photo} alt="" />
+                        <img src={photo} alt={group.title || group.kicker || ""} width={640} height={480} />
                       </a>
                     </div>
                   ))}

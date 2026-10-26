@@ -36,7 +36,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
     <>
       <HeroSearch content={content.heroSearch} locale={locale} />
       <Counters stats={data.stats} />
-      <OfficeMapSection offices={data.offices} />
+      <OfficeMapSection offices={data.offices} locale={locale} />
       <FeaturedProperties
         titleHtml={content.featured.titleHtml}
         properties={data.featuredProperties}

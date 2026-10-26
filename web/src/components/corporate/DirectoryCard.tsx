@@ -41,6 +41,7 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
             <h3>
               <a href={item.urlPath}>{item.name}</a>
             </h3>
+            <AwardBadges badges={item.badges} />
             {item.phoneHref ? (
               <span>
                 {" "}
@@ -85,6 +86,7 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
           <a href={item.urlPath}>{item.name}</a>
         </h3>
         {item.role ? <span>{item.role}</span> : null}
+        <AwardBadges badges={item.badges} />
         {item.phoneHref ? (
           <div>
             <i className="flaticon-phone-call" /> <a href={item.phoneHref} target="_blank">{item.phoneLabel}</a>
@@ -101,3 +103,19 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
 }
 
 export const DirectoryPagination = Pagination;
+
+function AwardBadges({ badges }: { badges?: { title: string; period: string }[] }) {
+  if (!badges || badges.length === 0) {
+    return null;
+  }
+  return (
+    <ul className="sk-award-badges">
+      {badges.map((badge) => (
+        <li key={`${badge.title}-${badge.period}`}>
+          {badge.title}
+          {badge.period ? ` · ${badge.period}` : ""}
+        </li>
+      ))}
+    </ul>
+  );
+}

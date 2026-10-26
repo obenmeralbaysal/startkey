@@ -36,7 +36,10 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
                 </div>
                 <div className="w-full md:w-1/3">
                   <div className="block">
-                    <select className="select single-select" id="sorting-type-select" name="SortingType" defaultValue={sorting}>
+                    <label className="sk-search-label" htmlFor="sorting-type-select">
+                      {data.filter.placeholders.sortLabel || "Sıralama"}
+                    </label>
+                    <select className="select single-select" id="sorting-type-select" name="SortingType" data-placeholder={data.filter.placeholders.sort} defaultValue={sorting}>
                       {data.filter.sortOptions.map((option) => (
                         <option key={option.value || "default"} value={option.value}>
                           {option.label}
@@ -97,7 +100,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <label id="search-text-1">{labels.FilterDTO_AdTypeId}</label>
         <select
           className=""
-          data-placeholder="Portföy Tipi"
+          data-placeholder={filter.placeholders.adType || labels.FilterDTO_AdTypeId}
           id="FilterDTO_AdTypeId"
           name="FilterDTO.AdTypeId"
           defaultValue={scalar(values["FilterDTO.AdTypeId"])}
@@ -115,7 +118,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <label id="search-text-1">{labels.FilterDTO_ProcessTypeId}</label>
         <select
           className=""
-          data-placeholder="Portföy Durumu"
+          data-placeholder={filter.placeholders.process || labels.FilterDTO_ProcessTypeId}
           bind-id="FilterDTO_AdTypeId"
           bind-query="adType"
           id="FilterDTO_ProcessTypeId"
@@ -157,7 +160,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
         <label id="search-text-1">{labels.FilterDTO_CurrencyId}</label>
         <select
           className=""
-          data-placeholder="Para Birimi"
+          data-placeholder={filter.placeholders.currency || labels.FilterDTO_CurrencyId}
           id="FilterDTO_CurrencyId"
           name="FilterDTO.CurrencyId"
           bind-url={bind.currencies}
@@ -199,6 +202,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           className=""
           id="FilterDTO_CountryId"
           name="FilterDTO.CountryId"
+          data-placeholder={filter.placeholders.country || labels.FilterDTO_CountryId}
           bind-url={bind.countries}
           defaultValue={scalar(values["FilterDTO.CountryId"])}
         >
@@ -215,6 +219,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           bind-query="countryId"
           id="FilterDTO_CityId"
           name="FilterDTO.CityId"
+          data-placeholder={filter.placeholders.city || labels.FilterDTO_CityId}
           bind-url={bind.cities}
           defaultValue={scalar(values["FilterDTO.CityId"])}
         >
@@ -230,6 +235,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           bind-query="cityId"
           id="FilterDTO_CountyIds"
           name="FilterDTO.CountyIds"
+          data-placeholder={filter.placeholders.county || labels.FilterDTO_CountyIds}
           bind-url={bind.counties}
           defaultValue={list(values["FilterDTO.CountyIds"])}
         >
@@ -249,6 +255,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           bind-query="countyIds"
           id="FilterDTO_DistrictIds"
           name="FilterDTO.DistrictIds"
+          data-placeholder={filter.placeholders.district || labels.FilterDTO_DistrictIds}
           bind-url={bind.districts}
           defaultValue={list(values["FilterDTO.DistrictIds"])}
         >
@@ -265,6 +272,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           className=""
           id="FilterDTO_OfficeId"
           name="FilterDTO.OfficeId"
+          data-placeholder={filter.placeholders.office || labels.FilterDTO_OfficeId}
           bind-url={bind.offices}
           defaultValue={scalar(values["FilterDTO.OfficeId"])}
         >
@@ -279,6 +287,7 @@ function FilterForm({ filter }: { filter: ListingFilterData }) {
           bind-query="officeId"
           id="FilterDTO_UserId"
           name="FilterDTO.UserId"
+          data-placeholder={filter.placeholders.agent || labels.FilterDTO_UserId}
           bind-url={bind.users}
           defaultValue={scalar(values["FilterDTO.UserId"])}
         >

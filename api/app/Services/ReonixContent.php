@@ -136,7 +136,7 @@ class ReonixContent
             return $this->mapTrainingList($this->collect('content/trainings', ['locale' => $locale]));
         }
         if ($kind === 'champion') {
-            return $this->mapChampions($this->collect('content/champions', ['locale' => $locale]));
+            return $this->mapChampions($this->collect('content/champions', ['locale' => $locale]), $locale);
         }
 
         $body = $this->client->get('content/articles', [
@@ -400,7 +400,7 @@ class ReonixContent
      * @param  array<string, mixed>  $body
      * @return array<string, mixed>|null
      */
-    private function mapChampions(array $body): ?array
+    private function mapChampions(array $body, string $locale): ?array
     {
         $list = $body['list'] ?? null;
         if (! is_array($list)) {
@@ -411,12 +411,18 @@ class ReonixContent
             if (! is_array($row)) {
                 continue;
             }
-            $locale = is_array($row['locale'] ?? null) ? $row['locale'] : [];
-            $document = is_array($locale['document'] ?? null) ? $locale['document'] : [];
+            $local = is_array($row['locale'] ?? null) ? $row['locale'] : [];
+            $document = is_array($local['document'] ?? null) ? $local['document'] : [];
+            $photos = [];
+            foreach (is_array($document['photos'] ?? null) ? $document['photos'] : [] as $photo) {
+                if (is_string($photo) && $photo !== '') {
+                    $photos[] = $photo;
+                }
+            }
             $groups[] = [
                 'kicker' => (string) ($document['kicker'] ?? ''),
-                'title' => (string) ($locale['title'] ?? ''),
-                'photos' => array_values($document['photos'] ?? []),
+                'title' => (string) ($local['title'] ?? ''),
+                'photos' => $photos,
             ];
         }
 
@@ -425,9 +431,50 @@ class ReonixContent
             'heading' => (string) ($list['heading'] ?? ''),
             'breadcrumb' => $list['breadcrumb'] ?? ['heading' => $list['heading'] ?? '', 'trail' => []],
             'meta' => $list['meta'] ?? [],
-            'groups' => $groups,
+            'groups' => $this->fillChampionPhotos($groups, $locale),
             'alternates' => is_array($list['alternates'] ?? null) ? $list['alternates'] : [],
         ];
+    }
+
+    /**
+     * Groups stored with a title and no photos still render as headings only.
+     * The reference photo set in the corporate seed fills those empty groups.
+     *
+     * @param  list<array{kicker: string, title: string, photos: list<string>}>  $groups
+     * @return list<array{kicker: string, title: string, photos: list<string>}>
+     */
+    private function fillChampionPhotos(array $groups, string $locale): array
+    {
+        $missing = false;
+        foreach ($groups as $group) {
+            if (($group['photos'] ?? []) === []) {
+                $missing = true;
+                break;
+            }
+        }
+        if (! $missing) {
+            return $groups;
+        }
+        $path = database_path('data/corporate-seed.json');
+        if (! is_file($path)) {
+            return $groups;
+        }
+        $data = json_decode((string) file_get_contents($path), true);
+        $seed = is_array($data['championGroups'][$locale] ?? null) ? $data['championGroups'][$locale] : [];
+        foreach ($groups as $index => $group) {
+            if (($group['photos'] ?? []) !== []) {
+                continue;
+            }
+            $photos = [];
+            foreach (is_array($seed[$index]['photos'] ?? null) ? $seed[$index]['photos'] : [] as $photo) {
+                if (is_string($photo) && $photo !== '') {
+                    $photos[] = $photo;
+                }
+            }
+            $groups[$index]['photos'] = $photos;
+        }
+
+        return $groups;
     }
 
     /**

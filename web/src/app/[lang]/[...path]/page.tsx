@@ -15,6 +15,15 @@ function publicPath(lang: string, segments: string[]): string {
   return `/${lang}/${segments.join("/")}`;
 }
 
+function queryText(value: string | string[] | undefined): string {
+  return typeof value === "string" ? value : "";
+}
+
+function queryPage(query: { page?: string | string[]; pageIndex?: string | string[] }): number {
+  const raw = queryText(query.page) || queryText(query.pageIndex);
+  return Number(raw || 1) || 1;
+}
+
 async function requestOrigin(): Promise<string> {
   const headerList = await headers();
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "";
@@ -27,7 +36,7 @@ export async function generateMetadata({
   searchParams,
 }: {
   params: Promise<{ lang: string; path: string[] }>;
-  searchParams: Promise<{ pageIndex?: string; searchText?: string } & Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ page?: string; pageIndex?: string; searchText?: string } & Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
   const { lang, path } = await params;
   const query = await searchParams;
@@ -38,8 +47,8 @@ export async function generateMetadata({
   const data = await fetchCorporatePage(
     lang,
     publicPath(lang, path),
-    Number(query.pageIndex ?? 1) || 1,
-    typeof query.searchText === "string" ? query.searchText : "",
+    queryPage(query),
+    queryText(query.searchText),
     query,
   );
   if (!data) {
@@ -65,7 +74,7 @@ export default async function CorporateCatchAll({
   searchParams,
 }: {
   params: Promise<{ lang: string; path: string[] }>;
-  searchParams: Promise<{ pageIndex?: string; searchText?: string } & Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ page?: string; pageIndex?: string; searchText?: string } & Record<string, string | string[] | undefined>>;
 }) {
   const { lang, path } = await params;
   const query = await searchParams;
@@ -78,8 +87,8 @@ export default async function CorporateCatchAll({
   const data = await fetchCorporatePage(
     locale,
     pathname,
-    Number(query.pageIndex ?? 1) || 1,
-    typeof query.searchText === "string" ? query.searchText : "",
+    queryPage(query),
+    queryText(query.searchText),
     query,
   );
 

@@ -92,7 +92,7 @@ class ReonixCatalogueTest extends TestCase
             ],
         ]);
         Http::fake([
-            'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices*' => Http::response(['data' => [
                 ['id' => 16369, 'name' => '1872', 'phone' => '+90 (232) 812-1872', 'address' => 'İzmir / Foça / Atatürk / Reha Midilli Cad. No:21'],
                 ['id' => 8, 'name' => 'Moda', 'phone' => '', 'address' => 'Moda'],
             ]]),
@@ -112,6 +112,63 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.hasResults', false)
             ->assertJsonPath('data.foundLabel', '0 Ofis Bulundu')
             ->assertJsonPath('data.emptyLabel', 'Henüz eklenmiş ofis yok.');
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'catalogue/offices') && str_contains($request->url(), 'q=yok'));
+    }
+
+    public function test_directory_search_folds_turkish_letters_and_forwards_q(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices*' => Http::response(['data' => [
+                ['id' => 1, 'name' => 'Boğaz', 'address' => 'İstanbul / Şişli / X', 'city' => 'İstanbul', 'district' => 'Şişli'],
+                ['id' => 2, 'name' => 'Gül', 'address' => 'Ankara / Çankaya', 'city' => 'Ankara', 'district' => 'Çankaya'],
+                ['id' => 3, 'name' => 'Işık', 'address' => 'İzmir / Konak', 'city' => 'İzmir', 'district' => 'Konak'],
+            ], 'places' => [
+                ['city' => 'Ankara', 'districts' => ['Çankaya']],
+                ['city' => 'İstanbul', 'districts' => ['Şişli']],
+                ['city' => 'İzmir', 'districts' => ['Konak']],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants*' => Http::response(['data' => [
+                ['id' => 9, 'name' => 'Gül Ak', 'office_name' => 'Işık', 'city' => 'İzmir', 'district' => 'Konak', 'office_id' => 3],
+                ['id' => 8, 'name' => 'Ada Yılmaz', 'office_name' => 'Boğaz', 'city' => 'İstanbul', 'district' => 'Şişli', 'office_id' => 1],
+            ]]),
+        ]);
+
+        foreach (['İstanbul', 'istanbul', 'ISTANBUL'] as $term) {
+            $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler&q='.rawurlencode($term))
+                ->assertOk()
+                ->assertJsonPath('data.pagination.total', 1)
+                ->assertJsonPath('data.items.0.name', 'Boğaz');
+        }
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler&q=sisli')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.name', 'Boğaz');
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler&q=gul')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.name', 'Gül');
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler&q=isik')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.name', 'Işık');
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler&il='.rawurlencode('İstanbul').'&ilce='.rawurlencode('Şişli'))
+            ->assertOk()
+            ->assertJsonPath('data.pagination.total', 1)
+            ->assertJsonPath('data.items.0.name', 'Boğaz')
+            ->assertJsonPath('data.filter.places.1.city', 'İstanbul');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar&q=gul')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.name', 'Gül Ak');
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar&q=isik')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.name', 'Gül Ak');
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar&q=sisli')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.name', 'Ada Yılmaz');
+
+        $names = collect($this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler')->assertOk()->json('data.items'))->pluck('name')->all();
+        $this->assertSame(['Boğaz', 'Gül', 'Işık'], $names);
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'catalogue/offices') && str_contains(rawurldecode($request->url()), 'q=İstanbul'));
     }
 
     public function test_the_portal_office_list_uses_reference_texts_without_a_seeded_page(): void
@@ -326,5 +383,36 @@ class ReonixCatalogueTest extends TestCase
         $this->get('/api/v1/catalogue/media/offices/7')
             ->assertOk()
             ->assertHeader('content-type', 'image/png');
+    }
+
+    public function test_an_office_card_in_the_consultant_list_uses_the_office_media_id(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants*' => Http::response([
+                'data' => [
+                    ['type' => 'consultant', 'id' => 3, 'name' => 'Ada Yilmaz', 'role' => 'agent', 'office_id' => 2, 'office_name' => 'Zirve'],
+                    ['type' => 'office', 'id' => 'office-9', 'office_id' => 9, 'name' => 'Çapa', 'has_image' => true, 'address' => 'İstanbul / Fatih', 'badges' => [['title' => 'Ayın Ofisi', 'period' => '2026-09']]],
+                ],
+                'offices' => [
+                    ['id' => '9', 'name' => 'Çapa'],
+                    ['id' => '2', 'name' => 'Zirve'],
+                ],
+            ]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
+            ->assertOk()
+            ->assertJsonPath('data.items.1.variant', 'office')
+            ->assertJsonPath('data.items.1.name', 'Çapa')
+            ->assertJsonPath('data.items.1.image', '/api/v1/catalogue/media/offices/9')
+            ->assertJsonPath('data.items.1.badges.0.title', 'Ayın Ofisi')
+            ->assertJsonPath('data.filter.offices.0.name', 'Çapa')
+            ->assertJsonPath('data.filter.ui.officeChoose', 'Ofis seçiniz')
+            ->assertJsonPath('data.pagination.totalPages', 1);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar&ofis=9')
+            ->assertOk()
+            ->assertJsonPath('data.pagination.total', 1)
+            ->assertJsonPath('data.items.0.name', 'Çapa');
     }
 }

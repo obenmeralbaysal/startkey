@@ -20,11 +20,19 @@ async function fillSelect(select: HTMLSelectElement, url: string) {
   const items = payload.items ?? [];
   const current = select.value;
   select.replaceChildren();
+  const hint = select.getAttribute("data-placeholder") ?? "";
   for (const item of items) {
     const option = document.createElement("option");
     option.value = String(item.id);
-    option.textContent = item.text;
+    const bare = item.text === "Seçiniz" || item.text === "Select" || item.text === "Wählen";
+    option.textContent = hint !== "" && (String(item.id) === "" || bare) ? hint : item.text;
     select.appendChild(option);
+  }
+  if (hint !== "" && ![...select.options].some((option) => option.value === "")) {
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = hint;
+    select.prepend(empty);
   }
   if (current && [...select.options].some((option) => option.value === current)) {
     select.value = current;

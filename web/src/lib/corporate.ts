@@ -320,6 +320,7 @@ export type CorporatePayload =
       filter: DirectoryFilterData;
       foundLabel: string;
       emptyLabel?: string;
+      emptySearchLabel?: string;
       items: DirectoryCardData[];
       hasResults: boolean;
       pagination: DirectoryPagination;
@@ -361,6 +362,7 @@ export type CorporatePayload =
       filter: DirectoryFilterData;
       foundLabel: string;
       emptyLabel?: string;
+      emptySearchLabel?: string;
       items: DirectoryCardData[];
       hasResults: boolean;
       pagination: DirectoryPagination;
@@ -410,6 +412,31 @@ export interface DirectoryPagination {
   searchQuery: string;
 }
 
+export interface DirectoryPlace {
+  city: string;
+  districts: string[];
+}
+
+export interface DirectoryUi {
+  searchLabel: string;
+  placeholder: string;
+  filterLabel: string;
+  cityLabel: string;
+  districtLabel: string;
+  officeLabel: string;
+  cityChoose: string;
+  districtChoose: string;
+  officeChoose: string;
+  officeSearch: string;
+  pageStatus: string;
+  clearLabel: string;
+  clearSearchLabel: string;
+  emptySearchLabel: string;
+  loadingLabel: string;
+  closeLabel: string;
+  chooseLabel: string;
+}
+
 export interface DirectoryFilterData {
   action: string;
   searchHeading: string;
@@ -419,6 +446,9 @@ export interface DirectoryFilterData {
   bindUrls: Record<string, string>;
   values: Record<string, string>;
   selectedLabels: Record<string, string>;
+  places?: DirectoryPlace[];
+  offices?: { id: string; name: string }[];
+  ui?: DirectoryUi;
 }
 
 export interface DirectoryCardData {
@@ -434,6 +464,7 @@ export interface DirectoryCardData {
   location?: string;
   instagram?: string;
   variant: "office" | "consultant";
+  badges?: { title: string; period: string }[];
 }
 
 export interface ListingCardData {
@@ -501,13 +532,14 @@ export async function fetchCorporatePage(
 ): Promise<CorporatePayload | null> {
   const params = new URLSearchParams({ locale, path });
   if (pageIndex > 1) {
+    params.set("page", String(pageIndex));
     params.set("pageIndex", String(pageIndex));
   }
   if (searchText !== "") {
     params.set("searchText", searchText);
   }
   for (const [key, value] of Object.entries(extraQuery)) {
-    if (key === "pageIndex" || key === "searchText" || value === undefined) {
+    if (key === "page" || key === "pageIndex" || key === "searchText" || key === "locale" || key === "path" || value === undefined) {
       continue;
     }
     if (Array.isArray(value)) {
