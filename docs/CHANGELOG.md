@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Backend]**: Katalog görselleri yerel diskte 6 saat tutulur; üst sistem susarsa eski kopya döner, eşleşen ETag 304 verir. Medya ucu dakikada 600 isteğe çıkar. Galeri küçük resimleri ve aktif olmayan kareler geç yüklenir. #2185
 - **[UI]**: İlan detayındaki danışman fotoğrafı 72px yuvarlak yerine kartın tam genişliğinde, kendi oranıyla gösterilir; kırpılmaz, yüz kesilmez. Telefonda da kart genişliğindedir. #2185
 - **[UI]**: Danışman listesinde ofis kartları yeniden durur. Kişi başına bir kart kalır; ofis satırları aynen geçer ve kişilerle tek Türkçe A-Z sırada karışır. Ofis kartının alt satırı Gayrimenkul Danışmanı (EN Real Estate Consultant, DE Immobilienberater), görseli ofis logosu, bağlantısı ofis detayıdır. Liste sayacı ofisleri de sayar; boş sonuç “0 Danışman Bulundu” kalır. Üst sayaç yalnız kişileri sayar. #2178
 - **[UI]**: Üst menü, iyileştirme sunumundaki 72px beyaz çubuktur. Sıra Kurumsal, Portföyler, Danışmanlar, Ofisler, Akademi ve Medya’dır; İletişim Kurumsal’da, haber ve blog Medya’dadır. Kırmızı düğme Başvuru menüsüdür (Franchise ve Danışman). Telefonda menü soldan açılır; çubukta ☰ ve kısa Başvur kalır. Harita başlığı ofis ve ülke sayısı ile ülke etiketlerini canlı pinlerden üretir; pini olmayan listede başlık basılmaz. #2185

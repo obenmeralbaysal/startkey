@@ -83,7 +83,7 @@ function FramedImage({
   return (
     <picture>
       {photo.webp ? <source srcSet={photo.webp} type="image/webp" /> : null}
-      <img src={photo.image} alt={alt} onError={onFail} />
+      <img src={photo.image} alt={alt} loading="eager" fetchPriority="high" onError={onFail} />
     </picture>
   );
 }
@@ -240,7 +240,7 @@ export function ListingGallery({
                   aria-label={label}
                   onClick={(event) => openAt(slot.index, event.currentTarget)}
                 >
-                  <img src={photo.thumb || photo.image} alt="" onError={() => setFailed((current) => ({ ...current, [available.indexOf(photo)]: true }))} />
+                  <img src={photo.thumb || photo.image} alt="" loading="lazy" decoding="async" onError={() => setFailed((current) => ({ ...current, [available.indexOf(photo)]: true }))} />
                   {slot.kind === "more" ? <span className="sk-photo-more">{label}</span> : null}
                 </button>
               );
