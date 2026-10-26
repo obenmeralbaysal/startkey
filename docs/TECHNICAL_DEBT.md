@@ -2,6 +2,24 @@
 
 Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
+### TD-024 — Ofis grubu, şube/TTBS ve toplu oran ucu eksik
+
+**Alan:** Portal / Ofis ayarları ve ekip
+
+**Mevcut Durum:**
+
+Ofis adı, telefon, adres, Sahibinden mağaza bağlantısı, TTBS ve ofis kuralları `PUT settings/office` grubuna yazılır. Uç 404 dönerse form hata yerine "Ofis bilgisi kaydı henüz hazır değil." basar. Logo ve marka rengi yalnız okunur. Ekip formundaki şube ve TTBS/MYK üye gövdesine konmaz; doluysa "Şube ve TTBS/MYK kaydı henüz hazır değil." görünür. Toplu oran yalnız `POST commission-policy/changes` ile gider ve doğrudan uygulanmaz. Uç 404 ise "Toplu oran onay ucu henüz hazır değil. Oran uygulanmadı." basılır.
+
+**Geçici Olmasının Nedeni:**
+
+MD backlog 6 (üyede şube ve TTBS/MYK) ve backlog 7 (ofis ayar grubu) bu depoda yok. Toplu oran onay ucu da aynı listede eksik.
+
+**Gelecekteki Implementasyon:**
+
+`settings/office` kaydı aynı alanlarla durur. Şube ve TTBS/MYK üye oluşturma ve satır güncellemesine bağlanır. `commission-policy/changes` 2xx olunca durum "Onaya gönderildi" kalır.
+
+**Durum:** Açık
+
 ### TD-023 — Portal üst araması sonuç üretmez
 
 **Alan:** Portal / Arama

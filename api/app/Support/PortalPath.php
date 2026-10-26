@@ -68,6 +68,7 @@ final class PortalPath
         'profile',
         'reports',
         'roles',
+        'settings',
         'team',
         'visits',
         'whatsapp',

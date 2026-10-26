@@ -83,6 +83,11 @@ export function canManageOffice(role: OfficeRole, office: OfficeMembership | und
   return canManageMatchmaking(role, office);
 }
 
+/** Office profile writes follow the same matrix as office settings. Everyone else stays read-only. */
+export function canEditOfficeSettings(role: OfficeRole, office: OfficeMembership | undefined): boolean {
+  return canManageOffice(role, office);
+}
+
 export const SETTINGS_DENIED = "Bu ayara erişim yetkiniz yok";
 
 const SETTINGS_PAGES = [

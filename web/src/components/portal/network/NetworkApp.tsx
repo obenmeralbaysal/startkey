@@ -197,8 +197,8 @@ function SummaryScreen({ lang }: { lang: Locale }) {
     [copy.branches, summary.branches],
   ] as const;
   return (
-    <section>
-      <h1>{copy.summary}</h1>
+    <section className="ux-screen">
+      <header className="ux-page-head"><h1>{copy.summary}</h1></header>
       <div className="glass-kpis glass-kpis-5">
         {cards.map(([label, value]) => (
           <article key={label} className="glass-kpi">
@@ -225,8 +225,8 @@ function OfficeScreen({ lang }: { lang: Locale }) {
   }), [lang, params]);
   const state = useNetwork("offices", query, lang);
   return (
-    <section>
-      <h1>{copy.offices}</h1>
+    <section className="ux-screen">
+      <header className="ux-page-head"><h1>{copy.offices}</h1></header>
       <SearchBox lang={lang} section="offices" placeholder={copy.searchOffices} />
       {state.kind === "loading" ? <Skeleton label={copy.loading} /> : null}
       {state.kind === "error" ? <ErrorState message={state.message || copy.error} retry={copy.retry} onRetry={state.retry} /> : null}
@@ -247,8 +247,8 @@ function ConsultantScreen({ lang }: { lang: Locale }) {
   const state = useNetwork("consultants", query, lang);
   const options = useOfficeOptions();
   return (
-    <section>
-      <h1>{copy.consultants}</h1>
+    <section className="ux-screen">
+      <header className="ux-page-head"><h1>{copy.consultants}</h1></header>
       <div className="glass-network-tools">
         <SearchBox lang={lang} section="consultants" placeholder={copy.searchConsultants} />
         <OfficeFilter lang={lang} options={options} />
@@ -264,23 +264,32 @@ function OfficeList({ lang, page, empty }: { lang: Locale; page: NetworkPage<Net
   const copy = PORTAL_NETWORK_COPY[lang];
   if (page.data.length === 0) return <EmptyState message={empty} />;
   return (
-    <>
-      <ul className="glass-list">
-        {page.data.map((office) => (
-          <li key={office.id}>
-            <Link className="glass-list-row glass-network-row" href={officeConsultantsHref(office.id, lang)}>
-              <Mark label={office.name} src={office.logo} />
-              <span>
-                <strong>{office.name}</strong>
-                <span>{[office.city, `${office.consultant_count} ${copy.consultantsCount}`, `${office.portfolio_count} ${copy.portfolios}`].filter(Boolean).join(" · ")}</span>
-              </span>
-              <Icon name="chevronRight" />
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <div className="ux-card">
+      <div className="ux-table-wrap">
+        <table className="ux-table">
+          <thead>
+            <tr>
+              <th>{copy.offices}</th>
+              <th>{copy.consultantsCount}</th>
+              <th>{copy.portfolios}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {page.data.map((office) => (
+              <tr key={office.id}>
+                <td data-label={copy.offices}>
+                  <Link href={officeConsultantsHref(office.id, lang)}>{office.name}</Link>
+                  {office.city ? <small className="ux-muted">{office.city}</small> : null}
+                </td>
+                <td data-label={copy.consultantsCount}>{office.consultant_count}</td>
+                <td data-label={copy.portfolios}>{office.portfolio_count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <Pager lang={lang} section="offices" pagination={page.pagination} />
-    </>
+    </div>
   );
 }
 
@@ -288,22 +297,32 @@ function ConsultantList({ lang, page, empty }: { lang: Locale; page: NetworkPage
   const copy = PORTAL_NETWORK_COPY[lang];
   if (page.data.length === 0) return <EmptyState message={empty} />;
   return (
-    <>
-      <ul className="glass-list">
-        {page.data.map((row) => (
-          <li key={row.id}>
-            <div className="glass-list-row glass-network-row">
-              <Mark label={row.name} src={row.photo} />
-              <span>
-                <strong>{row.name}</strong>
-                <span>{[consultantTitle(row.title, lang), row.office?.name, `${row.portfolio_count} ${copy.portfolios}`].filter(Boolean).join(" · ")}</span>
-              </span>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="ux-card">
+      <div className="ux-table-wrap">
+        <table className="ux-table">
+          <thead>
+            <tr>
+              <th>{copy.consultants}</th>
+              <th>{copy.offices}</th>
+              <th>{copy.portfolios}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {page.data.map((row) => (
+              <tr key={row.id}>
+                <td data-label={copy.consultants}>
+                  <strong>{row.name}</strong>
+                  {consultantTitle(row.title, lang) ? <small className="ux-muted">{consultantTitle(row.title, lang)}</small> : null}
+                </td>
+                <td data-label={copy.offices}>{row.office?.name ?? ""}</td>
+                <td data-label={copy.portfolios}>{row.portfolio_count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <Pager lang={lang} section="consultants" pagination={page.pagination} />
-    </>
+    </div>
   );
 }
 
@@ -407,12 +426,6 @@ function ErrorState({ message, retry, onRetry }: { message: string; retry: strin
       <button className="glass-btn-lite" type="button" onClick={onRetry}>{retry}</button>
     </div>
   );
-}
-
-function Mark({ label, src }: { label: string; src: string | null }) {
-  if (src) return <img className="glass-network-mark" alt="" src={src} />;
-  const letters = label.trim().slice(0, 2).toLocaleUpperCase("tr-TR");
-  return <span className="glass-network-mark">{letters || "?"}</span>;
 }
 
 function Loading({ label }: { label: string }) {

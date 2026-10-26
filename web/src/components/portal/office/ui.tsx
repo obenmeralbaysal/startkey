@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { createContext, useContext, useEffect, useRef, useState, type InputHTMLAttributes } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
 
 import type { Locale } from "@/lib/locales";
 import type { OfficeMembership } from "@/components/portal/office/access";
 import { isRecord, text, type OfficeRecord } from "@/components/portal/office/api";
+import { displayCell } from "@/lib/office-settings";
 import { hasWatermarkedMedia, WatermarkBadge } from "@/components/portal/office/watermark";
 import { Icon, Sheet } from "@/components/portal/shell";
 
@@ -70,34 +71,83 @@ function format(value: unknown) {
   return String(value);
 }
 
-export function RecordTable({ rows, href, loading = false }: { rows: OfficeRecord[]; href?: (row: OfficeRecord) => string; loading?: boolean }) {
+export function PageFrame({
+  title,
+  description,
+  crumb,
+  action,
+  children,
+}: {
+  title: string;
+  description?: string;
+  crumb?: string[];
+  action?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <section className="ux-screen">
+      <header className="ux-page-head">
+        <div>
+          {crumb && crumb.length > 0 ? <nav className="ux-crumb" aria-label="Breadcrumb">{crumb.join(" / ")}</nav> : null}
+          <h1>{title}</h1>
+          {description ? <p>{description}</p> : null}
+        </div>
+        {action}
+      </header>
+      <div className="ux-card">{children}</div>
+    </section>
+  );
+}
+
+export function RecordTable({
+  rows,
+  href,
+  loading = false,
+  empty = "Kayıt yok.",
+  recordLabel = "Kayıt",
+  summaryLabel = "Özet",
+}: {
+  rows: OfficeRecord[];
+  href?: (row: OfficeRecord) => string;
+  loading?: boolean;
+  empty?: string;
+  recordLabel?: string;
+  summaryLabel?: string;
+}) {
   if (loading) {
     return <Skeleton />;
   }
   if (rows.length === 0) {
-    return <EmptyState />;
+    return <EmptyState message={empty} />;
   }
   return (
-    <ul className="glass-list">
-      {rows.map((row) => {
-        const id = String(row.id ?? text(row, ["title", "name"]));
-        const label = text(row, typeof row.title === "string" && row.title ? ["title"] : ["first_name", "name", "applicant_name", "office_name", "status"]);
-        const extra = text(row, ["status", "price", "phone", "email", "type"]);
-        const body = (
-          <>
-            <strong>{label || id}</strong>
-            {extra === label ? null : <span>{extra}</span>}
-            <WatermarkBadge flagged={hasWatermarkedMedia(row)} compact />
-            {href ? <Icon name="chevronRight" /> : null}
-          </>
-        );
-        return (
-          <li key={id}>
-            {href ? <Link className="glass-list-row" href={href(row)}>{body}</Link> : <div className="glass-list-row">{body}</div>}
-          </li>
-        );
-      })}
-    </ul>
+    <div className="ux-table-wrap">
+      <table className="ux-table">
+        <thead>
+          <tr>
+            <th>{recordLabel}</th>
+            <th>{summaryLabel}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => {
+            const id = String(row.id ?? text(row, ["title", "name"]));
+            const label = text(row, typeof row.title === "string" && row.title ? ["title"] : ["first_name", "name", "applicant_name", "office_name", "status"]);
+            const extra = displayCell(text(row, ["status", "price", "phone", "email", "type"]));
+            const title = label || id;
+            return (
+              <tr key={id}>
+                <td data-label={recordLabel}>
+                  {href ? <Link href={href(row)}>{title}</Link> : <strong>{title}</strong>}
+                  <WatermarkBadge flagged={hasWatermarkedMedia(row)} compact />
+                </td>
+                <td data-label={summaryLabel}>{extra === title ? "" : extra}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

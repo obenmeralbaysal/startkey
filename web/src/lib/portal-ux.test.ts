@@ -50,6 +50,9 @@ test("office menu follows role access and the mobile bar is the four work items"
   const owner = officeMenu("owner", office("owner"), "tr");
   assert.deepEqual(owner.filter((entry) => entry.group === "manage").map((entry) => entry.id), ["office", "team", "branches", "notifications", "settings"]);
   assert.equal(owner.find((entry) => entry.id === "reports")?.label, "Raporlar & Hakediş");
+  assert.equal(owner.find((entry) => entry.id === "lease")?.label, "Kira takvimi");
+  assert.equal(JSON.stringify(PORTAL_UX_COPY).includes("Kira radarı"), false);
+  assert.equal(JSON.stringify(PORTAL_UX_COPY).includes("Lease radar"), false);
   assert.deepEqual(officeBottomNav(owner).map((entry) => entry.bottomLabel), ["Özet", "Kişiler", "Portföy", "Talepler"]);
 
   const agent = officeMenu("agent", office("agent"), "tr").map((entry) => entry.id);
