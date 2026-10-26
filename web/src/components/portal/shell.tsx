@@ -110,7 +110,7 @@ export function AppShell({
         </div>
       </header>
       <main className="glass-main">{children}</main>
-      <nav className="glass-tabbar" aria-label="Menü">
+      <nav className="glass-tabbar" aria-label="Menü" data-count={tabs.length + (rest.length > 0 ? 1 : 0)} style={{ gridTemplateColumns: `repeat(${tabs.length + (rest.length > 0 ? 1 : 0)}, minmax(0, 1fr))` }}>
         {tabs.map((item) => (
           <Link key={item.href} className="glass-tab" href={item.href} aria-current={item.current ? "page" : undefined}>
             <Icon name={item.icon} />

@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { DeskStats } from "@/components/portal/DeskStats";
 import { FranchiseDesk } from "@/components/portal/FranchiseDesk";
+import { officeCall } from "@/components/portal/office/api";
 import { EmptyState, Skeleton } from "@/components/portal/office/ui";
 import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
+import { networkHome, showNetworkPortal } from "@/lib/portal-network";
 
 export type PortalOffice = { id: number; name: string; role: string | null };
 
@@ -40,17 +42,16 @@ type ConsultantRow = {
 
 type PackageOption = { code: string; name: string };
 
-export function PortalDesk({ user, onLogout }: { user: PortalUser; onLogout: () => void }) {
+export function PortalDesk({ user, lang = "tr", onLogout }: { user: PortalUser; lang?: string; onLogout: () => void }) {
   return (
     <ToastProvider>
-      <DeskScreen user={user} onLogout={onLogout} />
+      <DeskScreen user={user} lang={lang} onLogout={onLogout} />
     </ToastProvider>
   );
 }
 
-function DeskScreen({ user, onLogout }: { user: PortalUser; onLogout: () => void }) {
-  const ownerOffices = user.offices.filter((office) => office.role === "owner");
-  const isAdmin = user.is_admin;
+function DeskScreen({ user, lang, onLogout }: { user: PortalUser; lang: string; onLogout: () => void }) {
+  const [gate, setGate] = useState<"check" | "desk">("check");
   const [hash, setHash] = useState("");
 
   useEffect(() => {
@@ -59,6 +60,41 @@ function DeskScreen({ user, onLogout }: { user: PortalUser; onLogout: () => void
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (showNetworkPortal(user)) {
+      window.location.replace(networkHome(lang));
+      return;
+    }
+    officeCall("me", null)
+      .then((me) => {
+        if (cancelled) return;
+        if (showNetworkPortal(me)) {
+          window.location.replace(networkHome(lang));
+          return;
+        }
+        setGate("desk");
+      })
+      .catch(() => {
+        if (!cancelled) setGate("desk");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [lang, user]);
+
+  if (gate === "check") {
+    return (
+      <main className="glass-loading" aria-busy="true">
+        <img className="glass-logo" alt="StartKey" src="/portal/img/startkey_logo.png" />
+        <span className="glass-spinner" />
+      </main>
+    );
+  }
+
+  const ownerOffices = user.offices.filter((office) => office.role === "owner");
+  const isAdmin = user.is_admin;
 
   const anchors: Array<[string, string, IconName]> = [
     ...(isAdmin

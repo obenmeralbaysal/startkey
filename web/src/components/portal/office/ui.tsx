@@ -105,9 +105,9 @@ export function Notice({ message }: { message: string }) {
   return <p className="glass-notice" data-tone={message.startsWith("Hata") ? "error" : "info"}>{message}</p>;
 }
 
-export function Skeleton({ lines = 4 }: { lines?: number }) {
+export function Skeleton({ lines = 4, label = "Yükleniyor" }: { lines?: number; label?: string }) {
   return (
-    <div className="glass-skeleton" aria-busy="true" aria-label="Yükleniyor">
+    <div className="glass-skeleton" aria-busy="true" aria-label={label}>
       {Array.from({ length: lines }, (_, index) => <span key={index} />)}
     </div>
   );

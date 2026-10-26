@@ -2,6 +2,24 @@
 
 Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
+### TD-022 — Franchise ağ ekranları mock ile görüntülenir
+
+**Alan:** Portal / Franchise ağı
+
+**Mevcut Durum:**
+
+`/portal/network` canlıda `GET /api/v1/portal/network/summary`, `/offices` ve `/consultants` okur. `NEXT_PUBLIC_PORTAL_NETWORK_MOCK=1` iken aynı üç ekran yerel fixture basar.
+
+**Geçici Olmasının Nedeni:**
+
+Ekran görüntüsü ve oturumsuz önizleme için mock durur. Canlı liste StartKey vekilindedir.
+
+**Gelecekteki Implementasyon:**
+
+Mock üretimde kapalı kalır.
+
+**Durum:** Açık
+
 ### TD-001 — Ana sayfa CRM verileri referans anlık görüntüsünden geliyor
 
 **Alan:** Backend / Ana sayfa

@@ -107,7 +107,7 @@ export function PortalLogin({ lang }: { lang: PortalLoginLang }) {
   }
 
   if (user) {
-    return <PortalDesk user={user} onLogout={() => setUser(null)} />;
+    return <PortalDesk user={user} lang={lang} onLogout={() => setUser(null)} />;
   }
 
   return (

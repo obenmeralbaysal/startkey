@@ -2996,3 +2996,150 @@ button.glass-chip {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+.glass-lang-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.glass-lang-row a {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  background: var(--material);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.glass-lang-row a[aria-current="true"] {
+  color: #fff;
+  background: #1d1d1f;
+}
+
+.glass-network-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 260px);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.glass-network-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.glass-network-row > span {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 2px;
+  min-width: 0;
+  max-width: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+.glass-network-row strong,
+.glass-network-row > span > span {
+  flex: none;
+  order: 0;
+  max-width: none;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.glass-network-row > span > span {
+  color: var(--label-2);
+  font-size: 14px;
+}
+
+.glass-network-row .glass-icon {
+  order: 0;
+}
+
+.glass-network-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.glass-kpi-text strong {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.glass-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.glass-pager [aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+@media (max-width: 719px) {
+  .glass-network-tools {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .glass-tabbar[data-count="3"] .glass-tab span {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.15;
+  }
+
+  .glass-network-row strong,
+  .glass-network-row > span,
+  .glass-network-row > span > span,
+  .glass-network-row .glass-icon {
+    flex-basis: auto;
+    order: 0;
+    white-space: normal;
+  }
+}
+
+/* #2182 network header: language row + logout */
+.glass-network-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.glass-network-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+  background: #fff;
+  color: #1f2937;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.glass-network-logout:hover { background: #f3f4f6; border-color: rgba(15, 23, 42, 0.2); }
+.glass-network-logout:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
