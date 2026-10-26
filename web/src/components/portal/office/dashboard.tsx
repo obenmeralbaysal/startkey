@@ -12,9 +12,10 @@ import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import {
   QUICK_ACTIONS,
   appointmentLines,
+  earningsDeepLink,
   greetingTitle,
   officeCaption,
-  pendingPortfolios,
+  pendingWorkLabel,
   summaryFigures,
   withLang,
 } from "@/lib/portal-ux";
@@ -57,8 +58,8 @@ export function OfficeDashboard() {
   const appointments = useOfficeData("appointments");
   const figures = summaryFigures(stats.data === undefined ? null : stats.data, pending.data === undefined ? null : pending.data, showEarnings);
   const loading = stats.data === undefined;
-  const rows = manager ? pendingPortfolios(pending.data) : [];
   const today = appointmentLines(appointments.data, new Date(), locale);
+  const pendingText = pendingWorkLabel(loading ? "—" : formatNumber(figures.pending), locale);
   const actions = [
     { id: "portfolio", title: copy.newPortfolio, hint: copy.newPortfolioHint, icon: "plus" as const, tone: "red" },
     { id: "contact", title: copy.newContact, hint: copy.newContactHint, icon: "person" as const, tone: "navy" },
@@ -93,9 +94,13 @@ export function OfficeDashboard() {
         <Kpi label={copy.pending} value={loading ? "—" : formatNumber(figures.pending)} hint={copy.review} href={withLang("/portal/office/portfolios", locale)} />
         <Kpi label={copy.newMatches} value={loading ? "—" : formatNumber(figures.matches)} hint={figures.matchesAreWeek ? copy.last7 : ""} href={withLang("/portal/office/matches", locale)} />
         {showEarnings ? (
-          <Kpi label={copy.monthEarnings} value={loading ? "—" : formatMoney(figures.earnings ?? 0)} hint={figures.closings == null ? "" : `${formatNumber(figures.closings)} ${copy.closings}`} href={withLang("/portal/office/earnings", locale)} />
+          <Kpi label={copy.monthEarnings} value={loading ? "—" : formatMoney(figures.earnings ?? 0)} hint={figures.closings == null ? "" : `${formatNumber(figures.closings)} ${copy.closings}`} href={withLang(earningsDeepLink(role), locale)} />
         ) : null}
       </div>
+
+      <p className="ux-pending-line">
+        <Link className="ux-pending" href={withLang("/portal/office/portfolios", locale)}>{pendingText}</Link>
+      </p>
 
       <div className="ux-split">
         <section className="ux-panel">
@@ -113,23 +118,6 @@ export function OfficeDashboard() {
             </ul>
           )}
         </section>
-        {manager ? (
-          <section className="ux-panel">
-            <div className="ux-split-head"><h2>{copy.pendingTitle}</h2></div>
-            {pending.data === undefined ? <p className="ux-muted">…</p> : rows.length === 0 ? <p className="ux-muted">{copy.noPending}</p> : (
-              <ul>
-                {rows.map((row) => (
-                  <li key={row.id}>
-                    <Link className="ux-row" href={withLang(`/portal/office/portfolios/${row.id}`, locale)}>
-                      <span><strong>{row.title}</strong>{row.meta ? <small>{row.meta}</small> : null}</span>
-                      <span className="ux-pill">{copy.review}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        ) : null}
       </div>
     </div>
   );

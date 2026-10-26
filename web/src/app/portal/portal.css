@@ -3820,7 +3820,8 @@ button.glass-chip {
   border-bottom: 1px solid rgba(0, 33, 114, 0.1);
 }
 
-.ux-tabs button {
+.ux-tabs button,
+.ux-tabs a.ux-tab {
   min-height: 44px;
   padding: 0;
   border: 0;
@@ -3829,9 +3830,24 @@ button.glass-chip {
   font-weight: 700;
 }
 
-.ux-tabs button[aria-selected="true"] {
+.glass-page a.ux-tab,
+.glass-page a.ux-tab:hover,
+.glass-page a.ux-tab:focus-visible,
+.glass-page a.ux-pending,
+.glass-page a.ux-pending:hover,
+.glass-page a.ux-pending:focus-visible {
+  color: var(--ux-navy, #002172);
+  text-decoration: none;
+}
+
+.ux-tabs button[aria-selected="true"],
+.glass-page a.ux-tab[aria-selected="true"] {
   color: var(--ux-navy, #002172);
   box-shadow: inset 0 -2px 0 var(--ux-red, #ec3323);
+}
+
+.ux-pending-line {
+  margin: 16px 0 0;
 }
 
 .ux-form-grid {

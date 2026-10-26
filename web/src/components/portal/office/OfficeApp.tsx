@@ -19,6 +19,7 @@ import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type 
 import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import type { Locale } from "@/lib/locales";
 import {
+  PORTAL_SEARCH_READY,
   menuCurrent,
   officeBottomNav,
   officeHome,
@@ -42,15 +43,15 @@ type OfficeBoot = {
 let officeBoot: OfficeBoot | null = null;
 const OFFICE_BOOT_MS = 20_000;
 
-export function OfficeApp({ parts, lang }: { parts: string[]; lang: Locale }) {
+export function OfficeApp({ parts, lang, tab = "" }: { parts: string[]; lang: Locale; tab?: string }) {
   return (
     <ToastProvider>
-      <OfficeScreen parts={parts} lang={lang} />
+      <OfficeScreen parts={parts} lang={lang} tab={tab} />
     </ToastProvider>
   );
 }
 
-function OfficeScreen({ parts, lang }: { parts: string[]; lang: Locale }) {
+function OfficeScreen({ parts, lang, tab }: { parts: string[]; lang: Locale; tab: string }) {
   const router = useRouter();
   const copy = PORTAL_UX_COPY[lang];
   const [ready, setReady] = useState(false);
@@ -186,7 +187,7 @@ function OfficeScreen({ parts, lang }: { parts: string[]; lang: Locale }) {
     label: item.label,
     bottomLabel: item.bottomLabel,
     icon: item.icon as IconName,
-    current: menuCurrent(item.id, parts),
+    current: menuCurrent(item.id, parts, role === "agent"),
   });
   const shellLinks = menu.map(toLink);
   const workLinks = menu.filter((item) => item.group === "work").map(toLink);
@@ -222,7 +223,7 @@ function OfficeScreen({ parts, lang }: { parts: string[]; lang: Locale }) {
         }
         toolbar={
           <>
-            <PortalSearch label={copy.searchLabel} placeholder={copy.searchPlaceholder} />
+            {PORTAL_SEARCH_READY ? <PortalSearch label={copy.searchLabel} placeholder={copy.searchPlaceholder} /> : null}
             <NotificationBell />
             <UserChip first={userName.first} last={userName.last} role={role} locale={lang} />
           </>
@@ -247,7 +248,7 @@ function OfficeScreen({ parts, lang }: { parts: string[]; lang: Locale }) {
         }
       >
         <div key={`${officeId}:${section.join("/")}`} className="glass-view">
-          <OfficeWork key={officeId} parts={section} />
+          <OfficeWork key={officeId} parts={section} tab={tab} />
         </div>
       </AppShell>
     </OfficeProvider>

@@ -6,21 +6,27 @@ import { PORTAL_UX_COPY } from "../content/portal-ux.ts";
 import { NETWORK_MENU } from "./portal-network.ts";
 import {
   PORTAL_SEARCH_READY,
+  PROFILE_SCREEN_FIELDS,
   QUICK_ACTIONS,
   SECTION_DENIED_TEXT,
+  UNVAN_CANDIDATE_FIELDS,
   appointmentLines,
+  earningsDeepLink,
   greetingTitle,
   networkChrome,
   notificationBadge,
   notificationLines,
   officeBottomNav,
   officeCaption,
+  menuCurrent,
   officeMenu,
+  pendingWorkLabel,
   personTitle,
   officeRoleBadge,
   officeSectionDenied,
   pendingPortfolios,
   portalLandingHref,
+  reportsHubTab,
   summaryFigures,
 } from "./portal-ux.ts";
 
@@ -51,10 +57,18 @@ test("office menu follows role access and the mobile bar is the four work items"
   const owner = officeMenu("owner", office("owner"), "tr");
   assert.deepEqual(owner.filter((entry) => entry.group === "manage").map((entry) => entry.id), ["office", "team", "branches", "notifications", "settings"]);
   assert.equal(owner.find((entry) => entry.id === "reports")?.label, "Raporlar & Hakediş");
-  assert.equal(owner.find((entry) => entry.id === "lease")?.label, "Kira takvimi");
+  assert.equal(owner.some((entry) => entry.id === "earnings"), false);
+  const portfolios = owner.find((entry) => entry.id === "portfolios");
+  assert.equal(portfolios?.label, "Portföyler");
+  assert.equal(portfolios?.bottomLabel, portfolios?.label);
+  assert.equal(portfolios?.icon, "building");
+  assert.equal(owner.find((entry) => entry.id === "lease")?.label, PORTAL_UX_COPY.tr.lease);
+  assert.equal(countText(PORTAL_UX_COPY.tr, "Kira takvimi"), 1);
+  assert.equal(countText(PORTAL_UX_COPY.en, "Lease calendar"), 1);
+  assert.equal(countText(PORTAL_UX_COPY.de, "Mietkalender"), 1);
   assert.equal(JSON.stringify(PORTAL_UX_COPY).includes("Kira radarı"), false);
   assert.equal(JSON.stringify(PORTAL_UX_COPY).includes("Lease radar"), false);
-  assert.deepEqual(officeBottomNav(owner).map((entry) => entry.bottomLabel), ["Özet", "Kişiler", "Portföy", "Talepler"]);
+  assert.deepEqual(officeBottomNav(owner).map((entry) => entry.bottomLabel), ["Özet", "Kişiler", "Portföyler", "Talepler"]);
 
   const agent = officeMenu("agent", office("agent"), "tr").map((entry) => entry.id);
   assert.equal(agent.includes("team"), false);
@@ -62,17 +76,33 @@ test("office menu follows role access and the mobile bar is the four work items"
   assert.equal(agent.includes("branches"), false);
   assert.equal(agent.includes("notifications"), true);
   assert.equal(agent.includes("earnings"), true);
+  assert.equal(officeMenu("agent", office("agent"), "tr").find((entry) => entry.id === "earnings")?.label, "Hakedişim");
+  assert.equal(officeMenu("agent", office("agent"), "tr").find((entry) => entry.id === "reports")?.label, "Performansım");
 
-  const manager = officeMenu("manager", office("manager"), "tr").map((entry) => entry.id);
-  assert.equal(manager.includes("earnings"), false);
+  const manager = officeMenu("manager", office("manager"), "tr");
+  assert.equal(manager.some((entry) => entry.id === "earnings"), false);
+  assert.equal(manager.find((entry) => entry.id === "reports")?.label, "Raporlar & Hakediş");
   assert.equal(officeMenu("manager", office("manager", { managers_can_view_earnings: true }), "tr").some((entry) => entry.id === "reports" && entry.label === "Raporlar & Hakediş"), true);
   const branched = officeMenu("office_manager", office("office_manager", { branch_id: 4 }), "en").map((entry) => entry.id);
-  assert.equal(branched.includes("office"), false);
+  assert.equal(branched.includes("office"), true);
   assert.equal(branched.includes("branches"), false);
   assert.equal(branched.includes("team"), true);
 
   assert.equal(officeSectionDenied(["earnings"], "manager", office("manager")), true);
+  assert.equal(officeSectionDenied(["reports", "earnings"], "manager", office("manager")), true);
+  assert.equal(officeSectionDenied(["reports"], "manager", office("manager")), false);
   assert.equal(officeSectionDenied(["earnings"], "manager", office("manager", { managers_can_view_earnings: true })), false);
+  assert.equal(officeSectionDenied(["reports", "earnings"], "owner", office("owner")), false);
+  assert.equal(reportsHubTab(["reports"], "earnings", true), "earnings");
+  assert.equal(reportsHubTab(["reports"], "earnings", false), "reports");
+  assert.equal(reportsHubTab(["reports", "earnings"], null, true), "earnings");
+  assert.equal(earningsDeepLink("agent"), "/portal/office/earnings");
+  assert.equal(earningsDeepLink("owner"), "/portal/office/reports?tab=earnings");
+  assert.equal(earningsDeepLink("office_manager"), "/portal/office/reports?tab=earnings");
+  assert.equal(pendingWorkLabel("4", "tr"), "Bekleyen işler: 4");
+  assert.equal(menuCurrent("reports", ["earnings"], false), true);
+  assert.equal(menuCurrent("reports", ["reports", "earnings"], false), true);
+  assert.equal(menuCurrent("reports", ["earnings"], true), false);
   assert.equal(officeSectionDenied(["earnings"], "agent", office("agent")), false);
   assert.equal(officeSectionDenied(["settings", "team"], "agent", office("agent")), true);
   assert.equal(officeSectionDenied(["settings", "notifications"], "agent", office("agent")), false);
@@ -123,9 +153,14 @@ test("greeting and office line drop an empty title instead of leaving a dash", (
   assert.equal(officeCaption("Kadıköy", "owner", "tr"), "Kadıköy ofisi");
   assert.equal(officeCaption("Kadıköy", "office-manager", "en"), "Kadıköy office");
   assert.equal(officeCaption("Kadıköy", "AGENT", "de"), "Büro Kadıköy");
+  assert.equal(personTitle({ title: "Gayrimenkul Danışmanı" }), "");
   assert.equal(personTitle({ title: "Broker" }), "");
-  assert.equal(personTitle({ job_title: "manager" }), "");
-  assert.equal(personTitle({ unvan: "Lider" }), "Lider");
+  assert.equal(personTitle({ job_title: "Lider" }), "");
+  assert.equal(personTitle({ position_name: "Lider" }), "");
+  assert.equal(personTitle({ unvan: "Lider" }), "");
+  for (const field of UNVAN_CANDIDATE_FIELDS) {
+    assert.equal((PROFILE_SCREEN_FIELDS as readonly string[]).includes(field), false);
+  }
 });
 
 test("summary figures use numbers only and hide manager earnings without the flag", () => {
@@ -173,3 +208,9 @@ test("summary figures use numbers only and hide manager earnings without the fla
   ]);
   assert.equal(JSON.stringify(empty).includes("unexpected"), false);
 });
+
+function countText(value: unknown, needle: string): number {
+  if (typeof value === "string") return value.includes(needle) ? 1 : 0;
+  if (!value || typeof value !== "object") return 0;
+  return Object.values(value).reduce<number>((sum, item) => sum + countText(item, needle), 0);
+}
