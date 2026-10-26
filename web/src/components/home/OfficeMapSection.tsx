@@ -2,10 +2,10 @@
 
 import dynamic from "next/dynamic";
 
-import { officeCountUnit } from "@/content/office-map";
+import { countryChipLabel, officeMapHeading, officeMapSubtitle } from "@/content/office-map";
 import type { MapOffice } from "@/lib/api";
 import type { Locale } from "@/lib/locales";
-import { officeMapCountText } from "@/lib/map-coordinates";
+import { officeCountrySummary } from "@/lib/map-coordinates";
 
 const RESET_LABEL: Record<Locale, string> = {
   tr: "Tümünü göster",
@@ -24,18 +24,32 @@ export function OfficeMapSection({
   offices: readonly MapOffice[] | null | undefined;
   locale: Locale;
 }) {
-  const officeCount = officeMapCountText(officeCountUnit[locale], offices);
+  const summary = officeCountrySummary(offices);
+  const heading = summary ? officeMapHeading(locale, summary.officeCount, summary.countries.length) : null;
   return (
-    <section className="bg-seashell [padding-top:calc(70px_*_var(--sk-scale,_1))] [padding-bottom:calc(40px_*_var(--sk-scale,_1))] max-md:[padding-top:calc(40px_*_var(--sk-scale,_1))]">
-      <div className="container">
-        <div className="sk-section-title is-center [margin-bottom:calc(30px_*_var(--sk-scale,_1))]" data-aos="fade-up" data-aos-duration="1200">
-          <h2>Startkey Global</h2>
-          {officeCount ? <p className="sk-office-count">{officeCount}</p> : null}
+    <section className="sk-office-map-section" id="sk-office-map-section">
+      {summary && heading ? (
+        <div className="sk-office-map-head">
+          <div>
+            <h2>{heading}</h2>
+            <p>{officeMapSubtitle[locale]}</p>
+          </div>
+          <div className="sk-office-map-chips">
+            {summary.countries.map((chip) => (
+              <span className="sk-office-chip" key={chip.code}>
+                {countryChipLabel(locale, chip.code)} {chip.count}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
-      <div data-aos="fade-up" data-aos-duration="1200">
-        <OfficeMap offices={offices ? [...offices] : []} className="is-bleed" overview resetLabel={RESET_LABEL[locale]} />
-      </div>
+      ) : null}
+      <OfficeMap
+        offices={offices ? [...offices] : []}
+        className="is-bleed"
+        overview
+        label={heading ?? "Startkey Global"}
+        resetLabel={RESET_LABEL[locale]}
+      />
     </section>
   );
 }

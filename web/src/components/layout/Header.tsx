@@ -6,376 +6,376 @@ import { usePathname } from "next/navigation";
 import { LanguageSelector } from "@/components/layout/LanguageSelector";
 import { applicationMenu } from "@/content/application-menu";
 import type { HomepageContent, NavItem } from "@/content/types";
+import { buildHeaderNav, drawerHeaderNav } from "@/lib/header-nav";
 import type { Locale } from "@/lib/locales";
 import { portalLoginHref } from "@/lib/portal";
 
 const LOGO_SRC = "/media/brand/startkey-logo.png";
 
+const PORTAL_ENTRY: Record<Locale, string> = {
+  tr: "Portal girişi",
+  en: "Portal",
+  de: "Portal",
+};
+
 /**
- * Header measured on startkey.com.tr at 1440px. Lengths below are those reference
- * pixels. `--sk-scale` (0.8 from 768px) is what makes this the 20% smaller copy.
+ * Header from the improvements mockup: 72px white bar, centred nav, one red
+ * Başvuru menu. Lengths are the mockup pixels (not --sk-scale). The phone
+ * layout starts at the existing 991px menu breakpoint so the six items still
+ * fit; the mockup's 600px switch is too narrow for this nav.
  */
 const HEADER_STYLES = `
   .sk-header {
     position: sticky;
     top: 0;
     z-index: 999;
+    box-sizing: border-box;
+    height: 72px;
     background: #fff;
-    transition: 0.4s;
+    border-bottom: 1px solid #E3E6EC;
   }
-  .sk-header.sticky {
-    box-shadow: 0 calc(5px * var(--sk-scale, 1)) calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);
-    animation: sk-header-slide 1s ease;
-  }
-  @keyframes sk-header-slide {
-    from { transform: translateY(-100%); }
-    to { transform: none; }
-  }
-  .sk-header-row {
+  .sk-header.sticky { box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08); }
+  .sk-bar {
     display: flex;
     align-items: center;
-    flex-wrap: nowrap;
-    min-height: calc(111px * var(--sk-scale, 1));
+    justify-content: space-between;
+    gap: 16px;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
   }
-  .sk-logo {
-    flex-shrink: 0;
-    padding-right: calc(20px * var(--sk-scale, 1));
-  }
-  .sk-logo img {
-    display: block;
-    width: calc(192px * var(--sk-scale, 1));
-    height: auto;
-    max-width: none;
-  }
-  @media (max-width: 767px) {
-    .sk-logo img {
-      width: 130px;
-      height: 53px;
-    }
-  }
-  .sk-nav {
+  .sk-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .sk-logo { display: flex; flex-shrink: 0; }
+  .sk-logo img { display: block; height: 40px; width: auto; max-width: 148px; }
+  .sk-burger, .sk-drawer, .sk-overlay { display: none; }
+  .sk-nav-desktop {
     display: flex;
-    align-items: center;
-    margin: 0 0 0 auto;
+    align-items: stretch;
+    gap: 22px;
+    height: 100%;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
-  .sk-nav > li {
-    flex-shrink: 0;
-    margin: 0 calc(10px * var(--sk-scale, 1));
-  }
-  .sk-nav > li > a {
+  .sk-nav-desktop > li { position: relative; flex-shrink: 0; display: flex; align-items: center; }
+  .sk-nav-desktop > li > a {
     display: inline-flex;
     align-items: center;
-    position: relative;
-    padding: calc(30px * var(--sk-scale, 1)) 0;
-    color: #000;
-    font-size: calc(17px * var(--sk-scale, 1));
-    font-weight: 500;
-    line-height: 1.5;
-    white-space: nowrap;
-    transition: color 0.3s ease;
-  }
-  .sk-nav > li > a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: calc(22px * var(--sk-scale, 1));
-    width: 0;
-    height: calc(2px * var(--sk-scale, 1));
-    background: #ec3323;
-    transition: width 0.4s;
-  }
-  .sk-nav > li > a:hover {
-    color: #ec3323;
-  }
-  .sk-nav > li > a:hover::after {
-    width: 100%;
-  }
-  .sk-nav > li > a .ri-add-line {
-    display: inline-block;
-    margin-left: calc(2px * var(--sk-scale, 1));
-    font-size: calc(16px * var(--sk-scale, 1));
+    gap: 4px;
+    height: 100%;
+    color: #1B2333;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
     line-height: 1;
-    transition: transform 0.4s;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .sk-nav > li > a:hover .ri-add-line {
-    transform: rotate(180deg);
-  }
-  .sk-nav .sk-drop {
+  .sk-nav-desktop > li > a:hover,
+  .sk-nav-desktop > li > a.is-active { color: #EC3323; }
+  .sk-caret { display: inline-block; font-size: 11px; line-height: 1; }
+  .sk-nav-desktop .sk-drop {
     display: none;
     position: absolute;
-    z-index: 99;
-    min-width: calc(265px * var(--sk-scale, 1));
-    border-left: calc(2px * var(--sk-scale, 1)) solid #ec3323;
+    top: 100%;
+    left: 0;
+    z-index: 1002;
+    min-width: 220px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
     background: #fff;
-    padding: calc(10px * var(--sk-scale, 1)) 0;
-    box-shadow: 0 0 calc(15px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.1);
+    border: 1px solid #E3E6EC;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08);
   }
-  .sk-nav > li:hover > .sk-drop,
-  .sk-nav > li:focus-within > .sk-drop { display: block; }
-  .sk-drop a {
+  .sk-nav-desktop > li:hover > .sk-drop,
+  .sk-nav-desktop > li:focus-within > .sk-drop { display: block; }
+  .sk-nav-desktop .sk-drop a {
     display: block;
-    padding: calc(9px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1));
-    color: #000;
-    font-size: calc(16px * var(--sk-scale, 1));
-    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #1B2333;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
   }
-  .sk-drop a:hover { color: #ec3323; }
-  .sk-actions {
+  .sk-nav-desktop .sk-drop a:hover,
+  .sk-nav-desktop .sk-drop a.is-active { color: #EC3323; background: #F6F7FA; }
+  .sk-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .sk-lang { position: relative; }
+  .sk-lang-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #5B6475;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sk-lang-code .sk-caret { font-size: 10px; }
+  .sk-lang-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 1002;
+    min-width: 160px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #E3E6EC;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08);
+  }
+  .sk-lang-menu[hidden] { display: none !important; }
+  .sk-lang-menu a {
     display: flex;
     align-items: center;
-    flex-shrink: 0;
-    gap: calc(20px * var(--sk-scale, 1));
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: #1B2333;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
   }
-  .sk-mobile-tools { display: none; }
-  .sk-drawer { display: contents; }
-  .sk-drawer-close, .sk-drawer-logo, .sk-expand { display: none; }
-  @media (max-width: 991px) {
-    .sk-header-row { min-height: calc(78px * var(--sk-scale, 1)); }
-    .sk-nav, .sk-actions { display: none; }
-    .sk-mobile-tools {
-      display: flex;
-      align-items: center;
-      margin-left: auto;
-      gap: calc(12px * var(--sk-scale, 1));
-    }
-    .sk-burger {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: calc(42px * var(--sk-scale, 1));
-      height: calc(42px * var(--sk-scale, 1));
-      padding: 0;
-      border: 0;
-      border-radius: 50%;
-      background: #002172;
-      color: #fff;
-      font-size: calc(20px * var(--sk-scale, 1));
-      cursor: pointer;
-    }
-    /* Reference .main-menu-wrap: full-height panel sliding in from the left. */
-    .sk-drawer {
-      display: block;
-      position: fixed;
-      top: 0;
-      left: -100%;
-      z-index: 1000;
-      width: 100%;
-      height: 100vh;
-      height: 100dvh;
-      box-sizing: border-box;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      background: #fff;
-      padding: calc(55px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) calc(30px * var(--sk-scale, 1));
-      visibility: hidden;
-      transition: left 0.4s, visibility 0s 0.4s;
-    }
-    .sk-drawer.is-open {
-      left: 0;
-      visibility: visible;
-      transition: left 0.4s;
-    }
-    .sk-drawer-close {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      top: calc(8px * var(--sk-scale, 1));
-      right: calc(8px * var(--sk-scale, 1));
-      width: calc(44px * var(--sk-scale, 1));
-      height: calc(44px * var(--sk-scale, 1));
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: #000;
-      font-size: calc(26px * var(--sk-scale, 1));
-      cursor: pointer;
-    }
-    .sk-drawer-logo {
-      display: block;
-      margin: 0 0 calc(20px * var(--sk-scale, 1));
-      text-align: center;
-    }
-    .sk-drawer-logo img {
-      display: inline-block;
-      width: calc(150px * var(--sk-scale, 1));
-      height: auto;
-    }
-    .sk-drawer .sk-nav {
-      display: block;
-      margin: 0;
-    }
-    .sk-drawer .sk-nav > li {
-      position: relative;
-      margin: 0;
-    }
-    .sk-drawer .sk-nav a {
-      display: block;
-      padding: calc(15px * var(--sk-scale, 1)) 0;
-      border-bottom: 1px solid #f3f4f6;
-      color: rgba(0, 0, 0, 0.65);
-      font-size: calc(16px * var(--sk-scale, 1));
-      font-weight: 400;
-      line-height: 1.5;
-      white-space: normal;
-    }
-    .sk-drawer .sk-nav > li > a::after { display: none; }
-    .sk-drawer .sk-nav a.is-active { color: #ec3323; font-weight: 500; }
-    .sk-drawer .sk-nav > li > a .ri-add-line { transform: none; }
-    .sk-expand {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: calc(56px * var(--sk-scale, 1));
-      height: calc(55px * var(--sk-scale, 1));
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: #000;
-      font-size: calc(18px * var(--sk-scale, 1));
-      cursor: pointer;
-    }
-    .sk-expand i { transition: transform 0.4s; }
-    .sk-nav > li.menu-open > .sk-expand i { transform: rotate(180deg); }
-    /* Reference accordion: slideUp/slideDown("slow"), one submenu open at a time. */
-    .sk-drawer .sk-drop {
-      display: block;
-      position: static;
-      min-width: 0;
-      max-height: 0;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-      border: 0;
-      box-shadow: none;
-      visibility: hidden;
-      transition: max-height 0.6s ease, visibility 0s 0.6s;
-    }
-    .sk-drawer .sk-nav > li.menu-open > .sk-drop {
-      max-height: calc(800px * var(--sk-scale, 1));
-      transition: max-height 0.6s ease;
-    }
-    .sk-drawer.is-open .sk-nav > li.menu-open > .sk-drop { visibility: visible; }
-    .sk-drawer .sk-drop a {
-      margin-left: calc(10px * var(--sk-scale, 1));
-      padding: calc(15px * var(--sk-scale, 1)) 0 calc(15px * var(--sk-scale, 1)) calc(10px * var(--sk-scale, 1));
-      font-size: calc(14px * var(--sk-scale, 1));
-    }
-    .sk-drawer .sk-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: calc(12px * var(--sk-scale, 1));
-      margin-top: calc(24px * var(--sk-scale, 1));
-    }
-    .sk-drawer .sk-actions .sk-lang-desktop { display: none; }
-    .sk-drawer .sk-actions .sk-btn { justify-content: center; width: 100%; box-sizing: border-box; text-align: center; }
+  .sk-lang-menu a:hover { background: #F6F7FA; }
+  .sk-lang-menu img { display: block; width: 20px; height: 14px; object-fit: cover; }
+  .sk-portal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: 40px;
+    padding: 0 18px;
+    border: 1px solid #002172;
+    border-radius: 8px;
+    background: #fff;
+    color: #002172;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .sk-drawer, .sk-drawer.is-open, .sk-drawer .sk-drop, .sk-expand i, .sk-apply-trigger .ri-arrow-down-s-line, .sk-header, .sk-header.sticky, .sk-nav > li > a { transition: none; animation: none; }
-  }
-  @media (min-width: 992px) and (max-width: 1199px) {
-    .sk-nav > li { margin: 0 calc(7px * var(--sk-scale, 1)); }
-    .sk-nav > li > a { font-size: calc(15px * var(--sk-scale, 1)); }
-  }
+  .sk-portal:hover { background: #F4F6FB; }
+  .sk-apply { position: relative; }
   .sk-apply-trigger {
     display: inline-flex;
     align-items: center;
-    gap: calc(6px * var(--sk-scale, 1));
-    padding: calc(8px * var(--sk-scale, 1)) calc(16px * var(--sk-scale, 1));
+    gap: 6px;
+    height: 40px;
+    padding: 0 18px;
     border: 0;
-    border-radius: calc(5px * var(--sk-scale, 1));
+    border-radius: 8px;
     background: #EC3323;
     color: #fff;
-    font-size: calc(17px * var(--sk-scale, 1));
-    font-weight: 500;
-    line-height: 1.5;
+    font-family: "Nunito Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
     white-space: nowrap;
     cursor: pointer;
   }
   .sk-apply-trigger:hover,
-  .sk-apply-trigger[aria-expanded="true"] {
-    background: #C9291B;
-    color: #fff;
+  .sk-apply-trigger[aria-expanded="true"] { background: #C9291B; color: #fff; }
+  .sk-apply-trigger:focus-visible,
+  .sk-burger:focus-visible,
+  .sk-drawer-close:focus-visible,
+  .sk-portal:focus-visible,
+  .sk-lang-code:focus-visible {
+    outline: 2px solid #002172;
+    outline-offset: 2px;
   }
-  .sk-apply-trigger:focus-visible {
-    outline: calc(2px * var(--sk-scale, 1)) solid #002172;
-    outline-offset: calc(2px * var(--sk-scale, 1));
+  .sk-apply-trigger .sk-caret { transition: transform 0.2s; }
+  .sk-apply.is-open > .sk-apply-trigger .sk-caret { transform: rotate(180deg); }
+  .sk-apply-short { display: none; }
+  .sk-apply-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 1002;
+    min-width: 260px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #E3E6EC;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08);
   }
-  .sk-apply-trigger .ri-arrow-down-s-line {
-    font-size: calc(18px * var(--sk-scale, 1));
-    line-height: 1;
-    transition: transform 0.4s;
+  .sk-apply-menu[hidden] { display: none !important; }
+  .sk-apply-menu a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #1B2333;
+    text-decoration: none;
   }
-  .sk-apply.is-open > .sk-apply-trigger .ri-arrow-down-s-line { transform: rotate(180deg); }
-  .sk-apply .sk-apply-label,
-  .sk-apply .sk-apply-desc { display: block; }
-  .sk-apply .sk-apply-label {
-    color: inherit;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-  .sk-apply .sk-apply-desc {
-    margin-top: calc(2px * var(--sk-scale, 1));
-    color: #4b5563;
-    font-size: calc(13px * var(--sk-scale, 1));
-    font-weight: 400;
-    line-height: 1.35;
-    white-space: normal;
-  }
-  .sk-apply .sk-drop a:hover .sk-apply-desc { color: #C9291B; }
-  @media (min-width: 992px) and (max-width: 1199px) {
-    .sk-apply-trigger { font-size: calc(15px * var(--sk-scale, 1)); }
-  }
-  @media (min-width: 992px) {
-    .sk-apply { position: relative; }
-    .sk-apply > .sk-drop {
-      top: 100%;
-      left: 0;
-      min-width: calc(240px * var(--sk-scale, 1));
-    }
-    .sk-nav > li.sk-apply.is-open > .sk-drop { display: block; }
+  .sk-apply-menu a:hover { background: #F6F7FA; }
+  .sk-apply-label { display: block; color: #002172; font-weight: 700; font-size: 14px; line-height: 1.3; }
+  .sk-apply-desc { display: block; margin-top: 2px; color: #5B6475; font-size: 12px; font-weight: 400; line-height: 1.35; }
+  @media (max-width: 600px) {
+    .sk-bar { padding: 0 16px; }
   }
   @media (max-width: 991px) {
-    .sk-drawer .sk-apply-trigger {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      margin: calc(8px * var(--sk-scale, 1)) 0;
-      box-sizing: border-box;
-      font-size: calc(16px * var(--sk-scale, 1));
-      text-align: left;
+    .sk-nav-desktop, .sk-lang-desktop, .sk-portal-desktop { display: none; }
+    .sk-burger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #002172;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
     }
-    .sk-drawer .sk-apply .sk-drop a { white-space: normal; }
+    .sk-apply-long { display: none; }
+    .sk-apply-short { display: inline; }
+    .sk-apply-trigger { height: 36px; padding: 0 12px; }
+    .sk-apply-trigger .sk-caret { display: none; }
+    .sk-overlay {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      border: 0;
+      padding: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .sk-drawer {
+      display: block;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1001;
+      box-sizing: border-box;
+      width: 86%;
+      max-width: 340px;
+      padding: 20px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(0, 33, 114, 0.16);
+      transform: translateX(-105%);
+      visibility: hidden;
+    }
+    .sk-drawer.is-open { transform: none; visibility: visible; }
+    .sk-drawer-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .sk-drawer-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #1B2333;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .sk-drawer-nav { margin: 8px 0 0; padding: 0; list-style: none; }
+    .sk-drawer-nav > li { border-bottom: 1px solid #EEF0F4; }
+    .sk-drawer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 14px 0;
+      border: 0;
+      background: transparent;
+      color: #002172;
+      font-family: Poppins, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: left;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .sk-drawer-row.is-active { color: #EC3323; }
+    .sk-drawer-row .sk-caret,
+    .sk-drawer-row .sk-next { color: #5B6475; font-size: 16px; }
+    .sk-drawer-nav > li.is-open > .sk-drawer-row .sk-caret { transform: rotate(180deg); }
+    .sk-drawer-sub { margin: 0; padding: 0 0 8px; list-style: none; }
+    .sk-drawer-sub[hidden] { display: none !important; }
+    .sk-drawer-sub a {
+      display: block;
+      padding: 8px 0 8px 12px;
+      color: #1B2333;
+      font-family: "Nunito Sans", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .sk-drawer-sub a.is-active { color: #EC3323; }
+    .sk-drawer-actions { display: grid; gap: 8px; margin-top: 20px; }
+    .sk-drawer-apply {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      height: 40px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 8px;
+      background: #EC3323;
+      color: #fff;
+      font-family: "Nunito Sans", sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .sk-drawer-apply:hover,
+    .sk-drawer-apply[aria-expanded="true"] { background: #C9291B; }
+    .sk-drawer-apply-list {
+      display: grid;
+      gap: 4px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid #E3E6EC;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 33, 114, 0.08);
+    }
+    .sk-drawer-apply-list[hidden] { display: none !important; }
+    .sk-drawer-apply-list a { display: block; padding: 8px; border-radius: 8px; text-decoration: none; }
+    .sk-drawer-actions .sk-portal { width: 100%; }
+    .sk-drawer-langs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 16px;
+      color: #5B6475;
+      font-family: "Nunito Sans", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .sk-drawer-langs a { color: #5B6475; text-decoration: none; }
+    .sk-drawer-langs a[aria-current="true"] { color: #1B2333; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sk-apply-trigger .sk-caret,
+    .sk-drawer-row .sk-caret { transition: none; }
   }
 `;
-
-function HeaderButton({
-  href,
-  tone,
-  children,
-  external,
-}: {
-  href: string;
-  tone: "brand" | "navy";
-  children: string;
-  external?: boolean;
-}) {
-  return (
-    <a
-      className={`sk-btn sk-btn-${tone}`}
-      href={href}
-      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-    >
-      {children}
-    </a>
-  );
-}
 
 const MENU_LABELS: Record<Locale, { open: string; close: string }> = {
   tr: { open: "Menüyü aç", close: "Menüyü kapat" },
@@ -383,69 +383,117 @@ const MENU_LABELS: Record<Locale, { open: string; close: string }> = {
   de: { open: "Menü öffnen", close: "Menü schließen" },
 };
 
+const LANG_ORDER = ["tr", "en", "de"] as const;
+
 function isCurrent(href: string, pathname: string): boolean {
   if (!href || href === "#" || /^https?:/.test(href)) return false;
   const path = href.split("?")[0].replace(/\/$/, "");
   return path === pathname.replace(/\/$/, "");
 }
 
-function NavEntry({
-  item,
+function itemKey(item: NavItem): string {
+  return `${item.label}-${item.href}`;
+}
+
+function externalProps(target: string | null): { target: string; rel: string } | Record<string, never> {
+  return target ? { target, rel: "noopener noreferrer" } : {};
+}
+
+function DesktopNav({ items, pathname }: { items: NavItem[]; pathname: string }) {
+  return (
+    <ul className="sk-nav-desktop">
+      {items.map((item) => {
+        const childActive = item.children.some(
+          (child) => isCurrent(child.href, pathname) && !/^\/(tr|en|de)\/?$/.test(child.href.split("?")[0]),
+        );
+        if (item.children.length === 0) {
+          const active = isCurrent(item.href, pathname);
+          return (
+            <li key={itemKey(item)}>
+              <a className={active ? "is-active" : undefined} href={item.href} aria-current={active ? "page" : undefined} {...externalProps(item.target)}>
+                {item.label}
+              </a>
+            </li>
+          );
+        }
+        return (
+          <li key={itemKey(item)}>
+            <a
+              href={item.href}
+              className={childActive ? "is-active" : undefined}
+              onClick={(event) => event.preventDefault()}
+            >
+              {item.label}
+              <span className="sk-caret" aria-hidden="true">▾</span>
+            </a>
+            <ul className="sk-drop">
+              {item.children.map((child) => {
+                const active = isCurrent(child.href, pathname);
+                return (
+                  <li key={itemKey(child)}>
+                    <a className={active ? "is-active" : undefined} href={child.href} aria-current={active ? "page" : undefined} {...externalProps(child.target)}>
+                      {child.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function DrawerNav({
+  items,
   pathname,
-  open,
+  openKey,
   onToggle,
 }: {
-  item: NavItem;
+  items: NavItem[];
   pathname: string;
-  open: boolean;
-  onToggle: () => void;
+  openKey: string | null;
+  onToggle: (key: string) => void;
 }) {
-  if (item.children.length === 0) {
-    return (
-      <li>
-        <a
-          href={item.href}
-          className={isCurrent(item.href, pathname) ? "is-active" : undefined}
-          aria-current={isCurrent(item.href, pathname) ? "page" : undefined}
-          {...(item.target ? { target: item.target, rel: "noopener noreferrer" } : {})}
-        >
-          {item.label}
-        </a>
-      </li>
-    );
-  }
-
   return (
-    <li className={`relative${open ? " menu-open" : ""}`}>
-      <button type="button" className="sk-expand" aria-expanded={open} aria-label={item.label} onClick={onToggle}>
-        <i className="ri-arrow-down-s-line" />
-      </button>
-      <a
-        href="#"
-        className={item.children.some((child) => isCurrent(child.href, pathname)) ? "is-active" : undefined}
-        onClick={(event) => {
-          event.preventDefault();
-          onToggle();
-        }}
-      >
-        {item.label}
-        <i className="ri-add-line" />
-      </a>
-      <ul className="sk-drop">
-        {item.children.map((child) => (
-          <li key={`${child.label}-${child.href}`}>
-            <a
-              href={child.href}
-              className={isCurrent(child.href, pathname) ? "is-active" : undefined}
-              aria-current={isCurrent(child.href, pathname) ? "page" : undefined}
-              {...(child.target ? { target: child.target, rel: "noopener noreferrer" } : {})}
-            >
-              {child.label}
-            </a>
+    <ul className="sk-drawer-nav">
+      {items.map((item) => {
+        if (item.children.length === 0) {
+          const active = isCurrent(item.href, pathname);
+          return (
+            <li key={itemKey(item)}>
+              <a className={`sk-drawer-row${active ? " is-active" : ""}`} href={item.href} aria-current={active ? "page" : undefined} {...externalProps(item.target)}>
+                <span>{item.label}</span>
+                <span className="sk-next" aria-hidden="true">›</span>
+              </a>
+            </li>
+          );
+        }
+        const key = itemKey(item);
+        const open = openKey === key;
+        return (
+          <li key={key} className={open ? "is-open" : undefined}>
+            <button type="button" className="sk-drawer-row" aria-expanded={open} onClick={() => onToggle(key)}>
+              <span>{item.label}</span>
+              <span className="sk-caret" aria-hidden="true">▾</span>
+            </button>
+            <ul className="sk-drawer-sub" hidden={!open}>
+              {item.children.map((child) => {
+                const active = isCurrent(child.href, pathname);
+                return (
+                  <li key={itemKey(child)}>
+                    <a className={active ? "is-active" : undefined} href={child.href} aria-current={active ? "page" : undefined} {...externalProps(child.target)}>
+                      {child.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
           </li>
-        ))}
-      </ul>
-    </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -461,11 +509,11 @@ function ApplicationMenu({
   const menu = applicationMenu[locale];
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLLIElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const items = [
-    { ...menu.consultant, href: consultantHref },
     { ...menu.franchise, href: franchiseHref },
+    { ...menu.consultant, href: consultantHref },
   ];
 
   const close = useCallback(() => {
@@ -497,7 +545,7 @@ function ApplicationMenu({
   }, [open, close]);
 
   return (
-    <li ref={rootRef} className={`sk-apply${open ? " is-open menu-open" : ""}`}>
+    <div ref={rootRef} className={`sk-apply${open ? " is-open" : ""}`}>
       <button
         ref={triggerRef}
         type="button"
@@ -508,10 +556,11 @@ function ApplicationMenu({
         aria-controls="sk-apply-menu"
         onClick={() => setOpen((current) => !current)}
       >
-        <span>{menu.label}</span>
-        <i className="ri-arrow-down-s-line" aria-hidden="true" />
+        <span className="sk-apply-long">{menu.label}</span>
+        <span className="sk-apply-short">{menu.shortLabel}</span>
+        <span className="sk-caret" aria-hidden="true">▾</span>
       </button>
-      <ul id="sk-apply-menu" className="sk-drop" role="menu" hidden={!open}>
+      <ul id="sk-apply-menu" className="sk-apply-menu" role="menu" hidden={!open}>
         {items.map((item) => (
           <li key={item.href} role="none">
             <a href={item.href} role="menuitem">
@@ -521,7 +570,7 @@ function ApplicationMenu({
           </li>
         ))}
       </ul>
-    </li>
+    </div>
   );
 }
 
@@ -531,18 +580,28 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
   const { nav, languageSwitcher, headerButtons } = content;
   const pathname = usePathname() || `/${locale}`;
   const labels = MENU_LABELS[locale];
+  const desktopNav = buildHeaderNav(locale, nav, content.heroSearch.tabs);
+  const drawerNav = drawerHeaderNav(desktopNav);
+  const menu = applicationMenu[locale];
+  const applyItems = [
+    { ...menu.franchise, href: headerButtons.franchise.href },
+    { ...menu.consultant, href: headerButtons.consultant.href },
+  ];
   const [menuOpen, setMenuOpen] = useState(false);
+  const [drawerApplyOpen, setDrawerApplyOpen] = useState(false);
   const [stuck, setStuck] = useState(false);
-  const [openIndex, setOpenIndex] = useState<number | null>(() => {
-    const index = nav.findIndex((item) => item.children.some((child) => isCurrent(child.href, pathname)));
-    return index >= 0 ? index : null;
-  });
+  const [openKey, setOpenKey] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const burgerRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const languages = LANG_ORDER.flatMap((code) => {
+    const option = languageSwitcher.options.find((item) => item.code === code);
+    return option ? [option] : [];
+  });
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
+    setDrawerApplyOpen(false);
     burgerRef.current?.focus();
   }, []);
 
@@ -597,73 +656,103 @@ export function Header({ content, locale }: { content: HomepageContent; locale: 
   return (
     <header className={stuck ? "sk-header sticky" : "sk-header"}>
       <style dangerouslySetInnerHTML={{ __html: HEADER_STYLES }} />
-      <div className="container">
-        <div className="sk-header-row">
+      <div className="sk-bar">
+        <div className="sk-brand">
+          <button
+            ref={burgerRef}
+            type="button"
+            className="sk-burger"
+            aria-label={labels.open}
+            aria-expanded={menuOpen}
+            aria-controls="sk-main-menu"
+            onClick={() => setMenuOpen(true)}
+          >
+            <span aria-hidden="true">☰</span>
+          </button>
           <a className="sk-logo" href={`/${locale}`}>
             <img src={LOGO_SRC} alt="OfficeLogo-photo" width={192} height={77} />
           </a>
-
-          <div className="sk-mobile-tools">
-            <LanguageSelector content={languageSwitcher} currentCode={locale} id="languageMenuMobile" />
-            <button
-              ref={burgerRef}
-              type="button"
-              className="sk-burger"
-              aria-label={labels.open}
-              aria-expanded={menuOpen}
-              aria-controls="sk-main-menu"
-              onClick={() => setMenuOpen(true)}
-            >
-              <i className="ri-menu-line" />
-            </button>
+        </div>
+        <DesktopNav items={desktopNav} pathname={pathname} />
+        <div className="sk-actions">
+          <div className="sk-lang-desktop">
+            <LanguageSelector content={languageSwitcher} currentCode={locale} id="languageMenuDesktop" />
           </div>
-
-          <div
-            ref={drawerRef}
-            id="sk-main-menu"
-            className={`sk-drawer${menuOpen ? " is-open" : ""}`}
-            onClick={(event) => {
-              const link = (event.target as HTMLElement).closest("a");
-              if (link && link.getAttribute("href") !== "#") setMenuOpen(false);
-            }}
+          <a className="sk-portal sk-portal-desktop" href={portalLoginHref(locale)}>
+            {headerButtons.crm.label}
+          </a>
+          <ApplicationMenu
+            locale={locale}
+            consultantHref={headerButtons.consultant.href}
+            franchiseHref={headerButtons.franchise.href}
+          />
+        </div>
+      </div>
+      {menuOpen ? <div className="sk-overlay" onClick={closeMenu} /> : null}
+      <div
+        ref={drawerRef}
+        id="sk-main-menu"
+        className={`sk-drawer${menuOpen ? " is-open" : ""}`}
+        role="dialog"
+        aria-modal={menuOpen}
+        aria-hidden={!menuOpen}
+        aria-label={labels.open}
+        {...(!menuOpen ? { inert: true } : {})}
+        onClick={(event) => {
+          const link = (event.target as HTMLElement).closest("a");
+          if (link && link.getAttribute("href") !== "#") setMenuOpen(false);
+        }}
+      >
+        <div className="sk-drawer-top">
+          <a className="sk-logo" href={`/${locale}`}>
+            <img src={LOGO_SRC} alt="OfficeLogo-photo" width={150} height={60} />
+          </a>
+          <button ref={closeRef} type="button" className="sk-drawer-close" aria-label={labels.close} onClick={closeMenu}>
+            <span aria-hidden="true">✕</span>
+          </button>
+        </div>
+        {/* No single search route for portfolio, office and consultant together, so the mockup field is omitted. */}
+        <DrawerNav
+          items={drawerNav}
+          pathname={pathname}
+          openKey={openKey}
+          onToggle={(key) => setOpenKey((current) => (current === key ? null : key))}
+        />
+        <div className="sk-drawer-actions">
+          <button
+            type="button"
+            className="sk-drawer-apply"
+            aria-expanded={drawerApplyOpen}
+            aria-controls="sk-drawer-apply-menu"
+            onClick={() => setDrawerApplyOpen((current) => !current)}
           >
-            <button ref={closeRef} type="button" className="sk-drawer-close" aria-label={labels.close} onClick={closeMenu}>
-              <i className="ri-close-line" />
-            </button>
-            <a className="sk-drawer-logo" href={`/${locale}`}>
-              <img src={LOGO_SRC} alt="OfficeLogo-photo" width={150} height={60} />
-            </a>
-            <ul className="sk-nav">
-              {nav.map((item, index) => (
-                <NavEntry
-                  item={item}
-                  pathname={pathname}
-                  key={`${item.label}-${item.href}`}
-                  open={openIndex === index}
-                  onToggle={() => setOpenIndex((current) => (current === index ? null : index))}
-                />
-              ))}
-              <ApplicationMenu
-                locale={locale}
-                consultantHref={headerButtons.consultant.href}
-                franchiseHref={headerButtons.franchise.href}
-              />
-            </ul>
-            <div className="sk-actions">
-              <div className="sk-lang-desktop">
-                <LanguageSelector content={languageSwitcher} currentCode={locale} id="languageMenuDesktop" />
-              </div>
-              <HeaderButton href={headerButtons.consultant.href} tone="brand">
-                {headerButtons.consultant.label}
-              </HeaderButton>
-              <HeaderButton href={headerButtons.franchise.href} tone="navy">
-                {headerButtons.franchise.label}
-              </HeaderButton>
-              <HeaderButton href={portalLoginHref(locale)} tone="brand" external>
-                {headerButtons.crm.label}
-              </HeaderButton>
-            </div>
+            <span>{menu.label}</span>
+            <span className="sk-caret" aria-hidden="true">▾</span>
+          </button>
+          <div id="sk-drawer-apply-menu" className="sk-drawer-apply-list" hidden={!drawerApplyOpen}>
+            {applyItems.map((item) => (
+              <a key={item.href} href={item.href}>
+                <span className="sk-apply-label">{item.label}</span>
+                <span className="sk-apply-desc">{item.description}</span>
+              </a>
+            ))}
           </div>
+          <a className="sk-portal" href={portalLoginHref(locale)}>
+            {PORTAL_ENTRY[locale]}
+          </a>
+        </div>
+        <div className="sk-drawer-langs">
+          {languages.map((option, index) => (
+            <span key={option.code}>
+              {index > 0 ? <span aria-hidden="true"> · </span> : null}
+              <a
+                href={`/${locale}/Settings/ChangeCulture?langCode=${option.code}&returnPath=${encodeURIComponent(pathname)}`}
+                aria-current={option.code === locale ? "true" : undefined}
+              >
+                {option.code.toUpperCase()}
+              </a>
+            </span>
+          ))}
         </div>
       </div>
     </header>

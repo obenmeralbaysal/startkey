@@ -7,6 +7,8 @@ export interface ApplicationMenuItem {
 
 export interface ApplicationMenuCopy {
   label: string;
+  /** Short label for the phone header button. */
+  shortLabel: string;
   consultant: ApplicationMenuItem;
   franchise: ApplicationMenuItem;
 }
@@ -18,17 +20,19 @@ export interface ApplicationMenuCopy {
 export const applicationMenu: Record<Locale, ApplicationMenuCopy> = {
   tr: {
     label: "Başvuru",
+    shortLabel: "Başvur",
     consultant: {
-      label: "Danışman",
+      label: "Danışman Başvurusu",
       description: "Danışmanımız Olun",
     },
     franchise: {
-      label: "Franchise",
+      label: "Franchise Başvurusu",
       description: "Franchise Ol",
     },
   },
   en: {
-    label: "Application",
+    label: "Apply",
+    shortLabel: "Apply",
     consultant: {
       label: "Consultant",
       description: "Be Our Consultant",
@@ -39,7 +43,8 @@ export const applicationMenu: Record<Locale, ApplicationMenuCopy> = {
     },
   },
   de: {
-    label: "Bewerbung",
+    label: "Bewerben",
+    shortLabel: "Bewerben",
     consultant: {
       label: "Berater",
       description: "Sei unser Berater",
