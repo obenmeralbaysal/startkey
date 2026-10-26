@@ -36,6 +36,32 @@ class ReonixCatalogue
     }
 
     /** @return array<string, mixed>|null */
+    /** @return list<array{network: string, href: string}> */
+    public function socialLinks(array $office): array
+    {
+        $out = [];
+        foreach (is_array($office['social'] ?? null) ? $office['social'] : [] as $link) {
+            $href = is_array($link) ? (string) ($link['href'] ?? '') : '';
+            $network = is_array($link) ? strtolower((string) ($link['network'] ?? '')) : '';
+            if ($network !== '' && preg_match('#^https?://#i', $href)) {
+                $out[] = ['network' => $network, 'href' => $href];
+            }
+        }
+
+        return $out;
+    }
+
+    private function instagram(array $office): string
+    {
+        foreach ($this->socialLinks($office) as $link) {
+            if ($link['network'] === 'instagram') {
+                return $link['href'];
+            }
+        }
+
+        return '';
+    }
+
     public function officeDetail(string $locale, int $id): ?array
     {
         $body = $this->one('catalogue/offices/'.$id);
@@ -75,7 +101,8 @@ class ReonixCatalogue
             'phoneLabel' => $card['phoneLabel'],
             'email' => $card['email'],
             'address' => $address,
-            'instagram' => '',
+            'instagram' => $this->instagram($office),
+            'social' => $this->socialLinks($office),
             'portfoliosHref' => $this->listPath('listings', $locale).'?FilterDTO.OfficeId='.(int) $office['id'],
             'portfoliosLabel' => $name.' '.match ($locale) {
                 'en' => 'All Portfolios',

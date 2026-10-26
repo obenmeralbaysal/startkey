@@ -220,6 +220,42 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.map', []);
     }
 
+    public function test_the_portal_office_detail_carries_social_links(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices/9' => Http::response(['data' => [
+                'office' => ['id' => 9, 'name' => '1872', 'phone' => '', 'address' => 'İzmir', 'social' => [
+                    ['network' => 'instagram', 'href' => 'https://www.instagram.com/startkey.1872/'],
+                    ['network' => 'facebook', 'href' => 'javascript:alert(1)'],
+                ]],
+                'consultants' => [],
+                'portfolios' => [],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler/9/1872')
+            ->assertOk()
+            ->assertJsonPath('data.instagram', 'https://www.instagram.com/startkey.1872/')
+            ->assertJsonPath('data.social', [['network' => 'instagram', 'href' => 'https://www.instagram.com/startkey.1872/']]);
+    }
+
+    public function test_the_portal_consultant_list_is_in_turkish_alphabetical_order(): void
+    {
+        $rows = [];
+        foreach (['Burak Kaya', 'Çağla Er', ' Ahmet Su', 'Zeki Ay', 'İrem Ok', 'Ilgın Ak', 'ayşe Tan', 'Can Bal'] as $i => $name) {
+            $rows[] = ['id' => $i + 1, 'name' => $name, 'role' => 'agent', 'office_id' => 7, 'office_name' => 'Kadikoy'];
+        }
+        $rows[] = ['type' => 'office', 'id' => 'office-7', 'office_id' => 7, 'name' => 'Alfa'];
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants' => Http::response(['data' => $rows]),
+        ]);
+
+        $names = collect($this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')->assertOk()->json('data.items'))
+            ->pluck('name')->map(fn ($n) => trim((string) $n))->all();
+
+        $this->assertSame(['Ahmet Su', 'ayşe Tan', 'Burak Kaya', 'Can Bal', 'Çağla Er', 'Ilgın Ak', 'İrem Ok', 'Zeki Ay', 'Alfa'], $names);
+    }
+
     public function test_a_listing_inquiry_is_sent_to_the_portal(): void
     {
         Http::fake([
