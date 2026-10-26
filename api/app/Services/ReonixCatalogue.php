@@ -132,9 +132,8 @@ class ReonixCatalogue
         $card = $this->officeCard($office, $locale);
         $name = $card['name'];
         $address = (string) ($office['address'] ?? '');
-        $latitude = $this->coordinate($office['latitude'] ?? null);
-        $longitude = $this->coordinate($office['longitude'] ?? null);
-        $pin = ($latitude !== null && $longitude !== null && abs($latitude) <= 90) ? [
+        [$latitude, $longitude] = $this->coordinatePair($office['latitude'] ?? null, $office['longitude'] ?? null);
+        $pin = ($latitude !== null && $longitude !== null) ? [
             'id' => (int) $office['id'],
             'name' => $name,
             'urlPath' => $card['urlPath'],
@@ -591,8 +590,7 @@ class ReonixCatalogue
         $pins = [];
         $skipped = 0;
         foreach ($rows as $row) {
-            $latitude = $this->coordinate($row['latitude'] ?? null);
-            $longitude = $this->coordinate($row['longitude'] ?? null);
+            [$latitude, $longitude] = $this->coordinatePair($row['latitude'] ?? null, $row['longitude'] ?? null);
             if ($latitude === null || $longitude === null) {
                 $skipped++;
 
@@ -624,13 +622,33 @@ class ReonixCatalogue
         return $value === true || $value === 1 || $value === '1' || $value === 'true';
     }
 
+    /**
+     * @return array{0: ?float, 1: ?float}
+     */
+    private function coordinatePair(mixed $latitude, mixed $longitude): array
+    {
+        $lat = $this->coordinate($latitude);
+        $lng = $this->coordinate($longitude);
+        if ($lat === null || $lng === null || abs($lat) > 90) {
+            return [null, null];
+        }
+
+        return [$lat, $lng];
+    }
+
     private function coordinate(mixed $value): ?float
     {
+        if (is_string($value)) {
+            $value = trim($value);
+            if (preg_match('/^-?\d+,\d+$/', $value)) {
+                $value = str_replace(',', '.', $value);
+            }
+        }
         if (! is_numeric($value)) {
             return null;
         }
         $number = (float) $value;
-        if ($number < -180 || $number > 180 || ($number === 0.0 && trim((string) $value) === '')) {
+        if (! is_finite($number) || $number < -180 || $number > 180 || ($number === 0.0 && trim((string) $value) === '')) {
             return null;
         }
 

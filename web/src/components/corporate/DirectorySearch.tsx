@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, useTransition, type KeyboardEvent, type ReactNode } from "react";
 
-import { directoryHref, type DirectoryQueryState } from "@/lib/directory-query";
+import { directoryHref, sortTurkish, type DirectoryQueryState } from "@/lib/directory-query";
 import type { DirectoryPlace, DirectoryUi } from "@/lib/corporate";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), select:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -45,9 +45,11 @@ export function DirectorySearch({
   const visibleOffices = officeChoices.filter((office) =>
     office.name.toLocaleLowerCase("tr").includes(officeQuery.trim().toLocaleLowerCase("tr")),
   );
-  const districts = query.il
-    ? (places.find((place) => place.city === query.il)?.districts ?? [])
-    : [...new Set(places.flatMap((place) => place.districts))];
+  const districts = sortTurkish(
+    query.il
+      ? (places.find((place) => place.city === query.il)?.districts ?? [])
+      : [...new Set(places.flatMap((place) => place.districts))],
+  );
 
   useEffect(() => {
     setText(query.q);
@@ -162,6 +164,7 @@ export function DirectorySearch({
           children
         ) : (
           <div className="text-center">
+            {foundLabel ? <p>{foundLabel}</p> : null}
             <p>{searching ? ui.emptySearchLabel : emptyLabel}</p>
             {searching ? (
               <button type="button" className="sk-dir-clear-search" onClick={clearSearch}>

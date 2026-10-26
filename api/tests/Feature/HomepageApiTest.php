@@ -107,6 +107,11 @@ class HomepageApiTest extends TestCase
                 'latitude' => '25.2',
                 'longitude' => '55.3',
                 'location_needs_review' => true,
+            ], [
+                'id' => 11,
+                'name' => 'Pearl',
+                'latitude' => '35,3302379',
+                'longitude' => '33,3486544',
             ]]]),
             'https://portal.test/api/v1/integrations/portal/catalogue/consultants' => Http::response(['data' => [[
                 'id' => 3,
@@ -125,7 +130,10 @@ class HomepageApiTest extends TestCase
             ->assertJsonPath('data.featuredProperties.0.area', '120 m²')
             ->assertJsonPath('data.featuredProperties.0.location', 'Konak / İzmir')
             ->assertJsonPath('data.featuredProperties.0.adSubType', 'Daire')
-            ->assertJsonCount(2, 'data.offices')
+            ->assertJsonCount(3, 'data.offices')
+            ->assertJsonPath('data.offices.2.name', 'Pearl')
+            ->assertJsonPath('data.offices.2.latitude', 35.3302379)
+            ->assertJsonPath('data.offices.2.longitude', 33.3486544)
             ->assertJsonPath('data.offices.0.name', 'Kadikoy')
             ->assertJsonPath('data.offices.0.latitude', 41)
             ->assertJsonPath('data.offices.0.locationNeedsReview', false)

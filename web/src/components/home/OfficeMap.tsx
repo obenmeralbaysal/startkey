@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 
 import type { MapOffice } from "@/lib/api";
 import { officeMapTiles } from "@/lib/config";
+import { mapPinPosition } from "@/lib/map-coordinates";
 import { pinClickMovesMap, popupHost, stickyPopupOptions } from "@/lib/office-map-popup";
 
 /** Pixel inset so every pin, including the corner ones, stays inside the frame. */
@@ -112,9 +113,10 @@ export function OfficeMap({
         if (!sticky.isOpen() && markerOnMap) sticky.openOn(map);
       };
       for (const office of offices) {
-        if (!Number.isFinite(office.latitude) || !Number.isFinite(office.longitude)) continue;
+        const position = mapPinPosition(office.latitude, office.longitude);
+        if (!position) continue;
         placed += 1;
-        const latlng = L.latLng(office.latitude, office.longitude);
+        const latlng = L.latLng(position.latitude, position.longitude);
         const href = office.urlPath.startsWith("/") ? office.urlPath : "/";
         const html = `<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`;
         const marker = L.circleMarker(latlng, {

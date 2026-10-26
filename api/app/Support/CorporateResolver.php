@@ -1314,7 +1314,7 @@ class CorporateResolver
         $last = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Lastname') ?? '')));
         $query = $this->catalogueSearchQuery($filters);
         $facetPlaces = $places !== [] ? $this->normalisePlaces($places) : $this->placesFromRows($rows);
-        $rows = $this->turkishSortConsultants($rows);
+        $rows = $this->turkishSortConsultants($this->dedupeConsultantRows($rows));
         $items = [];
         foreach ($rows as $row) {
             $name = mb_strtolower((string) ($row['name'] ?? ''));
@@ -1370,7 +1370,108 @@ class CorporateResolver
      * @return array<string, mixed>
      */
     /**
-     * Consultants A-Z in Turkish order (office cards keep their place after them).
+     * One card per person. Office rows are dropped; offices stay on the office list.
+     *
+     * @param  list<array<string, mixed>>  $rows
+     * @return list<array<string, mixed>>
+     */
+    private function dedupeConsultantRows(array $rows): array
+    {
+        $index = [];
+        $out = [];
+        foreach ($rows as $row) {
+            if (! is_array($row) || ($row['type'] ?? 'consultant') === 'office') {
+                continue;
+            }
+            $key = $this->consultantPersonKey($row);
+            if ($key === '' || ! isset($index[$key])) {
+                if ($key !== '') {
+                    $index[$key] = count($out);
+                }
+                $out[] = $row;
+
+                continue;
+            }
+            $out[$index[$key]] = $this->mergeConsultantCard($out[$index[$key]], $row);
+        }
+
+        return $out;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function consultantPersonKey(array $row): string
+    {
+        $userId = (int) ($row['user_id'] ?? 0);
+        if ($userId <= 0 && preg_match('/^(\d+)-\d+$/', (string) ($row['id'] ?? ''), $match)) {
+            $userId = (int) $match[1];
+        }
+
+        return $userId > 0 ? (string) $userId : trim((string) ($row['id'] ?? ''));
+    }
+
+    /**
+     * @param  array<string, mixed>  $kept
+     * @param  array<string, mixed>  $extra
+     * @return array<string, mixed>
+     */
+    private function mergeConsultantCard(array $kept, array $extra): array
+    {
+        $locations = [];
+        foreach (array_merge($this->catalogueLocations($kept), $this->catalogueLocations($extra)) as $place) {
+            $locations[$place['city'].'|'.$place['district']] = $place;
+        }
+        $kept['locations'] = array_values($locations);
+        $offices = $this->consultantMemberships($kept);
+        foreach ($this->consultantMemberships($extra) as $office) {
+            $offices[] = $office;
+        }
+        $seen = [];
+        $unique = [];
+        foreach ($offices as $office) {
+            $id = (string) ($office['office_id'] ?? '').'|'.(string) ($office['office_name'] ?? '');
+            if (isset($seen[$id])) {
+                continue;
+            }
+            $seen[$id] = true;
+            $unique[] = $office;
+        }
+        $kept['offices'] = $unique;
+        if (! empty($extra['is_default']) && empty($kept['is_default'])) {
+            foreach (['office_id', 'office_name', 'role', 'city', 'district', 'id'] as $field) {
+                if (array_key_exists($field, $extra)) {
+                    $kept[$field] = $extra[$field];
+                }
+            }
+            $kept['is_default'] = true;
+        }
+
+        return $kept;
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return list<array<string, mixed>>
+     */
+    private function consultantMemberships(array $row): array
+    {
+        $offices = [];
+        foreach (is_array($row['offices'] ?? null) ? $row['offices'] : [] as $office) {
+            if (is_array($office)) {
+                $offices[] = $office;
+            }
+        }
+        if ($offices === [] && (($row['office_id'] ?? null) !== null || (string) ($row['office_name'] ?? '') !== '')) {
+            $offices[] = [
+                'office_id' => $row['office_id'] ?? null,
+                'office_name' => $row['office_name'] ?? null,
+            ];
+        }
+
+        return $offices;
+    }
+
+    /**
+     * Consultants A-Z in Turkish order. Office cards are not part of this list.
      *
      * @param  list<array<string, mixed>>  $rows
      * @return list<array<string, mixed>>
@@ -1380,12 +1481,10 @@ class CorporateResolver
         $collator = class_exists(\Collator::class) ? new \Collator('tr_TR') : null;
         $collator?->setStrength(\Collator::SECONDARY);
         $key = fn (array $row) => trim((string) preg_replace('/\s+/u', ' ', (string) ($row['name'] ?? '')));
-        $people = array_values(array_filter($rows, fn ($row) => ($row['type'] ?? 'consultant') !== 'office'));
-        $offices = array_values(array_filter($rows, fn ($row) => ($row['type'] ?? 'consultant') === 'office'));
+        $people = array_values(array_filter($rows, fn ($row) => is_array($row) && ($row['type'] ?? 'consultant') !== 'office'));
         usort($people, fn ($a, $b) => $collator ? $collator->compare($key($a), $key($b)) : strcmp(mb_strtolower($key($a)), mb_strtolower($key($b))));
-        usort($offices, fn ($a, $b) => $collator ? $collator->compare($key($a), $key($b)) : strcmp(mb_strtolower($key($a)), mb_strtolower($key($b))));
 
-        return array_merge($people, $offices);
+        return $people;
     }
 
     private function pageRemote(array $payload, array $items, int $pageIndex, int $perPage, string $basePath, string $searchQuery): array
@@ -1536,7 +1635,7 @@ class CorporateResolver
         $meta['title'] = $locale === 'tr' ? 'Startkey Türkiye | '.$heading : '| '.$heading;
         $payload['meta'] = $meta;
         $total = $payload['pagination']['total'] ?? null;
-        if ($total !== null && ($payload['hasResults'] ?? false)) {
+        if ($total !== null) {
             $payload['foundLabel'] = str_replace('{count}', (string) $total, $defaults['foundTemplate']);
         }
 

@@ -5,6 +5,10 @@ export interface DirectoryQueryState {
   ofis: string;
 }
 
+export function sortTurkish(values: readonly string[]): string[] {
+  return [...values].sort((a, b) => a.localeCompare(b, "tr"));
+}
+
 export function directoryHref(basePath: string, query: DirectoryQueryState, page = 1): string {
   const params = new URLSearchParams();
   if (query.q) {
