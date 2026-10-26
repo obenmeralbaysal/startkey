@@ -2123,6 +2123,10 @@ a.btn.style2::after {
   object-fit: cover;
 }
 
+.sk-photo.sk-photo-contain {
+  object-fit: contain;
+}
+
 @media (max-width: 767px) {
   .sk-counter {
     width: 50%;

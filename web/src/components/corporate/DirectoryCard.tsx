@@ -10,6 +10,7 @@ function FramedPhoto({
   width,
   height,
   fill = false,
+  contain = false,
 }: {
   href: string;
   image: string;
@@ -18,13 +19,21 @@ function FramedPhoto({
   width: number;
   height: number;
   fill?: boolean;
+  contain?: boolean;
 }) {
   return (
     <div className={fill ? "sk-photo-frame sk-photo-frame-fill" : "sk-photo-frame"}>
       <a href={href}>
         <Picture width={width} height={height}>
           {imageWebp ? <source srcSet={imageWebp} type="image/webp" /> : null}
-          <img className="sk-photo" src={image} alt={alt} width={width} height={height} style={{ "--sk-photo-w": width, "--sk-photo-h": height }} />
+          <img
+            className={contain ? "sk-photo sk-photo-contain" : "sk-photo"}
+            src={image}
+            alt={alt}
+            width={width}
+            height={height}
+            style={{ "--sk-photo-w": width, "--sk-photo-h": height }}
+          />
         </Picture>
       </a>
     </div>
@@ -35,12 +44,13 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
   if (item.variant === "office") {
     return (
       <div className="agent-card style1">
-        <FramedPhoto href={item.urlPath} image={item.image} imageWebp={item.imageWebp} alt="OfficeLogo-photo" width={413} height={194} fill />
+        <FramedPhoto href={item.urlPath} image={item.image} imageWebp={item.imageWebp} alt="OfficeLogo-photo" width={413} height={194} fill contain />
         <div className="block">
           <div className="sk-office-info">
             <h3>
               <a href={item.urlPath}>{item.name}</a>
             </h3>
+            {item.role ? <span>{item.role}</span> : null}
             <AwardBadges badges={item.badges} />
             {item.phoneHref ? (
               <span>
