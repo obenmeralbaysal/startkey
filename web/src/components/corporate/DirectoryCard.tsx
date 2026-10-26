@@ -58,7 +58,7 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
             <h3>
               <a href={item.urlPath}>{item.name}</a>
             </h3>
-            {item.role ? <span>{item.role}</span> : null}
+            {memberLine(item) ? <span>{memberLine(item)}</span> : null}
             <AwardBadges badges={item.badges} />
             <RankBadges badges={item.rankBadges} locale={localeOf(item.urlPath)} variant="card" />
             {item.phoneHref ? (
@@ -104,7 +104,7 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
         <h3>
           <a href={item.urlPath}>{item.name}</a>
         </h3>
-        {item.role ? <span>{item.role}</span> : null}
+        {memberLine(item) ? <span>{memberLine(item)}</span> : null}
         <AwardBadges badges={item.badges} />
         <RankBadges badges={item.rankBadges} locale={localeOf(item.urlPath)} variant="card" />
         {item.phoneHref ? (
@@ -123,6 +123,12 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
 }
 
 export const DirectoryPagination = Pagination;
+
+export function memberLine(item: { title?: string; role?: string }): string {
+  const title = item.title?.trim();
+  if (title) return title;
+  return item.role?.trim() ?? "";
+}
 
 function AwardBadges({ badges }: { badges?: { title: string; period: string }[] }) {
   if (!badges || badges.length === 0) {

@@ -108,6 +108,18 @@ test("network rows never keep phone or email", () => {
   assert.equal(blob.includes("555000"), false);
   assert.equal(blob.includes("@"), false);
   assert.equal(office?.name, "Kadıköy");
+  const owned = toOffice({
+    id: 4,
+    name: "Çift",
+    owners: [
+      { id: 8, first_name: "Ada", last_name: "Bir", email: "ada@example.com", title: "Broker/Owner" },
+      { id: 9, first_name: "Efe", last_name: "İki", email: "efe@example.com" },
+    ],
+  });
+  assert.deepEqual(owned?.owners?.map((row) => row.name), ["Ada Bir", "Efe İki"]);
+  assert.equal(owned?.owner?.name, "Ada Bir");
+  assert.equal(owned?.owner?.title, "Broker/Owner");
+  assert.equal(JSON.stringify(owned).includes("@"), false);
   assert.equal(consultant?.office?.name, "Kadıköy");
   assert.equal(page.data[0]?.title, "agent");
   assert.equal(page.pagination.per_page, 20);

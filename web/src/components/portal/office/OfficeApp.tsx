@@ -210,7 +210,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
               <span className="glass-avatar">{initials(userName.first, userName.last)}</span>
               <span>
                 <strong>{`${userName.first} ${userName.last}`.trim() || officeLabel(office)}</strong>
-                <small>{roleLabel(role)}</small>
+                <small>{roleLabel(role, office?.title)}</small>
               </span>
             </div>
             {isAdmin ? <Link className="glass-nav-item" href="/portal"><Icon name="grid" /><span>Franchise</span></Link> : null}
@@ -245,7 +245,9 @@ function memberships(value: unknown): OfficeMembership[] {
   return value.filter(isRecord).map((row) => row as OfficeMembership);
 }
 
-function roleLabel(role: string): string {
+function roleLabel(role: string, title?: string | null): string {
+  const explicit = title?.trim();
+  if (explicit) return explicit;
   if (role === "owner") return "Broker";
   if (role === "agent") return "Agent";
   if (role === "office_manager" || role === "manager") return "Ofis yöneticisi";

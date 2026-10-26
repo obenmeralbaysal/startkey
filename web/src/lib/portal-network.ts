@@ -2,6 +2,7 @@ import type { Locale } from "@/lib/locales";
 import type {
   NetworkConsultant,
   NetworkOffice,
+  NetworkOwner,
   NetworkPage,
   NetworkPagination,
   NetworkQuery,
@@ -140,6 +141,8 @@ export function toOffice(value: unknown): NetworkOffice | null {
   if (!row) return null;
   const id = asId(row.id);
   if (id === null) return null;
+  const owners = asOwners(row.owners);
+  const owner = owners[0] ?? asOwner(row.owner);
   return {
     id,
     name: asText(row.name),
@@ -147,6 +150,8 @@ export function toOffice(value: unknown): NetworkOffice | null {
     logo: asOptionalText(row.logo),
     consultant_count: asCount(row.consultant_count),
     portfolio_count: asCount(row.portfolio_count),
+    owners: owners.length > 0 ? owners : owner ? [owner] : [],
+    owner,
   };
 }
 
@@ -300,6 +305,21 @@ function asCount(value: unknown): number {
 
 function asText(value: unknown): string {
   return typeof value === "string" ? value : "";
+}
+
+function asOwners(value: unknown): NetworkOwner[] {
+  if (!Array.isArray(value)) return [];
+  return value.map(asOwner).filter((row): row is NetworkOwner => row !== null);
+}
+
+function asOwner(value: unknown): NetworkOwner | null {
+  const row = asRecord(value);
+  if (!row) return null;
+  const id = asId(row.id);
+  if (id === null) return null;
+  const name = asText(row.name).trim() || `${asText(row.first_name)} ${asText(row.last_name)}`.trim();
+  if (name === "") return null;
+  return { id, name, title: asOptionalText(row.title) };
 }
 
 function asOptionalText(value: unknown): string | null {

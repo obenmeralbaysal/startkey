@@ -266,7 +266,7 @@ function OfficeList({ lang, page, empty }: { lang: Locale; page: NetworkPage<Net
               <Mark label={office.name} src={office.logo} />
               <span>
                 <strong>{office.name}</strong>
-                <span>{[office.city, `${office.consultant_count} ${copy.consultantsCount}`, `${office.portfolio_count} ${copy.portfolios}`].filter(Boolean).join(" · ")}</span>
+                <span>{[office.city, ownerLine(office), `${office.consultant_count} ${copy.consultantsCount}`, `${office.portfolio_count} ${copy.portfolios}`].filter(Boolean).join(" · ")}</span>
               </span>
               <Icon name="chevronRight" />
             </Link>
@@ -276,6 +276,14 @@ function OfficeList({ lang, page, empty }: { lang: Locale; page: NetworkPage<Net
       <Pager lang={lang} section="offices" pagination={page.pagination} />
     </>
   );
+}
+
+function ownerLine(office: NetworkOffice): string {
+  const owners = office.owners && office.owners.length > 0 ? office.owners : office.owner ? [office.owner] : [];
+  return owners
+    .map((owner) => (owner.title ? `${owner.name} (${owner.title})` : owner.name))
+    .filter(Boolean)
+    .join(", ");
 }
 
 function ConsultantList({ lang, page, empty }: { lang: Locale; page: NetworkPage<NetworkConsultant>; empty: string }) {

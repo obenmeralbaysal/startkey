@@ -139,6 +139,7 @@ class ReonixCatalogue
         $consultants = is_array($body['consultants'] ?? null) ? $body['consultants'] : [];
         $portfolios = is_array($body['portfolios'] ?? null) ? $body['portfolios'] : [];
         $card = $this->officeCard($office, $locale);
+        $owners = $this->officeOwners($office, $consultants, $locale);
         $name = $card['name'];
         $address = (string) ($office['address'] ?? '');
         [$latitude, $longitude] = $this->coordinatePair($office['latitude'] ?? null, $office['longitude'] ?? null);
@@ -188,6 +189,8 @@ class ReonixCatalogue
                     default => 'Konum',
                 }],
             ],
+            'owners' => $owners,
+            'owner' => $owners[0] ?? null,
             'teamGroups' => $this->teamGroups($consultants, $locale),
             'listings' => array_values(array_map(fn ($row) => $this->listingCard($row, $locale), array_filter($portfolios, 'is_array'))),
             'emptyListingsLabel' => $this->emptyListingsLabel($locale),
@@ -241,6 +244,7 @@ class ReonixCatalogue
             'urlPath' => $card['urlPath'],
             'name' => $name,
             'role' => $card['role'],
+            'title' => $card['title'] ?? $card['role'],
             'image' => $card['image'],
             'imageWebp' => '',
             'email' => $card['email'],
@@ -405,6 +409,7 @@ class ReonixCatalogue
         $id = (int) ($row['id'] ?? 0);
         $name = (string) ($row['name'] ?? '');
         $phone = (string) ($row['phone'] ?? '');
+        $owners = $this->listedOwners($row, $locale);
 
         return [
             'externalId' => $id,
@@ -419,6 +424,8 @@ class ReonixCatalogue
             'variant' => 'office',
             'badges' => $this->badges($row),
             'rankBadges' => $this->rankBadges($row),
+            'owners' => $owners,
+            'owner' => $owners[0] ?? null,
         ];
     }
 
@@ -428,14 +435,14 @@ class ReonixCatalogue
      */
     private function teamGroups(array $consultants, string $locale): array
     {
-        $buckets = ['broker' => [], 'professional' => []];
+        $buckets = ['broker' => [], 'management' => [], 'professional' => []];
         foreach ($consultants as $row) {
-            if (! is_array($row)) {
+            if (! is_array($row) || ($row['type'] ?? '') === 'office') {
                 continue;
             }
-            $role = (string) ($row['role'] ?? '');
-            $key = $role === 'agent' ? 'professional' : 'broker';
-            $buckets[$key][] = $this->consultantCard($row, $locale);
+            $role = $this->rawRole($row);
+            $card = $this->consultantCard($row, $locale);
+            $buckets[$this->teamBucket($role, $this->explicitTitle($row))][] = $card;
         }
 
         $headings = [
@@ -443,6 +450,7 @@ class ReonixCatalogue
                 'de' => 'MAKLER/EIGENTÜMER',
                 default => 'BROKER/OWNER',
             },
+            'management' => '',
             'professional' => match ($locale) {
                 'en' => 'PROFESSIONALS',
                 'de' => 'UNSERE PROFIS',
@@ -450,7 +458,7 @@ class ReonixCatalogue
             },
         ];
         $groups = [];
-        foreach (['broker', 'professional'] as $key) {
+        foreach (['broker', 'management', 'professional'] as $key) {
             if ($buckets[$key] === []) {
                 continue;
             }
@@ -458,6 +466,140 @@ class ReonixCatalogue
         }
 
         return $groups;
+    }
+
+    /**
+     * Owner-role members, in payload order. Office managers stay out of this list.
+     *
+     * @param  array<string, mixed>  $office
+     * @param  list<array<string, mixed>>  $consultants
+     * @return list<array<string, mixed>>
+     */
+    private function officeOwners(array $office, array $consultants, string $locale): array
+    {
+        $owners = [];
+        foreach ($consultants as $row) {
+            if (! is_array($row) || ($row['type'] ?? '') === 'office') {
+                continue;
+            }
+            if ($this->rawRole($row) !== 'owner') {
+                continue;
+            }
+            $owners[] = $this->consultantCard($row, $locale);
+        }
+
+        return $owners !== [] ? $owners : $this->listedOwners($office, $locale);
+    }
+
+    /**
+     * Owners attached to an office list row. `owners` wins; a lone owner_* set stays the first owner.
+     *
+     * @param  array<string, mixed>  $row
+     * @return list<array<string, mixed>>
+     */
+    private function listedOwners(array $row, string $locale): array
+    {
+        $owners = [];
+        foreach (is_array($row['owners'] ?? null) ? $row['owners'] : [] as $owner) {
+            if (! is_array($owner)) {
+                continue;
+            }
+            $role = $this->rawRole($owner);
+            if ($role !== '' && $role !== 'owner') {
+                continue;
+            }
+            $owners[] = $this->ownerCard($owner, $locale);
+        }
+        if ($owners !== []) {
+            return $owners;
+        }
+
+        $id = (int) ($row['owner_id'] ?? 0);
+        $first = trim((string) ($row['owner_first_name'] ?? ''));
+        $last = trim((string) ($row['owner_last_name'] ?? ''));
+        $email = trim((string) ($row['owner_email'] ?? ''));
+        if ($id <= 0 && $first === '' && $last === '' && $email === '') {
+            return [];
+        }
+
+        return [$this->ownerCard([
+            'id' => $id,
+            'first_name' => $first,
+            'last_name' => $last,
+            'email' => $email,
+            'role' => 'owner',
+        ], $locale)];
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function ownerCard(array $row, string $locale): array
+    {
+        $first = trim((string) ($row['first_name'] ?? ''));
+        $last = trim((string) ($row['last_name'] ?? ''));
+        if (trim((string) ($row['name'] ?? '')) === '' && ($first !== '' || $last !== '')) {
+            $row['name'] = trim($first.' '.$last);
+        }
+        if ($this->rawRole($row) === '') {
+            $row['role'] = 'owner';
+        }
+
+        return $this->consultantCard($row, $locale);
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function rawRole(array $row): string
+    {
+        return trim((string) ($row['role'] ?? ''));
+    }
+
+    /**
+     * Agents stay with the professionals. Managers join the broker heading only when
+     * their own title contains "Owner"; otherwise they stay above the professionals.
+     */
+    private function teamBucket(string $role, string $explicitTitle): string
+    {
+        if ($role === 'agent') {
+            return 'professional';
+        }
+        if (in_array($role, ['office_manager', 'manager'], true)) {
+            return $this->titleHasOwner($explicitTitle) ? 'broker' : 'management';
+        }
+
+        return 'broker';
+    }
+
+    private function titleHasOwner(string $title): bool
+    {
+        return $title !== '' && mb_stripos($title, 'owner') !== false;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function explicitTitle(array $row): string
+    {
+        $title = $row['title'] ?? null;
+        if (is_string($title) && trim($title) !== '') {
+            return trim($title);
+        }
+        if (is_array($title)) {
+            $name = $title['name'] ?? null;
+            if (is_string($name) && trim($name) !== '') {
+                return trim($name);
+            }
+        }
+        $named = $row['title_name'] ?? null;
+
+        return is_string($named) ? trim($named) : '';
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function resolvedTitle(array $row): string
+    {
+        $explicit = $this->explicitTitle($row);
+        if ($explicit !== '') {
+            return $explicit;
+        }
+
+        return $this->roleLabel($this->rawRole($row));
     }
 
     private function roleLabel(string $role): string
@@ -555,6 +697,7 @@ class ReonixCatalogue
             }
             $card = $this->officeCard(array_merge($row, ['id' => $officeId]), $locale);
             $card['role'] = $this->officeConsultantTitle($locale);
+            $card['title'] = $card['role'];
 
             return $card;
         }
@@ -566,7 +709,8 @@ class ReonixCatalogue
             'externalId' => $id,
             'urlPath' => $this->detailPath('consultants', $locale, $id, $name),
             'name' => $name,
-            'role' => $this->roleLabel((string) ($row['role'] ?? '')),
+            'role' => $this->rawRole($row),
+            'title' => $this->resolvedTitle($row),
             'image' => $this->catalogueImage('consultants', $row),
             'imageWebp' => '',
             'phoneHref' => $phone !== '' ? 'tel:'.preg_replace('/\D+/', '', $phone) : '',

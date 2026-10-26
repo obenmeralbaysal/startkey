@@ -229,9 +229,14 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.tabs.2.label', 'Konum')
             ->assertJsonPath('data.portfoliosLabel', 'Akın Tüm Portföyleri')
             ->assertJsonPath('data.teamGroups.0.heading', 'BROKER/OWNER')
-            ->assertJsonPath('data.teamGroups.0.members.0.role', 'Broker/Owner')
+            ->assertJsonPath('data.teamGroups.0.members.0.role', 'owner')
+            ->assertJsonPath('data.teamGroups.0.members.0.title', 'Broker/Owner')
+            ->assertJsonPath('data.owners.0.externalId', 1)
+            ->assertJsonPath('data.owner.externalId', 1)
+            ->assertJsonPath('data.owner.name', 'Meral Akın')
             ->assertJsonPath('data.teamGroups.1.heading', 'PROFESYONELLER')
-            ->assertJsonPath('data.teamGroups.1.members.0.role', 'Gayrimenkul Danışmanı')
+            ->assertJsonPath('data.teamGroups.1.members.0.role', 'agent')
+            ->assertJsonPath('data.teamGroups.1.members.0.title', 'Gayrimenkul Danışmanı')
             ->assertJsonPath('data.emptyListingsLabel', 'Henüz İlan Girilmemiş. Tüm İlanlarımızı Görmek İçin Butona Tıklayınız')
             ->assertJsonPath('data.pin', null)
             ->assertJsonPath('data.map', []);
@@ -241,10 +246,100 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.breadcrumb.trail.1.label', 'Danışmanlarımız')
             ->assertJsonPath('data.tabs.1.label', 'Portföyler')
             ->assertJsonPath('data.contactLabels.office', 'Startkey:')
-            ->assertJsonPath('data.role', 'Broker/Owner')
+            ->assertJsonPath('data.role', 'owner')
+            ->assertJsonPath('data.title', 'Broker/Owner')
             ->assertJsonPath('data.commentHeading', 'Meral Akın için Yorum Ekle')
             ->assertJsonPath('data.form.submitLabel', 'Yorumu Gönder')
             ->assertJsonPath('data.mineListingsLabel', 'Tüm Portföylerim');
+    }
+
+    public function test_an_office_lists_every_owner_and_keeps_a_managers_own_title(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices/7' => Http::response(['data' => [
+                'office' => [
+                    'id' => 7,
+                    'name' => 'Akın',
+                    'phone' => '',
+                    'address' => 'İzmir',
+                    'owner_id' => 1,
+                    'owners' => [
+                        ['id' => 1, 'first_name' => 'Meral', 'last_name' => 'Akın', 'email' => 'meral@example.com'],
+                        ['id' => 3, 'first_name' => 'Ali', 'last_name' => 'Akın', 'email' => 'ali@example.com'],
+                    ],
+                ],
+                'consultants' => [
+                    ['id' => 1, 'name' => 'Meral Akın', 'role' => 'owner', 'phone' => '', 'email' => 'meral@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                    ['id' => 4, 'name' => 'Deniz Yönetici', 'role' => 'office_manager', 'title' => 'Broker Manager', 'phone' => '', 'email' => 'deniz@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                    ['id' => 6, 'name' => 'Kerem Ortak', 'role' => 'manager', 'title' => 'Broker/Owner', 'phone' => '', 'email' => 'kerem@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                    ['id' => 3, 'name' => 'Ali Akın', 'role' => 'owner', 'phone' => '', 'email' => 'ali@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                    ['id' => 5, 'name' => 'Saha Yılmaz', 'role' => 'manager', 'title' => ['name' => 'Saha Yöneticisi'], 'phone' => '', 'email' => 'saha@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                    ['id' => 2, 'name' => 'Berrin Coşkun', 'role' => 'agent', 'title_name' => 'Kıdemli Danışman', 'phone' => '', 'email' => 'berrin@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                    ['id' => 8, 'name' => 'Boş Ünvan', 'role' => 'office_manager', 'title' => '   ', 'phone' => '', 'email' => 'bos@example.com', 'office_id' => 7, 'office_name' => 'Akın'],
+                ],
+                'portfolios' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [
+                [
+                    'id' => 11,
+                    'name' => 'Çift',
+                    'phone' => '',
+                    'address' => 'İzmir / Konak',
+                    'owner_id' => 99,
+                    'owner_first_name' => 'Eski',
+                    'owner_last_name' => 'Kayıt',
+                    'owners' => [
+                        ['id' => 8, 'first_name' => 'Ada', 'last_name' => 'Bir', 'email' => 'ada@example.com'],
+                        ['id' => 9, 'first_name' => 'Efe', 'last_name' => 'İki', 'email' => 'efe@example.com'],
+                    ],
+                ],
+                [
+                    'id' => 12,
+                    'name' => 'Tek',
+                    'phone' => '',
+                    'address' => 'İzmir / Bornova',
+                    'owner_id' => 4,
+                    'owner_first_name' => 'Can',
+                    'owner_last_name' => 'Tek',
+                    'owner_email' => 'can@example.com',
+                ],
+            ]]),
+        ]);
+
+        $detail = $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler/7/akin')->assertOk()->json('data');
+        $this->assertSame([1, 3], array_column($detail['owners'], 'externalId'));
+        $this->assertSame($detail['owners'][0], $detail['owner']);
+        $this->assertSame('Meral Akın', $detail['owner']['name']);
+        $this->assertSame('owner', $detail['owner']['role']);
+        $this->assertSame('Broker/Owner', $detail['owner']['title']);
+
+        $this->assertSame('BROKER/OWNER', $detail['teamGroups'][0]['heading']);
+        $this->assertSame(['Meral Akın', 'Kerem Ortak', 'Ali Akın'], array_column($detail['teamGroups'][0]['members'], 'name'));
+        $this->assertSame(['owner', 'manager', 'owner'], array_column($detail['teamGroups'][0]['members'], 'role'));
+        $this->assertSame('', $detail['teamGroups'][1]['heading']);
+        $this->assertSame(['Deniz Yönetici', 'Saha Yılmaz', 'Boş Ünvan'], array_column($detail['teamGroups'][1]['members'], 'name'));
+        $this->assertSame('PROFESYONELLER', $detail['teamGroups'][2]['heading']);
+
+        $manager = $detail['teamGroups'][1]['members'][0];
+        $this->assertSame('Broker Manager', $manager['title']);
+        $this->assertSame('office_manager', $manager['role']);
+        $this->assertNotContains(4, array_column($detail['owners'], 'externalId'));
+        $this->assertSame('Saha Yöneticisi', $detail['teamGroups'][1]['members'][1]['title']);
+        $this->assertSame('manager', $detail['teamGroups'][1]['members'][1]['role']);
+        $this->assertSame('Broker/Owner', $detail['teamGroups'][1]['members'][2]['title']);
+        $this->assertSame('office_manager', $detail['teamGroups'][1]['members'][2]['role']);
+        $this->assertSame('Kıdemli Danışman', $detail['teamGroups'][2]['members'][0]['title']);
+        $this->assertSame('agent', $detail['teamGroups'][2]['members'][0]['role']);
+
+        $list = $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler')->assertOk()->json('data.items');
+        $pair = collect($list)->firstWhere('externalId', 11);
+        $single = collect($list)->firstWhere('externalId', 12);
+        $this->assertSame(['Ada Bir', 'Efe İki'], array_column($pair['owners'], 'name'));
+        $this->assertSame($pair['owners'][0], $pair['owner']);
+        $this->assertSame('owner', $pair['owner']['role']);
+        $this->assertSame('Broker/Owner', $pair['owner']['title']);
+        $this->assertSame('Can Tek', $single['owner']['name']);
+        $this->assertSame([$single['owner']], $single['owners']);
     }
 
     public function test_the_portal_office_detail_carries_a_map_pin_only_with_reonix_coordinates(): void
