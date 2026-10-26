@@ -15,12 +15,20 @@ class ReonixCatalogue
         return (string) config('reonix.base_url') !== '' && (string) config('reonix.portal_key') !== '';
     }
 
+    /** @var array<string, list<array<string, mixed>>|null> Unfiltered lists already fetched in this request. */
+    private array $collections = [];
+
     /** @return list<array<string, mixed>>|null */
     public function collection(string $kind): ?array
     {
+        // One homepage request asks for the same list several times (featured,
+        // counters, map pins and their consultant counts); fetch each once.
+        if (array_key_exists($kind, $this->collections)) {
+            return $this->collections[$kind];
+        }
         $listed = $this->listed($kind);
 
-        return $listed === null ? null : $listed['rows'];
+        return $this->collections[$kind] = $listed === null ? null : $listed['rows'];
     }
 
     /**

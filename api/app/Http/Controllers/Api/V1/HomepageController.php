@@ -24,20 +24,31 @@ class HomepageController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $locale = Locale::fromRequest($request);
-        $portfolios = $this->catalogue->collection('portfolios');
+        $key = 'homepage:payload:'.$locale;
+        $cached = Cache::get($key);
+        if (is_array($cached)) {
+            return response()->json(['data' => $cached]);
+        }
 
-        return response()->json([
-            'data' => [
-                'stats' => $this->stats($locale),
-                'featuredProperties' => is_array($portfolios)
-                    ? $this->featuredFromCatalogueRows($portfolios, $locale)
-                    : $this->featuredProperties($locale),
-                'popularCities' => is_array($portfolios)
-                    ? $this->citiesFromPortfolios($portfolios, $locale)
-                    : $this->popularCities($locale),
-                'offices' => $this->catalogue->mapOffices($locale),
-            ],
-        ]);
+        $portfolios = $this->catalogue->collection('portfolios');
+        $data = [
+            'stats' => $this->stats($locale),
+            'featuredProperties' => is_array($portfolios)
+                ? $this->featuredFromCatalogueRows($portfolios, $locale)
+                : $this->featuredProperties($locale),
+            'popularCities' => is_array($portfolios)
+                ? $this->citiesFromPortfolios($portfolios, $locale)
+                : $this->popularCities($locale),
+            'offices' => $this->catalogue->mapOffices($locale),
+        ];
+        // Several sequential Reonix calls make a cold payload take seconds; keep a
+        // good one for 5 minutes. Payloads without live map pins are not cached,
+        // so a Reonix outage is not pinned for 5 minutes.
+        if ($data['offices'] !== []) {
+            Cache::put($key, $data, now()->addMinutes(5));
+        }
+
+        return response()->json(['data' => $data]);
     }
 
     /** Seeded counter keys that must show live Reonix numbers instead of static text. */
