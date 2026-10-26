@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: Ana sayfa Startkey Global haritası koordinatı olan her ofisi (İngiltere, Atina ve Kıbrıs dahil) yaklaşık 40px payla kadraja alır. Yükseklik masaüstünde 620px, 768px altında 420px. Pine tıklanınca yakınlaştırma 13 olur ve bilgi balonu durur. Yakın pinler kırmızı kümede toplanır; sol üstte yakınlaştırma altındaki “Tümünü göster” başlangıç kadrajına döner. `locationNeedsReview` cevapta kalır, kadrajdan ofis düşürmez. #2178
 - **[Bugfix]**: Ana sayfa haritasında enlem 35.8–42.2 ve boylam 25.6–44.9 dışındaki ofisler `fitBounds` hesabına girmez; pinler haritada kalır. `locationNeedsReview` gelmese de aynı dışlama uygulanır. Ofis detay haritası kendi pinine odaklanmaya devam eder. #2178
 - **[UI]**: Üstteki seminer sayısı, eğitim listesinin ilk bölümündeki yaklaşan kayıtların sayısıdır. Sabit sayı kalktı. #2178
 - **[UI]**: Ana sayfadaki Startkey Global haritası sayfa genişliğindedir. Sınırlar, konumu incelenmesi gereken ofisler dışında kalan pinlere 20px payla oturur; bu pinler haritada durur. `location_needs_review` ana sayfa ofis listesinde `locationNeedsReview` olarak gelir. #2178
