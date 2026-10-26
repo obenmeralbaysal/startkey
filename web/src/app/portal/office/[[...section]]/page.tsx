@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { settingsHttpDecision } from "@/components/portal/office/access";
 import { config } from "@/lib/config";
 import { officeSectionRedirect } from "@/lib/portal-office-routes";
+import { portalLocale } from "@/lib/portal-ux";
 
 import { OfficePageClient } from "./office-client";
 
@@ -11,16 +12,19 @@ export const dynamic = "force-dynamic";
 
 export default async function OfficePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ section?: string[] }>;
+  searchParams: Promise<{ lang?: string }>;
 }) {
   const { section } = await params;
+  const { lang } = await searchParams;
   const parts = section ?? [];
   const destination = officeSectionRedirect(parts);
   if (destination) redirect(destination);
   const tab = parts[0] === "settings" ? parts[1] : undefined;
   if (tab && (await settingsClosed(tab))) forbidden();
-  return <OfficePageClient parts={parts} />;
+  return <OfficePageClient parts={parts} lang={portalLocale(lang)} />;
 }
 
 async function settingsClosed(tab: string): Promise<boolean> {

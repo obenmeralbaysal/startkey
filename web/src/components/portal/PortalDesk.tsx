@@ -8,6 +8,7 @@ import { officeCall } from "@/components/portal/office/api";
 import { EmptyState, Skeleton } from "@/components/portal/office/ui";
 import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
 import { networkHome, openNetworkHome } from "@/lib/portal-network";
+import { portalLandingHref } from "@/lib/portal-ux";
 
 export type PortalOffice = { id: number; name: string; role: string | null };
 
@@ -63,21 +64,29 @@ function DeskScreen({ user, lang, onLogout }: { user: PortalUser; lang: string; 
 
   useEffect(() => {
     let cancelled = false;
+    const desk = new URLSearchParams(window.location.search).get("desk");
+    const go = (href: string | null) => {
+      if (cancelled) return;
+      if (href) {
+        window.location.replace(href);
+        return;
+      }
+      setGate("desk");
+    };
     if (openNetworkHome(user)) {
-      window.location.replace(networkHome(lang));
+      go(networkHome(lang));
       return;
     }
     officeCall("me", null)
       .then((me) => {
-        if (cancelled) return;
         if (openNetworkHome(me)) {
-          window.location.replace(networkHome(lang));
+          go(networkHome(lang));
           return;
         }
-        setGate("desk");
+        go(portalLandingHref(user, lang, desk));
       })
       .catch(() => {
-        if (!cancelled) setGate("desk");
+        go(portalLandingHref(user, lang, desk));
       });
     return () => {
       cancelled = true;
@@ -93,21 +102,17 @@ function DeskScreen({ user, lang, onLogout }: { user: PortalUser; lang: string; 
     );
   }
 
-  const ownerOffices = user.offices.filter((office) => office.role === "owner");
   const isAdmin = user.is_admin;
 
-  const anchors: Array<[string, string, IconName]> = [
-    ...(isAdmin
-      ? ([
-          ["#panel", "Panel", "chart"],
-          ["#ofisler", "Ofisler", "grid"],
-          ["#basvurular", "Başvurular", "inbox"],
-          ["#danisman", "Danışmanlar", "people"],
-          ["#paket", "Paket", "tag"],
-        ] as Array<[string, string, IconName]>)
-      : []),
-    ...ownerOffices.map((office): [string, string, IconName] => [`#ofis-${office.id}`, office.name, "building"]),
-  ];
+  const anchors: Array<[string, string, IconName]> = isAdmin
+    ? [
+        ["#panel", "Panel", "chart"],
+        ["#ofisler", "Ofisler", "grid"],
+        ["#basvurular", "Başvurular", "inbox"],
+        ["#danisman", "Danışmanlar", "people"],
+        ["#paket", "Paket", "tag"],
+      ]
+    : [];
   const active = anchors.some(([href]) => href === hash) ? hash : anchors[0]?.[0] ?? "";
   const links: ShellLink[] = [
     ...anchors.map(([href, label, icon]) => ({ href, label, icon, current: href === active })),
@@ -136,15 +141,12 @@ function DeskScreen({ user, lang, onLogout }: { user: PortalUser; lang: string; 
     >
       <div className="glass-view">
         {isAdmin ? <AdminPanel /> : null}
-        {ownerOffices.map((office) => (
-          <OwnerPanel key={office.id} office={office} />
-        ))}
         {!isAdmin && user.offices.length === 0 ? (
           <section className="glass-card">
             <EmptyState message="Bu hesap için ofis kaydı yok." />
           </section>
         ) : null}
-        {!isAdmin && ownerOffices.length === 0 && user.offices.length > 0 ? (
+        {!isAdmin && user.offices.length > 0 ? (
           <section className="glass-card">
             <EmptyState message="StartKey Portal" />
             <Link className="glass-btn" href="/portal/office">Ofis</Link>
@@ -265,50 +267,6 @@ function PackageForm({ packages, onDone }: { packages: PackageOption[]; onDone: 
       </select>
       <button className="glass-btn" type="submit">
         Paketi yaz
-      </button>
-    </form>
-  );
-}
-
-function OwnerPanel({ office }: { office: PortalOffice }) {
-  const toast = useToast();
-
-  function add(kind: "brokers" | "agents", event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    portalSend(`/api/v1/portal/offices/${office.id}/${kind}`, {
-      first_name: form.get("first_name"),
-      last_name: form.get("last_name"),
-      email: form.get("email"),
-      phone: form.get("phone"),
-    }).then((body) => {
-      if (body.data?.attached) {
-        toast("Mevcut kişi bu ofise bağlandı. Portala aynı hesapla girip ofis değiştirebilir.");
-        return;
-      }
-      toast(body.message || "Kaydedildi.");
-    });
-  }
-
-  return (
-    <section className="glass-card" id={`ofis-${office.id}`}>
-      <h2>{office.name}</h2>
-      <MemberForm title="Broker ekle" onSubmit={(event) => add("brokers", event)} />
-      <MemberForm title="Agent ekle" onSubmit={(event) => add("agents", event)} />
-    </section>
-  );
-}
-
-function MemberForm({ title, onSubmit }: { title: string; onSubmit: (event: React.FormEvent<HTMLFormElement>) => void }) {
-  return (
-    <form className="glass-form" onSubmit={onSubmit}>
-      <h3>{title}</h3>
-      <input name="first_name" placeholder="Ad" autoComplete="given-name" required />
-      <input name="last_name" placeholder="Soyad" autoComplete="family-name" required />
-      <input name="email" type="email" inputMode="email" placeholder="E-posta" autoComplete="email" required />
-      <input name="phone" type="tel" inputMode="tel" placeholder="Telefon" autoComplete="tel" />
-      <button className="glass-btn" type="submit">
-        Ekle
       </button>
     </form>
   );

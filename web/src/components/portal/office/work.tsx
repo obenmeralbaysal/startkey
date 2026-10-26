@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import {
   canApproveEarnings,
@@ -10,8 +10,8 @@ import {
   canManageRates,
   canVerify,
   integrationLinks,
+  officeNumber,
   roleOf,
-  SETTINGS_DENIED,
   settingsLinks,
   settingsPageAccess,
 } from "@/components/portal/office/access";
@@ -21,6 +21,8 @@ import { OfficeDashboard } from "@/components/portal/office/dashboard";
 import { ConfirmButton, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 import { hasWatermarkedMedia, isWatermarkedImage, mediaThumb, portfolioMedia, WatermarkBadge, WatermarkBanner } from "@/components/portal/office/watermark";
 import { Icon } from "@/components/portal/shell";
+import { PORTAL_UX_COPY } from "@/content/portal-ux";
+import { officeSectionDenied, withLang } from "@/lib/portal-ux";
 import {
   classifySahibindenImportFailure,
   parseSahibindenListing,
@@ -31,7 +33,15 @@ import {
 } from "@/lib/sahibinden-listing";
 
 export function OfficeWork({ parts }: { parts: string[] }) {
+  const { office, locale } = useOffice();
   const [head, id] = parts;
+  if (officeSectionDenied(parts, roleOf(office), office)) {
+    return (
+      <section className="glass-card">
+        <p>{PORTAL_UX_COPY[locale].denied}</p>
+      </section>
+    );
+  }
   if (!head) return <OfficeDashboard />;
   if (head === "contacts") return id === "new" ? <ContactForm /> : id ? <ContactDetail id={id} /> : <ContactList />;
   if (head === "portfolios") return id === "new" ? <PortfolioNew step={parts[2]} /> : id ? <PortfolioDetail id={id} /> : <PortfolioList />;
@@ -42,6 +52,7 @@ export function OfficeWork({ parts }: { parts: string[] }) {
   if (head === "reports") return <SimpleList title="Kapanış raporları" path="reports/closings" />;
   if (head === "collaborations") return <Collaborations />;
   if (head === "lease") return <Lease />;
+  if (head === "branches") return <BranchList />;
   if (head === "settings") return <Settings parts={parts.slice(1)} />;
   return <p className="glass-muted">Bu bölüm yok.</p>;
 }
@@ -1421,7 +1432,7 @@ function SimpleList({ title, path }: { title: string; path: string }) {
 }
 
 function Settings({ parts }: { parts: string[] }) {
-  const { office } = useOffice();
+  const { office, locale } = useOffice();
   const role = roleOf(office);
   const page = parts[0];
   const child = parts[1];
@@ -1431,7 +1442,7 @@ function Settings({ parts }: { parts: string[] }) {
         <h2>Ofis Ayarları</h2>
         <div className="glass-grid">
           {settingsLinks(role, office).map(({ slug, label }) => (
-            <Link key={slug} className="glass-card" href={`/portal/office/settings/${slug}`} data-settings={slug}>{label}</Link>
+            <Link key={slug} className="glass-card" href={withLang(`/portal/office/settings/${slug}`, locale)} data-settings={slug}>{label}</Link>
           ))}
         </div>
       </section>
@@ -1441,7 +1452,7 @@ function Settings({ parts }: { parts: string[] }) {
     return (
       <section className="glass-card" data-screen="office-settings">
         <h2>Ofis Ayarları</h2>
-        <p>{SETTINGS_DENIED}</p>
+        <p>{PORTAL_UX_COPY[locale].denied}</p>
       </section>
     );
   }
@@ -1463,10 +1474,24 @@ function Settings({ parts }: { parts: string[] }) {
 }
 
 function SettingsDenied() {
+  const { locale } = useOffice();
   return (
     <section className="glass-card" data-screen="office-settings">
       <h2>Ofis Ayarları</h2>
-      <p>{SETTINGS_DENIED}</p>
+      <p>{PORTAL_UX_COPY[locale].denied}</p>
+    </section>
+  );
+}
+
+function BranchList() {
+  const { locale } = useOffice();
+  const copy = PORTAL_UX_COPY[locale];
+  const list = useData("branches");
+  const data = rows(list.data);
+  return (
+    <section className="glass-card">
+      <h2>{copy.branches}</h2>
+      {list.data === undefined ? <RecordTable rows={[]} loading /> : data.length === 0 ? <p className="glass-muted">{copy.branchesEmpty}</p> : <RecordTable rows={data} />}
     </section>
   );
 }
@@ -1565,6 +1590,7 @@ function Team() {
         <input name="phone" placeholder="Telefon" />
         <select name="role_id" required defaultValue=""><option value="">Rol</option>{rows(roles.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
       </Form>
+      <OwnerInvites />
       {canDeleteTeam(roleOf(office), office) ? (
         <Form title="Üye çıkar" onSubmit={async (form) => {
           await officeCall(`team/${form.get("id")}`, officeId, { method: "DELETE" });
@@ -1575,6 +1601,64 @@ function Team() {
         </Form>
       ) : null}
     </section>
+  );
+}
+
+function OwnerInvites() {
+  const { officeId, office, notice, locale } = useOffice();
+  const copy = PORTAL_UX_COPY[locale];
+  if (roleOf(office) !== "owner") return null;
+
+  async function add(kind: "brokers" | "agents", event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const id = officeNumber(office) || officeId;
+    const response = await fetch(`/api/v1/portal/offices/${id}/${kind}`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        first_name: form.get("first_name"),
+        last_name: form.get("last_name"),
+        email: form.get("email"),
+        phone: form.get("phone"),
+      }),
+    });
+    const body = await response.json().catch(() => ({})) as { message?: unknown };
+    if (!response.ok) {
+      notice(`Hata: ${typeof body.message === "string" && body.message ? body.message : copy.savedError}`);
+      return;
+    }
+    notice(typeof body.message === "string" && body.message ? body.message : copy.saved);
+    event.currentTarget.reset();
+  }
+
+  return (
+    <>
+      <InviteForm title={copy.addBroker} copy={copy} onSubmit={(event) => add("brokers", event)} />
+      <InviteForm title={copy.addAgent} copy={copy} onSubmit={(event) => add("agents", event)} />
+    </>
+  );
+}
+
+function InviteForm({
+  title,
+  copy,
+  onSubmit,
+}: {
+  title: string;
+  copy: (typeof PORTAL_UX_COPY)["tr"];
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <form className="glass-form" onSubmit={onSubmit}>
+      <h3>{title}</h3>
+      <input name="first_name" placeholder={copy.firstName} autoComplete="given-name" required />
+      <input name="last_name" placeholder={copy.lastName} autoComplete="family-name" required />
+      <input name="email" type="email" inputMode="email" placeholder={copy.email} autoComplete="email" required />
+      <input name="phone" type="tel" inputMode="tel" placeholder={copy.phone} autoComplete="tel" />
+      <button className="glass-btn" type="submit">{copy.add}</button>
+    </form>
   );
 }
 

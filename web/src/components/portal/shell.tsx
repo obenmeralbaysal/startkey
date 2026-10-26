@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -40,6 +41,8 @@ const PATHS = {
   checkCircle: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18M8 12.3l2.8 2.7L16 9.5",
   alert: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18M12 7.5v5.5M12 16.5v.01",
   logout: "M14.5 4H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3.5M10 8l-4 4 4 4M6 12h10",
+  menu: "M4 7h16M4 12h16M4 17h16",
+  bell: "M6 16.5V10a6 6 0 1 1 12 0v6.5l1.6 2.2H4.4zM10 19.8a2 2 0 0 0 4 0",
   plus: "M12 5v14M5 12h14",
   tray: "M4 13.5h4.5l1.5 2.5h4l1.5-2.5H20M5.5 5.5h13A1.5 1.5 0 0 1 20 7v11a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18V7a1.5 1.5 0 0 1 1.5-1.5",
 } as const;
@@ -54,29 +57,63 @@ export function Icon({ name }: { name: IconName }) {
   );
 }
 
-export type ShellLink = { href: string; label: string; icon: IconName; current: boolean };
+export type ShellLink = { href: string; label: string; icon: IconName; current: boolean; bottomLabel?: string };
+
+export type ShellGroup = { id: string; label?: string; links: ShellLink[] };
 
 export function AppShell({
   links,
+  groups,
   primary = 4,
+  bottom,
+  variant = "glass",
+  moreLabel = "Diğer",
+  menuLabel = "Menüyü aç",
+  closeLabel = "Kapat",
   homeHref,
   header,
+  toolbar,
   footer,
   children,
 }: {
   links: ShellLink[];
+  groups?: ShellGroup[];
   primary?: number;
+  bottom?: ShellLink[];
+  variant?: "glass" | "ux";
+  moreLabel?: string;
+  menuLabel?: string;
+  closeLabel?: string;
   homeHref: string;
   header?: ReactNode;
+  toolbar?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
 }) {
+  const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [drawer, setDrawer] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const ux = variant === "ux";
   const current = links.find((item) => item.current);
-  const tabs = links.slice(0, primary);
-  const rest = links.slice(primary);
+  const tabs = bottom ?? links.slice(0, primary);
+  const rest = bottom ? links.filter((item) => !bottom.some((tab) => tab.href === item.href)) : links.slice(primary);
   const moreCurrent = rest.some((item) => item.current);
+  const nav = groups ?? [{ id: "all", links }];
+  const tabCount = tabs.length + (rest.length > 0 ? 1 : 0);
+
+  useEffect(() => {
+    setDrawer(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!drawer) return;
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setDrawer(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [drawer]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
@@ -86,53 +123,76 @@ export function AppShell({
   }, []);
 
   return (
-    <div className="glass-app">
-      <aside className="glass-sidebar">
-        <Link className="glass-brand" href={homeHref}>
+    <div className={ux ? "glass-app glass-app-ux" : "glass-app"} data-drawer={drawer ? "open" : "closed"}>
+      {ux ? <button className="ux-backdrop" type="button" aria-label={closeLabel} onClick={() => setDrawer(false)} /> : null}
+      <aside className="glass-sidebar" id="portal-sidebar">
+        <Link className="glass-brand" href={homeHref} onClick={() => setDrawer(false)}>
           <img alt="StartKey" src="/portal/img/startkey_logo.png" />
         </Link>
         {header ? <div className="glass-side-head">{header}</div> : null}
-        <nav className="glass-side-nav" aria-label="Menü">
-          {links.map((item) => (
-            <NavItem key={item.href} item={item} />
-          ))}
-        </nav>
+        {nav.map((group) => (
+          <div className="ux-group" key={group.id}>
+            {group.label ? <p className="ux-group-label">{group.label}</p> : null}
+            <nav className="glass-side-nav" aria-label={group.label || "Menü"}>
+              {group.links.map((item) => (
+                <NavItem key={`${group.id}-${item.href}`} item={item} onNavigate={() => setDrawer(false)} />
+              ))}
+            </nav>
+          </div>
+        ))}
         {footer ? <div className="glass-side-foot">{footer}</div> : null}
       </aside>
       <header className="glass-topbar" data-scrolled={scrolled}>
-        <Link href={homeHref} aria-label="StartKey">
-          <img alt="" src="/portal/img/startkey_logo.png" />
-        </Link>
-        <span className="glass-topbar-title">{current?.label ?? ""}</span>
+        {ux ? (
+          <button className="ux-burger" type="button" aria-label={menuLabel} aria-controls="portal-sidebar" aria-expanded={drawer} onClick={() => setDrawer(true)}>
+            <Icon name="menu" />
+          </button>
+        ) : (
+          <Link href={homeHref} aria-label="StartKey">
+            <img alt="" src="/portal/img/startkey_logo.png" />
+          </Link>
+        )}
+        {ux ? null : <span className="glass-topbar-title">{current?.label ?? ""}</span>}
+        {toolbar ? <div className="ux-toolbar">{toolbar}</div> : null}
         <div className="glass-topbar-tools">
-          {header}
-          {footer}
+          {ux ? null : header}
+          {ux ? null : footer}
         </div>
       </header>
       <main className="glass-main">{children}</main>
-      <nav className="glass-tabbar" aria-label="Menü" data-count={tabs.length + (rest.length > 0 ? 1 : 0)} style={{ gridTemplateColumns: `repeat(${tabs.length + (rest.length > 0 ? 1 : 0)}, minmax(0, 1fr))` }}>
+      <nav className="glass-tabbar" aria-label="Menü" data-count={tabCount} style={{ gridTemplateColumns: `repeat(${tabCount}, minmax(0, 1fr))` }}>
         {tabs.map((item) => (
           <Link key={item.href} className="glass-tab" href={item.href} aria-current={item.current ? "page" : undefined}>
             <Icon name={item.icon} />
-            <span>{item.label}</span>
+            <span>{item.bottomLabel ?? item.label}</span>
           </Link>
         ))}
         {rest.length > 0 ? (
-          <button className="glass-tab" type="button" aria-current={moreCurrent ? "page" : undefined} aria-haspopup="dialog" onClick={() => setMoreOpen(true)}>
+          <button
+            className="glass-tab"
+            type="button"
+            aria-current={moreCurrent ? "page" : undefined}
+            aria-expanded={ux ? drawer : undefined}
+            aria-controls={ux ? "portal-sidebar" : undefined}
+            aria-haspopup={ux ? undefined : "dialog"}
+            onClick={() => (ux ? setDrawer(true) : setMoreOpen(true))}
+          >
             <Icon name="more" />
-            <span>Diğer</span>
+            <span>{moreLabel}</span>
           </button>
         ) : null}
       </nav>
-      <Sheet open={moreOpen} title="Diğer" onClose={() => setMoreOpen(false)}>
-        {header}
-        <nav className="glass-side-nav" aria-label="Diğer">
-          {rest.map((item) => (
-            <NavItem key={item.href} item={item} onNavigate={() => setMoreOpen(false)} />
-          ))}
-        </nav>
-        {footer}
-      </Sheet>
+      {ux ? null : (
+        <Sheet open={moreOpen} title={moreLabel} onClose={() => setMoreOpen(false)}>
+          {header}
+          <nav className="glass-side-nav" aria-label={moreLabel}>
+            {rest.map((item) => (
+              <NavItem key={item.href} item={item} onNavigate={() => setMoreOpen(false)} />
+            ))}
+          </nav>
+          {footer}
+        </Sheet>
+      )}
     </div>
   );
 }

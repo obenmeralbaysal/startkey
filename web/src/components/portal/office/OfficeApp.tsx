@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clearOfficeReads, isRecord, officeCall, type OfficeRecord } from "@/components/portal/office/api";
+import { NotificationBell, PortalSearch, UserChip } from "@/components/portal/office/chrome";
 import { networkHome, openNetworkHome } from "@/lib/portal-network";
 import {
   officeLabel,
@@ -15,12 +16,25 @@ import {
 import { EmptyState, OfficeProvider } from "@/components/portal/office/ui";
 import { OfficeWork } from "@/components/portal/office/work";
 import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
+import { PORTAL_UX_COPY } from "@/content/portal-ux";
+import type { Locale } from "@/lib/locales";
+import {
+  menuCurrent,
+  officeBottomNav,
+  officeHome,
+  officeMenu,
+  officeRoleBadge,
+  personTitle,
+  withLang,
+  type OfficeMenuItem,
+} from "@/lib/portal-ux";
 
 type OfficeBoot = {
   at: number;
   isAdmin: boolean;
   first: string;
   last: string;
+  title: string;
   offices: OfficeMembership[];
   officeId: number;
 };
@@ -28,16 +42,17 @@ type OfficeBoot = {
 let officeBoot: OfficeBoot | null = null;
 const OFFICE_BOOT_MS = 20_000;
 
-export function OfficeApp({ parts }: { parts: string[] }) {
+export function OfficeApp({ parts, lang }: { parts: string[]; lang: Locale }) {
   return (
     <ToastProvider>
-      <OfficeScreen parts={parts} />
+      <OfficeScreen parts={parts} lang={lang} />
     </ToastProvider>
   );
 }
 
-function OfficeScreen({ parts }: { parts: string[] }) {
+function OfficeScreen({ parts, lang }: { parts: string[]; lang: Locale }) {
   const router = useRouter();
+  const copy = PORTAL_UX_COPY[lang];
   const [ready, setReady] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [offices, setOffices] = useState<OfficeMembership[]>([]);
@@ -45,7 +60,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
   const route = parts.join("/");
   const [section, setSection] = useState(parts);
   const [switching, setSwitching] = useState(false);
-  const [userName, setUserName] = useState({ first: "", last: "" });
+  const [userName, setUserName] = useState({ first: "", last: "", title: "" });
   const toast = useToast();
   const notice = useCallback((value: string) => toast(value), [toast]);
   const noticeRef = useRef(notice);
@@ -60,7 +75,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
     const apply = (boot: OfficeBoot) => {
       if (cancelled) return;
       setIsAdmin(boot.isAdmin);
-      setUserName({ first: boot.first, last: boot.last });
+      setUserName({ first: boot.first, last: boot.last, title: boot.title });
       setOffices(boot.offices);
       setOfficeId(boot.officeId);
       setReady(true);
@@ -72,7 +87,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
     (async () => {
       const session = await fetch("/api/v1/portal/session", { credentials: "include", headers: { Accept: "application/json" } });
       if (!session.ok) {
-        window.location.href = "/portal";
+        window.location.href = withLang("/portal", lang);
         return;
       }
       const sessionBody = (await session.json()) as OfficeRecord;
@@ -81,18 +96,18 @@ function OfficeScreen({ parts }: { parts: string[] }) {
       const last = typeof loginUser.last_name === "string" ? loginUser.last_name : "";
       if (!cancelled) {
         setIsAdmin(Boolean(loginUser.is_admin));
-        setUserName({ first, last });
+        setUserName({ first, last, title: personTitle(loginUser) });
       }
       if (openNetworkHome(loginUser)) {
         officeBoot = null;
-        if (!cancelled) window.location.replace(networkHome(new URLSearchParams(window.location.search).get("lang")));
+        if (!cancelled) window.location.replace(networkHome(lang));
         return;
       }
       try {
         const me = await officeCall("me", null);
         if (openNetworkHome(me)) {
           officeBoot = null;
-          if (!cancelled) window.location.replace(networkHome(new URLSearchParams(window.location.search).get("lang")));
+          if (!cancelled) window.location.replace(networkHome(lang));
           return;
         }
         const list = memberships(me.offices ?? loginUser.offices);
@@ -102,6 +117,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
           isAdmin: Boolean(loginUser.is_admin),
           first,
           last,
+          title: personTitle(me) || personTitle(loginUser),
           offices: list,
           officeId: current || (list[0] ? officeNumber(list[0]) : 0),
         };
@@ -114,26 +130,11 @@ function OfficeScreen({ parts }: { parts: string[] }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lang]);
 
   const office = offices.find((item) => officeNumber(item) === officeId) ?? offices[0];
   const role = roleOf(office);
-  const links = useMemo(() => {
-    const items = [
-      ["", "Özet"],
-      ["contacts", "Kişiler"],
-      ["portfolios", "Portföy"],
-      ["demands", "Talepler"],
-      ["matches", "Eşleşmeler"],
-      ["calendar", "Takvim"],
-      ["earnings", "Hakediş"],
-      ["reports", role === "agent" ? "Performansım" : "Raporlar"],
-      ["collaborations", "İşbirlikleri"],
-      ["lease", "Kira radarı"],
-      ["settings", "Ayarlar"],
-    ];
-    return items;
-  }, [role]);
+  const menu = useMemo(() => officeMenu(role, office, lang), [role, office, lang]);
 
   async function choose(next: number) {
     if (next === officeId || switching) return;
@@ -144,7 +145,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
       setOfficeId(next);
       setSection([]);
       notice("");
-      if ((parts[0] ?? "") !== "") router.push("/portal/office");
+      if ((parts[0] ?? "") !== "") router.push(officeHome(lang));
     } catch (error) {
       notice(`Hata: ${error instanceof Error ? error.message : "Ofis değişmedi."}`);
     } finally {
@@ -156,7 +157,7 @@ function OfficeScreen({ parts }: { parts: string[] }) {
     officeBoot = null;
     clearOfficeReads();
     await fetch("/api/v1/portal/session", { method: "DELETE", credentials: "include" });
-    window.location.href = "/portal";
+    window.location.href = withLang("/portal", lang);
   }
 
   if (!ready) {
@@ -173,29 +174,44 @@ function OfficeScreen({ parts }: { parts: string[] }) {
         <section className="glass-panel">
           <img className="glass-logo" alt="StartKey" src="/portal/img/startkey_logo.png" />
           <EmptyState message="Bu hesap bir ofise bağlı değil." />
-          {isAdmin ? <Link className="glass-btn" href="/portal">Franchise masası</Link> : null}
+          {isAdmin ? <Link className="glass-btn" href={withLang("/portal?desk=1", lang)}>Franchise masası</Link> : null}
           <button className="glass-btn-lite" type="button" onClick={logout}>Çıkış</button>
         </section>
       </main>
     );
   }
 
-  const shellLinks: ShellLink[] = links.map(([slug, label]) => ({
-    href: slug ? `/portal/office/${slug}` : "/portal/office",
-    label,
-    icon: ICONS[slug] ?? "grid",
-    current: (parts[0] ?? "") === slug,
-  }));
+  const toLink = (item: OfficeMenuItem): ShellLink => ({
+    href: withLang(item.href, lang),
+    label: item.label,
+    bottomLabel: item.bottomLabel,
+    icon: item.icon as IconName,
+    current: menuCurrent(item.id, parts),
+  });
+  const shellLinks = menu.map(toLink);
+  const workLinks = menu.filter((item) => item.group === "work").map(toLink);
+  const manageLinks = menu.filter((item) => item.group === "manage").map(toLink);
+  const bottom = officeBottomNav(menu).map(toLink);
+  const badge = officeRoleBadge(role, lang);
 
   return (
-    <OfficeProvider value={{ officeId, office, isAdmin, firstName: userName.first, notice, reload: () => undefined }}>
+    <OfficeProvider value={{ officeId, office, isAdmin, firstName: userName.first, jobTitle: userName.title, locale: lang, notice, reload: () => undefined }}>
       <AppShell
+        variant="ux"
         links={shellLinks}
-        homeHref="/portal/office"
+        bottom={bottom}
+        moreLabel={copy.more}
+        menuLabel={copy.menu}
+        closeLabel={copy.close}
+        groups={[
+          { id: "work", links: workLinks },
+          { id: "manage", label: copy.manage, links: manageLinks },
+        ]}
+        homeHref={officeHome(lang)}
         header={
           offices.length > 1 ? (
             <label className="glass-office">
-              <span>Ofis</span>
+              <span>{copy.office}</span>
               <select value={officeId} disabled={switching} aria-busy={switching} onChange={(event) => choose(Number(event.target.value))}>
                 {offices.map((item) => (
                   <option key={officeNumber(item)} value={officeNumber(item)}>{officeLabel(item)}</option>
@@ -204,17 +220,29 @@ function OfficeScreen({ parts }: { parts: string[] }) {
             </label>
           ) : <div className="glass-office-name">{officeLabel(office)}</div>
         }
+        toolbar={
+          <>
+            <PortalSearch label={copy.searchLabel} placeholder={copy.searchPlaceholder} />
+            <NotificationBell />
+            <UserChip first={userName.first} last={userName.last} role={role} locale={lang} />
+          </>
+        }
         footer={
           <div className="glass-side-group">
             <div className="glass-who">
               <span className="glass-avatar">{initials(userName.first, userName.last)}</span>
               <span>
                 <strong>{`${userName.first} ${userName.last}`.trim() || officeLabel(office)}</strong>
-                <small>{roleLabel(role, office?.title)}</small>
+                <small>{office?.title?.trim() ? roleLabel(role, office.title) : (badge || roleLabel(role))}</small>
               </span>
             </div>
-            {isAdmin ? <Link className="glass-nav-item" href="/portal"><Icon name="grid" /><span>Franchise</span></Link> : null}
-            <button className="glass-nav-item" type="button" onClick={logout}><Icon name="logout" /><span>Çıkış</span></button>
+            <nav className="ux-lang" aria-label="Language">
+              {(["tr", "en", "de"] as const).map((code) => (
+                <Link key={code} href={sectionHref(section, code)} aria-current={code === lang ? "true" : undefined}>{code.toUpperCase()}</Link>
+              ))}
+            </nav>
+            {isAdmin ? <Link className="glass-nav-item" href={withLang("/portal?desk=1", lang)}><Icon name="grid" /><span>Franchise</span></Link> : null}
+            <button className="glass-nav-item" type="button" onClick={logout}><Icon name="logout" /><span>{copy.logout}</span></button>
           </div>
         }
       >
@@ -226,19 +254,10 @@ function OfficeScreen({ parts }: { parts: string[] }) {
   );
 }
 
-const ICONS: Record<string, IconName> = {
-  "": "home",
-  contacts: "people",
-  portfolios: "building",
-  demands: "search",
-  matches: "link",
-  calendar: "calendar",
-  earnings: "wallet",
-  reports: "chart",
-  collaborations: "swap",
-  lease: "key",
-  settings: "sliders",
-};
+function sectionHref(parts: string[], locale: Locale): string {
+  const path = parts.length === 0 ? "/portal/office" : `/portal/office/${parts.join("/")}`;
+  return withLang(path, locale);
+}
 
 function memberships(value: unknown): OfficeMembership[] {
   if (!Array.isArray(value)) return [];

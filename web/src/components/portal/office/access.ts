@@ -15,6 +15,7 @@ export type OfficeMembership = {
   can_remove_team_members?: boolean;
   can_delete_portfolios?: boolean;
   managers_can_view_financial_reports?: boolean;
+  managers_can_view_earnings?: boolean;
 };
 
 export function officeNumber(office: OfficeMembership): number {
@@ -59,6 +60,13 @@ export function canManageRates(role: OfficeRole): boolean {
 
 export function canApproveEarnings(role: OfficeRole): boolean {
   return isManager(role);
+}
+
+/** Owner and consultant see earnings. Manager roles need the office flag. */
+export function canViewEarnings(role: OfficeRole, office: OfficeMembership | undefined): boolean {
+  if (role === "owner" || role === "agent") return true;
+  if (role === "manager" || role === "office_manager") return office?.managers_can_view_earnings === true;
+  return false;
 }
 
 export function canManageDuty(role: OfficeRole): boolean {
