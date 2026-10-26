@@ -36,6 +36,7 @@ final class PortalSettings
             'manager' => ! $manager,
             'office-wide' => ! $officeWide,
             'office-settings' => ! ($role === 'owner' || ($role === 'office_manager' && ! $branched)),
+            'branch-write' => ! in_array($role, ['owner', 'office_manager'], true),
             default => true,
         };
     }
@@ -55,6 +56,9 @@ final class PortalSettings
         }
         if ($path === 'office/matchmaking-weights' || str_starts_with($path, 'office-settings/')) {
             return 'office-wide';
+        }
+        if ($write && $path === 'settings/office') {
+            return 'office-settings';
         }
         if ($write && ($path === 'settings' || str_starts_with($path, 'settings/'))) {
             return 'office-wide';
@@ -82,6 +86,12 @@ final class PortalSettings
         }
         if (in_array($method, ['PUT', 'PATCH'], true) && $path === 'office/settings') {
             return 'office-settings';
+        }
+        if ($method === 'POST' && $path === 'branches') {
+            return 'branch-write';
+        }
+        if (in_array($method, ['PUT', 'PATCH'], true) && preg_match('#^branches/\d+$#', $path) === 1) {
+            return 'branch-write';
         }
         if ($write && $path === 'duty-roster') {
             return 'manager';

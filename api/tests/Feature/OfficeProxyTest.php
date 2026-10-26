@@ -322,8 +322,43 @@ class OfficeProxyTest extends TestCase
         $this->withCredentials()
             ->withUnencryptedCookie($manager->getName(), $manager->getValue())
             ->withHeader('X-Portal-Office', '7')
-            ->putJson('/api/v1/portal/office/settings/office', ['name' => 'Lider'])
+            ->getJson('/api/v1/portal/office/settings/office')
             ->assertOk();
+        $this->withCredentials()
+            ->withUnencryptedCookie($manager->getName(), $manager->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->putJson('/api/v1/portal/office/settings/office', ['name' => 'Lider'])
+            ->assertForbidden();
+
+        $lead = $this->login([
+            'role' => 'office_manager',
+            'role_slug' => 'office_manager',
+            'branch_id' => null,
+        ]);
+        Http::fake([
+            'http://reonix.test/api/v1/settings/office' => Http::response(['data' => ['name' => 'Lider']]),
+        ]);
+        $this->withCredentials()
+            ->withUnencryptedCookie($lead->getName(), $lead->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->putJson('/api/v1/portal/office/settings/office', [
+                'name' => 'Lider',
+                'phone' => '0232',
+                'logo_url' => 'https://example.test/logo.png',
+                'brand_color' => '#ffffff',
+            ])
+            ->assertOk();
+        Http::assertSent(function ($request) {
+            if ($request->method() !== 'PUT' || ! str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/api/v1/settings/office')) {
+                return false;
+            }
+            $data = $request->data();
+
+            return ($data['name'] ?? null) === 'Lider'
+                && ($data['phone'] ?? null) === '0232'
+                && ! array_key_exists('logo_url', $data)
+                && ! array_key_exists('brand_color', $data);
+        });
 
         $branched = $this->login([
             'role' => 'office_manager',
@@ -679,11 +714,85 @@ class OfficeProxyTest extends TestCase
             'manager office settings write' => ['manager', null, 'put', '/api/v1/portal/office/office/settings'],
             'branched office settings write' => ['office_manager', 4, 'put', '/api/v1/portal/office/office/settings'],
             'agent settings' => ['agent', null, 'get', '/api/v1/portal/office/settings'],
+            'agent settings office read' => ['agent', null, 'get', '/api/v1/portal/office/settings/office'],
             'agent settings write' => ['agent', null, 'put', '/api/v1/portal/office/settings/office'],
+            'manager settings write' => ['manager', null, 'put', '/api/v1/portal/office/settings/office'],
             'agent bulk rate' => ['agent', null, 'post', '/api/v1/portal/office/commission-policy/changes'],
+            'office manager bulk rate' => ['office_manager', null, 'post', '/api/v1/portal/office/commission-policy/changes'],
             'branched settings write' => ['office_manager', 4, 'put', '/api/v1/portal/office/settings/office'],
             'manager bulk rate' => ['manager', null, 'post', '/api/v1/portal/office/commission-policy/changes'],
+            'agent team create' => ['agent', null, 'post', '/api/v1/portal/office/team'],
+            'agent team update' => ['agent', null, 'put', '/api/v1/portal/office/team/4'],
+            'agent branch create' => ['agent', null, 'post', '/api/v1/portal/office/branches'],
+            'manager branch update' => ['manager', null, 'put', '/api/v1/portal/office/branches/3'],
         ];
+    }
+
+    public function test_contract_paths_are_forwarded_for_the_allowed_role(): void
+    {
+        $owner = $this->login();
+        $agent = $this->login(['role' => 'agent', 'role_slug' => 'agent']);
+        $lead = $this->login([
+            'role' => 'office_manager',
+            'role_slug' => 'office_manager',
+            'branch_id' => 4,
+        ]);
+        Http::fake(function ($request) {
+            $path = (string) parse_url($request->url(), PHP_URL_PATH);
+            if (str_ends_with($path, '/api/v1/commission-policy/changes')) {
+                return Http::response([
+                    'status' => 'pending_approval',
+                    'data' => ['changes' => []],
+                ], 202);
+            }
+
+            return Http::response(['data' => ['name' => 'Bayraklı', 'ok' => true]]);
+        });
+
+        $as = fn ($cookie) => $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7');
+
+        foreach ([$owner, $agent, $lead] as $cookie) {
+            foreach ([
+                '/api/v1/portal/office/me',
+                '/api/v1/portal/office/dashboard/agent-stats',
+                '/api/v1/portal/office/global-search?q=Kad%C4%B1k%C3%B6y&limit=5',
+                '/api/v1/portal/office/notifications',
+                '/api/v1/portal/office/appointments',
+                '/api/v1/portal/office/branches',
+            ] as $url) {
+                $as($cookie)->getJson($url)->assertOk();
+            }
+        }
+
+        $as($owner)->postJson('/api/v1/portal/office/branches', ['name' => 'Bayraklı'])->assertOk();
+        $as($lead)->putJson('/api/v1/portal/office/branches/3', ['name' => 'Karşıyaka'])->assertOk();
+        $as($owner)->postJson('/api/v1/portal/office/team', [
+            'branch_id' => 3,
+            'ttbs_no' => '3500000',
+            'myk_no' => 'MYK-1',
+        ])->assertOk();
+        $as($owner)->putJson('/api/v1/portal/office/team/4', [
+            'branch_id' => 3,
+            'ttbs_no' => '3500000',
+            'myk_no' => 'MYK-2',
+        ])->assertOk();
+        $as($owner)->postJson('/api/v1/portal/office/commission-policy/changes', [
+            'user_ids' => [4],
+            'rate_percentage' => 42.5,
+        ])->assertStatus(202)->assertJsonPath('status', 'pending_approval');
+
+        Http::assertSent(fn ($request) => $request->method() === 'GET'
+            && str_contains($request->url(), '/api/v1/global-search?')
+            && str_contains($request->url(), 'q=Kad')
+            && str_contains($request->url(), 'limit=5'));
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/api/v1/branches')
+            && ($request->data()['name'] ?? null) === 'Bayraklı');
+        Http::assertSent(fn ($request) => $request->method() === 'PUT'
+            && str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/api/v1/branches/3')
+            && ($request->data()['name'] ?? null) === 'Karşıyaka');
     }
 
     /**

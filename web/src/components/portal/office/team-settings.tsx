@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import { canDeleteTeam, canManageRates, roleOf } from "@/components/portal/office/access";
 import { OfficeError, officeCall, rows, text, type OfficeRecord } from "@/components/portal/office/api";
+import { matchedFieldErrors } from "@/components/portal/office/field-errors";
 import { PageFrame, useOffice } from "@/components/portal/office/ui";
 import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import {
@@ -14,11 +15,10 @@ import {
   bulkRateSent,
   duplicateTeamEmail,
   memberRoleLabel,
-  officeSettingsOutcome,
   roleOptions,
   teamFieldError,
+  teamLicenceBody,
   teamMemberBody,
-  teamMemberExtras,
   type TeamMemberInput,
 } from "@/lib/office-settings";
 
@@ -30,6 +30,7 @@ const EMPTY: TeamMemberInput = {
   role_id: "",
   branch_id: "",
   ttbs_no: "",
+  myk_no: "",
 };
 
 export function TeamSettings() {
@@ -94,18 +95,18 @@ export function TeamSettings() {
     setPending(true);
     try {
       await officeCall("team", officeId, { method: "POST", body: teamMemberBody(form) });
-      const extras = teamMemberExtras(form);
-      setBanner(extras ? copy.branchStub : "");
+      setBanner("");
       setForm(EMPTY);
       notice(copy.saved);
       reload();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      if (/email/i.test(message) || message === copy.duplicateEmail) {
-        setFieldError({ field: "email", message: copy.duplicateEmail });
-      } else {
-        notice(copy.savedError);
-      }
+      const fields = error instanceof OfficeError
+        ? matchedFieldErrors(["first_name", "last_name", "email", "phone", "role_id", "branch_id", "ttbs_no", "myk_no"], error.fields)
+        : {};
+      const first = Object.entries(fields)[0];
+      if (first) setFieldError({ field: first[0], message: first[1] });
+      else if (error instanceof OfficeError && /email/i.test(error.message)) setFieldError({ field: "email", message: error.message });
+      else notice(error instanceof Error ? error.message : copy.savedError);
     } finally {
       setPending(false);
     }
@@ -153,11 +154,7 @@ export function TeamSettings() {
         notice(copy.saved);
       }
     } catch (error) {
-      if (error instanceof OfficeError && officeSettingsOutcome(error.status) === "missing") {
-        setBanner(copy.rateStub);
-      } else {
-        notice(copy.savedError);
-      }
+      notice(error instanceof Error ? error.message : copy.savedError);
     } finally {
       setPending(false);
     }
@@ -189,14 +186,17 @@ export function TeamSettings() {
               {roles.map((role) => <option key={role.id} value={role.id}>{role.label}</option>)}
             </select>
           </Field>
-          <Field label={copy.teamBranch}>
+          <Field label={copy.teamBranch} error={fieldError?.field === "branch_id" ? fieldError.message : ""}>
             <select name="branch_id" value={form.branch_id} onChange={(event) => setForm({ ...form, branch_id: event.target.value })}>
               <option value="">{copy.teamBranch}</option>
               {branches.map((branch) => <option key={String(branch.id)} value={String(branch.id)}>{text(branch, ["name", "title"])}</option>)}
             </select>
           </Field>
-          <Field label={copy.teamLicence}>
+          <Field label={copy.teamLicence} error={fieldError?.field === "ttbs_no" ? fieldError.message : ""}>
             <input name="ttbs_no" value={form.ttbs_no} onChange={(event) => setForm({ ...form, ttbs_no: event.target.value })} />
+          </Field>
+          <Field label={copy.teamMyk} error={fieldError?.field === "myk_no" ? fieldError.message : ""}>
+            <input name="myk_no" value={form.myk_no} onChange={(event) => setForm({ ...form, myk_no: event.target.value })} />
           </Field>
           <button className="ux-create" type="submit" disabled={pending}>{copy.add}</button>
         </form>
@@ -238,7 +238,25 @@ export function TeamSettings() {
                       <select
                         aria-label={copy.teamBranch}
                         defaultValue={String(row.branch_id ?? "")}
-                        onChange={() => setBanner(copy.branchStub)}
+                        onChange={(event) => {
+                          const id = row.id ?? row.user_id;
+                          void officeCall(`team/${id}`, officeId, {
+                            method: "PUT",
+                            body: teamLicenceBody({
+                              branch_id: event.target.value,
+                              ttbs_no: String(row.ttbs_no ?? ""),
+                              myk_no: String(row.myk_no ?? ""),
+                            }),
+                          }).then(() => {
+                            notice(copy.saved);
+                            reload();
+                          }).catch((error: unknown) => {
+                            const message = error instanceof OfficeError && error.fields.branch_id
+                              ? error.fields.branch_id
+                              : error instanceof Error ? error.message : copy.savedError;
+                            setFieldError({ field: "branch_id", message });
+                          });
+                        }}
                       >
                         <option value="">{copy.teamBranch}</option>
                         {branches.map((branch) => <option key={String(branch.id)} value={String(branch.id)}>{text(branch, ["name", "title"])}</option>)}

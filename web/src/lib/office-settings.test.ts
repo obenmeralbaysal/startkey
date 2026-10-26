@@ -24,9 +24,10 @@ import {
   readMinMatchScore,
   readOfficeSettings,
   roleOptions,
+  branchBody,
   teamFieldError,
+  teamLicenceBody,
   teamMemberBody,
-  teamMemberExtras,
 } from "./office-settings.ts";
 
 const messages = {
@@ -50,18 +51,25 @@ test("office profile blocks an empty TTBS number and hides raw keys", () => {
   assert.equal(officeFieldError({ ...profile, name: "" }, messages)?.field, "name");
   assert.equal(officeFieldError({ ...profile, address: "" }, messages)?.field, "address");
   assert.equal(officeFieldError(profile, messages), null);
-  const body = officeSettingsBody(profile);
+  const rules = {
+    require_owner_approval: true,
+    requires_closing_verification: false,
+    managers_can_view_earnings: true,
+  };
+  const body = officeSettingsBody(profile, rules);
   assert.equal(OFFICE_SETTINGS_GROUP, "office");
-  assert.equal(OFFICE_SETTINGS_PATH, "office/settings");
+  assert.equal(OFFICE_SETTINGS_PATH, "settings/office");
   assert.deepEqual(body, {
     name: "Lider",
+    phone: "0232",
     address: "Bayraklı",
     sahibinden_store_url: "https://www.sahibinden.com/magaza",
     ttbs_no: "3500000",
+    rules,
   });
-  assert.equal("phone" in body, false);
-  assert.equal("rules" in body, false);
-  assert.equal(officeSettingsOutcome(404), "missing");
+  assert.equal("logo_url" in body, false);
+  assert.equal("brand_color" in body, false);
+  assert.equal(officeSettingsOutcome(404), "error");
   assert.equal(officeSettingsOutcome(200), "saved");
   assert.equal(officeSettingsOutcome(422), "error");
 });
@@ -94,6 +102,19 @@ test("office settings read logo and colour without treating them as inputs", () 
   assert.equal(readOfficeSettings({
     data: { name: "Lider", address: "Bayraklı", sahibinden_store_url: "https://www.sahibinden.com/magaza", ttbs_no: "3500000" },
   }).profile.sahibinden_store_url, "https://www.sahibinden.com/magaza");
+  assert.equal(view.profile.phone, "0232");
+  assert.equal(readOfficeSettings({
+    data: {
+      name: "Lider",
+      phone: "0232",
+      address: "Bayraklı",
+      sahibinden_store_url: "https://www.sahibinden.com/magaza",
+      ttbs_no: "3500000",
+      logo_url: "/portal/img/logo.png",
+      brand_color: "#002172",
+      rules: { require_owner_approval: true, requires_closing_verification: true, managers_can_view_earnings: false },
+    },
+  }).rules.requires_closing_verification, true);
   assert.equal(view.logoUrl, "/portal/img/logo.png");
   assert.equal(isSafeHex(view.brandColor), true);
   assert.equal(isSafeHex("red"), false);
@@ -104,7 +125,7 @@ test("office settings read logo and colour without treating them as inputs", () 
   });
 });
 
-test("team create omits branch and licence until the backlog endpoint exists", () => {
+test("team create and edit send the branch and licence fields", () => {
   const input = {
     first_name: "Ada",
     last_name: "Yılmaz",
@@ -112,7 +133,8 @@ test("team create omits branch and licence until the backlog endpoint exists", (
     phone: "",
     role_id: "3",
     branch_id: "9",
-    ttbs_no: "MYK-1",
+    ttbs_no: "3500000",
+    myk_no: "MYK-1",
   };
   assert.equal(teamFieldError({ ...input, email: "" }, PORTAL_UX_COPY.tr.fieldRequired)?.field, "email");
   assert.deepEqual(teamMemberBody(input), {
@@ -121,10 +143,16 @@ test("team create omits branch and licence until the backlog endpoint exists", (
     email: "ada@example.com",
     phone: null,
     role_id: 3,
+    branch_id: 9,
+    ttbs_no: "3500000",
+    myk_no: "MYK-1",
   });
-  assert.equal("branch_id" in teamMemberBody(input), false);
-  assert.deepEqual(teamMemberExtras(input), { branch_id: 9, ttbs_no: "MYK-1" });
-  assert.equal(teamMemberExtras({ ...input, branch_id: "", ttbs_no: "" }), null);
+  assert.deepEqual(teamLicenceBody({ branch_id: "", ttbs_no: "3500000", myk_no: "" }), {
+    branch_id: null,
+    ttbs_no: "3500000",
+    myk_no: "",
+  });
+  assert.deepEqual(branchBody(" Bayraklı "), { name: "Bayraklı" });
   assert.equal(duplicateTeamEmail([{ email: "Ada@Example.com" }], "ada@example.com"), true);
   assert.equal(PORTAL_UX_COPY.tr.duplicateEmail, DUPLICATE_EMAIL);
   const roles = roleOptions({
@@ -143,6 +171,7 @@ test("bulk rate is an approval request and table cells hide raw keys", () => {
   assert.equal(PORTAL_UX_COPY.tr.approvalSent, APPROVAL_SENT);
   assert.equal(PORTAL_UX_COPY.en.approvalSent, "Sent for approval");
   assert.equal(PORTAL_UX_COPY.de.approvalSent, "Zur Freigabe gesendet");
+  assert.equal(bulkRateSent({ status: "pending_approval", data: { changes: [] } }), true);
   assert.equal(bulkRateSent({ data: { status: "pending_approval" } }), true);
   assert.equal(bulkRateSent({ status: "applied" }), false);
   const body = bulkRateBody([4, 5], 12.5);

@@ -58,7 +58,7 @@ class OfficeProxyController extends Controller
         $query = $request->query();
         $json = $this->jsonBody($request);
         $files = $this->files($request);
-        if (in_array(strtoupper($request->method()), ['PUT', 'PATCH'], true) && $remotePath === 'office/settings') {
+        if (in_array(strtoupper($request->method()), ['PUT', 'PATCH'], true) && in_array($remotePath, ['office/settings', 'settings/office'], true)) {
             $query = $this->withoutBranding($query);
             $json = $json === null ? null : $this->withoutBranding($json);
             $files = $this->withoutBrandingFiles($files);

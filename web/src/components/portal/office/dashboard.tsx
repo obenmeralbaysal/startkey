@@ -70,6 +70,8 @@ export function OfficeDashboard() {
   const appointments = useOfficeData("appointments");
   const figures = summaryFigures(stats.data === undefined ? null : stats.data, showPending && pending.data !== undefined ? pending.data : null, showEarnings);
   const loading = stats.data === undefined;
+  const showMatches = figures.matches != null;
+  const showEarningsCard = showEarnings && figures.earnings != null;
   const today = appointmentLines(appointments.data, new Date(), locale);
   const pendingText = pendingWorkLabel(loading ? "—" : formatNumber(figures.pending), locale);
   const actions = [
@@ -101,11 +103,11 @@ export function OfficeDashboard() {
         })}
       </div>
 
-      <div className="ux-kpis" data-count={(showPending ? 1 : 0) + (showEarnings ? 1 : 0) + 2}>
+      <div className="ux-kpis" data-count={(showPending ? 1 : 0) + (showEarningsCard ? 1 : 0) + (showMatches ? 1 : 0) + 1}>
         <Kpi label={copy.activePortfolios} value={loading ? "—" : formatNumber(figures.active)} hint={figures.activeDelta == null ? "" : `+${formatNumber(figures.activeDelta)} ${copy.thisMonth}`} tone={figures.activeDelta == null ? undefined : "up"} href={withLang("/portal/office/portfolios", locale)} />
         {showPending ? <Kpi label={copy.pending} value={loading ? "—" : formatNumber(figures.pending)} hint={copy.review} href={withLang("/portal/office/portfolios", locale)} /> : null}
-        <Kpi label={copy.newMatches} value={loading ? "—" : formatNumber(figures.matches)} hint={figures.matchesAreWeek ? copy.last7 : ""} href={withLang("/portal/office/matches", locale)} />
-        {showEarnings ? (
+        {showMatches ? <Kpi label={copy.newMatches} value={loading ? "—" : formatNumber(figures.matches ?? 0)} hint={figures.matchesAreWeek ? copy.last7 : ""} href={withLang("/portal/office/matches", locale)} /> : null}
+        {showEarningsCard ? (
           <Kpi label={copy.monthEarnings} value={loading ? "—" : formatMoney(figures.earnings ?? 0)} hint={figures.closings == null ? "" : `${formatNumber(figures.closings)} ${copy.closings}`} href={withLang(earningsDeepLink(role), locale)} />
         ) : null}
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import {
   canApproveEarnings,
@@ -9,6 +9,7 @@ import {
   canManageRates,
   canVerify,
   canViewEarnings,
+  canWriteBranches,
   integrationLinks,
   roleOf,
   settingsLinks,
@@ -23,6 +24,7 @@ import { ConfirmButton, PageFrame, PasswordInput, RecordTable, RecordView, useOf
 import { hasWatermarkedMedia, isWatermarkedImage, mediaThumb, portfolioMedia, WatermarkBadge, WatermarkBanner } from "@/components/portal/office/watermark";
 import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import { collaborationPath, officeSectionDenied, reportsHubTab, withLang } from "@/lib/portal-ux";
+import { branchBody } from "@/lib/office-settings";
 import {
   classifySahibindenImportFailure,
   parseSahibindenListing,
@@ -1504,13 +1506,74 @@ function SettingsDenied() {
 }
 
 function BranchList() {
-  const { locale } = useOffice();
+  const { officeId, office, locale, notice } = useOffice();
   const copy = PORTAL_UX_COPY[locale];
   const list = useData("branches");
   const data = rows(list.data);
+  const writable = canWriteBranches(roleOf(office));
+  const [name, setName] = useState("");
+  const [fieldError, setFieldError] = useState("");
+
+  async function create(event: FormEvent) {
+    event.preventDefault();
+    if (!writable) return;
+    if (!name.trim()) {
+      setFieldError(copy.fieldRequired);
+      return;
+    }
+    setFieldError("");
+    try {
+      await officeCall("branches", officeId, { method: "POST", body: branchBody(name) });
+      setName("");
+      notice(copy.saved);
+      list.reload();
+    } catch (error) {
+      if (error instanceof OfficeError && error.fields.name) setFieldError(error.fields.name);
+      else notice(error instanceof Error ? error.message : copy.savedError);
+    }
+  }
+
+  async function rename(id: string, next: string) {
+    if (!writable || !next.trim()) return;
+    try {
+      await officeCall(`branches/${id}`, officeId, { method: "PUT", body: branchBody(next) });
+      notice(copy.saved);
+      list.reload();
+    } catch (error) {
+      notice(error instanceof Error ? error.message : copy.savedError);
+    }
+  }
+
   return (
     <PageFrame title={copy.branches}>
-      <RecordTable rows={data} loading={list.data === undefined} empty={copy.branchesEmpty} recordLabel={copy.record} summaryLabel={copy.summaryColumn} />
+      {writable ? (
+        <form className="ux-inline" onSubmit={create}>
+          <label className="ux-field">
+            <span>{copy.branchName}</span>
+            <input name="name" value={name} onChange={(event) => setName(event.target.value)} />
+            {fieldError ? <small className="ux-field-error">{fieldError}</small> : null}
+          </label>
+          <button className="ux-create" type="submit">{copy.add}</button>
+        </form>
+      ) : null}
+      {writable ? (
+        list.data === undefined ? <p className="ux-muted">…</p> : data.length === 0 ? <p className="ux-muted">{copy.branchesEmpty}</p> : (
+          <ul className="ux-plain">
+            {data.map((row) => {
+              const id = String(row.id ?? "");
+              const label = text(row, ["name", "title"]);
+              if (!id || !label) return null;
+              return (
+                <li key={id}>
+                  <input aria-label={copy.branchName} defaultValue={label} onBlur={(event) => { if (event.target.value.trim() !== label) void rename(id, event.target.value); }} />
+                </li>
+              );
+            })}
+          </ul>
+        )
+      ) : (
+        <RecordTable rows={data} loading={list.data === undefined} empty={copy.branchesEmpty} recordLabel={copy.record} summaryLabel={copy.summaryColumn} />
+      )}
     </PageFrame>
   );
 }

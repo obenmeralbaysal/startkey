@@ -8,17 +8,17 @@ Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
 **Mevcut Durum:**
 
-Ofis adı, adres, Sahibinden mağaza bağlantısı ve TTBS `GET/PUT office/settings` ile gider (`name`, `address`, `sahibinden_store_url`, `ttbs_no`). Telefon ve ofis kuralları formda "Yakında" ve kapalıdır; istek gövdesine konmaz. Logo ve marka rengi yalnız okunur. Ekip formundaki şube ve TTBS/MYK üye gövdesine konmaz; doluysa "Şube ve TTBS/MYK kaydı henüz hazır değil." görünür. Toplu oran `POST commission-policy/changes` ile gider. Cevap `status: pending_approval` ise "Onaya gönderildi" basılır. Uç 404 ise "Toplu oran onay ucu henüz hazır değil. Oran uygulanmadı." basılır.
+Telefon, ofis kuralları, şube adı ve ekip `branch_id` / `ttbs_no` / `myk_no` alanları `settings/office`, `branches` ve `team` uçlarına bağlı. Logo ve marka rengi yalnız okunur.
 
 **Geçici Olmasının Nedeni:**
 
-`office/settings` telefon ve kural alanlarını taşımıyor. MD backlog 6 (üyede şube ve TTBS/MYK) bu depoda yok.
+Sözleşme gelene kadar bu alanlar gönderilmiyordu.
 
 **Gelecekteki Implementasyon:**
 
-Telefon ve ofis kuralları aynı ofis ayarı ucuna bağlanır ve gönderilir. Şube ve TTBS/MYK üye oluşturma ve satır güncellemesine bağlanır.
+Uygulandı. `GET/PUT settings/office` telefon ve kuralları yazar. Ekip oluşturma ve güncelleme şube ile TTBS/MYK gönderir. Şube adı sahibi ve ofis yöneticisi için yazılır.
 
-**Durum:** Açık
+**Durum:** Çözüldü
 
 ### TD-023 — Portal üst araması sonuç üretmez
 
@@ -26,15 +26,15 @@ Telefon ve ofis kuralları aynı ofis ayarı ucuna bağlanır ve gönderilir. Ş
 
 **Mevcut Durum:**
 
-Ofis kabuğundaki arama kutusu `PORTAL_SEARCH_READY` kapalıyken hiç basılmaz. Bileşen kodu durur. `global-search` vekil listesindedir; sorgu ve cevap sözleşmesi bu depoda yoktur.
+Arama istemcisi `GET global-search?q=` (2–120 karakter) ve `limit` ile `{data:{portfolios,demands,contacts}}` okur; yazım yaklaşık 300 ms bekler. Kutu `PORTAL_SEARCH_READY` kapalıyken basılmaz.
 
 **Geçici Olmasının Nedeni:**
 
-Sözleşme olmadan sonuç uydurulmaz.
+Kutu bilerek kapalı. Sonuç listesi kodda durur, ekranda yoktur.
 
 **Gelecekteki Implementasyon:**
 
-En az 3 karakterde `global-search` çağrılır ve dönen portföy, kişi ve talep satırları açılır.
+`PORTAL_SEARCH_READY` açılınca kutu ve sonuçlar görünür.
 
 **Durum:** Açık
 

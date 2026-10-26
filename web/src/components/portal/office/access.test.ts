@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { integrationLinks, SETTINGS_DENIED, settingsHttpDecision, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
+import { canEditOfficeSettings, canWriteBranches, integrationLinks, SETTINGS_DENIED, settingsHttpDecision, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
 
 const office = (role: string, branchId: number | null = null): OfficeMembership => ({
   id: 7,
@@ -17,6 +17,15 @@ test("settings the role cannot open show the denied state", () => {
   assert.equal(settingsPageAccess("badges", "office_manager", office("office_manager")), "deny");
   assert.equal(settingsPageAccess("matchmaking", "office_manager", office("office_manager", 4)), "deny");
   assert.equal(settingsPageAccess("office", "office_manager", office("office_manager", 4)), "allow");
+  assert.equal(canEditOfficeSettings("owner", office("owner")), true);
+  assert.equal(canEditOfficeSettings("office_manager", office("office_manager")), true);
+  assert.equal(canEditOfficeSettings("office_manager", office("office_manager", 4)), false);
+  assert.equal(canEditOfficeSettings("manager", office("manager")), false);
+  assert.equal(canEditOfficeSettings("agent", office("agent")), false);
+  assert.equal(canWriteBranches("owner"), true);
+  assert.equal(canWriteBranches("office_manager"), true);
+  assert.equal(canWriteBranches("manager"), false);
+  assert.equal(canWriteBranches("agent"), false);
   assert.equal(settingsPageAccess("team", "agent", office("agent")), "deny");
   assert.equal(settingsPageAccess("missing", "owner", office("owner")), "deny");
 });

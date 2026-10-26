@@ -3,12 +3,9 @@ export const DUPLICATE_EMAIL = "Bu e-posta ekipte zaten var.";
 export const APPROVAL_SENT = "Onaya gönderildi";
 export const LOGO_NOTE = "Logo ve marka rengini StartKey yönetimi belirler.";
 
-/** Portal path for GET/PUT /api/v1/office/settings. */
+/** GET settings returns data.groups.office. GET/PUT settings/office is the flat office record. */
 export const OFFICE_SETTINGS_GROUP = "office";
-export const OFFICE_SETTINGS_PATH = "office/settings";
-
-/** STUB until MD backlog 6. team POST does not accept these yet. */
-export const TEAM_EXTRAS_STUB = "branch-ttbs";
+export const OFFICE_SETTINGS_PATH = "settings/office";
 
 export const BULK_RATE_PATH = "commission-policy/changes";
 
@@ -48,23 +45,30 @@ export function officeFieldError(input: OfficeProfileInput, messages: OfficeFiel
   return null;
 }
 
-export function officeSettingsBody(input: OfficeProfileInput): {
+export function officeSettingsBody(input: OfficeProfileInput, rules: OfficeRules): {
   name: string;
+  phone: string;
   address: string;
   sahibinden_store_url: string;
   ttbs_no: string;
+  rules: OfficeRules;
 } {
   return {
     name: input.name.trim(),
+    phone: input.phone.trim(),
     address: input.address.trim(),
     sahibinden_store_url: input.sahibinden_store_url.trim(),
     ttbs_no: input.ttbs_no.trim(),
+    rules: {
+      require_owner_approval: rules.require_owner_approval,
+      requires_closing_verification: rules.requires_closing_verification,
+      managers_can_view_earnings: rules.managers_can_view_earnings,
+    },
   };
 }
 
-export function officeSettingsOutcome(status: number): "saved" | "missing" | "error" {
+export function officeSettingsOutcome(status: number): "saved" | "error" {
   if (status >= 200 && status < 300) return "saved";
-  if (status === 404) return "missing";
   return "error";
 }
 
@@ -124,6 +128,7 @@ export type TeamMemberInput = {
   role_id: string;
   branch_id: string;
   ttbs_no: string;
+  myk_no: string;
 };
 
 export type TeamField = "first_name" | "last_name" | "email" | "role_id";
@@ -142,6 +147,9 @@ export function teamMemberBody(input: TeamMemberInput): {
   email: string;
   phone: string | null;
   role_id: number;
+  branch_id: number | null;
+  ttbs_no: string;
+  myk_no: string;
 } {
   return {
     first_name: input.first_name.trim(),
@@ -149,18 +157,33 @@ export function teamMemberBody(input: TeamMemberInput): {
     email: input.email.trim(),
     phone: input.phone.trim() || null,
     role_id: Number(input.role_id),
+    ...licenceBody(input),
   };
 }
 
-// STUB until MD backlog 6 — branch and TTBS/MYK are collected, not sent.
-export function teamMemberExtras(input: TeamMemberInput): { branch_id: number | null; ttbs_no: string } | null {
+export function teamLicenceBody(input: { branch_id: string; ttbs_no: string; myk_no: string }): {
+  branch_id: number | null;
+  ttbs_no: string;
+  myk_no: string;
+} {
+  return licenceBody(input);
+}
+
+export function branchBody(name: string): { name: string } {
+  return { name: name.trim() };
+}
+
+function licenceBody(input: { branch_id: string; ttbs_no: string; myk_no: string }): {
+  branch_id: number | null;
+  ttbs_no: string;
+  myk_no: string;
+} {
   const branch = input.branch_id.trim();
-  const ttbs = input.ttbs_no.trim();
-  if (!branch && !ttbs) return null;
   const branchId = Number(branch);
   return {
     branch_id: branch && Number.isFinite(branchId) ? branchId : null,
-    ttbs_no: ttbs,
+    ttbs_no: input.ttbs_no.trim(),
+    myk_no: input.myk_no.trim(),
   };
 }
 
@@ -212,6 +235,7 @@ export function bulkRateSent(payload: unknown): boolean {
 }
 
 function bulkRateStatus(payload: unknown): string {
+  if (isRecord(payload) && typeof payload.status === "string") return payload.status;
   const root = unwrap(payload);
   if (typeof root.status === "string") return root.status;
   const nested = isRecord(root.data) ? root.data.status : undefined;

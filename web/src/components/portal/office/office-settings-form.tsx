@@ -3,16 +3,17 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
-import { canEditOfficeSettings, canManageOffice, integrationLinks, roleOf } from "@/components/portal/office/access";
-import { OfficeError, officeCall, rows } from "@/components/portal/office/api";
+import { canEditOfficeSettings, canWriteBranches, integrationLinks, isManager, roleOf } from "@/components/portal/office/access";
+import { OfficeError, officeCall, rows, type FieldErrors } from "@/components/portal/office/api";
+import { matchedFieldErrors } from "@/components/portal/office/field-errors";
 import { EmptyState, PageFrame, useOffice } from "@/components/portal/office/ui";
 import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import {
+  branchBody,
   isSafeHex,
   OFFICE_SETTINGS_PATH,
   officeFieldError,
   officeSettingsBody,
-  officeSettingsOutcome,
   readOfficeSettings,
   type OfficeProfileInput,
   type OfficeRules,
@@ -38,16 +39,19 @@ type Tab = "general" | "rules" | "branches" | "integrations";
 export function OfficeSettingsForm() {
   const { officeId, office, locale, notice } = useOffice();
   const copy = PORTAL_UX_COPY[locale];
-  const editable = canEditOfficeSettings(roleOf(office), office);
-  const showBranches = canManageOffice(roleOf(office), office);
+  const role = roleOf(office);
+  const editable = canEditOfficeSettings(role, office);
+  const showBranches = isManager(role);
+  const writeBranches = canWriteBranches(role);
   const integrations = integrationLinks(roleOf(office), office);
   const [tab, setTab] = useState<Tab>("general");
   const [profile, setProfile] = useState<OfficeProfileInput>(EMPTY_PROFILE);
   const [rules, setRules] = useState<OfficeRules>(EMPTY_RULES);
   const [logoUrl, setLogoUrl] = useState("");
   const [brandColor, setBrandColor] = useState("");
-  const [fieldError, setFieldError] = useState("");
-  const [banner, setBanner] = useState("");
+  const [fieldError, setFieldError] = useState<FieldErrors>({});
+  const [branchName, setBranchName] = useState("");
+  const [branchError, setBranchError] = useState("");
   const [pending, setPending] = useState(false);
   const [branches, setBranches] = useState<ReturnType<typeof rows> | null>(null);
 
@@ -64,17 +68,13 @@ export function OfficeSettingsForm() {
         setBrandColor(view.brandColor);
       } catch (error) {
         if (cancelled) return;
-        if (error instanceof OfficeError && officeSettingsOutcome(error.status) === "missing") {
-          setBanner(copy.officeSettingsMissing);
-        } else {
-          notice(copy.savedError);
-        }
+        notice(error instanceof Error ? error.message : copy.savedError);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [copy.officeSettingsMissing, copy.savedError, notice, officeId]);
+  }, [copy.savedError, notice, officeId]);
 
   useEffect(() => {
     if (tab !== "branches") return;
@@ -103,28 +103,63 @@ export function OfficeSettingsForm() {
     const messages = { name: copy.officeNameRequired, address: copy.officeAddressRequired, ttbs: copy.ttbsRequired };
     const invalid = officeFieldError(profile, messages);
     if (invalid) {
-      setFieldError(invalid.message);
+      setFieldError({ [invalid.field]: invalid.message });
       return;
     }
-    setFieldError("");
+    setFieldError({});
     setPending(true);
     try {
       const payload = await officeCall(OFFICE_SETTINGS_PATH, officeId, {
         method: "PUT",
-        body: officeSettingsBody(profile),
+        body: officeSettingsBody(profile, rules),
       });
       const view = readOfficeSettings(payload);
       if (view.profile.name) setProfile(view.profile);
-      setBanner("");
+      setRules(view.rules);
       notice(copy.saved);
     } catch (error) {
-      if (error instanceof OfficeError && officeSettingsOutcome(error.status) === "missing") {
-        setBanner(copy.officeSettingsMissing);
+      if (error instanceof OfficeError && error.status === 422) {
+        const fields = matchedFieldErrors(["name", "phone", "address", "sahibinden_store_url", "ttbs_no"], error.fields);
+        if (Object.keys(fields).length > 0) setFieldError(fields);
+        else notice(error.message);
       } else {
-        notice(copy.savedError);
+        notice(error instanceof Error ? error.message : copy.savedError);
       }
     } finally {
       setPending(false);
+    }
+  }
+
+  async function addBranch(event: FormEvent) {
+    event.preventDefault();
+    if (!writeBranches || pending) return;
+    if (!branchName.trim()) {
+      setBranchError(copy.fieldRequired);
+      return;
+    }
+    setBranchError("");
+    setPending(true);
+    try {
+      await officeCall("branches", officeId, { method: "POST", body: branchBody(branchName) });
+      setBranchName("");
+      const payload = await officeCall("branches", officeId);
+      setBranches(rows(payload));
+      notice(copy.saved);
+    } catch (error) {
+      if (error instanceof OfficeError && error.fields.name) setBranchError(error.fields.name);
+      else notice(error instanceof Error ? error.message : copy.savedError);
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function renameBranch(id: string, name: string) {
+    if (!writeBranches || !name.trim()) return;
+    try {
+      await officeCall(`branches/${id}`, officeId, { method: "PUT", body: branchBody(name) });
+      notice(copy.saved);
+    } catch (error) {
+      notice(error instanceof Error ? error.message : copy.savedError);
     }
   }
 
@@ -134,7 +169,6 @@ export function OfficeSettingsForm() {
     <PageFrame title={copy.officeSettings} crumb={[copy.office, copy.officeSettings]}>
       <div data-screen="office-settings" data-locked={editable ? undefined : "office"}>
         {!editable ? <p className="ux-banner">{copy.officeSettingsOwnerNote}</p> : null}
-        {banner ? <p className="ux-banner">{banner}</p> : null}
         <div className="ux-tabs" role="tablist">
           <button type="button" role="tab" aria-selected={tab === "general"} onClick={() => setTab("general")}>{copy.tabGeneral}</button>
           <button type="button" role="tab" aria-selected={tab === "rules"} onClick={() => setTab("rules")}>{copy.tabRules}</button>
@@ -155,20 +189,20 @@ export function OfficeSettingsForm() {
               <p className="ux-logo-note">{copy.logoNote}</p>
             </div>
             <div className="ux-form-grid">
-              <Field label={`${copy.officeName} *`} error={fieldError === copy.officeNameRequired ? fieldError : ""}>
-                <input value={profile.name} disabled={!editable} onChange={(event) => setProfile({ ...profile, name: event.target.value })} />
+              <Field label={`${copy.officeName} *`} error={fieldError.name ?? ""}>
+                <input name="name" value={profile.name} disabled={!editable} onChange={(event) => setProfile({ ...profile, name: event.target.value })} />
               </Field>
-              <Field label={copy.officePhone}>
-                <input value={copy.comingSoon} disabled readOnly />
+              <Field label={copy.officePhone} error={fieldError.phone ?? ""}>
+                <input name="phone" type="tel" inputMode="tel" value={profile.phone} disabled={!editable} onChange={(event) => setProfile({ ...profile, phone: event.target.value })} />
               </Field>
-              <Field label={`${copy.officeAddress} *`} error={fieldError === copy.officeAddressRequired ? fieldError : ""}>
-                <input value={profile.address} disabled={!editable} onChange={(event) => setProfile({ ...profile, address: event.target.value })} />
+              <Field label={`${copy.officeAddress} *`} error={fieldError.address ?? ""}>
+                <input name="address" value={profile.address} disabled={!editable} onChange={(event) => setProfile({ ...profile, address: event.target.value })} />
               </Field>
-              <Field label={copy.officeStore}>
-                <input value={profile.sahibinden_store_url} inputMode="url" disabled={!editable} onChange={(event) => setProfile({ ...profile, sahibinden_store_url: event.target.value })} />
+              <Field label={copy.officeStore} error={fieldError.sahibinden_store_url ?? ""}>
+                <input name="sahibinden_store_url" value={profile.sahibinden_store_url} inputMode="url" disabled={!editable} onChange={(event) => setProfile({ ...profile, sahibinden_store_url: event.target.value })} />
               </Field>
-              <Field label={`${copy.officeTtbs} *`} error={fieldError === copy.ttbsRequired ? fieldError : ""}>
-                <input value={profile.ttbs_no} disabled={!editable} aria-invalid={fieldError === copy.ttbsRequired} onChange={(event) => setProfile({ ...profile, ttbs_no: event.target.value })} />
+              <Field label={`${copy.officeTtbs} *`} error={fieldError.ttbs_no ?? ""}>
+                <input name="ttbs_no" value={profile.ttbs_no} disabled={!editable} aria-invalid={Boolean(fieldError.ttbs_no)} onChange={(event) => setProfile({ ...profile, ttbs_no: event.target.value })} />
               </Field>
             </div>
             {editable ? <button className="ux-create" type="submit" disabled={pending}>{pending ? copy.saved : copy.save}</button> : null}
@@ -176,24 +210,41 @@ export function OfficeSettingsForm() {
         ) : null}
 
         {tab === "rules" ? (
-          <form className="ux-office-form">
-            <p className="ux-muted">{copy.comingSoon}</p>
-            <Rule label={copy.ruleOwnerApproval} checked={rules.require_owner_approval} disabled onChange={() => undefined} />
-            <Rule label={copy.ruleClosing} checked={rules.requires_closing_verification} disabled onChange={() => undefined} />
-            <Rule label={copy.ruleEarnings} checked={rules.managers_can_view_earnings} disabled onChange={() => undefined} />
-            <Field label={copy.ruleMinScore}>
-              <input value={copy.comingSoon} disabled readOnly />
-            </Field>
+          <form className="ux-office-form" onSubmit={saveProfile}>
+            <Rule label={copy.ruleOwnerApproval} checked={rules.require_owner_approval} disabled={!editable} onChange={(checked) => setRules({ ...rules, require_owner_approval: checked })} />
+            <Rule label={copy.ruleClosing} checked={rules.requires_closing_verification} disabled={!editable} onChange={(checked) => setRules({ ...rules, requires_closing_verification: checked })} />
+            <Rule label={copy.ruleEarnings} checked={rules.managers_can_view_earnings} disabled={!editable} onChange={(checked) => setRules({ ...rules, managers_can_view_earnings: checked })} />
+            {editable ? <button className="ux-create" type="submit" disabled={pending}>{pending ? copy.saved : copy.save}</button> : null}
           </form>
         ) : null}
 
         {tab === "branches" ? (
-          branches === null ? <p className="ux-muted">…</p> : branches.length === 0 ? <EmptyState message={copy.branchesEmpty} /> : (
-            <ul className="ux-plain">
-              {branches.map((row) => (
-                <li key={String(row.id)}>{String(row.name ?? row.title ?? row.id ?? "")}</li>
-              ))}
-            </ul>
+          branches === null ? <p className="ux-muted">…</p> : (
+            <>
+              {writeBranches ? (
+                <form className="ux-inline" onSubmit={addBranch}>
+                  <Field label={copy.branchName} error={branchError}>
+                    <input name="name" value={branchName} onChange={(event) => setBranchName(event.target.value)} />
+                  </Field>
+                  <button className="ux-create" type="submit" disabled={pending}>{copy.add}</button>
+                </form>
+              ) : null}
+              {branches.length === 0 ? <EmptyState message={copy.branchesEmpty} /> : (
+                <ul className="ux-plain">
+                  {branches.map((row) => {
+                    const id = String(row.id ?? "");
+                    const label = String(row.name ?? row.title ?? "");
+                    return (
+                      <li key={id || label}>
+                        {writeBranches && id ? (
+                          <input aria-label={copy.branchName} defaultValue={label} onBlur={(event) => { if (event.target.value.trim() !== label) void renameBranch(id, event.target.value); }} />
+                        ) : label}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </>
           )
         ) : null}
 

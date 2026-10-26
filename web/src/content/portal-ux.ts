@@ -17,7 +17,6 @@ export type PortalUxCopy = {
   collaborationIn: string;
   collaborationOut: string;
   summaryClosed: string;
-  comingSoon: string;
   lease: string;
   leaseDescription: string;
   leaseEmpty: string;
@@ -87,21 +86,19 @@ export type PortalUxCopy = {
   ttbsRequired: string;
   officeNameRequired: string;
   officeAddressRequired: string;
-  officeSettingsMissing: string;
   ruleOwnerApproval: string;
   ruleClosing: string;
   ruleEarnings: string;
-  ruleMinScore: string;
   teamRole: string;
   teamBranch: string;
+  branchName: string;
   teamLicence: string;
+  teamMyk: string;
   duplicateEmail: string;
   removeMember: string;
   bulkRate: string;
   bulkRateLabel: string;
   approvalSent: string;
-  branchStub: string;
-  rateStub: string;
   fieldRequired: string;
   record: string;
   summaryColumn: string;
@@ -125,7 +122,6 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     collaborationIn: "Gelen",
     collaborationOut: "Giden",
     summaryClosed: "Bu kart rolünüz için kapalı.",
-    comingSoon: "Yakında",
     lease: "Kira takvimi",
     leaseDescription: "Kiralanan portföyün kira yıldönümünden 90, 60 ve 30 gün önce bildirim gönderilir.",
     leaseEmpty: "Kiralanan portföyünüz olduğunda kayıtlar burada görünür.",
@@ -200,21 +196,19 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     ttbsRequired: "TTBS yetki belge numarası zorunludur.",
     officeNameRequired: "Ofis adı zorunludur.",
     officeAddressRequired: "Adres zorunludur.",
-    officeSettingsMissing: "Ofis bilgisi kaydı henüz hazır değil.",
     ruleOwnerApproval: "Portföy yayını için sahip onayı gerekir",
     ruleClosing: "Kapanış doğrulaması gerekir",
     ruleEarnings: "Yöneticiler hakedişi görebilir",
-    ruleMinScore: "En düşük eşleşme skoru",
     teamRole: "Rol",
     teamBranch: "Şube",
-    teamLicence: "TTBS/MYK no",
+    branchName: "Şube adı",
+    teamLicence: "TTBS no",
+    teamMyk: "MYK no",
     duplicateEmail: "Bu e-posta ekipte zaten var.",
     removeMember: "Çıkar",
     bulkRate: "Toplu oran",
     bulkRateLabel: "Oran",
     approvalSent: "Onaya gönderildi",
-    branchStub: "Şube ve TTBS/MYK kaydı henüz hazır değil.",
-    rateStub: "Toplu oran onay ucu henüz hazır değil. Oran uygulanmadı.",
     fieldRequired: "Bu alan zorunludur.",
     record: "Kayıt",
     summaryColumn: "Özet",
@@ -236,7 +230,6 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     collaborationIn: "Incoming",
     collaborationOut: "Outgoing",
     summaryClosed: "This card is closed for your role.",
-    comingSoon: "Soon",
     lease: "Lease calendar",
     leaseDescription: "A notification is sent 90, 60 and 30 days before the rent anniversary of a leased portfolio.",
     leaseEmpty: "Records appear here when you have a leased portfolio.",
@@ -311,21 +304,19 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     ttbsRequired: "The TTBS licence number is required.",
     officeNameRequired: "Office name is required.",
     officeAddressRequired: "Address is required.",
-    officeSettingsMissing: "The office record is not ready yet.",
     ruleOwnerApproval: "Owner approval is required before a portfolio is published",
     ruleClosing: "Closing verification is required",
     ruleEarnings: "Managers can view earnings",
-    ruleMinScore: "Lowest match score",
     teamRole: "Role",
     teamBranch: "Branch",
-    teamLicence: "TTBS/MYK no",
+    branchName: "Branch name",
+    teamLicence: "TTBS no",
+    teamMyk: "MYK no",
     duplicateEmail: "This email is already on the team.",
     removeMember: "Remove",
     bulkRate: "Bulk rate",
     bulkRateLabel: "Rate",
     approvalSent: "Sent for approval",
-    branchStub: "Branch and TTBS/MYK are not saved yet.",
-    rateStub: "The bulk-rate approval endpoint is not ready. The rate was not applied.",
     fieldRequired: "This field is required.",
     record: "Record",
     summaryColumn: "Summary",
@@ -347,7 +338,6 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     collaborationIn: "Eingehend",
     collaborationOut: "Ausgehend",
     summaryClosed: "Diese Karte ist für Ihre Rolle geschlossen.",
-    comingSoon: "Demnächst",
     lease: "Mietkalender",
     leaseDescription: "90, 60 und 30 Tage vor dem Mietjubiläum eines vermieteten Portfolios wird eine Benachrichtigung gesendet.",
     leaseEmpty: "Einträge erscheinen hier, sobald ein vermietetes Portfolio vorliegt.",
@@ -422,21 +412,19 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     ttbsRequired: "Die TTBS-Berechtigungsnummer ist erforderlich.",
     officeNameRequired: "Der Büroname ist erforderlich.",
     officeAddressRequired: "Die Adresse ist erforderlich.",
-    officeSettingsMissing: "Der Bürodatensatz ist noch nicht bereit.",
     ruleOwnerApproval: "Vor der Veröffentlichung ist die Freigabe des Inhabers nötig",
     ruleClosing: "Abschlussprüfung ist nötig",
     ruleEarnings: "Verwalter können die Provision sehen",
-    ruleMinScore: "Niedrigste Trefferpunktzahl",
     teamRole: "Rolle",
     teamBranch: "Filiale",
-    teamLicence: "TTBS/MYK-Nr.",
+    branchName: "Filialname",
+    teamLicence: "TTBS-Nr.",
+    teamMyk: "MYK-Nr.",
     duplicateEmail: "Diese E-Mail ist im Team bereits vorhanden.",
     removeMember: "Entfernen",
     bulkRate: "Sammelsatz",
     bulkRateLabel: "Satz",
     approvalSent: "Zur Freigabe gesendet",
-    branchStub: "Filiale und TTBS/MYK werden noch nicht gespeichert.",
-    rateStub: "Der Freigabe-Endpunkt für den Sammelsatz fehlt. Der Satz wurde nicht angewendet.",
     fieldRequired: "Dieses Feld ist erforderlich.",
     record: "Eintrag",
     summaryColumn: "Überblick",

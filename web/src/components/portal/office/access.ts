@@ -84,9 +84,15 @@ export function canManageOffice(role: OfficeRole, office: OfficeMembership | und
   return canManageMatchmaking(role, office);
 }
 
-/** Office profile writes follow the same matrix as office settings. Everyone else stays read-only. */
+/** Owner and an unbranched office manager write the office profile. A branched office manager stays read-only. */
 export function canEditOfficeSettings(role: OfficeRole, office: OfficeMembership | undefined): boolean {
-  return canManageOffice(role, office);
+  if (role === "owner") return true;
+  return role === "office_manager" && !office?.branch_id;
+}
+
+/** Branch name writes are the owner and every office manager, including a branched one. */
+export function canWriteBranches(role: OfficeRole): boolean {
+  return role === "owner" || role === "office_manager";
 }
 
 export const SETTINGS_DENIED = "Bu ayara erişim yetkiniz yok";

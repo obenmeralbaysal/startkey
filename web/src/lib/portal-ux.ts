@@ -1,6 +1,7 @@
 import {
   canManageOffice,
   canViewEarnings,
+  canWriteBranches,
   settingsAllowed,
   settingsPageAccess,
   type OfficeMembership,
@@ -12,8 +13,10 @@ import { NETWORK_MENU, networkHome, networkWriteControls, showNetworkPortal } fr
 
 export const SECTION_DENIED_TEXT = "Bu sekmeye erişiminiz yok.";
 
-/** global-search is allowlisted, but this repo has no query or response contract. */
+/** global-search is wired. The box stays hidden until this flag is turned on. */
 export const PORTAL_SEARCH_READY = false;
+
+export const SEARCH_DEBOUNCE_MS = 300;
 
 /** Fields the office profile form shows and writes. There is no unvan control. */
 export const PROFILE_SCREEN_FIELDS = ["first_name", "last_name", "phone", "password", "demand_match_network_default"] as const;
@@ -129,7 +132,7 @@ export function officeMenu(role: OfficeRole, office: OfficeMembership | undefine
   if (settingsAllowed("team", role, office)) {
     manage.push(item("team", "/portal/office/settings/team", copy.team, "manage", "people"));
   }
-  if (canManageOffice(role, office)) {
+  if (canManageOffice(role, office) || canWriteBranches(role)) {
     manage.push(item("branches", "/portal/office/branches", copy.branches, "manage", "grid"));
   }
   if (settingsAllowed("notifications", role, office)) {
@@ -150,7 +153,7 @@ export function officeSectionDenied(parts: readonly string[], role: OfficeRole, 
   const head = parts[0] ?? "";
   if (!head) return false;
   if (head === "earnings" || (head === "reports" && parts[1] === "earnings")) return !canViewEarnings(role, office);
-  if (head === "branches") return !canManageOffice(role, office);
+  if (head === "branches") return !(canManageOffice(role, office) || canWriteBranches(role));
   if (head === "settings") {
     const page = parts[1];
     if (!page) return false;
@@ -252,7 +255,7 @@ export type SummaryFigures = {
   active: number;
   activeDelta: number | null;
   pending: number;
-  matches: number;
+  matches: number | null;
   matchesAreWeek: boolean;
   earnings: number | null;
   closings: number | null;
@@ -260,14 +263,18 @@ export type SummaryFigures = {
 
 export function summaryFigures(stats: unknown, pending: unknown, showEarnings: boolean): SummaryFigures {
   const body = payloadBody(stats);
+  const added = explicitStat(body, "portfolios_added_this_month");
+  const week = explicitStat(body, "new_matches_last_7_days");
+  const monthClosings = explicitStat(body, "closings_this_month");
+  const monthEarnings = explicitStat(body, "earnings_this_month");
   return {
     active: numberAt(body, ["portfolios.active", "active_portfolios"]) ?? 0,
-    activeDelta: numberAt(body, ["portfolios.added_this_month", "portfolios.new_this_month", "portfolios.this_month"]),
+    activeDelta: added.present ? added.value : numberAt(body, ["portfolios.added_this_month", "portfolios.new_this_month", "portfolios.this_month"]),
     pending: (pending == null ? null : pendingCount(pending)) ?? numberAt(body, ["portfolios.pending", "portfolios.pending_approval", "pending_approvals"]) ?? 0,
-    matches: numberAt(body, ["matches.new", "matches.recent", "matches.last_7_days", "new_matches"]) ?? 0,
-    matchesAreWeek: numberAt(body, ["matches.last_7_days"]) !== null,
-    earnings: showEarnings ? numberAt(body, ["financials.earnings", "financials.this_month", "earnings.this_month", "financials.income"]) ?? 0 : null,
-    closings: showEarnings ? numberAt(body, ["closings.this_month", "this_month_closings"]) ?? 0 : null,
+    matches: week.present ? week.value : numberAt(body, ["matches.new", "matches.recent", "matches.last_7_days", "new_matches"]) ?? 0,
+    matchesAreWeek: week.present ? week.value != null : numberAt(body, ["matches.last_7_days"]) !== null,
+    earnings: !showEarnings ? null : monthEarnings.present ? monthEarnings.value : numberAt(body, ["financials.earnings", "financials.this_month", "earnings.this_month", "financials.income"]) ?? 0,
+    closings: !showEarnings ? null : monthClosings.present ? monthClosings.value : numberAt(body, ["closings.this_month", "this_month_closings"]) ?? 0,
   };
 }
 
@@ -315,6 +322,9 @@ export function appointmentLines(payload: unknown, now: Date, locale: Locale): A
 }
 
 export function notificationBadge(payload: unknown): number | null {
+  if (isRecord(payload) && typeof payload.unread_count === "number" && Number.isFinite(payload.unread_count)) {
+    return Math.max(0, payload.unread_count);
+  }
   const body = payloadBody(payload);
   if (!body) return null;
   if (typeof body.unread_count === "number" && Number.isFinite(body.unread_count)) return Math.max(0, body.unread_count);
@@ -326,15 +336,42 @@ export function notificationBadge(payload: unknown): number | null {
   return null;
 }
 
-export type NotificationLine = { id: string; title: string; meta: string };
+export type NotificationLine = { id: string; title: string; meta: string; href: string };
 
 export function notificationLines(payload: unknown): NotificationLine[] {
   const rows = notificationRows(payloadBody(payload));
   return rows.flatMap((row, index) => {
-    const title = textAt(row, ["title", "subject", "message", "body", "name"]);
+    const title = textAt(row, ["title", "subject", "message", "name"]);
     if (!title) return [];
-    return [{ id: textAt(row, ["id"]) || String(index), title, meta: textAt(row, ["meta", "subtitle", "created_at"]) }];
+    return [{
+      id: textAt(row, ["id"]) || String(index),
+      title,
+      meta: textAt(row, ["body", "meta", "subtitle", "created_at"]),
+      href: safeLink(textAt(row, ["link"])),
+    }];
   });
+}
+
+export type SearchHit = { id: string; title: string };
+
+export type SearchGroups = { portfolios: SearchHit[]; demands: SearchHit[]; contacts: SearchHit[] };
+
+/** `q` is 2–120 characters. Shorter or longer queries are not sent. */
+export function searchPath(query: string, limit = 8): string | null {
+  const text = query.trim();
+  if (text.length < 2 || text.length > 120) return null;
+  const size = Number.isFinite(limit) ? Math.min(20, Math.max(1, Math.floor(limit))) : 8;
+  return `global-search?q=${encodeURIComponent(text)}&limit=${size}`;
+}
+
+export function readSearchGroups(payload: unknown): SearchGroups {
+  const root = isRecord(payload) ? payload : {};
+  const data = isRecord(root.data) ? root.data : root;
+  return {
+    portfolios: searchHits(data.portfolios),
+    demands: searchHits(data.demands),
+    contacts: searchHits(data.contacts),
+  };
 }
 
 function item(
@@ -434,6 +471,29 @@ function pendingCount(pending: unknown): number {
   const listed = rowsAt(body, "pending_activations").length + rowsAt(body, "pending_closings").length;
   if (listed > 0) return listed;
   return numberAt(body, ["pending", "portfolios.pending", "portfolios.pending_approval"]) ?? 0;
+}
+
+function explicitStat(body: Record<string, unknown> | null, key: string): { present: boolean; value: number | null } {
+  if (!body || !Object.prototype.hasOwnProperty.call(body, key)) return { present: false, value: null };
+  const current = body[key];
+  if (current == null || current === "") return { present: true, value: null };
+  const parsed = Number(current);
+  return { present: true, value: Number.isFinite(parsed) ? parsed : null };
+}
+
+function searchHits(value: unknown): SearchHit[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((row, index) => {
+    if (!isRecord(row)) return [];
+    const title = textAt(row, ["title", "name", "full_name"]);
+    if (!title) return [];
+    return [{ id: textAt(row, ["id"]) || String(index), title }];
+  });
+}
+
+function safeLink(value: string): string {
+  if (!value.startsWith("/") || value.startsWith("//")) return "";
+  return value;
 }
 
 function finite(value: unknown): number | null {

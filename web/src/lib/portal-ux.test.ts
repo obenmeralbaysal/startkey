@@ -6,6 +6,7 @@ import { PORTAL_UX_COPY } from "../content/portal-ux.ts";
 import { NETWORK_MENU } from "./portal-network.ts";
 import {
   PORTAL_SEARCH_READY,
+  SEARCH_DEBOUNCE_MS,
   PROFILE_SCREEN_FIELDS,
   QUICK_ACTIONS,
   SECTION_DENIED_TEXT,
@@ -25,6 +26,8 @@ import {
   officeRoleBadge,
   officeSectionDenied,
   pendingPortfolios,
+  readSearchGroups,
+  searchPath,
   portalLandingHref,
   reportsHubTab,
   collaborationPath,
@@ -88,7 +91,7 @@ test("office menu follows role access and the mobile bar is the four work items"
   assert.equal(officeMenu("manager", office("manager", { managers_can_view_earnings: true }), "tr").some((entry) => entry.id === "reports" && entry.label === "Raporlar & Hakediş"), true);
   const branched = officeMenu("office_manager", office("office_manager", { branch_id: 4 }), "en").map((entry) => entry.id);
   assert.equal(branched.includes("office"), true);
-  assert.equal(branched.includes("branches"), false);
+  assert.equal(branched.includes("branches"), true);
   assert.equal(branched.includes("team"), true);
 
   assert.equal(officeSectionDenied(["earnings"], "manager", office("manager")), true);
@@ -139,6 +142,21 @@ test("network chrome stays the three read-only items", () => {
     "/portal/office/calendar",
   ]);
   assert.equal(PORTAL_SEARCH_READY, false);
+  assert.equal(SEARCH_DEBOUNCE_MS, 300);
+  assert.equal(searchPath("a"), null);
+  assert.equal(searchPath(` ${"k".repeat(121)} `), null);
+  assert.equal(searchPath("  Kadıköy "), "global-search?q=Kad%C4%B1k%C3%B6y&limit=8");
+  assert.deepEqual(readSearchGroups({
+    data: {
+      portfolios: [{ id: 1, title: "Bornova" }],
+      demands: [{ id: 2, name: "Kiralık" }],
+      contacts: [{ id: 3, full_name: "Mehmet K." }],
+    },
+  }), {
+    portfolios: [{ id: "1", title: "Bornova" }],
+    demands: [{ id: "2", title: "Kiralık" }],
+    contacts: [{ id: "3", title: "Mehmet K." }],
+  });
 });
 
 test("greeting and office line drop an empty title instead of leaving a dash", () => {
@@ -184,6 +202,32 @@ test("summary figures use numbers only and hide manager earnings without the fla
   const hidden = summaryFigures(stats, null, false);
   assert.equal(hidden.earnings, null);
   assert.equal(hidden.closings, null);
+  const contract = summaryFigures({
+    scope: "office",
+    portfolios: { active: 4 },
+    new_matches_last_7_days: null,
+    portfolios_added_this_month: null,
+    closings_this_month: null,
+    earnings_this_month: null,
+  }, null, true);
+  assert.equal(contract.active, 4);
+  assert.equal(contract.activeDelta, null);
+  assert.equal(contract.matches, null);
+  assert.equal(contract.earnings, null);
+  assert.equal(contract.closings, null);
+  const mine = summaryFigures({
+    scope: "mine",
+    new_matches_last_7_days: 1,
+    portfolios_added_this_month: 2,
+    closings_this_month: 0,
+    earnings_this_month: 10,
+  }, null, true);
+  assert.equal(mine.matches, 1);
+  assert.equal(mine.matchesAreWeek, true);
+  assert.equal(mine.activeDelta, 2);
+  assert.equal(mine.closings, 0);
+  assert.equal(mine.earnings, 10);
+  assert.equal(summaryFigures({ earnings_this_month: 50 }, null, false).earnings, null);
   const empty = summaryFigures(null, { unexpected: { raw: true } }, true);
   assert.deepEqual(empty, {
     active: 0,
@@ -205,10 +249,27 @@ test("summary figures use numbers only and hide manager earnings without the fla
       { id: 2, title: "Yarın", starts_at: "2026-10-27T10:30:00" },
     ],
   }, day, "tr").map((line) => line.title), ["Yer gösterme"]);
-  assert.equal(notificationBadge({ unread_count: 3 }), 3);
+  assert.equal(notificationBadge({ unread_count: 3, data: [{ id: 1 }] }), 3);
   assert.deepEqual(notificationLines({ notifications: [{ id: 1, title: "Portföy onay bekliyor" }] }), [
-    { id: "1", title: "Portföy onay bekliyor", meta: "" },
+    { id: "1", title: "Portföy onay bekliyor", meta: "", href: "" },
   ]);
+  assert.deepEqual(notificationLines({
+    unread_count: 1,
+    data: [{
+      id: 4,
+      title: "Portföy onay bekliyor",
+      body: "Bornova 2+1",
+      type: "demand_match",
+      read_at: null,
+      created_at: "2026-10-26T10:00:00",
+      link: "/portal/office/portfolios/9",
+    }],
+  }), [{
+    id: "4",
+    title: "Portföy onay bekliyor",
+    meta: "Bornova 2+1",
+    href: "/portal/office/portfolios/9",
+  }]);
   assert.equal(JSON.stringify(empty).includes("unexpected"), false);
   const meta = dashboardMeta({ data: { scope: "office", role: "owner", portfolios: { active: 1 } } });
   assert.deepEqual(meta, { scope: "office", role: "owner" });

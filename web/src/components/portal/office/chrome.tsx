@@ -7,16 +7,50 @@ import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import { officeCall } from "@/components/portal/office/api";
 import { useOffice } from "@/components/portal/office/ui";
 import { Icon, initials } from "@/components/portal/shell";
-import { notificationBadge, notificationLines, officeRoleBadge, withLang } from "@/lib/portal-ux";
+import { notificationBadge, notificationLines, officeRoleBadge, readSearchGroups, SEARCH_DEBOUNCE_MS, searchPath, withLang, type SearchGroups } from "@/lib/portal-ux";
 import type { Locale } from "@/lib/locales";
 
 export function PortalSearch({ label, placeholder }: { label: string; placeholder: string }) {
+  const { officeId } = useOffice();
+  const [query, setQuery] = useState("");
+  const [groups, setGroups] = useState<SearchGroups | null>(null);
+
+  useEffect(() => {
+    const path = searchPath(query);
+    if (!path) {
+      setGroups(null);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      officeCall(path, officeId)
+        .then((payload) => {
+          if (!cancelled) setGroups(readSearchGroups(payload));
+        })
+        .catch(() => {
+          if (!cancelled) setGroups(null);
+        });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [officeId, query]);
+
+  const hits = groups ? [...groups.portfolios, ...groups.demands, ...groups.contacts] : [];
+
   return (
-    <label className="ux-search">
-      <span className="ux-sr">{label}</span>
-      {/* TODO(TD-023): global-search is allowlisted but has no query or response contract in this repo. */}
-      <input type="search" disabled placeholder={placeholder} aria-disabled="true" />
-    </label>
+    <div className="ux-search">
+      <label>
+        <span className="ux-sr">{label}</span>
+        <input type="search" value={query} placeholder={placeholder} onChange={(event) => setQuery(event.target.value)} />
+      </label>
+      {hits.length > 0 ? (
+        <ul className="ux-search-results">
+          {hits.slice(0, 12).map((hit) => <li key={`${hit.id}-${hit.title}`}>{hit.title}</li>)}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
@@ -70,7 +104,7 @@ export function NotificationBell() {
             <ul>
               {lines.slice(0, 6).map((line) => (
                 <li key={line.id}>
-                  <strong>{line.title}</strong>
+                  {line.href ? <Link href={line.href} onClick={() => setOpen(false)}>{line.title}</Link> : <strong>{line.title}</strong>}
                   {line.meta ? <small className="ux-muted">{line.meta}</small> : null}
                 </li>
               ))}
