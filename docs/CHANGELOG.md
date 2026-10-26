@@ -1,5 +1,7 @@
 ## [2026-10-26]
 
+- **[UI]**: Portal ofis ve ağ ekranları lacivert kenar çubuğu, üst arama ve zil, rol rozeti ve 900px altında çekmece ile alt menü kullanır. Girişten sonra ofis rolleri `/portal/office` özetine, ağ rolleri `/portal/network` adresine iner. Özet karşılama, dört kısayol, KPI kartları ve onay listesini mevcut portal okumalarından basar. #2182
+
 - 662-1: Ana sayfa franchise linkleri mutlak /tr/franchise-basvuru yapıldı (göreli tr/... alt sayfalarda 404 veriyordu).
 - **[Backend]**: Ofis ciro, işlem ve kulüp rozetleri (`rankBadges`) ofis kartında, ofis listesinde ve ofis detayında görünür. Katalog içe aktarması her ofis ve danışman için `rankBadges` gönderir; boş liste kayıtlı rozetleri siler. Tam ofis ve danışman taraması gecelik çalışır. #2178
 - **[Backend]**: Franchise yöneticisi ve franchise personeli mevcut portal girişi ile ağı salt okunur görür. Ofis seçimi bu roller için gerekmez; `/me` `context: network` ve `role` döner. Ağ özeti, ofis ve danışman listeleri Reonix’ten gelir. Bu rollerin portal yazma istekleri 403 olur. #2182

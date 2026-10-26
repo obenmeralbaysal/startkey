@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { createContext, useContext, useEffect, useRef, useState, type InputHTMLAttributes } from "react";
 
+import type { Locale } from "@/lib/locales";
 import type { OfficeMembership } from "@/components/portal/office/access";
 import { isRecord, text, type OfficeRecord } from "@/components/portal/office/api";
 import { hasWatermarkedMedia, WatermarkBadge } from "@/components/portal/office/watermark";
@@ -13,6 +14,8 @@ export type OfficeState = {
   office: OfficeMembership;
   isAdmin: boolean;
   firstName: string;
+  jobTitle: string;
+  locale: Locale;
   notice: (message: string) => void;
   reload: () => void;
 };

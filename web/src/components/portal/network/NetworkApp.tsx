@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { PORTAL_NETWORK_COPY } from "@/content/portal-network";
+import { PORTAL_UX_COPY } from "@/content/portal-ux";
 import { officeCall } from "@/components/portal/office/api";
 import { EmptyState, Skeleton } from "@/components/portal/office/ui";
 import { AppShell, Icon, initials, type ShellLink } from "@/components/portal/shell";
@@ -115,8 +116,13 @@ export function NetworkApp() {
 
   return (
     <AppShell
+      variant="ux"
       links={links}
+      bottom={links}
       primary={3}
+      moreLabel={PORTAL_UX_COPY[lang].more}
+      menuLabel={PORTAL_UX_COPY[lang].menu}
+      closeLabel={PORTAL_UX_COPY[lang].close}
       homeHref={networkHome(lang)}
       footer={
         <div className="glass-side-group">

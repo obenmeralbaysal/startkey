@@ -2,6 +2,24 @@
 
 Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
+### TD-023 — Portal üst araması sonuç üretmez
+
+**Alan:** Portal / Arama
+
+**Mevcut Durum:**
+
+Ofis kabuğundaki arama kutusu yer tutucuyu gösterir ve kapalıdır. `global-search` vekil listesindedir; sorgu ve cevap sözleşmesi bu depoda yoktur.
+
+**Geçici Olmasının Nedeni:**
+
+Sözleşme olmadan sonuç uydurulmaz.
+
+**Gelecekteki Implementasyon:**
+
+En az 3 karakterde `global-search` çağrılır ve dönen portföy, kişi ve talep satırları açılır.
+
+**Durum:** Açık
+
 ### TD-022 — Franchise ağ ekranları mock ile görüntülenir
 
 **Alan:** Portal / Franchise ağı
