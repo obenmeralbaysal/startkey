@@ -374,6 +374,92 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.items.0.image', '/media/officelogo/a-plus.png');
     }
 
+    public function test_listing_detail_renders_description_specs_features_and_card_meta(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios/9' => Http::response(['data' => [
+                'portfolio' => [
+                    'id' => 9,
+                    'title' => 'Moda daire',
+                    'type' => 'sale',
+                    'description' => "Birinci satır\nİkinci satır\n\n<script>alert(1)</script> & \"tırnak\"",
+                    'rooms' => '2+1',
+                    'area' => '84 m²',
+                    'specs' => [
+                        ['label' => 'Oda Sayısı', 'value' => '2+1'],
+                        ['label' => 1, 'value' => 'bad'],
+                        ['value' => 'missing'],
+                        'not-a-pair',
+                        ['label' => 'm² (Brüt)', 'value' => '84'],
+                        ['label' => ' ', 'value' => 'x'],
+                    ],
+                    'feature_groups' => [
+                        ['heading' => 'İç Özellikler', 'items' => ['Asansör', '', 12, 'Balkon']],
+                        ['heading' => 'Boş', 'items' => []],
+                        ['heading' => '', 'items' => ['x']],
+                        ['items' => ['y']],
+                    ],
+                ],
+                'office' => [],
+                'agent' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios/10' => Http::response(['data' => [
+                'portfolio' => [
+                    'id' => 10,
+                    'title' => 'Arsa',
+                    'type' => 'sale',
+                    'description' => '   ',
+                    'rooms' => '',
+                    'area' => '   ',
+                ],
+                'office' => [],
+                'agent' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios' => Http::response(['data' => [
+                ['id' => 9, 'title' => 'Moda daire', 'type' => 'sale', 'rooms' => '2+1', 'area' => '84 m²'],
+                ['id' => 10, 'title' => 'Arsa', 'type' => 'sale', 'rooms' => '', 'area' => '   '],
+            ]]),
+        ]);
+
+        $html = '<p>Birinci satır<br />'."\n".'İkinci satır</p><p>&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;tırnak&quot;</p>';
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy/9/satilik')
+            ->assertOk()
+            ->assertJsonPath('data.descriptionHeading', 'Açıklama')
+            ->assertJsonPath('data.descriptionHtml', $html)
+            ->assertJsonPath('data.specs', [
+                ['label' => 'Oda Sayısı', 'value' => '2+1'],
+                ['label' => 'm² (Brüt)', 'value' => '84'],
+            ])
+            ->assertJsonPath('data.featureGroups', [
+                ['heading' => 'İç Özellikler', 'items' => ['Asansör', 'Balkon']],
+            ]);
+
+        $this->getJson('/api/v1/corporate?locale=en&path=/en/property/9/satilik')
+            ->assertOk()
+            ->assertJsonPath('data.descriptionHeading', 'Description')
+            ->assertJsonPath('data.descriptionHtml', $html);
+
+        $this->getJson('/api/v1/corporate?locale=de&path=/de/immobilien/9/satilik')
+            ->assertOk()
+            ->assertJsonPath('data.descriptionHeading', 'Beschreibung');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy/10/satilik')
+            ->assertOk()
+            ->assertJsonPath('data.descriptionHeading', '')
+            ->assertJsonPath('data.descriptionHtml', '')
+            ->assertJsonPath('data.specs', [])
+            ->assertJsonPath('data.featureGroups', []);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.features', [
+                ['icon' => 'flaticon-double-bed', 'text' => '2+1'],
+                ['icon' => 'flaticon-square', 'text' => '84 m²'],
+            ])
+            ->assertJsonPath('data.items.1.features', []);
+    }
+
     public function test_a_listing_gallery_includes_every_photo_up_to_the_media_index(): void
     {
         Http::fake([

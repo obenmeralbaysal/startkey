@@ -337,11 +337,15 @@ class ReonixCatalogue
             'price' => $card['price'],
             'gallery' => $this->gallery($row),
             'locationLinks' => $card['location'] !== '' ? [['href' => null, 'label' => $card['location']]] : [],
-            'specs' => [],
-            'descriptionHeading' => '',
-            'descriptionHtml' => $description === '' ? '' : '<p>'.e($description).'</p>',
+            'specs' => $this->specs($row),
+            'descriptionHeading' => $description === '' ? '' : match ($locale) {
+                'en' => 'Description',
+                'de' => 'Beschreibung',
+                default => 'Açıklama',
+            },
+            'descriptionHtml' => $this->descriptionHtml($description),
             'eids' => null,
-            'featureGroups' => [],
+            'featureGroups' => $this->featureGroups($row),
             'map' => [
                 'heading' => '',
                 'latitude' => (string) ($row['latitude'] ?? ''),
@@ -569,7 +573,7 @@ class ReonixCatalogue
             'title' => $title,
             'location' => (string) ($row['address'] ?? ''),
             'updatedLabel' => '',
-            'features' => [],
+            'features' => $this->cardFeatures($row),
             'detailLabel' => '',
             'style' => 'style3',
         ];
@@ -721,6 +725,97 @@ class ReonixCatalogue
             },
             default => $type,
         };
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return list<array{label: string, value: string}>
+     */
+    private function specs(array $row): array
+    {
+        $out = [];
+        foreach (is_array($row['specs'] ?? null) ? $row['specs'] : [] as $spec) {
+            if (! is_array($spec) || ! is_string($spec['label'] ?? null) || ! is_string($spec['value'] ?? null)) {
+                continue;
+            }
+            $label = trim($spec['label']);
+            $value = trim($spec['value']);
+            if ($label === '' || $value === '') {
+                continue;
+            }
+            $out[] = ['label' => $label, 'value' => $value];
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return list<array{heading: string, items: list<string>}>
+     */
+    private function featureGroups(array $row): array
+    {
+        $out = [];
+        foreach (is_array($row['feature_groups'] ?? null) ? $row['feature_groups'] : [] as $group) {
+            if (! is_array($group) || ! is_string($group['heading'] ?? null)) {
+                continue;
+            }
+            $heading = trim($group['heading']);
+            $items = [];
+            foreach (is_array($group['items'] ?? null) ? $group['items'] : [] as $item) {
+                if (! is_string($item) || trim($item) === '') {
+                    continue;
+                }
+                $items[] = trim($item);
+            }
+            if ($heading === '' || $items === []) {
+                continue;
+            }
+            $out[] = ['heading' => $heading, 'items' => $items];
+        }
+
+        return $out;
+    }
+
+    /** Escape, then one paragraph per blank line, with nl2br inside each paragraph. */
+    private function descriptionHtml(string $description): string
+    {
+        if ($description === '') {
+            return '';
+        }
+
+        $parts = preg_split('/\R\s*\R/u', e($description)) ?: [];
+        $paragraphs = [];
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if ($part === '') {
+                continue;
+            }
+            $paragraphs[] = '<p>'.nl2br($part).'</p>';
+        }
+
+        return implode('', $paragraphs);
+    }
+
+    /**
+     * Card meta matches the reference listing cards: rooms, then area.
+     *
+     * @param  array<string, mixed>  $row
+     * @return list<array{icon: string, text: string}>
+     */
+    private function cardFeatures(array $row): array
+    {
+        $features = [];
+        $rooms = trim((string) ($row['rooms'] ?? ''));
+        $area = trim((string) ($row['area'] ?? ''));
+        if ($rooms !== '') {
+            $features[] = ['icon' => 'flaticon-double-bed', 'text' => $rooms];
+        }
+        if ($area !== '') {
+            $features[] = ['icon' => 'flaticon-square', 'text' => $area];
+        }
+
+        return $features;
     }
 
     private function money(mixed $price, string $currency): string
