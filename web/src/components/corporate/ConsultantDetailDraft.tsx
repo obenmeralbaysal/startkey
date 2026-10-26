@@ -1,6 +1,7 @@
 "use client";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
+import { memberLine } from "@/components/corporate/DirectoryCard";
 import { ConsultantCommentForm } from "@/components/corporate/ConsultantCommentForm";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
@@ -52,7 +53,7 @@ export function ConsultantDetailDraft({ data, locale }: { data: ConsultantDetail
               </div>
               <div className="consultant-draft-identity">
                 <h2 className="consultant-draft-name">{data.name}</h2>
-                {data.role ? <span className="consultant-draft-role">{data.role}</span> : null}
+                {memberLine(data) ? <span className="consultant-draft-role">{memberLine(data)}</span> : null}
               </div>
               <ul className="consultant-draft-contact list-none">
                 {data.email ? (

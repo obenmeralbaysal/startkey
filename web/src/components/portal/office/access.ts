@@ -6,6 +6,7 @@ export type OfficeMembership = {
   name?: string;
   office_name?: string;
   role?: string | null;
+  title?: string | null;
   role_slug?: string | null;
   role_name?: string | null;
   branch_id?: number | null;

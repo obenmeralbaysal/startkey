@@ -5,6 +5,7 @@
 - **[Bugfix]**: Ofis haritası dünya sınırının soluna kaydırılınca gri şerit çıkmaz (`maxBounds`, `maxBoundsViscosity` 1, karo `noWrap`). Başvuru menüsü fare ayrılınca, odak dışarı çıkınca ve sayfa değişince kapanır. #2185
 - **[UI]**: Portföy küçük resmindeki “Filigranlı görsel” rozeti koyu yarı saydam zemin, açık yazı ve küçük köşe yarıçapı kullanır. Yerleşim aynı kalır. #2184
 - **[Bugfix]**: Başvuru ve diğer formlardaki reCAPTCHA bildirimi, reCAPTCHA betiği yüklenene kadar basılmaz. Betik yüklenince metin aynı kalır.
+- **[Backend]**: Ofis kataloğu birden fazla sahibi listeler. Üye kartında `role` ham roldür, `title` ünvan ya da yedek etikettir. Ofis yöneticisi ünvanı "Owner" içermiyorsa BROKER/OWNER grubuna girmez; sahip listesine yalnız `owner` rolü yazılır. Tekil `owner` alanı ilk sahip olarak kalır. #2182
 - 662-1: Ana sayfa franchise linkleri mutlak /tr/franchise-basvuru yapıldı (göreli tr/... alt sayfalarda 404 veriyordu).
 - **[Backend]**: Ofis ciro, işlem ve kulüp rozetleri (`rankBadges`) ofis kartında, ofis listesinde ve ofis detayında görünür. Katalog içe aktarması her ofis ve danışman için `rankBadges` gönderir; boş liste kayıtlı rozetleri siler. Tam ofis ve danışman taraması gecelik çalışır. #2178
 - **[Backend]**: Franchise yöneticisi ve franchise personeli mevcut portal girişi ile ağı salt okunur görür. Ofis seçimi bu roller için gerekmez; `/me` `context: network` ve `role` döner. Ağ özeti, ofis ve danışman listeleri Reonix’ten gelir. Bu rollerin portal yazma istekleri 403 olur. #2182

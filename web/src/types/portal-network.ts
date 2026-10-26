@@ -12,6 +12,12 @@ export type NetworkSummary = {
   updated_at: string | null;
 };
 
+export type NetworkOwner = {
+  id: number;
+  name: string;
+  title: string | null;
+};
+
 export type NetworkOffice = {
   id: number;
   name: string;
@@ -19,6 +25,8 @@ export type NetworkOffice = {
   logo: string | null;
   consultant_count: number;
   portfolio_count: number;
+  owners?: NetworkOwner[];
+  owner?: NetworkOwner | null;
 };
 
 export type NetworkConsultantOffice = {

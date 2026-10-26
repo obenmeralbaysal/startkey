@@ -29,6 +29,15 @@ type DeskUser = {
   email: string;
   phone: string | null;
   role: string | null;
+  title?: string | null;
+};
+
+type DeskOwner = {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  name?: string;
+  title?: string | null;
 };
 
 type Presence = "active" | "hidden" | "passive" | "archived";
@@ -43,6 +52,8 @@ type DeskOffice = {
   location_needs_review?: boolean | null;
   location_note?: string | null;
   consultant_count: number;
+  owners?: DeskOwner[];
+  owner?: DeskOwner | null;
   balance: number;
   limits: Record<"portfolios" | "users" | "contacts" | "branches", LimitCell>;
   portfolios: DeskPortfolio[];
@@ -119,6 +130,7 @@ function OfficeCard({
     <article className="glass-card">
       <div className="glass-card-head">
         <h3>{office.name}</h3>
+        <OwnerLine office={office} />
         <span className="glass-pill" data-tone={office.presence}>{presenceLabel(office.presence)}</span>
         {office.location_needs_review ? (
           <span className="glass-pill" data-tone="hidden" title={office.location_note ?? undefined}>Konum kontrol edilmeli</span>
@@ -328,7 +340,7 @@ function OfficeUsers({ officeId }: { officeId: number }) {
                 <strong>
                   {user.first_name} {user.last_name}
                 </strong>
-                <span className="glass-muted"> — {roleLabel(user.role)}</span>
+                <span className="glass-muted"> — {roleLabel(user)}</span>
                 <br />
                 <span className="glass-muted">{user.email}</span>
               </p>
@@ -380,7 +392,23 @@ function OfficeUsers({ officeId }: { officeId: number }) {
   );
 }
 
-function roleLabel(role: string | null): string {
+function OwnerLine({ office }: { office: DeskOffice }) {
+  const owners = office.owners && office.owners.length > 0 ? office.owners : office.owner ? [office.owner] : [];
+  if (owners.length === 0) return null;
+  return <p className="glass-muted">{owners.map(ownerText).filter(Boolean).join(", ")}</p>;
+}
+
+function ownerText(owner: DeskOwner): string {
+  const name = (owner.name || `${owner.first_name ?? ""} ${owner.last_name ?? ""}`).trim();
+  const title = owner.title?.trim();
+  if (!name) return title ?? "";
+  return title ? `${name} (${title})` : name;
+}
+
+function roleLabel(user: { role: string | null; title?: string | null }): string {
+  const title = user.title?.trim();
+  if (title) return title;
+  const role = user.role;
   if (role === "owner") return "Broker";
   if (role === "agent") return "Danışman";
   if (role === "office_manager" || role === "manager") return "Ofis yöneticisi";

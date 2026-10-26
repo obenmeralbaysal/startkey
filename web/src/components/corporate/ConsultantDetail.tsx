@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
+import { memberLine } from "@/components/corporate/DirectoryCard";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
 import { RankBadges } from "@/components/corporate/RankBadges";
@@ -35,7 +36,7 @@ export function ConsultantDetail({ data, locale }: { data: ConsultantDetailData;
             <div className="sk-agent-half">
               <div className="sk-agent-name">
                 <h2>{data.name}</h2>
-                {data.role ? <span>{data.role}</span> : null}
+                {memberLine(data) ? <span>{memberLine(data)}</span> : null}
                 <RankBadges badges={rankBadgesOf(data)} locale={locale} variant="detail" />
               </div>
               <ul className="sk-agent-info">

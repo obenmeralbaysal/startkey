@@ -345,6 +345,8 @@ export type CorporatePayload =
       portfoliosHref: string;
       portfoliosLabel: string;
       tabs: { id: string; label: string }[];
+      owners?: DirectoryCardData[];
+      owner?: DirectoryCardData | null;
       teamGroups: { heading: string; members: DirectoryCardData[] }[];
       listings: ListingCardData[];
       emptyListingsLabel?: string;
@@ -377,6 +379,7 @@ export type CorporatePayload =
       urlPath: string;
       name: string;
       role: string;
+      title?: string;
       image: string;
       imageWebp: string;
       email: string;
@@ -468,6 +471,9 @@ export interface DirectoryCardData {
   urlPath: string;
   name: string;
   role?: string;
+  title?: string;
+  owners?: DirectoryCardData[];
+  owner?: DirectoryCardData | null;
   image: string;
   imageWebp: string;
   phoneHref: string;
