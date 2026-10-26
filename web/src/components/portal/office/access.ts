@@ -84,10 +84,8 @@ const SETTINGS_PAGES = [
   ["team", "Ekip"],
   ["office", "Ofis"],
   ["subscription", "Abonelik"],
-  ["whatsapp", "WhatsApp"],
-  ["email", "E-posta"],
   ["billing", "Faturalama"],
-  ["sellers", "Sahibinden satıcıları"],
+  ["integrations", "Entegrasyonlar"],
   ["matchmaking", "Eşleşme"],
   ["badges", "Rozetler"],
   ["commission", "Hizmet bedeli"],
@@ -110,6 +108,7 @@ export function settingsAllowed(page: string, role: OfficeRole, office: OfficeMe
     case "email":
     case "billing":
     case "sellers":
+    case "integrations":
       return isManager(role);
     case "matchmaking":
       return canManageMatchmaking(role, office);
@@ -151,6 +150,20 @@ export function settingsHttpDecision(page: string, body: unknown): "allow" | "de
 
 export function settingsLinks(role: OfficeRole, office: OfficeMembership | undefined): { slug: string; label: string }[] {
   return SETTINGS_PAGES.filter(([slug]) => settingsAllowed(slug, role, office)).map(([slug, label]) => ({ slug, label }));
+}
+
+const INTEGRATION_LINKS = [
+  ["whatsapp", "/portal/office/settings/whatsapp", "WhatsApp"],
+  ["email", "/portal/office/settings/email", "E-posta"],
+  ["sahibinden", "/portal/office/settings/integrations/sahibinden", "Sahibinden"],
+] as const;
+
+/** Same gate as WhatsApp and E-posta (`isManager`: owner, manager, office_manager). */
+export function integrationLinks(role: OfficeRole, office: OfficeMembership | undefined): { slug: string; href: string; label: string }[] {
+  if (!settingsAllowed("whatsapp", role, office) || !settingsAllowed("email", role, office)) {
+    return [];
+  }
+  return INTEGRATION_LINKS.map(([slug, href, label]) => ({ slug, href, label }));
 }
 
 export function canVerify(office: OfficeMembership | undefined): boolean {

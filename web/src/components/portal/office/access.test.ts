@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { SETTINGS_DENIED, settingsHttpDecision, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
+import { integrationLinks, SETTINGS_DENIED, settingsHttpDecision, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
 
 const office = (role: string, branchId: number | null = null): OfficeMembership => ({
   id: 7,
@@ -46,6 +46,18 @@ test("owner, office manager, and agent see different settings tabs", () => {
   assert.equal(owner.includes("commission"), true);
   assert.equal(owner.includes("rates"), true);
   assert.equal(owner.includes("badges"), true);
+  assert.equal(owner.includes("integrations"), true);
+  assert.equal(owner.includes("sellers"), false);
+});
+
+test("sahibinden sellers use the whatsapp and email gate", () => {
+  assert.equal(settingsPageAccess("integrations", "agent", office("agent")), "deny");
+  assert.equal(settingsPageAccess("integrations", "owner", office("owner")), "allow");
+  assert.equal(settingsPageAccess("integrations", "office_manager", office("office_manager")), "allow");
+  assert.equal(settingsPageAccess("integrations", "manager", office("manager")), "allow");
+  assert.equal(integrationLinks("agent", office("agent")).length, 0);
+  assert.deepEqual(integrationLinks("office_manager", office("office_manager")).map((link) => link.slug), ["whatsapp", "email", "sahibinden"]);
+  assert.equal(integrationLinks("owner", office("owner")).some((link) => link.href === "/portal/office/settings/integrations/sahibinden"), true);
 });
 
 test("a me payload decides the settings HTTP status", () => {

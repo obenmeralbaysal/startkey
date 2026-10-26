@@ -1,8 +1,9 @@
-import { forbidden } from "next/navigation";
+import { forbidden, redirect } from "next/navigation";
 import { headers } from "next/headers";
 
 import { settingsHttpDecision } from "@/components/portal/office/access";
 import { config } from "@/lib/config";
+import { officeSectionRedirect } from "@/lib/portal-office-routes";
 
 import { OfficePageClient } from "./office-client";
 
@@ -15,6 +16,8 @@ export default async function OfficePage({
 }) {
   const { section } = await params;
   const parts = section ?? [];
+  const destination = officeSectionRedirect(parts);
+  if (destination) redirect(destination);
   const tab = parts[0] === "settings" ? parts[1] : undefined;
   if (tab && (await settingsClosed(tab))) forbidden();
   return <OfficePageClient parts={parts} />;
