@@ -9,6 +9,11 @@ export const OFFICE_SETTINGS_PATH = "settings/office";
 
 export const BULK_RATE_PATH = "commission-policy/changes";
 
+/** Ekip bulk rate button and form. Owner only; every other role omits them. */
+export function bulkRateVisible(role: string): boolean {
+  return role === "owner";
+}
+
 export type OfficeProfileInput = {
   name: string;
   phone: string;

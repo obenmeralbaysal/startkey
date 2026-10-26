@@ -12,6 +12,7 @@ import {
   TTBS_REQUIRED,
   assignableRoles,
   bulkRateBody,
+  bulkRateVisible,
   displayCell,
   duplicateTeamEmail,
   isSafeHex,
@@ -164,6 +165,12 @@ test("team create and edit send the branch and licence fields", () => {
   assert.deepEqual(assignableRoles(roles).map((role) => role.label), ["Danışman"]);
   assert.equal(memberRoleLabel({ role_slug: "office_manager" }, PORTAL_UX_COPY.tr.roles), "Ofis Yöneticisi");
   assert.equal(memberRoleLabel({ role_slug: "agent" }, PORTAL_UX_COPY.en.roles), "Consultant");
+});
+
+test("bulk rate is visible only for the owner", () => {
+  for (const role of ["owner", "manager", "office_manager", "agent", "franchise_admin", "franchise_staff", "broker"]) {
+    assert.equal(bulkRateVisible(role), role === "owner");
+  }
 });
 
 test("bulk rate is an approval request and table cells hide raw keys", () => {

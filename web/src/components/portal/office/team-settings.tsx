@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
-import { canDeleteTeam, canManageRates, roleOf } from "@/components/portal/office/access";
+import { canDeleteTeam, roleOf } from "@/components/portal/office/access";
 import { OfficeError, officeCall, rows, text, type OfficeRecord } from "@/components/portal/office/api";
 import { matchedFieldErrors } from "@/components/portal/office/field-errors";
 import { PageFrame, useOffice } from "@/components/portal/office/ui";
@@ -13,6 +13,7 @@ import {
   BULK_RATE_PATH,
   bulkRateBody,
   bulkRateSent,
+  bulkRateVisible,
   duplicateTeamEmail,
   memberRoleLabel,
   roleOptions,
@@ -136,7 +137,7 @@ export function TeamSettings() {
 
   async function submitRate(event: FormEvent) {
     event.preventDefault();
-    if (!canManageRates(roleOf(office)) || pending) return;
+    if (!bulkRateVisible(roleOf(office)) || pending) return;
     const ids = picked.filter((id) => id > 0);
     const value = Number(rate);
     if (ids.length === 0 || !Number.isFinite(value)) {
@@ -161,7 +162,7 @@ export function TeamSettings() {
   }
 
   const canRemove = canDeleteTeam(roleOf(office), office);
-  const canRate = canManageRates(roleOf(office));
+  const canRate = bulkRateVisible(roleOf(office));
 
   return (
     <PageFrame title={copy.team} crumb={[copy.settings, copy.team]}>
