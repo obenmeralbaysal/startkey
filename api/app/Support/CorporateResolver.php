@@ -331,11 +331,7 @@ class CorporateResolver
         }
 
         $sectionsMeta = $list->sidebar['sections'] ?? [];
-        $trainings = CmsTraining::query()
-            ->published()
-            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
-            ->orderBy('position')
-            ->get();
+        $trainings = $this->publishedTrainings($locale);
 
         $sections = [];
         foreach ($sectionsMeta as $section) {
@@ -758,6 +754,37 @@ class CorporateResolver
             ->where('cms_person_id', $personId)
             ->pluck('url_path', 'locale')
             ->all();
+    }
+
+    /**
+     * Items in the first section of the training list. That section is the upcoming
+     * seminars block ("Devam Eden Eğitimler" on the Turkish page).
+     */
+    public function upcomingSeminarCount(string $locale): int
+    {
+        $list = CmsListPage::query()->where('type', 'training')->where('locale', $locale)->first();
+        $sections = is_array($list?->sidebar['sections'] ?? null) ? $list->sidebar['sections'] : [];
+        $group = '';
+        foreach ($sections as $section) {
+            if (is_array($section) && is_string($section['group'] ?? null) && $section['group'] !== '') {
+                $group = $section['group'];
+                break;
+            }
+        }
+        if ($group === '') {
+            return 0;
+        }
+
+        return $this->publishedTrainings($locale)->where('group', $group)->count();
+    }
+
+    private function publishedTrainings(string $locale)
+    {
+        return CmsTraining::query()
+            ->published()
+            ->with(['translations' => fn ($builder) => $builder->where('locale', $locale)])
+            ->orderBy('position')
+            ->get();
     }
 
     private function trainingAlternates(int $trainingId): array

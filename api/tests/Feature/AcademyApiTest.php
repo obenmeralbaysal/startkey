@@ -18,6 +18,24 @@ class AcademyApiTest extends TestCase
         $this->seedAcademyFixtures();
     }
 
+    public function test_the_seminar_count_matches_the_upcoming_training_section(): void
+    {
+        $list = $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitimlerimiz')
+            ->assertOk();
+        $upcoming = count($list->json('data.sections.0.items'));
+
+        $this->getJson('/api/v1/seminars/upcoming-count?locale=tr')
+            ->assertOk()
+            ->assertJsonPath('data.count', $upcoming)
+            ->assertJsonPath('data.count', 1);
+
+        CmsTraining::query()->where('external_id', 385)->update(['published' => false]);
+
+        $this->getJson('/api/v1/seminars/upcoming-count?locale=tr')
+            ->assertOk()
+            ->assertJsonPath('data.count', 0);
+    }
+
     public function test_it_lists_trainings_in_ongoing_then_completed_sections(): void
     {
         $this->getJson('/api/v1/corporate?locale=tr&path=/tr/egitimlerimiz')
