@@ -20,7 +20,11 @@ function CounterIcon({ icon }: { icon: string }) {
   );
 }
 
-export function Counters({ stats }: { stats: ApiStat[] }) {
+export function Counters({ stats }: { stats: ApiStat[] | null | undefined }) {
+  // Live counts only: when the API sends none (Reonix unreachable), render nothing.
+  if (!stats || stats.length === 0) {
+    return null;
+  }
   const area = (
     <div className="sk-counters relative z-[1] bg-seashell">
       <div className="container">

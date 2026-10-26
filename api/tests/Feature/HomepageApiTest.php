@@ -23,8 +23,7 @@ class HomepageApiTest extends TestCase
         $response = $this->getJson('/api/v1/homepage?locale=tr');
 
         $response->assertOk()
-            ->assertJsonPath('data.stats.0.label', 'Startkey Franchise')
-            ->assertJsonPath('data.stats.0.value', 84)
+            ->assertJsonCount(0, 'data.stats')
             ->assertJsonPath('data.featuredProperties.0.externalId', 479134)
             ->assertJsonPath('data.featuredProperties.0.title', 'Soğucak Mahallesi')
             ->assertJsonPath('data.popularCities.0.name', 'İzmir');
@@ -39,8 +38,40 @@ class HomepageApiTest extends TestCase
 
         $this->getJson('/api/v1/homepage?locale=de')
             ->assertOk()
-            ->assertJsonPath('data.stats.0.label', 'Startkey-Franchise')
             ->assertJsonPath('data.featuredProperties.0.processType', 'Zum Verkauf');
+    }
+
+    public function test_counters_show_live_catalogue_counts_and_never_a_static_number(): void
+    {
+        config(['reonix.base_url' => 'https://portal.test', 'reonix.portal_key' => 'test-key']);
+        \App\Models\SiteStat::query()->create(['key' => 'stat-3', 'icon' => '/c3.png', 'value' => 1082, 'suffix' => '+', 'position' => 3])
+            ->translations()->create(['locale' => 'de', 'label' => 'Berater']);
+        \App\Models\SiteStat::query()->create(['key' => 'stat-4', 'icon' => '/c4.png', 'value' => 35, 'suffix' => '+', 'position' => 4])
+            ->translations()->create(['locale' => 'de', 'label' => 'Länder']);
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [['id' => 1], ['id' => 2], ['id' => 3]]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios' => Http::response(['data' => []]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants' => Http::response(['data' => [
+                ['id' => 7, 'name' => 'A'], ['id' => 8, 'name' => 'B'], ['type' => 'office', 'office_id' => 1, 'name' => 'Ofis'],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/homepage?locale=de')
+            ->assertOk()
+            ->assertJsonCount(3, 'data.stats')
+            ->assertJsonPath('data.stats.0.label', 'Startkey-Franchise')
+            ->assertJsonPath('data.stats.0.value', 3)
+            ->assertJsonPath('data.stats.0.suffix', '')
+            ->assertJsonPath('data.stats.1.value', 2)
+            ->assertJsonPath('data.stats.2.value', 35);
+    }
+
+    public function test_counters_hide_when_the_catalogue_fails(): void
+    {
+        config(['reonix.base_url' => 'https://portal.test', 'reonix.portal_key' => 'test-key']);
+        Http::fake(['https://portal.test/*' => Http::response([], 500)]);
+
+        $this->getJson('/api/v1/homepage?locale=tr')->assertOk()->assertJsonCount(0, 'data.stats');
     }
 
     public function test_it_defaults_to_turkish_when_locale_is_omitted(): void

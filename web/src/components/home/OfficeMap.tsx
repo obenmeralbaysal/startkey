@@ -46,6 +46,8 @@ export function OfficeMap({
   resetLabel = "Tümünü göster",
   className = "",
   overview = false,
+  onSelect,
+  onCenter,
 }: {
   offices: MapOffice[];
   zoom?: number;
@@ -54,8 +56,14 @@ export function OfficeMap({
   className?: string;
   /** Homepage: cluster pins, fit every office, and offer a labeled reset. A pin opens its popup without zooming. */
   overview?: boolean;
+  /** Homepage desktop card: a pin was clicked. */
+  onSelect?: (officeId: number) => void;
+  /** Homepage desktop card: the map centre after a move. */
+  onCenter?: (center: { latitude: number; longitude: number }) => void;
 }) {
   const node = useRef<HTMLDivElement>(null);
+  const callbacks = useRef({ onSelect, onCenter });
+  callbacks.current = { onSelect, onCenter };
 
   useEffect(() => {
     const host = node.current;
@@ -135,6 +143,7 @@ export function OfficeMap({
             }
             const onMap = group ? group.hasLayer(marker) : map?.hasLayer(marker) === true;
             hold(latlng, html, onMap);
+            callbacks.current.onSelect?.(office.id);
           });
         } else {
           marker.bindPopup(html);
@@ -146,6 +155,11 @@ export function OfficeMap({
       if (overview && map) {
         map.on("zoomend", reopen);
         map.on("moveend", reopen);
+        map.on("moveend", () => {
+          if (!map) return;
+          const c = map.getCenter();
+          callbacks.current.onCenter?.({ latitude: c.lat, longitude: c.lng });
+        });
         group?.on("animationend", reopen);
       }
 

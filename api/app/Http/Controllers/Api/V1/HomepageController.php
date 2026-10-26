@@ -11,6 +11,7 @@ use App\Support\Locale;
 use App\Support\MediaPath;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class HomepageController extends Controller
 {
@@ -39,19 +40,67 @@ class HomepageController extends Controller
         ]);
     }
 
+    /** Seeded counter keys that must show live Reonix numbers instead of static text. */
+    private const LIVE_STATS = ['stat-1' => 'offices', 'stat-2' => 'portfolios', 'stat-3' => 'consultants'];
+
     private function stats(string $locale): array
     {
+        $live = $this->liveCounts();
+
         return SiteStat::query()
             ->with(['translations' => fn ($query) => $query->where('locale', $locale)])
             ->orderBy('position')
             ->get()
-            ->map(fn (SiteStat $stat) => [
-                'icon' => $stat->icon,
-                'value' => $stat->value,
-                'suffix' => $stat->suffix,
-                'label' => $stat->translations->first()?->label ?? '',
-            ])
+            ->map(function (SiteStat $stat) use ($live) {
+                $kind = self::LIVE_STATS[$stat->key] ?? null;
+                if ($kind !== null && ! isset($live[$kind])) {
+                    return null; // no live number: hide the counter rather than show a stale one
+                }
+
+                return [
+                    'icon' => $stat->icon,
+                    'value' => $kind !== null ? $live[$kind] : $stat->value,
+                    'suffix' => $kind !== null ? '' : $stat->suffix,
+                    'label' => $stat->translations->first()?->label ?? '',
+                ];
+            })
+            ->filter()
+            ->values()
             ->all();
+    }
+
+    /**
+     * Live counts from the public Reonix catalogue (same rows the portal lists): active
+     * offices, active portfolios, and consultants as people only (office cards that
+     * Reonix may add to the consultant list carry type=office and are excluded).
+     * Only successful, non-zero counts are cached (10 min); failures are not cached.
+     *
+     * @return array<string, int>
+     */
+    private function liveCounts(): array
+    {
+        $cached = Cache::get('homepage:live-counts');
+        if (is_array($cached)) {
+            return $cached;
+        }
+        $counts = [];
+        foreach (array_unique(array_values(self::LIVE_STATS)) as $kind) {
+            $rows = $this->catalogue->collection($kind);
+            if (! is_array($rows)) {
+                continue;
+            }
+            if ($kind === 'consultants') {
+                $rows = array_filter($rows, fn (array $row) => ($row['type'] ?? '') !== 'office');
+            }
+            if (count($rows) > 0) {
+                $counts[$kind] = count($rows);
+            }
+        }
+        if (count($counts) === count(array_unique(array_values(self::LIVE_STATS)))) {
+            Cache::put('homepage:live-counts', $counts, now()->addMinutes(10));
+        }
+
+        return $counts;
     }
 
     /**
