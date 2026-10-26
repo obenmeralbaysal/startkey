@@ -119,13 +119,9 @@ function OfficeScreen({ parts }: { parts: string[] }) {
       ["reports", role === "agent" ? "Performansım" : "Raporlar"],
       ["collaborations", "İşbirlikleri"],
       ["lease", "Kira radarı"],
-      ["sahibinden", "Sahibinden"],
       ["settings", "Ayarlar"],
     ];
-    return items.filter(([slug]) => {
-      if (slug === "sahibinden") return role !== "";
-      return true;
-    });
+    return items;
   }, [role]);
 
   async function choose(next: number) {
@@ -230,7 +226,6 @@ const ICONS: Record<string, IconName> = {
   reports: "chart",
   collaborations: "swap",
   lease: "key",
-  sahibinden: "globe",
   settings: "sliders",
 };
 

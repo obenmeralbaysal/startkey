@@ -9,6 +9,7 @@ import {
   canDeleteTeam,
   canManageRates,
   canVerify,
+  integrationLinks,
   roleOf,
   SETTINGS_DENIED,
   settingsLinks,
@@ -18,12 +19,20 @@ import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/c
 import { OfficeDashboard } from "@/components/portal/office/dashboard";
 import { ConfirmButton, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 import { Icon } from "@/components/portal/shell";
+import {
+  classifySahibindenImportFailure,
+  parseSahibindenListing,
+  portfolioDraftFromImport,
+  SAHIBINDEN_IMPORT_ERROR_TEXT,
+  type PortfolioImportDraft,
+  type SahibindenImportError,
+} from "@/lib/sahibinden-listing";
 
 export function OfficeWork({ parts }: { parts: string[] }) {
   const [head, id] = parts;
   if (!head) return <OfficeDashboard />;
   if (head === "contacts") return id === "new" ? <ContactForm /> : id ? <ContactDetail id={id} /> : <ContactList />;
-  if (head === "portfolios") return id === "new" ? <PortfolioForm /> : id ? <PortfolioDetail id={id} /> : <PortfolioList />;
+  if (head === "portfolios") return id === "new" ? <PortfolioNew step={parts[2]} /> : id ? <PortfolioDetail id={id} /> : <PortfolioList />;
   if (head === "demands") return id === "new" ? <DemandForm /> : id ? <DemandDetail id={id} /> : <DemandList />;
   if (head === "matches") return <SimpleList title="Eşleşmeler" path="matches" />;
   if (head === "calendar") return <Calendar />;
@@ -31,8 +40,7 @@ export function OfficeWork({ parts }: { parts: string[] }) {
   if (head === "reports") return <SimpleList title="Kapanış raporları" path="reports/closings" />;
   if (head === "collaborations") return <Collaborations />;
   if (head === "lease") return <Lease />;
-  if (head === "sahibinden") return <Sahibinden />;
-  if (head === "settings") return <Settings page={id} />;
+  if (head === "settings") return <Settings parts={parts.slice(1)} />;
   return <p className="glass-muted">Bu bölüm yok.</p>;
 }
 
@@ -215,7 +223,7 @@ function VoiceDraft({ kind }: { kind: "portfolio" | "demand" }) {
   }
 
   return (
-    <section className="glass-card">
+    <section className="glass-card" data-screen={kind === "portfolio" ? "portfolio-voice" : undefined}>
       <h3>Sesli taslak</h3>
       <textarea value={transcript} placeholder="Konuşma metni" onChange={(event) => setTranscript(event.target.value)} />
       <div className="glass-actions">
@@ -282,18 +290,89 @@ function ChunkedMedia({ id, onDone }: { id: string; onDone: () => void }) {
   );
 }
 
-function PortfolioForm() {
+function PortfolioNew({ step }: { step?: string }) {
+  if (step === "manual") return <PortfolioForm />;
+  if (step === "voice") return <VoiceDraft kind="portfolio" />;
+  if (step === "sahibinden") return <SahibindenImport />;
+  if (step) return <p className="glass-muted">Bu bölüm yok.</p>;
+  return (
+    <section className="glass-card" data-screen="portfolio-new">
+      <h2>Yeni portföy</h2>
+      <div className="glass-actions">
+        <Link className="glass-btn" href="/portal/office/portfolios/new/manual" data-choice="manual">El ile</Link>
+        <Link className="glass-btn" href="/portal/office/portfolios/new/voice" data-choice="voice">Sesle</Link>
+        <Link className="glass-btn" href="/portal/office/portfolios/new/sahibinden" data-choice="sahibinden">Sahibinden linkiyle</Link>
+      </div>
+    </section>
+  );
+}
+
+function SahibindenImport() {
+  const { officeId, notice } = useOffice();
+  const [draft, setDraft] = useState<PortfolioImportDraft | null>(null);
+  const [error, setError] = useState<SahibindenImportError | null>(null);
+  const [pending, setPending] = useState(false);
+
+  async function readListing(raw: string) {
+    const parsed = parseSahibindenListing(raw);
+    if (!parsed.ok) {
+      setError("invalid");
+      return;
+    }
+    setError(null);
+    setPending(true);
+    try {
+      const payload = await officeCall("portfolios/import/sahibinden", officeId, { method: "POST", body: { url: parsed.url } });
+      setDraft(portfolioDraftFromImport(payload));
+      notice("İlan okundu. Alanları kontrol edip kaydedin.");
+    } catch (caught) {
+      const status = caught instanceof OfficeError ? caught.status : 0;
+      const message = caught instanceof Error ? caught.message : "";
+      setError(classifySahibindenImportFailure(status, message));
+    } finally {
+      setPending(false);
+    }
+  }
+
+  if (draft) {
+    return <PortfolioForm draft={draft} />;
+  }
+
+  return (
+    <section className="glass-card" data-screen="sahibinden-import" data-loading={pending ? "true" : "false"}>
+      <h2>Sahibinden linkiyle</h2>
+      <form className="glass-form" aria-busy={pending} onSubmit={(event) => {
+        event.preventDefault();
+        if (pending) return;
+        const form = new FormData(event.currentTarget);
+        readListing(String(form.get("url") ?? "")).catch(() => setError("upstream"));
+      }}>
+        <input name="url" placeholder="sahibinden.com ilan adresi veya ilan numarası" required aria-invalid={error ? true : undefined} disabled={pending} />
+        {error ? <p className="glass-notice" data-tone="error" role="alert" data-error={error}>{SAHIBINDEN_IMPORT_ERROR_TEXT[error]}</p> : null}
+        <button className="glass-btn" type="submit" disabled={pending} aria-busy={pending}>{pending ? "Okunuyor" : "Formu doldur"}</button>
+      </form>
+      <Link className="glass-link" href="/portal/office/portfolios/new">Seçenekler</Link>
+    </section>
+  );
+}
+
+function PortfolioForm({ draft }: { draft?: PortfolioImportDraft | null }) {
   const { officeId, notice } = useOffice();
   const contacts = useData("contacts?limit=100");
   const categories = useData("categories");
   const cities = useData("locations/cities");
-  const [city, setCity] = useState("");
-  const [district, setDistrict] = useState("");
+  const [title, setTitle] = useState(draft?.title ?? "");
+  const [contactId, setContactId] = useState(draft?.contactId ?? "");
+  const [categoryId, setCategoryId] = useState(draft?.categoryId ?? "");
+  const [type, setType] = useState(draft?.type ?? "sale");
+  const [price, setPrice] = useState(draft?.price ?? "");
+  const [city, setCity] = useState(draft?.cityId ?? "");
+  const [district, setDistrict] = useState(draft?.districtId ?? "");
+  const [neighborhood, setNeighborhood] = useState(draft?.neighborhoodId ?? "");
   const districts = useData(city ? `locations/districts?city_id=${city}` : "");
   const neighborhoods = useData(district ? `locations/neighborhoods?district_id=${district}` : "");
   return (
-    <>
-    <VoiceDraft kind="portfolio" />
+    <div data-screen="portfolio-manual">
     <Form
       title="Yeni portföy"
       onSubmit={async (form) => {
@@ -315,16 +394,16 @@ function PortfolioForm() {
         if (id) window.location.href = `/portal/office/portfolios/${id}`;
       }}
     >
-      <input name="title" placeholder="Başlık" />
-      <select name="contact_id" required defaultValue=""><option value="">Kişi</option>{rows(contacts.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["first_name"])}</option>)}</select>
-      <select name="category_id" required defaultValue=""><option value="">Kategori</option>{rows(categories.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
-      <select name="type" required defaultValue="sale"><option value="sale">Satılık</option><option value="rent">Kiralık</option></select>
-      <input name="price" type="number" min="0" placeholder="Fiyat" required />
-      <select name="city_id" required value={city} onChange={(event) => { setCity(event.target.value); setDistrict(""); }}><option value="">İl</option>{rows(cities.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
-      <select name="district_id" required value={district} onChange={(event) => setDistrict(event.target.value)}><option value="">İlçe</option>{rows(districts.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
-      <select name="neighborhood_id" required defaultValue=""><option value="">Mahalle</option>{rows(neighborhoods.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
+      <input name="title" placeholder="Başlık" value={title} onChange={(event) => setTitle(event.target.value)} />
+      <select name="contact_id" required value={contactId} onChange={(event) => setContactId(event.target.value)}><option value="">Kişi</option>{rows(contacts.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["first_name"])}</option>)}</select>
+      <select name="category_id" required value={categoryId} onChange={(event) => setCategoryId(event.target.value)}><option value="">Kategori</option>{rows(categories.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
+      <select name="type" required value={type} onChange={(event) => setType(event.target.value === "rent" ? "rent" : "sale")}><option value="sale">Satılık</option><option value="rent">Kiralık</option></select>
+      <input name="price" type="number" min="0" placeholder="Fiyat" required value={price} onChange={(event) => setPrice(event.target.value)} />
+      <select name="city_id" required value={city} onChange={(event) => { setCity(event.target.value); setDistrict(""); setNeighborhood(""); }}><option value="">İl</option>{rows(cities.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
+      <select name="district_id" required value={district} onChange={(event) => { setDistrict(event.target.value); setNeighborhood(""); }}><option value="">İlçe</option>{rows(districts.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
+      <select name="neighborhood_id" required value={neighborhood} onChange={(event) => setNeighborhood(event.target.value)}><option value="">Mahalle</option>{rows(neighborhoods.data).map((row) => <option key={String(row.id)} value={String(row.id)}>{text(row, ["name"])}</option>)}</select>
     </Form>
-    </>
+    </div>
   );
 }
 
@@ -1053,27 +1132,6 @@ function Lease() {
   );
 }
 
-function Sahibinden() {
-  const { officeId, notice } = useOffice();
-  const [preview, setPreview] = useState<unknown>(null);
-  return (
-    <section className="glass-card">
-      <h2>Sahibinden</h2>
-      <Form
-        title="İlan oku"
-        onSubmit={async (form) => {
-          const payload = await officeCall("portfolios/import/sahibinden", officeId, { method: "POST", body: { url: form.get("url") } });
-          setPreview(payload);
-          notice("İlan okundu. Portföy kaydı ayrıca açılır.");
-        }}
-      >
-        <input name="url" placeholder="İlan adresi veya bağlantı" required />
-      </Form>
-      <RecordView value={preview} />
-    </section>
-  );
-}
-
 function MatchmakingForm() {
   const { officeId, notice } = useOffice();
   const current = useData("office/matchmaking-weights");
@@ -1287,26 +1345,32 @@ function SimpleList({ title, path }: { title: string; path: string }) {
   );
 }
 
-function Settings({ page }: { page?: string }) {
+function Settings({ parts }: { parts: string[] }) {
   const { office } = useOffice();
   const role = roleOf(office);
+  const page = parts[0];
+  const child = parts[1];
   if (!page) {
     return (
-      <section className="glass-grid">
-        {settingsLinks(role, office).map(({ slug, label }) => (
-          <Link key={slug} className="glass-card" href={`/portal/office/settings/${slug}`}>{label}</Link>
-        ))}
+      <section data-screen="office-settings">
+        <h2>Ofis Ayarları</h2>
+        <div className="glass-grid">
+          {settingsLinks(role, office).map(({ slug, label }) => (
+            <Link key={slug} className="glass-card" href={`/portal/office/settings/${slug}`} data-settings={slug}>{label}</Link>
+          ))}
+        </div>
       </section>
     );
   }
   if (settingsPageAccess(page, role, office) === "deny") {
     return (
-      <section className="glass-card">
-        <h2>Ayarlar</h2>
+      <section className="glass-card" data-screen="office-settings">
+        <h2>Ofis Ayarları</h2>
         <p>{SETTINGS_DENIED}</p>
       </section>
     );
   }
+  if (page === "integrations") return child === "sahibinden" ? <Sellers /> : child ? <SettingsDenied /> : <Integrations />;
   if (page === "profile") return <ProfileForm />;
   if (page === "notifications") return <SimpleList title="Bildirimler" path="notifications" />;
   if (page === "duty") return <DutyForm />;
@@ -1320,11 +1384,29 @@ function Settings({ page }: { page?: string }) {
   if (page === "whatsapp") return <WhatsappForm />;
   if (page === "email") return <EmailForm />;
   if (page === "billing") return <BillingForm />;
-  if (page === "sellers") return <Sellers />;
+  return <SettingsDenied />;
+}
+
+function SettingsDenied() {
   return (
-    <section className="glass-card">
-      <h2>Ayarlar</h2>
+    <section className="glass-card" data-screen="office-settings">
+      <h2>Ofis Ayarları</h2>
       <p>{SETTINGS_DENIED}</p>
+    </section>
+  );
+}
+
+function Integrations() {
+  const { office } = useOffice();
+  return (
+    <section data-screen="settings-integrations">
+      <h2>Entegrasyonlar</h2>
+      <p className="glass-muted">Ofis Ayarları › Entegrasyonlar</p>
+      <div className="glass-grid">
+        {integrationLinks(roleOf(office), office).map(({ slug, href, label }) => (
+          <Link key={slug} className="glass-card" href={href} data-settings={slug}>{label}</Link>
+        ))}
+      </div>
     </section>
   );
 }
@@ -1489,8 +1571,9 @@ function Sellers() {
   const { officeId } = useOffice();
   const list = useData(`offices/${officeId}/sahibinden-sellers`);
   return (
-    <section className="glass-card">
+    <section className="glass-card" data-screen="settings-sahibinden">
       <h2>Sahibinden satıcıları</h2>
+      <p className="glass-muted">Ofis Ayarları › Entegrasyonlar › Sahibinden</p>
       <RecordTable rows={rows(list.data)} loading={list.data === undefined} />
       <form onSubmit={(event) => { event.preventDefault(); officeCall(`offices/${officeId}/sahibinden-sellers/sync`, officeId, { method: "POST", body: {} }).then(() => list.reload()); }}>
         <button className="glass-btn-lite" type="submit">Satıcıları yenile</button>

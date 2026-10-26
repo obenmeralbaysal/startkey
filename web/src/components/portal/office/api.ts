@@ -3,11 +3,13 @@ export type OfficeRecord = Record<string, unknown>;
 export class OfficeError extends Error {
   labels: string[];
   kinds: string[];
+  status: number;
 
-  constructor(message: string, labels: string[] = [], kinds: string[] = []) {
+  constructor(message: string, labels: string[] = [], kinds: string[] = [], status = 0) {
     super(message);
     this.labels = labels;
     this.kinds = kinds;
+    this.status = status;
   }
 }
 
@@ -62,7 +64,7 @@ export async function officeCall(
   });
   const payload = (await response.json().catch(() => ({}))) as OfficeRecord;
   if (!response.ok) {
-    throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload));
+    throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload), response.status);
   }
   if (cacheable) {
     const entry = { at: Date.now(), body: payload };
@@ -123,7 +125,7 @@ export async function publicCall(path: string, init?: { method?: string; body?: 
   });
   const payload = (await response.json().catch(() => ({}))) as OfficeRecord;
   if (!response.ok) {
-    throw new OfficeError(errorText(payload));
+    throw new OfficeError(errorText(payload), [], [], response.status);
   }
   return payload;
 }

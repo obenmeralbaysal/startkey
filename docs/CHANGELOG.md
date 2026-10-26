@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: Yeni portföy ekranı El ile, Sesle ve Sahibinden linkiyle seçeneklerini sunar. Sahibinden ilan adresi veya numarası mevcut içe aktarma ile formu doldurur; kayıt ayrıca onaylanır. Sahibinden menüsü yeni portföy ekranına, satıcı listesi Ofis Ayarları › Entegrasyonlar › Sahibinden altına alındı. #2185
 - **[Security]**: Rozet, ofis kaydı, nöbet listesi ve WhatsApp okumaları yeniden önceki erişime alındı. Bu uçlarda yalnızca yazma 403 olur. Kapalı ayar sayfası HTTP 403 kalır. #2185
 - **[Security]**: Yetkisiz bir ayar sekmesi artık HTTP 403 döner ve "Bu ayara erişim yetkiniz yok" metnini basar. Aynı sekmenin okuma API'leri de rol yetmezse 403 JSON döner. #2185
 - **[Backend]**: Portföy listesi 20 saniye önbelleğe alınır. Önbelleğe giren okumalar `Cache-Control: private, max-age` ile gelir; tarayıcı aynı süre içinde ikinci açılışı yeniden Reonix'e götürmez. Sorgu sırası ve `_` gibi tek kullanımlık parametreler anahtarı bozmaz. #2185
