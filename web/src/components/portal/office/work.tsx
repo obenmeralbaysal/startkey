@@ -18,6 +18,7 @@ import {
 import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
 import { OfficeDashboard } from "@/components/portal/office/dashboard";
 import { ConfirmButton, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
+import { hasWatermarkedMedia, isWatermarkedImage, mediaThumb, portfolioMedia, WatermarkBadge, WatermarkBanner } from "@/components/portal/office/watermark";
 import { Icon } from "@/components/portal/shell";
 import {
   classifySahibindenImportFailure,
@@ -720,6 +721,44 @@ function PortfolioCompletion({ id, portfolio, onSaved }: { id: string; portfolio
   );
 }
 
+function withoutGallery(value: unknown): unknown {
+  if (!isRecord(value)) {
+    return value;
+  }
+  if (isRecord(value.data)) {
+    return { ...value, data: stripGallery(value.data) };
+  }
+  return stripGallery(value);
+}
+
+function stripGallery(row: OfficeRecord): OfficeRecord {
+  const copy = { ...row };
+  delete copy.media;
+  delete copy.images;
+  delete copy.photos;
+  return copy;
+}
+
+function PortfolioGallery({ portfolio }: { portfolio: OfficeRecord | null }) {
+  const items = portfolioMedia(portfolio);
+  if (items.length === 0) {
+    return null;
+  }
+  return (
+    <ul className="portfolio-media">
+      {items.map((item, index) => {
+        const src = mediaThumb(item);
+        return (
+          <li key={String(item.id ?? index)}>
+            {src ? <img alt="" src={src} /> : null}
+            <WatermarkBadge flagged={isWatermarkedImage(item)} />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 function PortfolioDetail({ id }: { id: string }) {
   const { officeId, office, notice } = useOffice();
   const item = useData(`portfolios/${id}`);
@@ -733,10 +772,13 @@ function PortfolioDetail({ id }: { id: string }) {
       notice(`Hata: ${error instanceof Error ? error.message : "İşlem tamamlanamadı."}`);
     }
   }
+  const portfolio = one(item.data);
   return (
     <section className="glass-card">
       <h2>Portföy</h2>
-      <RecordView value={item.data} />
+      <WatermarkBanner show={hasWatermarkedMedia(portfolio)} />
+      <PortfolioGallery portfolio={portfolio} />
+      <RecordView value={withoutGallery(item.data)} />
       <PortfolioCompletion id={id} portfolio={one(item.data)} onSaved={() => item.reload()} />
       <div className="glass-actions">
         {canVerify(office) ? <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/approve`)}>Onayla</button> : null}

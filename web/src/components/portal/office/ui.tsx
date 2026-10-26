@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useRef, useState, type InputHTMLA
 
 import type { OfficeMembership } from "@/components/portal/office/access";
 import { isRecord, text, type OfficeRecord } from "@/components/portal/office/api";
+import { hasWatermarkedMedia, WatermarkBadge } from "@/components/portal/office/watermark";
 import { Icon, Sheet } from "@/components/portal/shell";
 
 export type OfficeState = {
@@ -83,6 +84,7 @@ export function RecordTable({ rows, href, loading = false }: { rows: OfficeRecor
           <>
             <strong>{label || id}</strong>
             {extra === label ? null : <span>{extra}</span>}
+            <WatermarkBadge flagged={hasWatermarkedMedia(row)} compact />
             {href ? <Icon name="chevronRight" /> : null}
           </>
         );

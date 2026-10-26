@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Services\ReonixClient;
 use App\Services\ReonixException;
+use App\Support\WatermarkFlags;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -281,7 +282,15 @@ class PortalSessionController extends Controller
             return response()->json(['message' => $this->message($e->error)], $status);
         }
 
-        return response()->json(['data' => $remote['data'] ?? null]);
+        $payload = $remote['data'] ?? null;
+        if (is_array($payload) && str_contains($path, 'portfolio')) {
+            $ensured = WatermarkFlags::ensure($payload, null, str_contains($path, '/media'));
+            if (is_array($ensured)) {
+                $payload = $ensured;
+            }
+        }
+
+        return response()->json(['data' => $payload]);
     }
 
     private function session(Request $request): ?array
