@@ -34,11 +34,11 @@ export const applicationMenu: Record<Locale, ApplicationMenuCopy> = {
     label: "Apply",
     shortLabel: "Apply",
     consultant: {
-      label: "Consultant",
+      label: "Consultant Application",
       description: "Be Our Consultant",
     },
     franchise: {
-      label: "Franchise",
+      label: "Franchise Application",
       description: "Franchise Application Form",
     },
   },
@@ -46,11 +46,11 @@ export const applicationMenu: Record<Locale, ApplicationMenuCopy> = {
     label: "Bewerben",
     shortLabel: "Bewerben",
     consultant: {
-      label: "Berater",
+      label: "Berater-Bewerbung",
       description: "Sei unser Berater",
     },
     franchise: {
-      label: "Franchise",
+      label: "Franchise-Bewerbung",
       description: "Ein Franchise sein",
     },
   },

@@ -16,8 +16,8 @@ export const officeMapSubtitle: Record<Locale, string> = {
 
 const COUNTRY_LABEL: Record<Locale, Record<string, string>> = {
   tr: { TR: "Türkiye", CY: "KKTC", GR: "Yunanistan", GB: "Birleşik Krallık", OTHER: "Diğer" },
-  en: { TR: "Turkey", CY: "TRNC", GR: "Greece", GB: "United Kingdom", OTHER: "Other" },
-  de: { TR: "Türkei", CY: "TRNC", GR: "Griechenland", GB: "Vereinigtes Königreich", OTHER: "Andere" },
+  en: { TR: "Turkey", CY: "Northern Cyprus", GR: "Greece", GB: "United Kingdom", OTHER: "Other" },
+  de: { TR: "Türkei", CY: "Nordzypern", GR: "Griechenland", GB: "Vereinigtes Königreich", OTHER: "Andere" },
 };
 
 export function officeMapHeading(locale: Locale, offices: number, countries: number): string {
