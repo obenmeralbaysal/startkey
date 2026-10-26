@@ -450,18 +450,21 @@
     "titleHtml": "<h2>3 Adımda Gayrimenkul Uzmanı Olun</h2> <p style=\"text-align: justify;\">Etkili sunum tekniklerinden başarılı satış stratejilerine, müşteri ilişkilerinden pazarlık becerilerine kadar geniş bir yelpazede eğitimler sunan Startkey Akademi, kariyerinizde fark yaratmanıza yardımcı olacak. Startkey Akademi <strong>Broker Eğitimleri</strong>,<strong> Gayrimenkul Danışmanı Başlangıç Eğitimleri</strong> ve <strong>Asistan Eğitimleri</strong> üzerine sunduğu kapsamlı içeriklerle sektörün liderlerinden biri olmanız için gerekli donanımı kazanın.</p> <p style=\"text-align: justify;\"><a href=\"https://startkey.com.tr/tr/egitimlerimiz\"><strong>Startkey Akademi</strong></a> eğitimlerine katılın ve başarıya giden bu yolda kendiniz için yeni bir adım atın.</p>",
     "cards": [
       {
-        "image": "7db72a5d-790b-4e30-9921-b02c1a62f982.png",
+        "image": "/img/3-adim/01-startkey-akademi.webp",
         "step": "01",
+        "alt": "Startkey Akademi: dizüstü bilgisayar ve mezuniyet kepi",
         "infoHtml": "<h3>Startkey Akademi</h3> <p>Startkey Akademi Sayfasına Gidip Kayıt İşlemlerinizi Tamamlayarak İstediğiniz Eğitime Katılım Sağlayabilirsiniz</p>"
       },
       {
-        "image": "9f785e99-e74a-4773-9b27-0f17a43b87fc.png",
-        "step": "01",
+        "image": "/img/3-adim/02-egitime-katilin.webp",
+        "step": "02",
+        "alt": "Eğitime katılın: eğitim sınıfı, takvim ve onay işareti",
         "infoHtml": "<h3>Eğitime Katılmayı İhmal Etmeyin</h3> <p>Startkey Akademi Eğitimleriyle Yeteneklerinize Yetenek Katın, Gayrimenkul Uzmanlığınızı Bir Adım İleriye Taşıyın</p>"
       },
       {
-        "image": "2249d240-41ac-4b2f-a6bc-598642ee9e88.png",
-        "step": "01",
+        "image": "/img/3-adim/03-yukselisin-keyfi.webp",
+        "step": "03",
+        "alt": "Yükselişin keyfi: basamaklar, ev, anahtar ve yükselen ok",
         "infoHtml": "<h3>Yükselişinizin Keyfini Çıkarın</h3> <p>Startkey Akademi Eğitimleriyle Daha İyi Sunum, Daha Etkili Pazarlık ve Daha Başarılı Satış Kapatma Becerileri Kazanın</p>"
       }
     ],

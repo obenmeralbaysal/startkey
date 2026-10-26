@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: “3 Adımda Gayrimenkul Uzmanı Olun” kart numaraları kart sırasından 01, 02 ve 03 olur. Görseller 780×540 dosyalarla değişti; damla biçimi ve kutu ölçüsü durur. #2178
 - **[UI]**: Ofis haritasının altlığı `NEXT_PUBLIC_MAP_STYLE` ile seçilir. Boş veya `default` OpenStreetMap’tir. `satellite` ve dolu `NEXT_PUBLIC_MAP_SATELLITE_URL` uydu katmanını, `NEXT_PUBLIC_MAP_SATELLITE_ATTRIBUTION` ise alt yazıyı verir; adres boşsa harita OpenStreetMap’te kalır. Pinlerde beyaz çerçeve ve gölge, kümelerde beyaz 2px çerçeve ve gölge vardır. #2178
 - **[UI]**: Ana sayfa Startkey Global haritası koordinatı olan her ofisi (İngiltere, Atina ve Kıbrıs dahil) yaklaşık 40px payla kadraja alır. Yükseklik masaüstünde 620px, 768px altında 420px. Pine tıklanınca yakınlaştırma 13 olur ve bilgi balonu durur. Yakın pinler kırmızı kümede toplanır; sol üstte yakınlaştırma altındaki “Tümünü göster” başlangıç kadrajına döner. `locationNeedsReview` cevapta kalır, kadrajdan ofis düşürmez. #2178
 - **[Bugfix]**: Ana sayfa haritasında enlem 35.8–42.2 ve boylam 25.6–44.9 dışındaki ofisler `fitBounds` hesabına girmez; pinler haritada kalır. `locationNeedsReview` gelmese de aynı dışlama uygulanır. Ofis detay haritası kendi pinine odaklanmaya devam eder. #2178
