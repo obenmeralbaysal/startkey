@@ -179,6 +179,47 @@ def breadcrumb(page: str) -> dict:
     return {"heading": heading, "trail": trail}
 
 
+def fetch_office_list_first(lang: str) -> str:
+    """First office-list page. Retries when the body has no office cards.
+
+    /tr/ofisler can return the homepage (title Anasayfa, zero agent cards)
+    while /en/offices and /de/anbieteren still list offices. Try the list URL
+    up to 3 times, then OFFICE_PAGER?pageIndex=1. fetch() already rate-limits.
+    """
+    last = ""
+    for _attempt in range(3):
+        last = fetch(OFFICE_LIST[lang])
+        if office_cards(last):
+            return last
+    alternate = fetch(f"{OFFICE_PAGER[lang]}?pageIndex=1")
+    if office_cards(alternate):
+        return alternate
+    return last
+
+
+def office_short_slug_order(cards_by_lang: dict[str, dict]) -> tuple[list[str], str]:
+    """Office crawl order from list cards.
+
+    Turkish card order wins. When tr has no cards, use the union of en then de
+    shortSlugs (the numeric path tail is the same in every language). Mode is
+    "tr", "fallback", or "empty".
+    """
+    tr_cards = cards_by_lang.get("tr") or {}
+    if tr_cards:
+        return list(tr_cards.keys()), "tr"
+    order: list[str] = []
+    seen: set[str] = set()
+    for lang in ("en", "de"):
+        for slug in cards_by_lang.get(lang) or {}:
+            if slug in seen:
+                continue
+            seen.add(slug)
+            order.append(slug)
+    if not order:
+        return [], "empty"
+    return order, "fallback"
+
+
 def office_cards(page: str) -> list[dict]:
     cards = []
     for m in re.finditer(r'<div[^>]*class="agent-card style1">([\s\S]*?)</ul>\s*</div>\s*</div>\s*</div>', page):
@@ -585,23 +626,33 @@ def main() -> int:
     print("== office lists")
     office_ui: dict[str, dict] = {}
     office_cards_by_slug: dict[str, dict[str, dict]] = {lang: {} for lang in LANGS}
-    tr_order: list[str] = []
     for lang in LANGS:
-        first = fetch(OFFICE_LIST[lang])
-        if lang == "tr":
+        first = fetch_office_list_first(lang)
+        if lang == "tr" and office_cards(first):
             (SNAP / "list-tr.html").write_text(first, encoding="utf-8")
         office_ui[lang] = list_ui_office(first, lang)
-        pages_idx = [int(p) for p in re.findall(r"pageIndex=(\d+)", first)]
-        last_page = max(pages_idx) if pages_idx else 1
         pages = [first]
-        for page_index in range(2, last_page + 1):
-            pages.append(fetch(f"{OFFICE_PAGER[lang]}?pageIndex={page_index}"))
+        if office_cards(first):
+            pages_idx = [int(p) for p in re.findall(r"pageIndex=(\d+)", first)]
+            last_page = max(pages_idx) if pages_idx else 1
+            for page_index in range(2, last_page + 1):
+                pages.append(fetch(f"{OFFICE_PAGER[lang]}?pageIndex={page_index}"))
         for page in pages:
             for card in office_cards(page):
                 office_cards_by_slug[lang][card["shortSlug"]] = card
-                if lang == "tr" and card["shortSlug"] not in tr_order:
-                    tr_order.append(card["shortSlug"])
         print(f"  {lang} cards {len(office_cards_by_slug[lang])}")
+    tr_order, order_mode = office_short_slug_order(office_cards_by_slug)
+    if order_mode == "empty":
+        print(
+            "ERROR office list returned 0 cards for tr, en, and de; aborting before consultant crawl",
+            file=sys.stderr,
+        )
+        return 1
+    if order_mode == "fallback":
+        print(
+            "WARN tr office list returned 0 cards; building office order from en then de shortSlugs",
+            file=sys.stderr,
+        )
     print(f"offices {len(tr_order)}")
 
     existing = {}

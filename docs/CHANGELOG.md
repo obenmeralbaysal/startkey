@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Bugfix]**: Katalog içe aktarma her istekte `StartKey-Import/1.0` User-Agent gönderir. `--dry-run` ofis, danışman ve atlanan sayıları basar; REONIX ortamını okumaz ve HTTP yapmaz. 0 ofis ve danışman varken içe aktarma durur (`--allow-empty-offices` ile sürer). `/tr/ofisler` anasayfa dönerse ofis sırası en sonra de kısa slug birleşiminden kurulur; üç dil de boşsa tarama içe aktarmaya geçmeden çıkar. #2185
 - **[UI]**: Ofis ayarlarındaki LOGO kutusu kalktı; logo notu durur. Ekip listesinde rol TR/EN/DE etiketidir, şube GET şube listesindeki addır, bulunamazsa "—". Özet, role kapalı kartı basmaz; o rolde yalnız bekleyen iş sayısı ve bağlantısı durur. `/portal/office/team` ekip ayarına döner. #2182
 - **[Security]**: Danışman `portfolios/{id}/approve` ve `portfolios/{id}/revision-request` için 403 alır. Ofis izni yoksa portföy listesi sorgusu `scope=mine` olur. #2182
 - **[UI]**: Portföy listesi `/portal/office/listings` adresinde Portföylerim / Tümü, durum sekmeleri, filtre ve sıralama ile açılır. Onayla ve Düzeltme iste yalnız ofis sahibi, yönetici ve ofis yöneticisindedir. Danışman kendi kayıtlarını görür; Tümü `can_view_all_portfolios` ile açılır. Onay kaydı Aktif sekmesine alır. Düzeltme notu zorunludur. #2182

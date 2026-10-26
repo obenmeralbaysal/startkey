@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import mimetypes
 import sys
@@ -18,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SEED = ROOT / "api" / "database" / "data" / "offices-seed.json"
 ENV_FILES = (ROOT / ".env", ROOT / "api" / ".env")
 PUBLIC = ROOT / "web" / "public"
+USER_AGENT = "StartKey-Import/1.0 (+https://startkey.sinapp.com.tr)"
 
 
 def env_value(name: str) -> str:
@@ -34,7 +36,12 @@ def env_value(name: str) -> str:
 def request(method: str, url: str, key: str, payload: dict | None = None, file: tuple[str, bytes, str] | None = None) -> dict:
     if file is None:
         data = json.dumps(payload or {}).encode()
-        headers = {"Accept": "application/json", "Content-Type": "application/json", "X-Portal-Key": key}
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-Portal-Key": key,
+            "User-Agent": USER_AGENT,
+        }
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
     else:
         boundary = "----catalogueimport"
@@ -56,6 +63,7 @@ def request(method: str, url: str, key: str, payload: dict | None = None, file: 
             "Accept": "application/json",
             "Content-Type": f"multipart/form-data; boundary={boundary}",
             "X-Portal-Key": key,
+            "User-Agent": USER_AGENT,
         }
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
@@ -70,19 +78,42 @@ def chunks(rows: list[dict], size: int) -> list[list[dict]]:
     return [rows[index : index + size] for index in range(0, len(rows), size)]
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Push the cleaned office crawl into Reonix.")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Load the seed, print catalogue counts, and exit without REONIX env or HTTP.",
+    )
+    parser.add_argument(
+        "--allow-empty-offices",
+        action="store_true",
+        help="Import even when the catalogue has consultants but zero offices.",
+    )
+    args = parser.parse_args(argv)
+
     if not SEED.is_file():
         print(f"missing {SEED}", file=sys.stderr)
-        return 1
-    base = env_value("REONIX_BASE_URL").rstrip("/")
-    key = env_value("REONIX_PORTAL_KEY")
-    if base == "" or key == "":
-        print("REONIX_BASE_URL or REONIX_PORTAL_KEY is empty", file=sys.stderr)
         return 1
 
     data = json.loads(SEED.read_text(encoding="utf-8"))
     offices, consultants, skipped = catalogue_rows(data.get("offices") or [], data.get("consultants") or [])
     print(f"offices={len(offices)} consultants={len(consultants)} skipped={len(skipped)}")
+    if args.dry_run:
+        return 0
+    if len(offices) == 0 and len(consultants) > 0 and not args.allow_empty_offices:
+        print(
+            f"refusing import: offices=0 consultants={len(consultants)}; "
+            "pass --allow-empty-offices to continue",
+            file=sys.stderr,
+        )
+        return 1
+
+    base = env_value("REONIX_BASE_URL").rstrip("/")
+    key = env_value("REONIX_PORTAL_KEY")
+    if base == "" or key == "":
+        print("REONIX_BASE_URL or REONIX_PORTAL_KEY is empty", file=sys.stderr)
+        return 1
 
     endpoint = base + "/api/v1/integrations/portal/catalogue/import"
     created = {"offices": 0, "consultants": 0, "reviews": 0, "skipped": len(skipped)}
