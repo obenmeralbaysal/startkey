@@ -56,6 +56,9 @@ class OfficeProxyController extends Controller
         }
 
         $query = $request->query();
+        if ($request->isMethod('GET') && $remotePath === 'portfolios') {
+            $query = PortalSettings::portfolioQuery($query, $session['user'], is_string($officeId) ? $officeId : null);
+        }
         $json = $this->jsonBody($request);
         $files = $this->files($request);
         if (in_array(strtoupper($request->method()), ['PUT', 'PATCH'], true) && in_array($remotePath, ['office/settings', 'settings/office'], true)) {

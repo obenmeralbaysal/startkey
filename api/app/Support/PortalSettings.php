@@ -99,8 +99,29 @@ final class PortalSettings
         if ($write && str_starts_with($path, 'whatsapp/')) {
             return 'manager';
         }
+        if ($write && preg_match('#^portfolios/[1-9]\d*/(approve|revision-request)$#', $path) === 1) {
+            return 'manager';
+        }
 
         return null;
+    }
+
+    /**
+     * Consultants stay on their own portfolios unless the office flag allows the full list.
+     *
+     * @param  array<string, mixed>  $query
+     * @param  array<string, mixed>  $user
+     * @return array<string, mixed>
+     */
+    public static function portfolioQuery(array $query, array $user, ?string $officeId): array
+    {
+        $member = self::member($user, $officeId);
+        if ($member === null || self::role($member) !== 'agent' || self::flag($member, 'can_view_all_portfolios')) {
+            return $query;
+        }
+        $query['scope'] = 'mine';
+
+        return $query;
     }
 
     /**
@@ -142,5 +163,15 @@ final class PortalSettings
         }
 
         return 'agent';
+    }
+
+    /**
+     * @param  array<string, mixed>  $member
+     */
+    private static function flag(array $member, string $key): bool
+    {
+        $value = $member[$key] ?? false;
+
+        return $value === true || $value === 1 || $value === '1';
     }
 }

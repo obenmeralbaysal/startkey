@@ -822,6 +822,89 @@ class OfficeProxyTest extends TestCase
      * @param  array<string, mixed>  $office
      * @param  list<array<string, mixed>>  $extraOffices
      */
+    public function test_agent_cannot_approve_or_request_portfolio_revision(): void
+    {
+        $agent = $this->login(['role' => 'agent', 'role_slug' => 'agent']);
+        Http::fake();
+
+        $call = $this->withCredentials()
+            ->withUnencryptedCookie($agent->getName(), $agent->getValue())
+            ->withHeader('X-Portal-Office', '7');
+
+        $call->postJson('/api/v1/portal/office/portfolios/5/approve', [])->assertForbidden();
+        $call->postJson('/api/v1/portal/office/portfolios/5/revision-request', [
+            'note' => 'Fotoğraf eksik',
+        ])->assertForbidden();
+        Http::assertNothingSent();
+    }
+
+    public function test_managers_forward_portfolio_approve_and_revision(): void
+    {
+        $cookies = [
+            $this->login(['role' => 'owner', 'role_slug' => 'owner']),
+            $this->login(['role' => 'manager', 'role_slug' => 'manager']),
+            $this->login(['role' => 'office_manager', 'role_slug' => 'office_manager']),
+        ];
+        Http::fake([
+            'http://reonix.test/api/v1/portfolios/*' => Http::response(['data' => ['id' => 5, 'status' => 'active']]),
+        ]);
+
+        foreach ($cookies as $cookie) {
+            $call = $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->withHeader('X-Portal-Office', '7');
+            $call->postJson('/api/v1/portal/office/portfolios/5/approve', [])->assertOk();
+            $call->postJson('/api/v1/portal/office/portfolios/5/revision-request', [
+                'note' => 'Fotoğraf eksik',
+            ])->assertOk();
+        }
+
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/portfolios/5/approve'));
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/portfolios/5/revision-request')
+            && $request['note'] === 'Fotoğraf eksik');
+    }
+
+    public function test_agent_portfolio_list_scope_stays_mine_without_office_permission(): void
+    {
+        $agent = $this->login(['role' => 'agent', 'role_slug' => 'agent']);
+        $allowed = $this->login([
+            'role' => 'agent',
+            'role_slug' => 'agent',
+            'can_view_all_portfolios' => true,
+        ]);
+        $owner = $this->login();
+        Http::fake([
+            'http://reonix.test/api/v1/portfolios*' => Http::response(['data' => []]),
+        ]);
+
+        $as = fn ($cookie) => $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7');
+
+        $as($agent)->getJson('/api/v1/portal/office/portfolios?scope=all&status=active')->assertOk();
+        Http::assertSent(function ($request) {
+            if (! str_ends_with((string) parse_url($request->url(), PHP_URL_PATH), '/portfolios')) {
+                return false;
+            }
+            parse_str((string) parse_url($request->url(), PHP_URL_QUERY), $query);
+
+            return ($query['scope'] ?? null) === 'mine' && ($query['status'] ?? null) === 'active';
+        });
+
+        Http::fake([
+            'http://reonix.test/api/v1/portfolios*' => Http::response(['data' => []]),
+        ]);
+        $as($allowed)->getJson('/api/v1/portal/office/portfolios?scope=all')->assertOk();
+        $as($owner)->getJson('/api/v1/portal/office/portfolios?scope=all')->assertOk();
+        Http::assertSent(function ($request) {
+            parse_str((string) parse_url($request->url(), PHP_URL_QUERY), $query);
+
+            return ($query['scope'] ?? null) === 'all';
+        });
+    }
+
     private function login(array $office = [], array $extraOffices = []): \Symfony\Component\HttpFoundation\Cookie
     {
         config(['reonix.base_url' => 'http://reonix.test', 'reonix.portal_key' => 'test-key']);

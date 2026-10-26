@@ -1,6 +1,7 @@
 ## [2026-10-26]
 
 - **[UI]**: Ofis ayarlarındaki LOGO kutusu kalktı; logo notu durur. Ekip listesinde rol TR/EN/DE etiketidir, şube GET şube listesindeki addır, bulunamazsa "—". Özet, role kapalı kartı basmaz; o rolde yalnız bekleyen iş sayısı ve bağlantısı durur. `/portal/office/team` ekip ayarına döner. #2182
+- **[Security]**: Danışman `portfolios/{id}/approve` ve `portfolios/{id}/revision-request` için 403 alır. Ofis izni yoksa portföy listesi sorgusu `scope=mine` olur. #2182
 - **[UI]**: Portföy listesi `/portal/office/listings` adresinde Portföylerim / Tümü, durum sekmeleri, filtre ve sıralama ile açılır. Onayla ve Düzeltme iste yalnız ofis sahibi, yönetici ve ofis yöneticisindedir. Danışman kendi kayıtlarını görür; Tümü `can_view_all_portfolios` ile açılır. Onay kaydı Aktif sekmesine alır. Düzeltme notu zorunludur. #2182
 - **[Bugfix]**: Portal giriş e-posta kontrolü herhangi bir `local@domain.tld` adresini kabul eder. `.invalid` gibi uzun son ekler artık reddedilmez. #2182
 - **[Security]**: Ekip ve şube yazma (ekleme, güncelleme, silme, davet, rol, durum) yalnız ofis sahibi ve ofis yöneticisindedir. Yönetici bu kayıtları okur; ekip ekleme formu ve satır düzenleme gizlenir. #2182
