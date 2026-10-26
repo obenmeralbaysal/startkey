@@ -12,11 +12,13 @@ export type PortalUxCopy = {
   reportsAndEarnings: string;
   performance: string;
   earnings: string;
+  myEarnings: string;
   collaborations: string;
   lease: string;
   leaseDescription: string;
   leaseEmpty: string;
   officeSettings: string;
+  officeSettingsOwnerNote: string;
   team: string;
   branches: string;
   notifications: string;
@@ -43,6 +45,7 @@ export type PortalUxCopy = {
   appointmentHint: string;
   activePortfolios: string;
   pending: string;
+  pendingWork: string;
   newMatches: string;
   monthEarnings: string;
   review: string;
@@ -113,11 +116,13 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     reportsAndEarnings: "Raporlar & Hakediş",
     performance: "Performansım",
     earnings: "Hakediş",
+    myEarnings: "Hakedişim",
     collaborations: "İşbirlikleri",
     lease: "Kira takvimi",
     leaseDescription: "Kiralanan portföyün kira yıldönümünden 90, 60 ve 30 gün önce bildirim gönderilir.",
     leaseEmpty: "Kiralanan portföyünüz olduğunda kayıtlar burada görünür.",
     officeSettings: "Ofis ayarları",
+    officeSettingsOwnerNote: "Bu ayarları Ofis Sahibi düzenleyebilir",
     team: "Ekip",
     branches: "Şubeler",
     notifications: "Bildirim tercihleri",
@@ -149,6 +154,7 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     appointmentHint: "Takvime ekle",
     activePortfolios: "Aktif portföy",
     pending: "Onay bekleyen",
+    pendingWork: "Bekleyen işler: {count}",
     newMatches: "Yeni eşleşme",
     monthEarnings: "Bu ay hakediş",
     review: "İncele",
@@ -217,11 +223,13 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     reportsAndEarnings: "Reports & earnings",
     performance: "My performance",
     earnings: "Earnings",
+    myEarnings: "My earnings",
     collaborations: "Collaborations",
     lease: "Lease calendar",
     leaseDescription: "A notification is sent 90, 60 and 30 days before the rent anniversary of a leased portfolio.",
     leaseEmpty: "Records appear here when you have a leased portfolio.",
     officeSettings: "Office settings",
+    officeSettingsOwnerNote: "The office owner can edit these settings",
     team: "Team",
     branches: "Branches",
     notifications: "Notification preferences",
@@ -253,6 +261,7 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     appointmentHint: "Add to calendar",
     activePortfolios: "Active portfolios",
     pending: "Pending approval",
+    pendingWork: "Pending work: {count}",
     newMatches: "New matches",
     monthEarnings: "Earnings this month",
     review: "Review",
@@ -321,11 +330,13 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     reportsAndEarnings: "Berichte & Provision",
     performance: "Meine Leistung",
     earnings: "Provision",
+    myEarnings: "Meine Provision",
     collaborations: "Zusammenarbeit",
     lease: "Mietkalender",
     leaseDescription: "90, 60 und 30 Tage vor dem Mietjubiläum eines vermieteten Portfolios wird eine Benachrichtigung gesendet.",
     leaseEmpty: "Einträge erscheinen hier, sobald ein vermietetes Portfolio vorliegt.",
     officeSettings: "Büroeinstellungen",
+    officeSettingsOwnerNote: "Diese Einstellungen kann der Büroinhaber bearbeiten",
     team: "Team",
     branches: "Filialen",
     notifications: "Benachrichtigungen",
@@ -357,6 +368,7 @@ export const PORTAL_UX_COPY: Record<Locale, PortalUxCopy> = {
     appointmentHint: "Zum Kalender",
     activePortfolios: "Aktive Portfolios",
     pending: "Freigabe offen",
+    pendingWork: "Offene Aufgaben: {count}",
     newMatches: "Neue Treffer",
     monthEarnings: "Provision diesen Monat",
     review: "Prüfen",

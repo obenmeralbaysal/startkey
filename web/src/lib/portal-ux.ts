@@ -15,6 +15,15 @@ export const SECTION_DENIED_TEXT = "Bu sekmeye erişiminiz yok.";
 /** global-search is allowlisted, but this repo has no query or response contract. */
 export const PORTAL_SEARCH_READY = false;
 
+/** Fields the office profile form shows and writes. There is no unvan control. */
+export const PROFILE_SCREEN_FIELDS = ["first_name", "last_name", "phone", "password", "demand_match_network_default"] as const;
+
+/**
+ * Names that could be mistaken for an unvan. None of them is a profile-screen field
+ * or a typed portal user property. `NetworkConsultant.title` is a network-list role slug.
+ */
+export const UNVAN_CANDIDATE_FIELDS = ["title", "job_title", "position_name", "unvan"] as const;
+
 export const QUICK_ACTIONS = [
   { id: "portfolio", href: "/portal/office/portfolios/new" },
   { id: "contact", href: "/portal/office/contacts/new" },
@@ -88,23 +97,17 @@ export function officeCaption(officeName: string, title: string, locale: Locale)
   return safeRank || officeText;
 }
 
+/** Greeting rank uses the profile screen. That screen has no unvan field, so this stays empty. */
 export function personTitle(source: unknown): string {
-  const user = unwrapUser(source);
-  for (const key of ["title", "job_title", "position_name", "unvan"]) {
-    const value = user[key];
-    if (typeof value !== "string") continue;
-    const clean = cleanTitle(value);
-    if (clean && !isRoleName(clean)) return clean;
-  }
+  unwrapUser(source);
   return "";
 }
 
 export function officeMenu(role: OfficeRole, office: OfficeMembership | undefined, locale: Locale): OfficeMenuItem[] {
   const copy = PORTAL_UX_COPY[locale];
-  const earnings = canViewEarnings(role, office);
   const work: OfficeMenuItem[] = [
     item("summary", "/portal/office", copy.summary, "work", "home", copy.summary),
-    item("portfolios", "/portal/office/portfolios", copy.portfolios, "work", "building", copy.portfolioShort),
+    item("portfolios", "/portal/office/portfolios", copy.portfolios, "work", "building"),
     item("contacts", "/portal/office/contacts", copy.contacts, "work", "people", copy.contacts),
     item("demands", "/portal/office/demands", copy.demands, "work", "search", copy.demands),
     item("matches", "/portal/office/matches", copy.matches, "work", "link"),
@@ -112,11 +115,9 @@ export function officeMenu(role: OfficeRole, office: OfficeMembership | undefine
   ];
   if (role === "agent") {
     work.push(item("reports", "/portal/office/reports", copy.performance, "work", "chart"));
-    work.push(item("earnings", "/portal/office/earnings", copy.earnings, "work", "wallet"));
-  } else if (earnings) {
-    work.push(item("reports", "/portal/office/reports", copy.reportsAndEarnings, "work", "chart"));
+    work.push(item("earnings", "/portal/office/earnings", copy.myEarnings, "work", "wallet"));
   } else {
-    work.push(item("reports", "/portal/office/reports", copy.reports, "work", "chart"));
+    work.push(item("reports", "/portal/office/reports", copy.reportsAndEarnings, "work", "chart"));
   }
   work.push(item("collaborations", "/portal/office/collaborations", copy.collaborations, "work", "swap"));
   work.push(item("lease", "/portal/office/lease", copy.lease, "work", "key"));
@@ -148,7 +149,7 @@ export function officeBottomNav(items: readonly OfficeMenuItem[]): OfficeMenuIte
 export function officeSectionDenied(parts: readonly string[], role: OfficeRole, office: OfficeMembership | undefined): boolean {
   const head = parts[0] ?? "";
   if (!head) return false;
-  if (head === "earnings") return !canViewEarnings(role, office);
+  if (head === "earnings" || (head === "reports" && parts[1] === "earnings")) return !canViewEarnings(role, office);
   if (head === "branches") return !canManageOffice(role, office);
   if (head === "settings") {
     const page = parts[1];
@@ -158,13 +159,31 @@ export function officeSectionDenied(parts: readonly string[], role: OfficeRole, 
   return false;
 }
 
-export function menuCurrent(id: string, parts: readonly string[]): boolean {
+export function menuCurrent(id: string, parts: readonly string[], separateEarnings = true): boolean {
   if (id === "summary") return parts.length === 0 || parts[0] === "";
   if (id === "settings") return parts[0] === "settings" && parts.length === 1;
   if (id === "office") return parts[0] === "settings" && parts[1] === "office";
   if (id === "team") return parts[0] === "settings" && parts[1] === "team";
   if (id === "notifications") return parts[0] === "settings" && parts[1] === "notifications";
+  if (id === "reports" && !separateEarnings) return parts[0] === "reports" || parts[0] === "earnings";
   return parts[0] === id;
+}
+
+export type ReportsTab = "reports" | "earnings";
+
+/** Owner, manager, and office manager share one screen. The earnings tab needs the office flag. */
+export function reportsHubTab(parts: readonly string[], tab: string | null | undefined, canSeeEarnings: boolean): ReportsTab {
+  const asked = parts[1] === "earnings" || tab === "earnings";
+  return asked && canSeeEarnings ? "earnings" : "reports";
+}
+
+export function earningsDeepLink(role: OfficeRole): string {
+  if (role === "agent") return "/portal/office/earnings";
+  return "/portal/office/reports?tab=earnings";
+}
+
+export function pendingWorkLabel(count: string, locale: Locale): string {
+  return PORTAL_UX_COPY[locale].pendingWork.replace("{count}", count);
 }
 
 /** Logged-in office roles leave /portal. Franchise desk stays only for an admin without an office, or an admin who asked for it. */

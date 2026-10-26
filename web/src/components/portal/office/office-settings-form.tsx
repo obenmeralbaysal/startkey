@@ -187,7 +187,8 @@ export function OfficeSettingsForm() {
 
   return (
     <PageFrame title={copy.officeSettings} crumb={[copy.office, copy.officeSettings]}>
-      <div data-screen="office-settings">
+      <div data-screen="office-settings" data-locked={editable ? undefined : "office"}>
+        {!editable ? <p className="ux-banner">{copy.officeSettingsOwnerNote}</p> : null}
         {banner ? <p className="ux-banner">{banner}</p> : null}
         <div className="ux-tabs" role="tablist">
           <button type="button" role="tab" aria-selected={tab === "general"} onClick={() => setTab("general")}>{copy.tabGeneral}</button>

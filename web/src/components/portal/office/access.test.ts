@@ -16,7 +16,7 @@ test("settings the role cannot open show the denied state", () => {
   assert.equal(settingsPageAccess("rates", "office_manager", office("office_manager")), "deny");
   assert.equal(settingsPageAccess("badges", "office_manager", office("office_manager")), "deny");
   assert.equal(settingsPageAccess("matchmaking", "office_manager", office("office_manager", 4)), "deny");
-  assert.equal(settingsPageAccess("office", "office_manager", office("office_manager", 4)), "deny");
+  assert.equal(settingsPageAccess("office", "office_manager", office("office_manager", 4)), "allow");
   assert.equal(settingsPageAccess("team", "agent", office("agent")), "deny");
   assert.equal(settingsPageAccess("missing", "owner", office("owner")), "deny");
 });
@@ -39,7 +39,7 @@ test("owner, office manager, and agent see different settings tabs", () => {
 
   const branched = settingsLinks("office_manager", office("office_manager", 4)).map((link) => link.slug);
   assert.equal(branched.includes("matchmaking"), false);
-  assert.equal(branched.includes("office"), false);
+  assert.equal(branched.includes("office"), true);
   assert.equal(branched.includes("team"), true);
 
   const owner = settingsLinks("owner", office("owner")).map((link) => link.slug);
@@ -68,6 +68,7 @@ test("a me payload decides the settings HTTP status", () => {
   assert.equal(settingsHttpDecision("rates", { offices: [office("office_manager")] }), "deny");
   assert.equal(settingsHttpDecision("matchmaking", { offices: [office("office_manager", 4)] }), "deny");
   assert.equal(settingsHttpDecision("office", { offices: [office("owner")] }), "allow");
+  assert.equal(settingsHttpDecision("office", { offices: [office("office_manager", 4)] }), "allow");
   assert.equal(settingsHttpDecision("commission", {}), "unknown");
   assert.equal(settingsHttpDecision("badges", { data: { user: { office_id: 7 }, offices: [office("owner")] } }), "allow");
 });

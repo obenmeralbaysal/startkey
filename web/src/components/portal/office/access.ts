@@ -115,7 +115,7 @@ export function settingsAllowed(page: string, role: OfficeRole, office: OfficeMe
     case "team":
       return canManageTeam(role);
     case "office":
-      return canManageOffice(role, office);
+      return isManager(role);
     case "subscription":
     case "whatsapp":
     case "email":

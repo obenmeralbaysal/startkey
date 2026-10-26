@@ -26,7 +26,7 @@ MD backlog 6 (üyede şube ve TTBS/MYK) ve backlog 7 (ofis ayar grubu) bu depoda
 
 **Mevcut Durum:**
 
-Ofis kabuğundaki arama kutusu yer tutucuyu gösterir ve kapalıdır. `global-search` vekil listesindedir; sorgu ve cevap sözleşmesi bu depoda yoktur.
+Ofis kabuğundaki arama kutusu `PORTAL_SEARCH_READY` kapalıyken hiç basılmaz. Bileşen kodu durur. `global-search` vekil listesindedir; sorgu ve cevap sözleşmesi bu depoda yoktur.
 
 **Geçici Olmasının Nedeni:**
 

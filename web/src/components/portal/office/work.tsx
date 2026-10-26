@@ -8,6 +8,7 @@ import {
   canDeleteRecords,
   canManageRates,
   canVerify,
+  canViewEarnings,
   integrationLinks,
   roleOf,
   settingsLinks,
@@ -20,7 +21,7 @@ import { TeamSettings } from "@/components/portal/office/team-settings";
 import { ConfirmButton, PageFrame, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
 import { hasWatermarkedMedia, isWatermarkedImage, mediaThumb, portfolioMedia, WatermarkBadge, WatermarkBanner } from "@/components/portal/office/watermark";
 import { PORTAL_UX_COPY } from "@/content/portal-ux";
-import { officeSectionDenied, withLang } from "@/lib/portal-ux";
+import { officeSectionDenied, reportsHubTab, withLang } from "@/lib/portal-ux";
 import {
   classifySahibindenImportFailure,
   parseSahibindenListing,
@@ -30,7 +31,7 @@ import {
   type SahibindenImportError,
 } from "@/lib/sahibinden-listing";
 
-export function OfficeWork({ parts }: { parts: string[] }) {
+export function OfficeWork({ parts, tab = "" }: { parts: string[]; tab?: string }) {
   const { office, locale } = useOffice();
   const [head, id] = parts;
   if (officeSectionDenied(parts, roleOf(office), office)) {
@@ -46,8 +47,8 @@ export function OfficeWork({ parts }: { parts: string[] }) {
   if (head === "demands") return id === "new" ? <DemandForm /> : id ? <DemandDetail id={id} /> : <DemandList />;
   if (head === "matches") return <SimpleList title={PORTAL_UX_COPY[locale].matches} path="matches" />;
   if (head === "calendar") return <Calendar />;
-  if (head === "earnings") return <Earnings />;
-  if (head === "reports") return <SimpleList title={roleOf(office) === "agent" ? PORTAL_UX_COPY[locale].performance : PORTAL_UX_COPY[locale].reports} path="reports/closings" />;
+  if (head === "earnings") return roleOf(office) === "agent" ? <Earnings heading={PORTAL_UX_COPY[locale].myEarnings} /> : <ReportsHub parts={["reports", "earnings"]} tab="earnings" />;
+  if (head === "reports") return roleOf(office) === "agent" ? <SimpleList title={PORTAL_UX_COPY[locale].performance} path="reports/closings" /> : <ReportsHub parts={parts} tab={tab} />;
   if (head === "collaborations") return <Collaborations />;
   if (head === "lease") return <Lease />;
   if (head === "branches") return <BranchList />;
@@ -1113,13 +1114,36 @@ function Calendar() {
   );
 }
 
-function Earnings() {
+function ReportsHub({ parts, tab }: { parts: string[]; tab: string }) {
+  const { office, locale } = useOffice();
+  const copy = PORTAL_UX_COPY[locale];
+  const showEarnings = canViewEarnings(roleOf(office), office);
+  const selected = reportsHubTab(parts, tab, showEarnings);
+  return (
+    <PageFrame title={copy.reportsAndEarnings} crumb={[copy.office, copy.reportsAndEarnings]}>
+      <div className="ux-tabs" role="tablist">
+        <Link className="ux-tab" role="tab" aria-selected={selected === "reports"} href={withLang("/portal/office/reports", locale)}>{copy.reports}</Link>
+        {showEarnings ? <Link className="ux-tab" role="tab" aria-selected={selected === "earnings"} href={withLang("/portal/office/reports?tab=earnings", locale)}>{copy.earnings}</Link> : null}
+      </div>
+      {selected === "earnings" ? <Earnings heading={null} /> : <ReportRows />}
+    </PageFrame>
+  );
+}
+
+function ReportRows() {
+  const { locale } = useOffice();
+  const copy = PORTAL_UX_COPY[locale];
+  const list = useData("reports/closings");
+  return <RecordTable rows={rows(list.data)} loading={list.data === undefined} recordLabel={copy.record} summaryLabel={copy.summaryColumn} />;
+}
+
+function Earnings({ heading }: { heading: string | null }) {
   const { officeId, office, notice, locale } = useOffice();
   const copy = PORTAL_UX_COPY[locale];
   const list = useData("earnings");
   const role = roleOf(office);
-  return (
-    <PageFrame title={copy.earnings}>
+  const body = (
+    <>
       <RecordTable rows={rows(list.data)} loading={list.data === undefined} recordLabel={copy.record} summaryLabel={copy.summaryColumn} />
       {rows(list.data).map((row) => (
         <article key={String(row.id)}>
@@ -1167,8 +1191,10 @@ function Earnings() {
         <input name="user_id" type="number" placeholder="Kullanıcı no" required />
         <input name="period" placeholder="Dönem YYYY-AA" required />
       </Form>
-    </PageFrame>
+    </>
   );
+  if (!heading) return body;
+  return <PageFrame title={heading}>{body}</PageFrame>;
 }
 
 function Collaborations() {

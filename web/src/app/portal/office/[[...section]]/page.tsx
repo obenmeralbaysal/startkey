@@ -15,16 +15,21 @@ export default async function OfficePage({
   searchParams,
 }: {
   params: Promise<{ section?: string[] }>;
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<{ lang?: string; tab?: string | string[] }>;
 }) {
   const { section } = await params;
-  const { lang } = await searchParams;
+  const { lang, tab: tabQuery } = await searchParams;
   const parts = section ?? [];
   const destination = officeSectionRedirect(parts);
   if (destination) redirect(destination);
-  const tab = parts[0] === "settings" ? parts[1] : undefined;
-  if (tab && (await settingsClosed(tab))) forbidden();
-  return <OfficePageClient parts={parts} lang={portalLocale(lang)} />;
+  const settingsTab = parts[0] === "settings" ? parts[1] : undefined;
+  if (settingsTab && (await settingsClosed(settingsTab))) forbidden();
+  return <OfficePageClient parts={parts} lang={portalLocale(lang)} tab={firstQuery(tabQuery)} />;
+}
+
+function firstQuery(value: string | string[] | undefined): string {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return raw === "earnings" ? "earnings" : "";
 }
 
 async function settingsClosed(tab: string): Promise<boolean> {
