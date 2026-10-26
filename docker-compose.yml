@@ -97,6 +97,9 @@ services:
       args:
         NEXT_PUBLIC_REONIX_URL: ${NEXT_PUBLIC_REONIX_URL:-}
         NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY:-}
+        NEXT_PUBLIC_MAP_STYLE: ${NEXT_PUBLIC_MAP_STYLE:-}
+        NEXT_PUBLIC_MAP_SATELLITE_URL: ${NEXT_PUBLIC_MAP_SATELLITE_URL:-}
+        NEXT_PUBLIC_MAP_SATELLITE_ATTRIBUTION: ${NEXT_PUBLIC_MAP_SATELLITE_ATTRIBUTION:-}
     depends_on:
       nginx:
         condition: service_started
@@ -104,6 +107,9 @@ services:
       API_BASE_URL: http://nginx
       NEXT_PUBLIC_REONIX_URL: ${NEXT_PUBLIC_REONIX_URL:-}
       NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY:-}
+      NEXT_PUBLIC_MAP_STYLE: ${NEXT_PUBLIC_MAP_STYLE:-}
+      NEXT_PUBLIC_MAP_SATELLITE_URL: ${NEXT_PUBLIC_MAP_SATELLITE_URL:-}
+      NEXT_PUBLIC_MAP_SATELLITE_ATTRIBUTION: ${NEXT_PUBLIC_MAP_SATELLITE_ATTRIBUTION:-}
     volumes:
       # Host copy is the source of truth. The image does not contain these files.
       - ./web/public/media:/app/public/media:ro

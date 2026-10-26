@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import type { MapOffice } from "@/lib/api";
+import { officeMapTiles } from "@/lib/config";
 
 /** Pixel inset so every pin, including the corner ones, stays inside the frame. */
 const BOUNDS_PADDING = 40;
@@ -71,8 +72,9 @@ export function OfficeMap({
       if (cancelled || !node.current) return;
       map = L.map(node.current, { attributionControl: false, scrollWheelZoom: false });
       L.control.attribution({ prefix: false }).addTo(map);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
+      const tiles = officeMapTiles();
+      L.tileLayer(tiles.url, {
+        attribution: tiles.attribution,
         maxZoom: 18,
       }).addTo(map);
 
@@ -99,10 +101,11 @@ export function OfficeMap({
         const href = office.urlPath.startsWith("/") ? office.urlPath : "/";
         const marker = L.circleMarker(latlng, {
           radius: 7,
-          color: "#ec3323",
+          color: "#ffffff",
           weight: 2,
           fillColor: "#ec3323",
-          fillOpacity: 0.9,
+          fillOpacity: 1,
+          className: "sk-office-pin",
         }).bindPopup(`<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`);
         if (overview) {
           marker.on("click", () => {
