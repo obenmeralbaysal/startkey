@@ -289,6 +289,57 @@ class OfficeProxyTest extends TestCase
             ->assertOk();
     }
 
+    public function test_office_settings_and_bulk_rate_follow_the_role_matrix(): void
+    {
+        $owner = $this->login();
+        Http::fake([
+            'http://reonix.test/api/v1/settings' => Http::response(['data' => ['office' => ['name' => 'Lider']]]),
+            'http://reonix.test/api/v1/settings/office' => Http::response(['data' => ['name' => 'Lider']]),
+            'http://reonix.test/api/v1/commission-policy/changes' => Http::response(['data' => ['status' => 'pending']]),
+        ]);
+        $call = $this->withCredentials()
+            ->withUnencryptedCookie($owner->getName(), $owner->getValue())
+            ->withHeader('X-Portal-Office', '7');
+        $call->getJson('/api/v1/portal/office/settings')->assertOk()->assertJsonPath('data.office.name', 'Lider');
+        $call->putJson('/api/v1/portal/office/settings/office', [
+            'name' => 'Lider',
+            'ttbs_no' => '3500000',
+        ])->assertOk();
+        $call->postJson('/api/v1/portal/office/commission-policy/changes', [
+            'user_ids' => [4],
+            'rate_percentage' => 12.5,
+        ])->assertOk();
+
+        $manager = $this->login([
+            'role' => 'manager',
+            'role_slug' => 'manager',
+            'branch_id' => null,
+        ]);
+        Http::fake([
+            'http://reonix.test/api/v1/settings' => Http::response(['data' => []]),
+            'http://reonix.test/api/v1/settings/office' => Http::response(['data' => ['name' => 'Lider']]),
+        ]);
+        $this->withCredentials()
+            ->withUnencryptedCookie($manager->getName(), $manager->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->putJson('/api/v1/portal/office/settings/office', ['name' => 'Lider'])
+            ->assertOk();
+
+        $branched = $this->login([
+            'role' => 'office_manager',
+            'role_slug' => 'office_manager',
+            'branch_id' => 4,
+        ]);
+        Http::fake([
+            'http://reonix.test/api/v1/settings' => Http::response(['data' => ['office' => ['name' => 'Lider']]]),
+        ]);
+        $this->withCredentials()
+            ->withUnencryptedCookie($branched->getName(), $branched->getValue())
+            ->withHeader('X-Portal-Office', '7')
+            ->getJson('/api/v1/portal/office/settings')
+            ->assertOk();
+    }
+
     public function test_catalogue_and_dashboard_reads_hit_upstream_once(): void
     {
         $cookie = $this->login();
@@ -623,6 +674,11 @@ class OfficeProxyTest extends TestCase
             'agent pending approvals' => ['agent', null, 'get', '/api/v1/portal/office/dashboard/pending-approvals'],
             'agent office settings write' => ['agent', null, 'put', '/api/v1/portal/office/office/settings'],
             'manager office settings write' => ['manager', null, 'put', '/api/v1/portal/office/office/settings'],
+            'agent settings' => ['agent', null, 'get', '/api/v1/portal/office/settings'],
+            'agent settings write' => ['agent', null, 'put', '/api/v1/portal/office/settings/office'],
+            'agent bulk rate' => ['agent', null, 'post', '/api/v1/portal/office/commission-policy/changes'],
+            'branched settings write' => ['office_manager', 4, 'put', '/api/v1/portal/office/settings/office'],
+            'manager bulk rate' => ['manager', null, 'post', '/api/v1/portal/office/commission-policy/changes'],
         ];
     }
 

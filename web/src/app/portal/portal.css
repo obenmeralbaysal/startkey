@@ -3718,3 +3718,276 @@ button.glass-chip {
     font-size: 26px;
   }
 }
+
+.glass-app-ux .glass-main,
+.glass-app-ux .glass-view,
+.ux-screen,
+.ux-card,
+.ux-table-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.glass-app-ux .glass-main,
+.glass-app-ux .glass-view {
+  overflow-x: clip;
+}
+
+.ux-screen {
+  display: grid;
+  gap: 16px;
+}
+
+.ux-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.ux-page-head h1,
+.ux-screen > h1 {
+  margin: 0;
+  color: var(--ux-navy, #002172);
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.ux-page-head p,
+.ux-crumb,
+.ux-logo-note,
+.ux-banner {
+  margin: 6px 0 0;
+  color: #6e6e73;
+}
+
+.ux-crumb {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ux-card,
+.glass-app-ux .glass-view > .glass-card {
+  min-width: 0;
+  border: 0;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 33, 114, 0.06);
+  backdrop-filter: none;
+}
+
+.ux-card {
+  padding: 16px;
+}
+
+.ux-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 16px;
+  border-bottom: 1px solid rgba(0, 33, 114, 0.1);
+}
+
+.ux-tabs button {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6e6e73;
+  font-weight: 700;
+}
+
+.ux-tabs button[aria-selected="true"] {
+  color: var(--ux-navy, #002172);
+  box-shadow: inset 0 -2px 0 var(--ux-red, #ec3323);
+}
+
+.ux-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ux-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ux-field span {
+  color: #6e6e73;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ux-field input,
+.ux-field select,
+.ux-table select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(0, 33, 114, 0.16);
+  border-radius: 12px;
+  padding: 0 12px;
+  background: #fff;
+  color: var(--ux-navy, #002172);
+}
+
+.ux-field-error {
+  color: var(--ux-red, #ec3323);
+  font-size: 13px;
+}
+
+.ux-brand {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ux-logo-placeholder,
+.ux-brand img {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 72px;
+  border: 1px dashed rgba(0, 33, 114, 0.25);
+  border-radius: 12px;
+  object-fit: contain;
+  color: #6e6e73;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ux-swatch,
+.ux-swatch-text {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  width: fit-content;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: var(--ux-navy, #002172);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ux-switch {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  border-top: 1px solid rgba(0, 33, 114, 0.08);
+}
+
+.ux-switch span {
+  color: var(--ux-navy, #002172);
+  font-weight: 600;
+}
+
+.ux-table-wrap {
+  overflow-x: clip;
+}
+
+.ux-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.ux-table th {
+  color: #6e6e73;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.ux-table th,
+.ux-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(0, 33, 114, 0.08);
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.ux-table a {
+  color: var(--ux-navy, #002172);
+  font-weight: 700;
+}
+
+.ux-plain {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ux-plain li + li {
+  margin-top: 8px;
+}
+
+.ux-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.ux-office-form .ux-create,
+.ux-inline .ux-create,
+.ux-form-grid .ux-create {
+  width: fit-content;
+}
+
+@media (max-width: 719px) {
+  .ux-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ux-page-head h1,
+  .ux-screen > h1 {
+    font-size: 24px;
+  }
+
+  .ux-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .ux-table,
+  .ux-table tbody,
+  .ux-table tr,
+  .ux-table td {
+    display: block;
+    width: auto;
+  }
+
+  .ux-table {
+    table-layout: auto;
+  }
+
+  .ux-table tr {
+    margin-bottom: 12px;
+    padding: 8px 0;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 33, 114, 0.06);
+  }
+
+  .ux-table td {
+    border-bottom: 0;
+  }
+
+  .ux-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 4px;
+    color: #6e6e73;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}

@@ -58,6 +58,12 @@ final class PortalSettings
         if ($path === 'office/matchmaking-weights' || str_starts_with($path, 'office-settings/')) {
             return 'office-wide';
         }
+        if ($write && ($path === 'settings' || str_starts_with($path, 'settings/'))) {
+            return 'office-wide';
+        }
+        if ($path === 'settings' || str_starts_with($path, 'settings/')) {
+            return 'manager';
+        }
         if ($path === 'team' || str_starts_with($path, 'team/') || $path === 'roles' || str_starts_with($path, 'roles/')) {
             return 'manager';
         }

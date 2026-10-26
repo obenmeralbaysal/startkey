@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: Ofis ayarları Genel ve Kurallar sekmelerinde Türkçe formdur. Logo ve marka rengi salt okunurdur. Ekip ekleme, satırdan rol ve çıkarma ile toplu oran onay akışı Ekip sekmesindedir. Kira takvimi adı, tanımı ve boş metni menü ve sayfadadır. Ofis ve ağ listeleri aynı sayfa başlığı ve kart tabloyu kullanır; dar ekranda satır kart olur. #2182
 - **[UI]**: Portal ofis ve ağ ekranları lacivert kenar çubuğu, üst arama ve zil, rol rozeti ve 900px altında çekmece ile alt menü kullanır. Girişten sonra ofis rolleri `/portal/office` özetine, ağ rolleri `/portal/network` adresine iner. Özet karşılama, dört kısayol, KPI kartları ve onay listesini mevcut portal okumalarından basar. #2182
 - **[Bugfix]**: Portal 422 yanıtında API mesajı ve alan doğrulama metni görünür. Formda aynı adlı alan varsa her alanın ilk hatası alanın yanında durur. `/portal/network/offices/{id}` "Ofis bulunamadı" sayfasını HTTP 404 ile açar. #2182
 - **[Bugfix]**: Harita en uzak seviyede dünyayı kadrajın tamamına yayar. `minZoom`, kap genişliğinden `getBoundsZoom` ile hesaplanır ve boyut değişince yenilenir; `maxBounds`, `maxBoundsViscosity` 1 ve `noWrap` her Leaflet haritasında durur. “Filigranlı görsel” rozeti beyaz yazı, koyu kontur ve `rgba(0,0,0,.65)` zeminle ilan kartında, ana sayfa şeridinde, galeri küçük resminde ve portalda okunur. #2185
