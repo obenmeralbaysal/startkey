@@ -646,4 +646,50 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.rankBadges.1.label', 'Ticari Kulüp')
             ->assertJsonCount(3, 'data.rankBadges');
     }
+
+    public function test_office_rank_badges_are_returned_on_the_list_and_the_detail(): void
+    {
+        $badges = [
+            ['year' => 2025, 'category' => 'ciro', 'label' => 'Ciro 13', 'rank' => 13, 'imageUrl' => 'https://cdnc.re-os.com/club/office-ciro.png'],
+            ['year' => 2024, 'category' => 'islem', 'label' => 'İşlem Birincisi', 'rank' => 1, 'imageUrl' => 'https://cdnc.re-os.com/club/office-islem.png'],
+        ];
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [
+                ['id' => 16559, 'name' => 'A Plus', 'phone' => '2325033500', 'address' => 'İzmir / Konak', 'rankBadges' => $badges],
+                ['id' => 2, 'name' => 'Bos Ofis', 'phone' => '2320000000', 'address' => 'İzmir / Bornova'],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices/16559' => Http::response(['data' => [
+                'office' => ['id' => 16559, 'name' => 'A Plus', 'phone' => '2325033500', 'address' => 'İzmir / Konak', 'rankBadges' => $badges],
+                'consultants' => [],
+                'portfolios' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants' => Http::response(['data' => [
+                ['type' => 'office', 'id' => 'office-16559', 'office_id' => 16559, 'name' => 'A Plus', 'has_image' => true, 'rankBadges' => $badges],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.name', 'A Plus')
+            ->assertJsonPath('data.items.0.variant', 'office')
+            ->assertJsonPath('data.items.0.rankBadges.0.label', 'Ciro 13')
+            ->assertJsonPath('data.items.0.rankBadges.0.rank', 13)
+            ->assertJsonPath('data.items.0.rankBadges.0.category', 'ciro')
+            ->assertJsonPath('data.items.0.rankBadges.1.category', 'islem')
+            ->assertJsonCount(2, 'data.items.0.rankBadges')
+            ->assertJsonPath('data.items.1.name', 'Bos Ofis')
+            ->assertJsonCount(0, 'data.items.1.rankBadges');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler/16559/a-plus')
+            ->assertOk()
+            ->assertJsonPath('data.rankBadges.0.imageUrl', 'https://cdnc.re-os.com/club/office-ciro.png')
+            ->assertJsonPath('data.rankBadges.0.label', 'Ciro 13')
+            ->assertJsonCount(2, 'data.rankBadges');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.variant', 'office')
+            ->assertJsonPath('data.items.0.rankBadges.0.rank', 13)
+            ->assertJsonCount(2, 'data.items.0.rankBadges');
+    }
 }

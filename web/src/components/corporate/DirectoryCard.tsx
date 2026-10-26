@@ -60,6 +60,7 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
             </h3>
             {item.role ? <span>{item.role}</span> : null}
             <AwardBadges badges={item.badges} />
+            <RankBadges badges={item.rankBadges} locale={localeOf(item.urlPath)} variant="card" />
             {item.phoneHref ? (
               <span>
                 {" "}

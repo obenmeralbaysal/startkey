@@ -5,6 +5,9 @@ Crawls every public office and consultant from StartKey.com.tr.
 Offices: every card on the live list, detail in tr/en/de.
 Consultants: every list page, then every detail in tr/en/de.
 Already-complete rows in offices-seed.json are skipped so the run can resume.
+
+The full crawl is nightly: `python3 scripts/crawl-offices.py`.
+Schedule and the import step are in docs/SYSTEM_JOBS.md.
 """
 from __future__ import annotations
 
@@ -335,6 +338,7 @@ def parse_office_detail(page: str, lang: str, url_path: str, card: dict | None) 
         "card": card or {},
         "breadcrumb": breadcrumb(page),
         "meta": meta(page),
+        "rankBadges": parse_rank_badges(page),
     }
 
 
@@ -655,6 +659,11 @@ def main() -> int:
                 rec["cityLabel"] = parsed["cityLabel"]
             if parsed.get("countyLabel"):
                 rec["countyLabel"] = parsed["countyLabel"]
+            incoming = parsed.get("rankBadges") if isinstance(parsed.get("rankBadges"), list) else []
+            if lang == "tr":
+                rec["rankBadges"] = incoming
+            elif not isinstance(rec.get("rankBadges"), list):
+                rec["rankBadges"] = incoming
             rec["translations"][lang] = parsed
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -770,10 +779,10 @@ def main() -> int:
                 rec["officeId"] = parsed["officeId"]
             elif not rec.get("officeId") and parsed.get("officeHref"):
                 rec["officeHref"] = parsed["officeHref"]
-            incoming = parsed.get("rankBadges") or []
+            incoming = parsed.get("rankBadges") if isinstance(parsed.get("rankBadges"), list) else []
             if lang == "tr":
-                rec["rankBadges"] = incoming or rec.get("rankBadges") or []
-            elif not rec.get("rankBadges"):
+                rec["rankBadges"] = incoming
+            elif not isinstance(rec.get("rankBadges"), list):
                 rec["rankBadges"] = incoming
             rec.setdefault("translations", {})
             rec["translations"][lang] = parsed
@@ -819,6 +828,7 @@ def main() -> int:
             "firstName": (tr_card.get("name") or "").split()[0] if tr_card.get("name") else "",
             "lastName": " ".join((tr_card.get("name") or "").split()[1:]),
             "hasFullDetail": False,
+            "rankBadges": [],
             "translations": {},
         }
         for lang in LANGS:

@@ -216,6 +216,7 @@ class ReonixCatalogue
             ],
             'meta' => ['title' => 'Startkey Türkiye | '.$name],
             'alternates' => $this->alternates('offices', (int) $office['id'], (string) $office['name']),
+            'rankBadges' => $card['rankBadges'],
         ];
     }
 
@@ -415,6 +416,7 @@ class ReonixCatalogue
             'location' => $this->cardLocation((string) ($row['address'] ?? '')) ?: trim((string) ($row['city'] ?? '').(((string) ($row['district'] ?? '')) !== '' ? ' / '.$row['district'] : '')),
             'variant' => 'office',
             'badges' => $this->badges($row),
+            'rankBadges' => $this->rankBadges($row),
         ];
     }
 

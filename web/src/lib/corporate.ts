@@ -352,6 +352,7 @@ export type CorporatePayload =
       seeAllLabel?: string;
       pin?: MapOffice | null;
       map: { query?: string; iframeSrc?: string; directionsLabel?: string; streetViewLabel?: string };
+      rankBadges?: RankBadge[];
       breadcrumb: CorporateBreadcrumb;
       meta: CorporateMeta;
       alternates: Record<string, string>;

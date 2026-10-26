@@ -63,6 +63,7 @@ def test_aplus_team_imports_with_the_office_after_the_alias_is_dropped():
     )
     parsed = parse_office_detail(page, "tr", "/aplus", {"shortSlug": "aplus", "name": "A Plus"})
     assert parsed["officeId"] == "16559"
+    assert parsed["rankBadges"] == []
     ids = [item for group in parsed["teamGroups"] for item in group["consultantIds"]]
     assert ids == [33137, 90001, 90002]
     assert parsed["teamGroups"][0]["cards"][1]["slug"] == "ada-yilmaz"
@@ -110,8 +111,9 @@ def test_aplus_team_imports_with_the_office_after_the_alias_is_dropped():
     offices, consultants, report = dedupe_catalogue([office], [alias, member])
     assert 33137 in report["droppedOfficeAliases"]
     assert 90001 in {row["externalId"] for row in consultants}
-    _office_rows, rows, skipped = catalogue_rows(offices, consultants)
+    office_rows, rows, skipped = catalogue_rows(offices, consultants)
     assert skipped == []
+    assert office_rows[0]["rankBadges"] == []
     imported = {row["importKey"]: row for row in rows}
     assert "consultant:33137" not in imported
     assert imported["consultant:90001"]["officeImportKey"] == "office:16559"
@@ -120,6 +122,7 @@ def test_aplus_team_imports_with_the_office_after_the_alias_is_dropped():
     assert imported["consultant:90002"]["officeImportKey"] == "office:16559"
     assert imported["consultant:90002"]["role"] == "owner"
     assert imported["consultant:90002"]["email"] == "bora@example.com"
+    assert imported["consultant:90002"]["rankBadges"] == []
 
 
 if __name__ == "__main__":

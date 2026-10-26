@@ -126,6 +126,11 @@ def _rank(label: str, category: str) -> int | None:
     for stem, rank in _ORDINALS:
         if stem in compact:
             return rank
+    number = re.search(r"(?<!\d)(\d{1,2})(?!\d)", label or "")
+    if number:
+        rank = int(number.group(1))
+        if 1 <= rank <= 50:
+            return rank
     return None
 
 
@@ -285,13 +290,23 @@ def _card_as_consultant(card: dict, office_id: int) -> dict:
             }
         },
     }
-    if isinstance(card.get("rankBadges"), list):
-        row["rankBadges"] = card["rankBadges"]
+    row["rankBadges"] = rank_badges_of(card)
     return row
 
 
 def _tr(row: dict) -> dict:
     return ((row.get("translations") or {}).get("tr")) or {}
+
+
+def rank_badges_of(row: dict) -> list:
+    """Badge list for import. A missing list is [] so Reonix drops stored badges."""
+    badges = row.get("rankBadges")
+    if isinstance(badges, list):
+        return badges
+    nested = _tr(row).get("rankBadges")
+    if isinstance(nested, list):
+        return nested
+    return []
 
 
 def _office_contacts(offices: list[dict]) -> tuple[set[str], set[str]]:
@@ -419,6 +434,8 @@ def dedupe_catalogue(offices: list[dict], consultants: list[dict]) -> tuple[list
                     comments.append(comment)
                     seen.add(marker)
             primary_detail["comments"] = comments
+            if rank_badges_of(primary) == [] and rank_badges_of(extra):
+                primary["rankBadges"] = rank_badges_of(extra)
         if dropped:
             merged.append({"keptId": primary_id, "droppedIds": dropped, "match": key.split(":", 1)[0]})
         merged_rows.append(primary)
@@ -484,6 +501,7 @@ def catalogue_rows(offices: list[dict], consultants: list[dict]) -> tuple[list[d
                 "phone": digits(detail.get("phoneHref") or detail.get("phoneLabel") or ""),
                 "address": detail.get("address") or "",
                 "image": detail.get("image") or "",
+                "rankBadges": rank_badges_of(office),
             }
         )
 
@@ -515,12 +533,8 @@ def catalogue_rows(offices: list[dict], consultants: list[dict]) -> tuple[list[d
             "role": _member_role(consultant),
             "image": detail.get("image") or "",
             "comments": detail.get("comments") or [],
+            "rankBadges": rank_badges_of(consultant),
         }
-        badges = consultant.get("rankBadges")
-        if not isinstance(badges, list):
-            badges = detail.get("rankBadges")
-        if isinstance(badges, list):
-            row["rankBadges"] = badges
         consultant_rows.append(row)
         seen.add(external_id)
 

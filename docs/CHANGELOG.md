@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Backend]**: Ofis ciro, işlem ve kulüp rozetleri (`rankBadges`) ofis kartında, ofis listesinde ve ofis detayında görünür. Katalog içe aktarması her ofis ve danışman için `rankBadges` gönderir; boş liste kayıtlı rozetleri siler. Tam ofis ve danışman taraması gecelik çalışır. #2178
 - **[Backend]**: Katalog görselleri yerel diskte 6 saat tutulur; üst sistem susarsa eski kopya döner, eşleşen ETag 304 verir. Medya ucu dakikada 600 isteğe çıkar. Galeri küçük resimleri ve aktif olmayan kareler geç yüklenir. #2185
 - **[Backend]**: Danışman ciro, işlem ve kulüp rozetleri (`rankBadges`) katalog listesinde ve danışman detayında Reonix cevabından geçer. A Plus ekibi ofis sayfasındaki danışman bağlantılarından içe aktarılır; ofis adlı tek kart düşer, kişiler ofise bağlanır.
 
