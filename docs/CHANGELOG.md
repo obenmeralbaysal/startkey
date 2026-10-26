@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- 662-1: Ana sayfa franchise linkleri mutlak /tr/franchise-basvuru yapıldı (göreli tr/... alt sayfalarda 404 veriyordu).
 - **[Backend]**: Ofis ciro, işlem ve kulüp rozetleri (`rankBadges`) ofis kartında, ofis listesinde ve ofis detayında görünür. Katalog içe aktarması her ofis ve danışman için `rankBadges` gönderir; boş liste kayıtlı rozetleri siler. Tam ofis ve danışman taraması gecelik çalışır. #2178
 - **[Backend]**: Katalog görselleri yerel diskte 6 saat tutulur; üst sistem susarsa eski kopya döner, eşleşen ETag 304 verir. Medya ucu dakikada 600 isteğe çıkar. Galeri küçük resimleri ve aktif olmayan kareler geç yüklenir. #2185
 - **[Portal]**: Sahibinden’den gelen filigranlı görseller portföy galerisinde “Filigranlı görsel” rozeti, portföyde uyarı bandı ve listede küçük rozet ile gösterilir. Aktife alma 422 `watermarked_media` yanıtı ofise iletilir. Katalog ve portal API’si `is_watermarked` ile `has_watermarked_media` alanlarını, yoksa false, geçirir. Ziyaretçi sayfalarında uyarı yoktur. #2184
