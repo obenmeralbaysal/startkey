@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   countryChipLabel,
@@ -44,6 +44,9 @@ export function OfficeMapSection({
   locale: Locale;
 }) {
   const summary = officeCountrySummary(offices);
+  // Stable array: a new array each render rebuilt the Leaflet map, whose
+  // moveend -> setCenter re-render looped forever (grey tiles, tab crash).
+  const mapOffices = useMemo(() => (offices ? [...offices] : []), [offices]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [center, setCenter] = useState<{
     latitude: number;
@@ -78,7 +81,7 @@ export function OfficeMapSection({
       ) : null}
       <div className="sk-office-map-frame">
         <OfficeMap
-          offices={offices ? [...offices] : []}
+          offices={mapOffices}
           className="is-bleed"
           overview
           label={heading ?? "Startkey Global"}

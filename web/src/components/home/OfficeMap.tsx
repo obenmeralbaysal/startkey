@@ -70,6 +70,7 @@ export function OfficeMap({
     if (!host) return;
     let map: import("leaflet").Map | undefined;
     let cancelled = false;
+    let settle: number | undefined;
 
     void (async () => {
       const leaflet = await import("leaflet");
@@ -204,7 +205,7 @@ export function OfficeMap({
         map.addControl(new ResetControl());
       }
       fit();
-      window.setTimeout(() => {
+      settle = window.setTimeout(() => {
         map?.invalidateSize();
         fit();
       }, 0);
@@ -212,7 +213,9 @@ export function OfficeMap({
 
     return () => {
       cancelled = true;
+      if (settle !== undefined) window.clearTimeout(settle);
       map?.remove();
+      map = undefined;
     };
   }, [offices, overview, resetLabel, zoom]);
 
