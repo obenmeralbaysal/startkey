@@ -126,7 +126,7 @@ class HomepageApiTest extends TestCase
             ->assertJsonFragment([
                 'cityCode' => '100',
                 'name' => 'İzmir',
-                'image' => 'izmir.jpg',
+                'image' => '/media/micrositecontent/izmir.jpg',
                 'urlPath' => '/tr/portfoy?FilterDTO.CityId=100',
             ])
             ->assertJsonFragment([

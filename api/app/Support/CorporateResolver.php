@@ -290,7 +290,7 @@ class CorporateResolver
             'group' => $training->group,
             'urlPath' => $translation->url_path,
             'title' => $translation->title,
-            'image' => $translation->image !== '' ? $translation->image : $translation->list_image,
+            'image' => $this->publicImage($translation->image !== '' ? $translation->image : $translation->list_image, 'content'),
             'datePrefix' => $translation->date_prefix,
             'dateValue' => $translation->date_value,
             'timePrefix' => $translation->time_prefix,
@@ -350,7 +350,7 @@ class CorporateResolver
                         'urlPath' => $translation?->card_url_path ?: ($translation?->url_path ?? ''),
                         'detailUrlPath' => $translation?->url_path ?: ($translation?->card_url_path ?? ''),
                         'title' => $translation?->title ?? '',
-                        'image' => $translation?->list_image ?? '',
+                        'image' => $this->publicImage($translation?->list_image ?? '', 'content'),
                         'infoLines' => $translation?->info_lines ?? [],
                         'detailLabel' => $translation?->detail_label ?? '',
                     ];
@@ -434,8 +434,8 @@ class CorporateResolver
             'dateLabel' => $translation->date_label,
             'category' => $translation->category,
             'bodyHtml' => $translation->body_html ?? '',
-            'image' => $translation->image,
-            'imageWebp' => $translation->image_webp,
+            'image' => $this->publicImage($translation->image, 'content'),
+            'imageWebp' => $this->publicImage($translation->image_webp, 'content'),
             'shareLabel' => $translation->share_label,
             'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->title, 'trail' => []],
             'meta' => $translation->meta ?? [],
@@ -494,8 +494,8 @@ class CorporateResolver
                     'title' => $translation?->title ?? '',
                     'dateLabel' => $translation?->date_label ?? '',
                     'category' => $translation?->category ?? '',
-                    'image' => $translation?->list_image ?: ($translation?->image ?? ''),
-                    'imageWebp' => $translation?->list_image_webp ?: ($translation?->image_webp ?? ''),
+                    'image' => $this->publicImage($translation?->list_image ?: ($translation?->image ?? ''), 'content'),
+                    'imageWebp' => $this->publicImage($translation?->list_image_webp ?: ($translation?->image_webp ?? ''), 'content'),
                     'width' => $translation?->list_width,
                     'height' => $translation?->list_height,
                     'imageAlt' => $spec['list_image_alt'] ?? '',
@@ -561,8 +561,8 @@ class CorporateResolver
                     'email' => $person->email,
                     'phoneHref' => $person->phone_href,
                     'phoneLabel' => $translation?->phone_label ?? '',
-                    'image' => $person->image,
-                    'imageWebp' => $person->image_webp,
+                    'image' => $this->publicImage($person->image, 'content'),
+                    'imageWebp' => $this->publicImage($person->image_webp, 'content'),
                 ];
             })
             ->all();
@@ -629,8 +629,8 @@ class CorporateResolver
             'phoneFieldLabel' => $translation->phone_field_label,
             'bioHeading' => $translation->bio_heading,
             'bioHtml' => $translation->bio_html ?? '',
-            'image' => $person->detail_image !== '' ? $person->detail_image : $person->image,
-            'imageWebp' => $person->detail_image_webp !== '' ? $person->detail_image_webp : $person->image_webp,
+            'image' => $this->publicImage($person->detail_image !== '' ? $person->detail_image : $person->image, 'content'),
+            'imageWebp' => $this->publicImage($person->detail_image_webp !== '' ? $person->detail_image_webp : $person->image_webp, 'content'),
             'social' => $person->social ?? [],
             'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->name, 'trail' => []],
             'meta' => $translation->meta ?? [],
@@ -702,8 +702,8 @@ class CorporateResolver
                         'urlPath' => $translation?->url_path ?? '',
                         'title' => $translation?->title ?? '',
                         'dateLabel' => $translation?->date_label ?? '',
-                        'image' => $translation?->list_image ?: ($translation?->image ?? ''),
-                        'imageWebp' => $translation?->list_image_webp ?: ($translation?->image_webp ?? ''),
+                        'image' => $this->publicImage($translation?->list_image ?: ($translation?->image ?? ''), 'content'),
+                        'imageWebp' => $this->publicImage($translation?->list_image_webp ?: ($translation?->image_webp ?? ''), 'content'),
                     ];
                 })
                 ->all();
@@ -1012,8 +1012,8 @@ class CorporateResolver
         return [
             'externalId' => $listing->external_id,
             'urlPath' => $card['urlPath'] ?? $translation->url_path,
-            'image' => $card['image'] ?? '',
-            'imageWebp' => $card['imageWebp'] ?? '',
+            'image' => $this->publicImage($card['image'] ?? '', 'property'),
+            'imageWebp' => $this->publicImage($card['imageWebp'] ?? '', 'property'),
             'processType' => $card['processType'] ?? '',
             'adSubType' => $card['adSubType'] ?? '',
             'adTypeIcon' => $card['adTypeIcon'] ?? '',
@@ -2188,8 +2188,8 @@ class CorporateResolver
             'urlPath' => $translation->url_path !== '' ? $translation->url_path : $canonical,
             'shortPath' => $translation->short_path,
             'name' => $translation->name,
-            'image' => $detail['image'] ?? ($card['image'] ?? ''),
-            'imageWebp' => $detail['imageWebp'] ?? ($card['imageWebp'] ?? ''),
+            'image' => $this->publicImage($detail['image'] ?? ($card['image'] ?? ''), 'officelogo'),
+            'imageWebp' => $this->publicImage($detail['imageWebp'] ?? ($card['imageWebp'] ?? ''), 'officelogo'),
             'phoneHref' => $detail['phoneHref'] ?? ($card['phoneHref'] ?? ''),
             'phoneLabel' => $detail['phoneLabel'] ?? ($card['phoneLabel'] ?? ''),
             'email' => $detail['email'] ?? ($card['email'] ?? ''),
@@ -2237,8 +2237,8 @@ class CorporateResolver
             'urlPath' => $translation->url_path,
             'name' => $translation->name,
             'role' => $translation->role,
-            'image' => $detail['image'] ?? ($card['image'] ?? ''),
-            'imageWebp' => $detail['imageWebp'] ?? ($card['imageWebp'] ?? ''),
+            'image' => $this->publicImage($detail['image'] ?? ($card['image'] ?? ''), 'user'),
+            'imageWebp' => $this->publicImage($detail['imageWebp'] ?? ($card['imageWebp'] ?? ''), 'user'),
             'email' => $detail['email'] ?? ($card['email'] ?? ''),
             'phoneHref' => $detail['phoneHref'] ?? ($card['phoneHref'] ?? ''),
             'phoneLabel' => $detail['phoneLabel'] ?? ($card['phoneLabel'] ?? ''),
@@ -2276,8 +2276,8 @@ class CorporateResolver
             'externalId' => $office->external_id,
             'urlPath' => $card['urlPath'] ?? $shortPath,
             'name' => $card['name'] ?? $translation->name,
-            'image' => $card['image'] ?? ($detail['image'] ?? ''),
-            'imageWebp' => $card['imageWebp'] ?? ($detail['imageWebp'] ?? ''),
+            'image' => $this->publicImage($card['image'] ?? ($detail['image'] ?? ''), 'officelogo'),
+            'imageWebp' => $this->publicImage($card['imageWebp'] ?? ($detail['imageWebp'] ?? ''), 'officelogo'),
             'phoneHref' => $card['phoneHref'] ?? ($detail['phoneHref'] ?? ''),
             'phoneLabel' => $card['phoneLabel'] ?? ($detail['phoneLabel'] ?? ''),
             'email' => $card['email'] ?? ($detail['email'] ?? ''),
@@ -2307,8 +2307,8 @@ class CorporateResolver
             'urlPath' => $href,
             'name' => $card['name'] ?? $translation->name,
             'role' => $card['role'] ?? $translation->role,
-            'image' => $card['image'] ?? '',
-            'imageWebp' => $card['imageWebp'] ?? '',
+            'image' => $this->publicImage($card['image'] ?? '', 'user'),
+            'imageWebp' => $this->publicImage($card['imageWebp'] ?? '', 'user'),
             'phoneHref' => $card['phoneHref'] ?? '',
             'phoneLabel' => $card['phoneLabel'] ?? '',
             'email' => $card['email'] ?? '',
@@ -2447,6 +2447,11 @@ class CorporateResolver
         }
 
         return null;
+    }
+
+    private function publicImage(mixed $value, string $directory): string
+    {
+        return MediaPath::absolute(is_string($value) ? $value : '', $directory);
     }
 
     private function escapeLike(string $value): string

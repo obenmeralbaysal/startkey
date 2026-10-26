@@ -1,4 +1,5 @@
 import type { HomepageContent } from "@/content/types";
+import { absoluteMedia } from "@/lib/media-path";
 
 export function HowItWorks({ content }: { content: HomepageContent["howItWorks"] }) {
   return (
@@ -14,7 +15,8 @@ export function HowItWorks({ content }: { content: HomepageContent["howItWorks"]
         </div>
         <div className="flex flex-wrap justify-center">
           {content.cards.map((card) => {
-            const imageBase = card.image.replace(/\.[^.]+$/, "");
+            const src = absoluteMedia(card.image, "micrositecontent");
+            const imageBase = src.replace(/\.[^.]+$/, "");
             return (
               <div
                 className="w-full xl:w-1/3 lg:w-1/3 md:w-1/2 sm:w-1/2"
@@ -33,11 +35,11 @@ export function HowItWorks({ content }: { content: HomepageContent["howItWorks"]
                     />
                     <picture>
                       <source
-                        srcSet={`/media/micrositecontent/${imageBase}.webp`}
+                        srcSet={`${imageBase}.webp`}
                         type="image/webp"
                       />
                       <img
-                        src={`/media/micrositecontent/${card.image}`}
+                        src={src}
                         alt="MicroSiteContent-photo"
                         width={260}
                         loading="lazy"

@@ -1,4 +1,5 @@
 import type { HomepageContent } from "@/content/types";
+import { absoluteMedia } from "@/lib/media-path";
 
 export function AddListing({ content }: { content: HomepageContent["addListing"] }) {
   return (
@@ -8,7 +9,7 @@ export function AddListing({ content }: { content: HomepageContent["addListing"]
           <div className="w-full md:w-1/2">
             <div
               className="[background-image:url(/themes/fela/img/add-listing-bg.jpg)] h-full max-md:[height:calc(300px_*_var(--sk-scale,_1))] [background-position:center_center] [background-size:cover] [background-repeat:no-repeat] [background-color:#ddd]"
-              style={{ backgroundImage: `url(/media/micrositecontent/${content.background})` }}
+              style={{ backgroundImage: `url(${absoluteMedia(content.background, "micrositecontent")})` }}
             />
           </div>
           <div className="w-full md:w-1/2">
