@@ -338,6 +338,7 @@ export type CorporatePayload =
       email: string;
       address: string;
       instagram: string;
+      social?: { network: string; href: string }[];
       portfoliosHref: string;
       portfoliosLabel: string;
       tabs: { id: string; label: string }[];

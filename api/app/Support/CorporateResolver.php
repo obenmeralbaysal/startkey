@@ -1038,6 +1038,7 @@ class CorporateResolver
     {
         $first = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Firstname') ?? '')));
         $last = mb_strtolower(trim((string) ($this->filterScalar($filters, 'FilterDTO.Lastname') ?? '')));
+        $rows = $this->turkishSortConsultants($rows);
         $items = [];
         foreach ($rows as $row) {
             $name = mb_strtolower((string) ($row['name'] ?? ''));
@@ -1060,6 +1061,24 @@ class CorporateResolver
      * @param  list<array<string, mixed>>  $items
      * @return array<string, mixed>
      */
+    /**
+     * Consultants A-Z in Turkish order (office cards keep their place after them).
+     *
+     * @param  list<array<string, mixed>>  $rows
+     * @return list<array<string, mixed>>
+     */
+    private function turkishSortConsultants(array $rows): array
+    {
+        $collator = class_exists(\Collator::class) ? new \Collator('tr_TR') : null;
+        $collator?->setStrength(\Collator::SECONDARY);
+        $key = fn (array $row) => trim((string) preg_replace('/\s+/u', ' ', (string) ($row['name'] ?? '')));
+        $people = array_values(array_filter($rows, fn ($row) => ($row['type'] ?? 'consultant') !== 'office'));
+        $offices = array_values(array_filter($rows, fn ($row) => ($row['type'] ?? 'consultant') === 'office'));
+        usort($people, fn ($a, $b) => $collator ? $collator->compare($key($a), $key($b)) : strcmp(mb_strtolower($key($a)), mb_strtolower($key($b))));
+
+        return array_merge($people, $offices);
+    }
+
     private function pageRemote(array $payload, array $items, int $pageIndex, int $perPage, string $basePath, string $searchQuery): array
     {
         $total = count($items);
@@ -1782,6 +1801,7 @@ class CorporateResolver
             'email' => $detail['email'] ?? ($card['email'] ?? ''),
             'address' => $detail['address'] ?? '',
             'instagram' => $detail['instagram'] ?? ($card['instagram'] ?? ''),
+            'social' => $detail['social'] ?? [],
             'portfoliosHref' => $listPath.'?FilterDTO.OfficeId='.$office->external_id,
             'portfoliosLabel' => $detail['portfoliosLabel'] ?? '',
             'tabs' => $detail['tabs'] ?? [],

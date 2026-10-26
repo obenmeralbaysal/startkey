@@ -11,9 +11,20 @@ import type { CorporatePayload } from "@/lib/corporate";
 
 type OfficeDetailData = Extract<CorporatePayload, { kind: "office-detail" }>;
 
+const SOCIAL_ICONS: Record<string, string> = {
+  instagram: "ri-instagram-line",
+  facebook: "ri-facebook-fill",
+  linkedin: "ri-linkedin-fill",
+  twitter: "ri-twitter-fill",
+  youtube: "ri-youtube-fill",
+  tiktok: "ri-tiktok-fill",
+  whatsapp: "ri-whatsapp-line",
+};
+
 export function OfficeDetail({ data }: { data: OfficeDetailData }) {
   const pin = data.pin && Number.isFinite(data.pin.latitude) && Number.isFinite(data.pin.longitude) ? data.pin : null;
   const pins = useMemo(() => (pin ? [pin] : []), [pin]);
+  const socialLinks = data.social?.length ? data.social : data.instagram ? [{ network: "instagram", href: data.instagram }] : [];
   const tabs = pin ? data.tabs : data.tabs.filter((tab) => tab.id !== "tab_3");
   const [activeId, setActiveId] = useState(tabs[0]?.id ?? "tab_1");
   const mapQuery = pin ? `${pin.latitude},${pin.longitude}` : "";
@@ -53,13 +64,15 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
                   </li>
                 ) : null}
               </ul>
-              {data.instagram ? (
+              {socialLinks.length > 0 ? (
                 <ul className="sk-office-social">
-                  <li>
-                    <a href={data.instagram} target="_blank">
-                      <i className="ri-instagram-line" />
-                    </a>
-                  </li>
+                  {socialLinks.map((link) => (
+                    <li key={link.href}>
+                      <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.network}>
+                        <i className={SOCIAL_ICONS[link.network] ?? "ri-links-line"} />
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               ) : null}
               {data.portfoliosLabel ? (
