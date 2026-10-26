@@ -1,6 +1,7 @@
 ## [2026-10-26]
 
 - **[Backend]**: Ofis ciro, işlem ve kulüp rozetleri (`rankBadges`) ofis kartında, ofis listesinde ve ofis detayında görünür. Katalog içe aktarması her ofis ve danışman için `rankBadges` gönderir; boş liste kayıtlı rozetleri siler. Tam ofis ve danışman taraması gecelik çalışır. #2178
+- **[Backend]**: Franchise yöneticisi ve franchise personeli mevcut portal girişi ile ağı salt okunur görür. Ofis seçimi bu roller için gerekmez; `/me` `context: network` ve `role` döner. Ağ özeti, ofis ve danışman listeleri Reonix’ten gelir. Bu rollerin portal yazma istekleri 403 olur. #2182
 - **[Backend]**: Katalog görselleri yerel diskte 6 saat tutulur; üst sistem susarsa eski kopya döner, eşleşen ETag 304 verir. Medya ucu dakikada 600 isteğe çıkar. Galeri küçük resimleri ve aktif olmayan kareler geç yüklenir. #2185
 - **[Portal]**: Sahibinden’den gelen filigranlı görseller portföy galerisinde “Filigranlı görsel” rozeti, portföyde uyarı bandı ve listede küçük rozet ile gösterilir. Aktife alma 422 `watermarked_media` yanıtı ofise iletilir. Katalog ve portal API’si `is_watermarked` ile `has_watermarked_media` alanlarını, yoksa false, geçirir. Ziyaretçi sayfalarında uyarı yoktur. #2184
 - **[Backend]**: Danışman ciro, işlem ve kulüp rozetleri (`rankBadges`) katalog listesinde ve danışman detayında Reonix cevabından geçer. A Plus ekibi ofis sayfasındaki danışman bağlantılarından içe aktarılır; ofis adlı tek kart düşer, kişiler ofise bağlanır.
