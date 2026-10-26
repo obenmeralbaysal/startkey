@@ -128,6 +128,35 @@ class PortalNetworkTest extends TestCase
         Http::assertNothingSent();
     }
 
+    public function test_franchise_roles_do_not_call_the_super_admin_limit_queue(): void
+    {
+        foreach (['franchise_admin', 'franchise_staff'] as $role) {
+            $cookie = $this->login($role);
+            Http::fake();
+
+            $this->withCredentials()
+                ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+                ->getJson('/api/v1/portal/office/admin/portal-limit-requests')
+                ->assertOk()
+                ->assertExactJson(['data' => []]);
+
+            Http::assertNothingSent();
+        }
+    }
+
+    public function test_an_office_user_still_cannot_read_the_super_admin_limit_queue(): void
+    {
+        $owner = $this->login('owner');
+        Http::fake();
+
+        $this->withCredentials()
+            ->withUnencryptedCookie($owner->getName(), $owner->getValue())
+            ->getJson('/api/v1/portal/office/admin/portal-limit-requests')
+            ->assertNotFound();
+
+        Http::assertNothingSent();
+    }
+
     #[DataProvider('writes')]
     public function test_franchise_roles_cannot_write(string $role, string $method, string $url): void
     {

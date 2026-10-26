@@ -4,7 +4,12 @@ import { NetworkApp } from "@/components/portal/network/NetworkApp";
 
 export const dynamic = "force-dynamic";
 
-export default function NetworkPage() {
+export default async function NetworkPage({
+  params,
+}: {
+  params: Promise<{ section?: string[] }>;
+}) {
+  const { section } = await params;
   return (
     <Suspense
       fallback={
@@ -14,7 +19,7 @@ export default function NetworkPage() {
         </main>
       }
     >
-      <NetworkApp />
+      <NetworkApp parts={section ?? []} />
     </Suspense>
   );
 }

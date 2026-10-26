@@ -257,7 +257,7 @@ function OfficeCard({
       </div>
       <div className="glass-section">
         <h4>Limit artışı</h4>
-        {office.limit_requests.map((row) => (
+        {(office.limit_requests ?? []).map((row) => (
           <div key={row.id} className="glass-item">
             <p>
               {resourceLabel(row.resource)} +{row.quantity} — {row.note}

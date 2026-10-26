@@ -28,6 +28,10 @@ class OfficeProxyController extends Controller
             return response()->json(['message' => __('messages.portal.forbidden')], 401);
         }
 
+        if ($request->isMethod('GET') && $this->franchiseLimitQueue($path, $session['user'])) {
+            return response()->json(['data' => []]);
+        }
+
         $remotePath = PortalPath::office($path);
         if ($remotePath === null || ! in_array(strtoupper($request->method()), ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], true)) {
             return response()->json(['message' => __('messages.portal.forbidden')], 404);
@@ -354,6 +358,24 @@ class OfficeProxyController extends Controller
         }
 
         return $session;
+    }
+
+    /**
+     * Super-admin limit queue. Franchise readers get an empty list and Reonix is not called.
+     *
+     * @param  array<string, mixed>  $user
+     */
+    private function franchiseLimitQueue(string $path, array $user): bool
+    {
+        $clean = trim($path, '/');
+        if ($clean !== 'admin/portal-limit-requests' && ! str_ends_with($clean, '/admin/portal-limit-requests')) {
+            return false;
+        }
+        if (($user['context'] ?? null) === 'office') {
+            return false;
+        }
+
+        return PortalNetworkAccess::role($user) !== null;
     }
 
     /**

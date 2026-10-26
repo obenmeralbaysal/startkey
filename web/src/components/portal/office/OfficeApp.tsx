@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { clearOfficeReads, isRecord, officeCall, type OfficeRecord } from "@/components/portal/office/api";
-import { networkHome, showNetworkPortal } from "@/lib/portal-network";
+import { networkHome, openNetworkHome } from "@/lib/portal-network";
 import {
   officeLabel,
   officeNumber,
@@ -83,14 +83,14 @@ function OfficeScreen({ parts }: { parts: string[] }) {
         setIsAdmin(Boolean(loginUser.is_admin));
         setUserName({ first, last });
       }
-      if (showNetworkPortal(loginUser)) {
+      if (openNetworkHome(loginUser)) {
         officeBoot = null;
         if (!cancelled) window.location.replace(networkHome(new URLSearchParams(window.location.search).get("lang")));
         return;
       }
       try {
         const me = await officeCall("me", null);
-        if (showNetworkPortal(me)) {
+        if (openNetworkHome(me)) {
           officeBoot = null;
           if (!cancelled) window.location.replace(networkHome(new URLSearchParams(window.location.search).get("lang")));
           return;

@@ -8,7 +8,7 @@ Faz 1 (ana sayfa) kapsamında bilerek geçici bırakılan uygulamalar.
 
 **Mevcut Durum:**
 
-`/portal/network` canlıda `GET /api/v1/portal/network/summary`, `/offices` ve `/consultants` okur. `NEXT_PUBLIC_PORTAL_NETWORK_MOCK=1` iken aynı üç ekran yerel fixture basar.
+`/portal/network` ve `/portal/network/summary` canlıda `GET /api/v1/portal/network/summary` okur; `/offices` ve `/consultants` aynı vekilin listelerini okur. `NEXT_PUBLIC_PORTAL_NETWORK_MOCK=1` iken aynı üç ekran yerel fixture basar.
 
 **Geçici Olmasının Nedeni:**
 

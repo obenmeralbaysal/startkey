@@ -80,6 +80,18 @@ class PortalNetworkController extends Controller
 
         $query = array_filter($query, fn ($value) => $value !== null && $value !== '');
 
+        if (str_contains($path, 'portal-limit-requests')) {
+            return response()->json([
+                'data' => [],
+                'pagination' => [
+                    'current_page' => 1,
+                    'per_page' => 20,
+                    'total_items' => 0,
+                    'total_pages' => 0,
+                ],
+            ]);
+        }
+
         try {
             $upstream = $this->reonix->exchange('get', $path, $query, null, [], $session['token']);
         } catch (ReonixException) {

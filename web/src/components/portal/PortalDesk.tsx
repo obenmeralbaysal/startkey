@@ -7,7 +7,7 @@ import { FranchiseDesk } from "@/components/portal/FranchiseDesk";
 import { officeCall } from "@/components/portal/office/api";
 import { EmptyState, Skeleton } from "@/components/portal/office/ui";
 import { AppShell, Icon, initials, ToastProvider, useToast, type IconName, type ShellLink } from "@/components/portal/shell";
-import { networkHome, showNetworkPortal } from "@/lib/portal-network";
+import { networkHome, openNetworkHome } from "@/lib/portal-network";
 
 export type PortalOffice = { id: number; name: string; role: string | null };
 
@@ -63,14 +63,14 @@ function DeskScreen({ user, lang, onLogout }: { user: PortalUser; lang: string; 
 
   useEffect(() => {
     let cancelled = false;
-    if (showNetworkPortal(user)) {
+    if (openNetworkHome(user)) {
       window.location.replace(networkHome(lang));
       return;
     }
     officeCall("me", null)
       .then((me) => {
         if (cancelled) return;
-        if (showNetworkPortal(me)) {
+        if (openNetworkHome(me)) {
           window.location.replace(networkHome(lang));
           return;
         }

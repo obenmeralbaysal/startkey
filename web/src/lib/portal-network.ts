@@ -57,16 +57,61 @@ export function showNetworkPortal(payload: unknown): boolean {
   return readContext(payload) === "network" && networkRole(payload) !== null;
 }
 
+/**
+ * Franchise readers open the network screens. An explicit office context stays
+ * on the office portal. A franchise role without a context still does: the
+ * login payload sometimes carries the role before context is copied onto /me.
+ */
+export function openNetworkHome(payload: unknown): boolean {
+  if (readContext(payload) === "office") return false;
+  return networkRole(payload) !== null;
+}
+
 export function networkHome(lang: string | null | undefined): string {
   return networkHref("summary", { lang: networkLang(lang) });
 }
 
-export function sectionFromPath(pathname: string): NetworkSection | null {
-  const path = pathname.replace(/\/+$/, "");
-  if (path === "/portal/network") return "summary";
-  if (path === "/portal/network/offices") return "offices";
-  if (path === "/portal/network/consultants") return "consultants";
+export function sectionFromParts(parts: readonly string[]): NetworkSection | null {
+  if (parts.length === 0) return "summary";
+  if (parts.length !== 1) return null;
+  if (parts[0] === "summary") return "summary";
+  if (parts[0] === "offices") return "offices";
+  if (parts[0] === "consultants") return "consultants";
   return null;
+}
+
+export function sectionFromPath(pathname: string): NetworkSection | null {
+  const path = pathname.split("?")[0].replace(/\/+$/, "");
+  const at = path.indexOf("/portal/network");
+  if (at < 0) return null;
+  const rest = path.slice(at);
+  if (rest === "/portal/network" || rest === "/portal/network/summary") return "summary";
+  if (rest === "/portal/network/offices") return "offices";
+  if (rest === "/portal/network/consultants") return "consultants";
+  return null;
+}
+
+/** `/{tr|en|de}/portal/...` is the public catch-all and 404s. Send it to the portal route. */
+export function localePortalRedirect(pathname: string): string | null {
+  const match = pathname.match(/^\/(?:tr|en|de)(\/portal(?:\/.*)?)$/);
+  return match?.[1] ?? null;
+}
+
+const PORTAL_LIMIT_REQUESTS = "admin/portal-limit-requests";
+
+export function isPortalLimitRequest(path: string): boolean {
+  const clean = path.split("?")[0].replace(/^\/+/, "").replace(/\/+$/, "");
+  return clean === PORTAL_LIMIT_REQUESTS || clean.endsWith(`/${PORTAL_LIMIT_REQUESTS}`);
+}
+
+/** Franchise readers never load the super-admin limit queue. */
+export function skipPortalLimitRequests(viewer: unknown): boolean {
+  return openNetworkHome(viewer);
+}
+
+/** A 403 from that queue is an empty list, not a broken offices page. */
+export function emptyLimitPayload(status: number): { data: [] } | null {
+  return status === 403 ? { data: [] } : null;
 }
 
 export function networkHref(section: NetworkSection, query: NetworkQuery = {}): string {
@@ -79,7 +124,7 @@ export function networkHref(section: NetworkSection, query: NetworkQuery = {}): 
   if (query.page && query.page !== "1" && /^[1-9]\d*$/.test(query.page)) params.set("page", query.page);
   const qs = params.toString();
   const path = section === "summary"
-    ? "/portal/network"
+    ? "/portal/network/summary"
     : section === "offices"
       ? "/portal/network/offices"
       : "/portal/network/consultants";
@@ -272,12 +317,16 @@ function readContext(payload: unknown): string | null {
 }
 
 function readRole(payload: unknown): string | null {
+  let fallback: string | null = null;
   for (const record of records(payload)) {
     for (const key of ["role", "role_slug"] as const) {
-      if (typeof record[key] === "string") return record[key];
+      const value = record[key];
+      if (typeof value !== "string" || value === "") continue;
+      if (value === "franchise_admin" || value === "franchise_staff") return value;
+      if (fallback === null) fallback = value;
     }
   }
-  return null;
+  return fallback;
 }
 
 function records(payload: unknown): Array<Record<string, unknown>> {

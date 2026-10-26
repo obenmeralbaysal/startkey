@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { defaultLocale } from "@/lib/locales";
+import { localePortalRedirect } from "@/lib/portal-network";
 
 /**
  * The reference website serves the Turkish homepage at `/` as well as at `/tr`
@@ -42,6 +43,13 @@ function nextWithPathname(request: NextRequest) {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const portal = localePortalRedirect(pathname);
+  if (portal) {
+    const url = request.nextUrl.clone();
+    url.pathname = portal;
+    return NextResponse.redirect(url);
+  }
+
   const lookup = pathname.match(/^\/(tr|en|de)\/lookup\/([^/]+)$/i);
 
   if (lookup) {

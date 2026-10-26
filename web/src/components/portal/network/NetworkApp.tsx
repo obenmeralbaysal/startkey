@@ -22,7 +22,9 @@ import {
   networkUsesMock,
   networkWriteControls,
   officeConsultantsHref,
+  openNetworkHome,
   pageStatus,
+  sectionFromParts,
   sectionFromPath,
   showNetworkPortal,
   toConsultant,
@@ -41,12 +43,12 @@ type Gate = {
   role: NetworkRole;
 };
 
-export function NetworkApp() {
+export function NetworkApp({ parts }: { parts: string[] }) {
   const params = useSearchParams();
   const pathname = usePathname();
   const lang = networkLang(params.get("lang"));
   const copy = PORTAL_NETWORK_COPY[lang];
-  const active = sectionFromPath(pathname);
+  const active = sectionFromParts(parts) ?? sectionFromPath(pathname);
   const [gate, setGate] = useState<Gate>(() => networkUsesMock()
     ? { status: "ready", first: "Ada", last: "Yılmaz", role: "franchise_admin" }
     : { status: "loading", first: "", last: "", role: "franchise_staff" });
@@ -71,7 +73,7 @@ export function NetworkApp() {
       const body = (await session.json()) as { data?: { user?: unknown } };
       const user = body.data?.user ?? {};
       let payload: unknown = user;
-      if (!showNetworkPortal(user)) {
+      if (!openNetworkHome(user)) {
         try {
           payload = await officeCall("me", null);
         } catch {
@@ -79,7 +81,7 @@ export function NetworkApp() {
         }
       }
       if (cancelled) return;
-      if (!showNetworkPortal(payload) && !showNetworkPortal(user)) {
+      if (!openNetworkHome(payload) && !openNetworkHome(user)) {
         window.location.href = "/portal";
         return;
       }

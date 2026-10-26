@@ -1,3 +1,5 @@
+import { emptyLimitPayload, isPortalLimitRequest, skipPortalLimitRequests } from "@/lib/portal-network";
+
 import { watermarkActivationMessage } from "./watermark";
 
 export type OfficeRecord = Record<string, unknown>;
@@ -30,8 +32,11 @@ export function clearOfficeReads(): void {
 export async function officeCall(
   path: string,
   officeId: number | null,
-  init?: { method?: string; body?: unknown; form?: FormData },
+  init?: { method?: string; body?: unknown; form?: FormData; viewer?: unknown },
 ): Promise<OfficeRecord> {
+  if (isPortalLimitRequest(path) && skipPortalLimitRequests(init?.viewer)) {
+    return { data: [] };
+  }
   const method = (init?.method ?? "GET").toUpperCase();
   const cacheKey = `${officeId ?? 0}:${path}`;
   const cacheable = method === "GET" && CACHED_GET.test(path);
@@ -66,6 +71,9 @@ export async function officeCall(
   });
   const payload = (await response.json().catch(() => ({}))) as OfficeRecord;
   if (!response.ok) {
+    if (isPortalLimitRequest(path) && emptyLimitPayload(response.status)) {
+      return { data: [] };
+    }
     throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload), response.status);
   }
   if (cacheable) {

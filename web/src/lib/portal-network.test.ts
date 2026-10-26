@@ -10,14 +10,20 @@ import {
   mockOfficePage,
   mockSummary,
   NETWORK_MENU,
+  emptyLimitPayload,
+  isPortalLimitRequest,
+  localePortalRedirect,
   networkApiUrl,
   networkHref,
   networkRole,
   networkUsesMock,
   networkWriteControls,
   officeConsultantsHref,
+  openNetworkHome,
+  sectionFromParts,
   sectionFromPath,
   showNetworkPortal,
+  skipPortalLimitRequests,
   toConsultant,
   toOffice,
   toPage,
@@ -44,6 +50,60 @@ test("franchise network context skips office selection", () => {
   assert.equal(showNetworkPortal({ context: "office", role: "franchise_admin" }), false);
   assert.equal(showNetworkPortal({ role: "franchise_admin" }), false);
   assert.equal(showNetworkPortal({ user: { is_admin: true, role: "owner" } }), false);
+  assert.equal(openNetworkHome({ context: "network", role: "franchise_admin" }), true);
+  assert.equal(openNetworkHome({ role: "franchise_staff" }), true);
+  assert.equal(openNetworkHome({ context: "office", role: "franchise_admin" }), false);
+  assert.equal(openNetworkHome({ role: "owner" }), false);
+  assert.equal(openNetworkHome({ data: { role: "owner", user: { role: "franchise_admin", context: "network" } } }), true);
+});
+
+test("network pages resolve summary, offices and consultants", () => {
+  assert.equal(sectionFromParts([]), "summary");
+  assert.equal(sectionFromParts(["summary"]), "summary");
+  assert.equal(sectionFromParts(["offices"]), "offices");
+  assert.equal(sectionFromParts(["consultants"]), "consultants");
+  assert.equal(sectionFromParts(["settings"]), null);
+  assert.equal(sectionFromPath("/portal/network"), "summary");
+  assert.equal(sectionFromPath("/portal/network/summary"), "summary");
+  assert.equal(sectionFromPath("/portal/network/offices"), "offices");
+  assert.equal(sectionFromPath("/portal/network/consultants"), "consultants");
+  assert.equal(sectionFromPath("/tr/portal/network/consultants"), "consultants");
+  assert.equal(sectionFromPath("/portal/network/summary/"), "summary");
+  assert.equal(networkHref("summary", { lang: "tr" }), "/portal/network/summary");
+  assert.equal(networkHref("offices"), "/portal/network/offices");
+  assert.equal(networkHref("consultants"), "/portal/network/consultants");
+  assert.equal(localePortalRedirect("/tr/portal/network/summary"), "/portal/network/summary");
+  assert.equal(localePortalRedirect("/en/portal/network/consultants"), "/portal/network/consultants");
+  assert.equal(localePortalRedirect("/de/portal"), "/portal");
+  assert.equal(localePortalRedirect("/tr/franchise-basvuru"), null);
+  assert.deepEqual(
+    ["franchise_admin", "franchise_staff"].map((role) => ({
+      role,
+      nav: ["summary", "offices", "consultants"],
+      writes: networkWriteControls(),
+    })),
+    [
+      { role: "franchise_admin", nav: ["summary", "offices", "consultants"], writes: [] },
+      { role: "franchise_staff", nav: ["summary", "offices", "consultants"], writes: [] },
+    ],
+  );
+});
+
+test("franchise roles do not call the super-admin limit queue", () => {
+  const viewer = { context: "network", role: "franchise_admin" };
+  assert.equal(skipPortalLimitRequests(viewer), true);
+  assert.equal(skipPortalLimitRequests({ context: "network", role: "franchise_staff" }), true);
+  assert.equal(skipPortalLimitRequests({ context: "office", role: "owner" }), false);
+  assert.equal(isPortalLimitRequest("admin/portal-limit-requests"), true);
+  assert.equal(isPortalLimitRequest("/api/v1/portal/office/admin/portal-limit-requests"), true);
+  assert.equal(isPortalLimitRequest("admin/network/offices"), false);
+  assert.equal(isPortalLimitRequest("admin/portal-limit-requests?page=1"), true);
+  assert.equal(networkApiUrl("offices").includes("portal-limit-requests"), false);
+  assert.equal(networkApiUrl("summary").includes("portal-limit-requests"), false);
+  assert.equal(networkApiUrl("consultants").includes("portal-limit-requests"), false);
+  assert.deepEqual(emptyLimitPayload(403), { data: [] });
+  assert.equal(emptyLimitPayload(404), null);
+  assert.equal(emptyLimitPayload(200), null);
 });
 
 test("opening an office filters consultants by office_id", () => {
@@ -53,6 +113,7 @@ test("opening an office filters consultants by office_id", () => {
     "/portal/network/consultants?lang=en&q=ada&office_id=4&page=2",
   );
   assert.equal(sectionFromPath("/portal/network/offices"), "offices");
+  assert.equal(sectionFromPath("/portal/network/summary"), "summary");
   assert.equal(sectionFromPath("/portal/network/settings"), null);
   assert.equal(networkApiUrl("consultants", { page: "2", q: "ada", office_id: "4" }), "/api/v1/portal/network/consultants?page=2&q=ada&office_id=4");
   assert.equal(networkApiUrl("summary"), "/api/v1/portal/network/summary");
