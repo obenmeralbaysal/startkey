@@ -8,6 +8,7 @@ import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
 import { OfficeMap } from "@/components/home/OfficeMap";
 import type { CorporatePayload } from "@/lib/corporate";
+import { mapPinPosition } from "@/lib/map-coordinates";
 
 type OfficeDetailData = Extract<CorporatePayload, { kind: "office-detail" }>;
 
@@ -22,7 +23,13 @@ const SOCIAL_ICONS: Record<string, string> = {
 };
 
 export function OfficeDetail({ data }: { data: OfficeDetailData }) {
-  const pin = data.pin && Number.isFinite(data.pin.latitude) && Number.isFinite(data.pin.longitude) ? data.pin : null;
+  const pin = useMemo(() => {
+    if (!data.pin) {
+      return null;
+    }
+    const position = mapPinPosition(data.pin.latitude, data.pin.longitude);
+    return position ? { ...data.pin, latitude: position.latitude, longitude: position.longitude } : null;
+  }, [data.pin]);
   const pins = useMemo(() => (pin ? [pin] : []), [pin]);
   const socialLinks = data.social?.length ? data.social : data.instagram ? [{ network: "instagram", href: data.instagram }] : [];
   const tabs = pin ? data.tabs : data.tabs.filter((tab) => tab.id !== "tab_3");
