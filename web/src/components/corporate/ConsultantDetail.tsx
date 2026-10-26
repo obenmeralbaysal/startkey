@@ -6,6 +6,7 @@ import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
 import { RankBadges } from "@/components/corporate/RankBadges";
+import { rankBadgesOf } from "@/content/rank-badges";
 import { CaptchaNotice } from "@/components/forms/CaptchaNotice";
 import { publicFormStatus } from "@/content/public-form-status";
 import type { CorporatePayload } from "@/lib/corporate";
@@ -35,7 +36,7 @@ export function ConsultantDetail({ data, locale }: { data: ConsultantDetailData;
               <div className="sk-agent-name">
                 <h2>{data.name}</h2>
                 {data.role ? <span>{data.role}</span> : null}
-                <RankBadges badges={data.rankBadges} locale={locale} variant="detail" />
+                <RankBadges badges={rankBadgesOf(data)} locale={locale} variant="detail" />
               </div>
               <ul className="sk-agent-info">
                 {data.email ? (

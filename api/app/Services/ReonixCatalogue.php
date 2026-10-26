@@ -138,6 +138,7 @@ class ReonixCatalogue
 
         $consultants = is_array($body['consultants'] ?? null) ? $body['consultants'] : [];
         $portfolios = is_array($body['portfolios'] ?? null) ? $body['portfolios'] : [];
+        $office = $this->mergeRankBadgeSources($office, $body);
         $card = $this->officeCard($office, $locale);
         $name = $card['name'];
         $address = (string) ($office['address'] ?? '');
@@ -900,6 +901,66 @@ class ReonixCatalogue
     }
 
     /**
+     * Office detail may put the table `office_rank_badges` beside the office row.
+     *
+     * @param  array<string, mixed>  $row
+     * @param  array<string, mixed>|null  $envelope
+     * @return array<string, mixed>
+     */
+    private function mergeRankBadgeSources(array $row, ?array $envelope = null): array
+    {
+        if ($this->rawRankBadges($row) !== []) {
+            return $row;
+        }
+        if ($envelope === null) {
+            return $row;
+        }
+        $extra = $this->rawRankBadges($envelope);
+        if ($extra !== []) {
+            $row['office_rank_badges'] = $extra;
+        }
+
+        return $row;
+    }
+
+    /**
+     * First non-empty list. An empty `rankBadges` must not hide `office_rank_badges`.
+     *
+     * @param  array<string, mixed>  $row
+     * @return list<mixed>
+     */
+    private function rawRankBadges(array $row): array
+    {
+        $found = [];
+        foreach (['office_rank_badges', 'officeRankBadges', 'rankBadges', 'rank_badges'] as $key) {
+            $value = $this->badgeList($row[$key] ?? null);
+            if ($value === null) {
+                continue;
+            }
+            if ($value !== []) {
+                return $value;
+            }
+            $found = $value;
+        }
+
+        return $found;
+    }
+
+    /** @return list<mixed>|null */
+    private function badgeList(mixed $value): ?array
+    {
+        if (is_string($value) && trim($value) !== '') {
+            $decoded = json_decode($value, true);
+            $value = is_array($decoded) ? $decoded : null;
+        }
+        if (! is_array($value)) {
+            return null;
+        }
+
+        return array_values($value);
+    }
+
+    /**
      * Ciro / işlem / club icons from the portal catalogue. Year descending, ciro before işlem.
      *
      * @param  array<string, mixed>  $row
@@ -907,19 +968,31 @@ class ReonixCatalogue
      */
     private function rankBadges(array $row): array
     {
-        $raw = $row['rankBadges'] ?? $row['rank_badges'] ?? [];
+        $raw = $this->rawRankBadges($row);
         $out = [];
-        foreach (is_array($raw) ? $raw : [] as $badge) {
+        foreach ($raw as $badge) {
             if (! is_array($badge)) {
                 continue;
             }
-            $category = (string) ($badge['category'] ?? '');
-            if (! in_array($category, ['ciro', 'islem', 'club'], true)) {
+            $category = mb_strtolower(trim((string) ($badge['category'] ?? '')));
+            $category = match ($category) {
+                'ciro' => 'ciro',
+                'islem', 'işlem' => 'islem',
+                'club' => 'club',
+                default => '',
+            };
+            if ($category === '') {
                 continue;
             }
             $label = trim((string) ($badge['label'] ?? ''));
-            $image = trim((string) ($badge['imageUrl'] ?? $badge['image_url'] ?? ''));
-            if ($label === '' || ! preg_match('#^https://#i', $image)) {
+            $image = trim((string) ($badge['imageUrl'] ?? $badge['image_url'] ?? $badge['url'] ?? $badge['src'] ?? ''));
+            if ($label === '' || $image === '') {
+                continue;
+            }
+            if (! preg_match('#^https?://#i', $image) && ! str_starts_with($image, '/')) {
+                $image = MediaPath::absolute($image, 'club');
+            }
+            if ($image === '' || preg_match('#^(javascript|data):#i', $image)) {
                 continue;
             }
             $year = $badge['year'] ?? null;
