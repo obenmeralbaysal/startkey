@@ -851,6 +851,20 @@
   border-radius: 12px;
 }
 
+.portfolio-media {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.portfolio-media img {
+  width: 96px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
 .glass-value {
   word-break: break-word;
 }

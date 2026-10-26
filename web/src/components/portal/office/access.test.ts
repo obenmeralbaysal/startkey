@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { integrationLinks, SETTINGS_DENIED, settingsHttpDecision, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
+import { canEditPortfolio, integrationLinks, SETTINGS_DENIED, settingsHttpDecision, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
 
 const office = (role: string, branchId: number | null = null): OfficeMembership => ({
   id: 7,
   role_slug: role,
   branch_id: branchId,
+});
+
+test("portfolio edit is hidden when the role or status cannot update", () => {
+  assert.equal(canEditPortfolio("owner", "prospect"), true);
+  assert.equal(canEditPortfolio("agent", "active"), true);
+  assert.equal(canEditPortfolio("office_manager", "draft"), true);
+  assert.equal(canEditPortfolio("agent", "closed"), false);
+  assert.equal(canEditPortfolio("owner", "pending_closing_approval"), false);
+  assert.equal(canEditPortfolio("viewer", "prospect"), false);
 });
 
 test("settings the role cannot open show the denied state", () => {

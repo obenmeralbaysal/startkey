@@ -36,6 +36,14 @@ export function canDeleteRecords(role: OfficeRole): boolean {
   return role === "owner" || role === "manager" || role === "office_manager";
 }
 
+const PORTFOLIO_EDIT_ROLES = new Set(["owner", "manager", "office_manager", "agent"]);
+
+/** Closed and closing-approval records cannot be updated. Other office roles can; the API still checks ownership. */
+export function canEditPortfolio(role: OfficeRole, status: string): boolean {
+  if (status === "closed" || status === "pending_closing_approval") return false;
+  return PORTFOLIO_EDIT_ROLES.has(role);
+}
+
 export function canManageTeam(role: OfficeRole): boolean {
   return isManager(role);
 }

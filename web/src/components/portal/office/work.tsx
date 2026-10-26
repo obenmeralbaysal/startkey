@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 import {
   canApproveEarnings,
   canDeleteRecords,
   canDeleteTeam,
+  canEditPortfolio,
   canManageRates,
   canVerify,
   integrationLinks,
@@ -17,7 +18,7 @@ import {
 } from "@/components/portal/office/access";
 import { OfficeError, officeCall, one, rows, text, type OfficeRecord } from "@/components/portal/office/api";
 import { OfficeDashboard } from "@/components/portal/office/dashboard";
-import { ConfirmButton, PasswordInput, RecordTable, RecordView, useOffice } from "@/components/portal/office/ui";
+import { ConfirmButton, PasswordInput, RecordTable, RecordView, Skeleton, useOffice } from "@/components/portal/office/ui";
 import { Icon } from "@/components/portal/shell";
 import {
   classifySahibindenImportFailure,
@@ -27,12 +28,19 @@ import {
   type PortfolioImportDraft,
   type SahibindenImportError,
 } from "@/lib/sahibinden-listing";
+import { portfolioEditChanges, portfolioScreen, portfolioSummary } from "@/lib/portal-portfolio-view";
 
 export function OfficeWork({ parts }: { parts: string[] }) {
   const [head, id] = parts;
   if (!head) return <OfficeDashboard />;
   if (head === "contacts") return id === "new" ? <ContactForm /> : id ? <ContactDetail id={id} /> : <ContactList />;
-  if (head === "portfolios") return id === "new" ? <PortfolioNew step={parts[2]} /> : id ? <PortfolioDetail id={id} /> : <PortfolioList />;
+  if (head === "portfolios") {
+    const screen = portfolioScreen(id, parts[2]);
+    if (screen === "new") return <PortfolioNew step={parts[2]} />;
+    if (screen === "edit" && id) return <PortfolioEdit id={id} />;
+    if (screen === "detail" && id) return <PortfolioDetail id={id} />;
+    return <PortfolioList />;
+  }
   if (head === "demands") return id === "new" ? <DemandForm /> : id ? <DemandDetail id={id} /> : <DemandList />;
   if (head === "matches") return <SimpleList title="Eşleşmeler" path="matches" />;
   if (head === "calendar") return <Calendar />;
@@ -723,6 +731,8 @@ function PortfolioCompletion({ id, portfolio, onSaved }: { id: string; portfolio
 function PortfolioDetail({ id }: { id: string }) {
   const { officeId, office, notice } = useOffice();
   const item = useData(`portfolios/${id}`);
+  const portfolio = one(item.data);
+  const summary = portfolioSummary(portfolio);
   const role = roleOf(office);
   async function act(path: string, body?: unknown) {
     try {
@@ -735,9 +745,33 @@ function PortfolioDetail({ id }: { id: string }) {
   }
   return (
     <section className="glass-card">
-      <h2>Portföy</h2>
-      <RecordView value={item.data} />
-      <PortfolioCompletion id={id} portfolio={one(item.data)} onSaved={() => item.reload()} />
+      <h2>{summary.title || "Portföy"}</h2>
+      {item.data === undefined ? <Skeleton /> : (
+        <>
+          {summary.facts.length > 0 ? (
+            <dl className="glass-dl">
+              {summary.facts.map((fact) => (
+                <div key={fact.label}>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+          {summary.description ? <p className="glass-muted">{summary.description}</p> : null}
+          {summary.media.length > 0 ? (
+            <div className="portfolio-media">
+              {summary.media.map((src) => <img key={src} alt="" src={src} />)}
+            </div>
+          ) : null}
+        </>
+      )}
+      {portfolio && canEditPortfolio(role, String(portfolio.status ?? "")) ? (
+        <div className="glass-actions">
+          <Link className="glass-btn-lite" href={`/portal/office/portfolios/${id}/edit`}>Düzenle</Link>
+        </div>
+      ) : null}
+      <PortfolioCompletion id={id} portfolio={portfolio} onSaved={() => item.reload()} />
       <div className="glass-actions">
         {canVerify(office) ? <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/approve`)}>Onayla</button> : null}
         <button className="glass-btn-lite" type="button" onClick={() => act(`portfolios/${id}/generate-showcase-link`)}>Vitrin bağlantısı</button>
@@ -765,7 +799,58 @@ function PortfolioDetail({ id }: { id: string }) {
           <textarea name="rejection_reason" minLength={5} placeholder="Gerekçe" required />
         </Form>
       ) : null}
-      <ClosingForm id={id} portfolio={one(item.data)} onDone={() => item.reload()} />
+      <ClosingForm id={id} portfolio={portfolio} onDone={() => item.reload()} />
+    </section>
+  );
+}
+
+function PortfolioEdit({ id }: { id: string }) {
+  const { officeId, notice } = useOffice();
+  const item = useData(`portfolios/${id}`);
+  const portfolio = one(item.data);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [currency, setCurrency] = useState("");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!portfolio || ready) return;
+    setTitle(typeof portfolio.title === "string" ? portfolio.title : "");
+    setDescription(portfolio.description == null ? "" : String(portfolio.description));
+    setPrice(portfolio.price == null ? "" : String(portfolio.price));
+    setCurrency(portfolio.currency == null ? "" : String(portfolio.currency));
+    setReady(true);
+  }, [portfolio, ready]);
+
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!portfolio) return;
+    const body = portfolioEditChanges(portfolio, { title, description, price, currency });
+    try {
+      if (Object.keys(body).length > 0) {
+        await officeCall(`portfolios/${id}`, officeId, { method: "PUT", body });
+        notice("Kaydedildi.");
+      }
+      window.location.href = `/portal/office/portfolios/${id}`;
+    } catch (error) {
+      notice(`Hata: ${error instanceof Error ? error.message : "İşlem tamamlanamadı."}`);
+    }
+  }
+
+  return (
+    <section className="glass-card">
+      <h2>Portföyü düzenle</h2>
+      <Link className="glass-link" href={`/portal/office/portfolios/${id}`}>Geri</Link>
+      {item.data === undefined || !ready ? <Skeleton /> : (
+        <form className="glass-form" onSubmit={save}>
+          <input name="title" placeholder="Başlık" maxLength={300} value={title} onChange={(event) => setTitle(event.target.value)} required />
+          <textarea name="description" placeholder="Açıklama" value={description} onChange={(event) => setDescription(event.target.value)} />
+          <input name="price" inputMode="decimal" placeholder="Fiyat" value={price} onChange={(event) => setPrice(event.target.value)} required />
+          <input name="currency" placeholder="Para birimi" maxLength={5} value={currency} onChange={(event) => setCurrency(event.target.value)} />
+          <button className="glass-btn" type="submit">Kaydet</button>
+        </form>
+      )}
     </section>
   );
 }
