@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Security]**: Portal vekili F1 okumalarını iletir. Danışman `dashboard/stats` ve `dashboard/pending-approvals` için 403 alır; `dashboard/agent-stats` her üyeye açıktır. Ofis ayarı yazması yalnız sahip ve ofis yöneticisindedir; logo ve renk alanları vekilde düşer. Hakediş, kapanış raporu ve işbirliği sorguları (`from`, `to`, `result`, `status`, `source`, `direction`) geçer. Ofis ayarı okuması 15 saniye tutulur ve yazınca düşer. Pano önbelleği oturum ve ofise bağlıdır; hakediş önbelleğe alınmaz. #2182
 - 662-1: Ana sayfa franchise linkleri mutlak /tr/franchise-basvuru yapıldı (göreli tr/... alt sayfalarda 404 veriyordu).
 - **[Backend]**: Ofis ciro, işlem ve kulüp rozetleri (`rankBadges`) ofis kartında, ofis listesinde ve ofis detayında görünür. Katalog içe aktarması her ofis ve danışman için `rankBadges` gönderir; boş liste kayıtlı rozetleri siler. Tam ofis ve danışman taraması gecelik çalışır. #2178
 - **[Backend]**: Franchise yöneticisi ve franchise personeli mevcut portal girişi ile ağı salt okunur görür. Ofis seçimi bu roller için gerekmez; `/me` `context: network` ve `role` döner. Ağ özeti, ofis ve danışman listeleri Reonix’ten gelir. Bu rollerin portal yazma istekleri 403 olur. #2182
