@@ -107,9 +107,8 @@ export const PORTAL_LOGIN_COPY: Record<PortalLoginLang, PortalLoginCopy> = {
   },
 };
 
-/** Same pattern the reference login form uses for client validation. */
-export const PORTAL_EMAIL_PATTERN =
-  /^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,5}|[0-9]{1,3})(\]?)$/;
+/** local@domain.tld. No TLD allowlist, so reserved suffixes such as .invalid pass. */
+export const PORTAL_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function isPortalLoginLang(value: string | undefined): value is PortalLoginLang {
   return value !== undefined && (PORTAL_LOGIN_LANGS as readonly string[]).includes(value);
