@@ -310,10 +310,6 @@ class OfficeProxyTest extends TestCase
         return [
             'agent commission' => ['agent', null, 'get', '/api/v1/portal/office/commission-policy'],
             'agent rates' => ['agent', null, 'get', '/api/v1/portal/office/earning-rates'],
-            'agent badges read' => ['agent', null, 'get', '/api/v1/portal/office/badges'],
-            'agent whatsapp read' => ['agent', null, 'get', '/api/v1/portal/office/whatsapp/accounts'],
-            'agent duty read' => ['agent', null, 'get', '/api/v1/portal/office/duty-roster'],
-            'agent office read' => ['agent', null, 'get', '/api/v1/portal/office/offices/7'],
             'agent duty write' => ['agent', null, 'put', '/api/v1/portal/office/duty-roster'],
             'agent team' => ['agent', null, 'get', '/api/v1/portal/office/team'],
             'agent email' => ['agent', null, 'put', '/api/v1/portal/office/office/imap-settings'],
@@ -322,10 +318,8 @@ class OfficeProxyTest extends TestCase
             'manager commission' => ['office_manager', null, 'get', '/api/v1/portal/office/commission-policy'],
             'manager rates' => ['office_manager', null, 'get', '/api/v1/portal/office/earning-rates'],
             'manager badges' => ['office_manager', null, 'post', '/api/v1/portal/office/badges'],
-            'manager badges read' => ['office_manager', null, 'get', '/api/v1/portal/office/badges'],
             'branched matchmaking' => ['office_manager', 4, 'post', '/api/v1/portal/office/office/matchmaking-weights'],
             'branched office' => ['office_manager', 4, 'put', '/api/v1/portal/office/offices/7'],
-            'branched office read' => ['office_manager', 4, 'get', '/api/v1/portal/office/offices/7'],
         ];
     }
 

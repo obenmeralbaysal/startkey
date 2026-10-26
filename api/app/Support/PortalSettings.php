@@ -41,13 +41,15 @@ final class PortalSettings
 
     private static function need(string $method, string $path): ?string
     {
+        $write = in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+
         if ($path === 'commission-policy' || str_starts_with($path, 'commission-policy/')) {
             return 'owner';
         }
         if ($path === 'earning-rates' || str_starts_with($path, 'earning-rates/')) {
             return 'owner';
         }
-        if ($path === 'badges' || str_starts_with($path, 'badges/')) {
+        if ($write && ($path === 'badges' || str_starts_with($path, 'badges/'))) {
             return 'owner';
         }
         if ($path === 'office/matchmaking-weights' || str_starts_with($path, 'office-settings/')) {
@@ -65,13 +67,13 @@ final class PortalSettings
         if (preg_match('#^offices/\d+/sahibinden-sellers(?:/|$)#', $path) === 1) {
             return 'manager';
         }
-        if (preg_match('#^offices/\d+$#', $path) === 1) {
+        if ($write && preg_match('#^offices/\d+$#', $path) === 1) {
             return 'office-wide';
         }
-        if ($path === 'duty-roster') {
+        if ($write && $path === 'duty-roster') {
             return 'manager';
         }
-        if (str_starts_with($path, 'whatsapp/')) {
+        if ($write && str_starts_with($path, 'whatsapp/')) {
             return 'manager';
         }
 
