@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\MediaPath;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -490,7 +491,7 @@ class ReonixCatalogue
     /**
      * Homepage map pins. Offices without a numeric latitude and longitude are skipped.
      *
-     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float}>
+     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float, locationNeedsReview: bool}>
      */
     public function mapOffices(string $locale): array
     {
@@ -516,6 +517,7 @@ class ReonixCatalogue
                 'urlPath' => (string) $card['urlPath'],
                 'latitude' => $latitude,
                 'longitude' => $longitude,
+                'locationNeedsReview' => $this->locationNeedsReview($row),
             ];
         }
 
@@ -524,6 +526,14 @@ class ReonixCatalogue
         }
 
         return $pins;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function locationNeedsReview(array $row): bool
+    {
+        $value = $row['location_needs_review'] ?? $row['locationNeedsReview'] ?? false;
+
+        return $value === true || $value === 1 || $value === '1' || $value === 'true';
     }
 
     private function coordinate(mixed $value): ?float
@@ -623,11 +633,33 @@ class ReonixCatalogue
         $count = array_key_exists('image_count', $row)
             ? (int) $row['image_count']
             : (! empty($row['has_image']) ? 1 : 0);
-        if ($id < 1 || $count < 1) {
-            return '/img/catalogue-mark.svg';
+        if ($id > 0 && $count > 0) {
+            return '/api/v1/catalogue/media/'.$kind.'/'.$id;
         }
 
-        return '/api/v1/catalogue/media/'.$kind.'/'.$id;
+        $raw = $this->rowImage($row);
+        if ($raw !== '') {
+            return MediaPath::absolute($raw, match ($kind) {
+                'offices' => 'officelogo',
+                'consultants' => 'user',
+                default => 'property',
+            });
+        }
+
+        return '/img/catalogue-mark.svg';
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function rowImage(array $row): string
+    {
+        foreach (['image', 'image_url', 'logo', 'avatar', 'avatar_path', 'photo', 'cover', 'thumbnail'] as $key) {
+            $value = $row[$key] ?? null;
+            if (is_string($value) && trim($value) !== '') {
+                return trim($value);
+            }
+        }
+
+        return '';
     }
 
     /**

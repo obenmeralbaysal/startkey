@@ -12,6 +12,7 @@ import { ThemeStyles } from "@/components/layout/ThemeStyles";
 import "@/styles/globals.css";
 import "@/styles/subpages.css";
 import { getHomepageContent } from "@/content/homepage";
+import { fetchUpcomingSeminarCount } from "@/lib/api";
 import { isLocale, locales, type Locale } from "@/lib/locales";
 
 export function generateStaticParams() {
@@ -74,6 +75,10 @@ export default async function LocaleLayout({
   }
   const locale = lang as Locale;
   const content = getHomepageContent(locale);
+  content.seminarBar = {
+    ...content.seminarBar,
+    count: await fetchUpcomingSeminarCount(locale),
+  };
 
   return (
     <html lang={content.htmlLang}>

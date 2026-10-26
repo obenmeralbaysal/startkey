@@ -1049,6 +1049,47 @@ article ol li {
     font-size: calc(24px * var(--sk-scale, 1));
     line-height: 1.3;
   }
+
+  /* Franchise rows are stored as utilities. On the reference those rows are
+     .content-title / .hw-img, and the pasted chat classes do nothing. */
+  .cms .widget-item > .relative {
+    margin: 0;
+  }
+
+  .cms .widget-item h2 {
+    margin-bottom: 0;
+  }
+
+  .cms .widget-item p {
+    margin: calc(12px * var(--sk-scale, 1)) 0 0;
+  }
+
+  .cms .widget-item img {
+    display: block;
+  }
+
+  .cms .gizmo-bot-avatar,
+  .cms .gizmo-bot-avatar * {
+    display: block;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  .cms .text-message,
+  .cms [class*="conversation-turn"],
+  .cms [class*="conversation-turn"] div {
+    display: block;
+    gap: 0;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-width: 100%;
+    overflow: visible;
+    white-space: normal;
+  }
 }
 
 .cms .mt-40 {

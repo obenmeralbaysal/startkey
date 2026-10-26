@@ -247,6 +247,40 @@ class ReonixCatalogueTest extends TestCase
         $this->assertDatabaseCount('listing_inquiries', 0);
     }
 
+    public function test_a_bare_listing_filename_becomes_a_media_path(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios' => Http::response(['data' => [[
+                'id' => 9,
+                'title' => 'Moda daire',
+                'type' => 'sale',
+                'image' => '0a161bef-78c7-4a9f-8659-180c1f7e0840.jpg',
+                'image_count' => 0,
+            ], [
+                'id' => 10,
+                'title' => 'Fotoğraflı',
+                'type' => 'sale',
+                'image' => 'ignored.jpg',
+                'image_count' => 2,
+            ]]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [[
+                'id' => 174,
+                'name' => 'A Plus',
+                'logo' => 'a-plus.png',
+                'has_image' => false,
+            ]]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.image', '/media/property/0a161bef-78c7-4a9f-8659-180c1f7e0840.jpg')
+            ->assertJsonPath('data.items.1.image', '/api/v1/catalogue/media/portfolios/10');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/ofisler')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.image', '/media/officelogo/a-plus.png');
+    }
+
     public function test_a_catalogue_photo_is_served_from_this_site(): void
     {
         Http::fake([

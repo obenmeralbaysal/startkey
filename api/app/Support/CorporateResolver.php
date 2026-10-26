@@ -211,6 +211,7 @@ class CorporateResolver
         return null;
     }
 
+
     private function peopleList(string $locale, string $path): ?array
     {
         if (! $this->pathMatches($path, config('site.corporate.people.lists.'.$locale, []))) {
@@ -238,8 +239,8 @@ class CorporateResolver
                     'email' => $person->email,
                     'phoneHref' => $person->phone_href,
                     'phoneLabel' => $translation?->phone_label ?? '',
-                    'image' => $person->image,
-                    'imageWebp' => $person->image_webp,
+                    'image' => $this->publicImage($person->image, 'content'),
+                    'imageWebp' => $this->publicImage($person->image_webp, 'content'),
                 ];
             })
             ->all();
@@ -306,14 +307,15 @@ class CorporateResolver
             'phoneFieldLabel' => $translation->phone_field_label,
             'bioHeading' => $translation->bio_heading,
             'bioHtml' => $translation->bio_html ?? '',
-            'image' => $person->detail_image !== '' ? $person->detail_image : $person->image,
-            'imageWebp' => $person->detail_image_webp !== '' ? $person->detail_image_webp : $person->image_webp,
+            'image' => $this->publicImage($person->detail_image !== '' ? $person->detail_image : $person->image, 'content'),
+            'imageWebp' => $this->publicImage($person->detail_image_webp !== '' ? $person->detail_image_webp : $person->image_webp, 'content'),
             'social' => $person->social ?? [],
             'breadcrumb' => $translation->breadcrumb ?? ['heading' => $translation->name, 'trail' => []],
             'meta' => $translation->meta ?? [],
             'alternates' => $this->personAlternates($person->id),
         ];
     }
+
 
     private function pageAlternates(int $pageId): array
     {
@@ -329,6 +331,28 @@ class CorporateResolver
             ->where('cms_person_id', $personId)
             ->pluck('url_path', 'locale')
             ->all();
+    }
+
+    /**
+     * Items in the first section of the training list. That section is the upcoming
+     * seminars block ("Devam Eden Eğitimler" on the Turkish page).
+     */
+    public function upcomingSeminarCount(string $locale): int
+    {
+        $paths = config('site.corporate.trainings.lists.'.$locale, []);
+        $path = is_array($paths) ? (string) ($paths[0] ?? '') : '';
+        if ($path === '') {
+            return 0;
+        }
+
+        $resolved = app(ReonixContent::class)->resolve($locale, $path, 1, '');
+        $payload = $resolved['payload'] ?? null;
+        if (! is_array($payload)) {
+            return 0;
+        }
+        $items = $payload['sections'][0]['items'] ?? null;
+
+        return is_array($items) ? count($items) : 0;
     }
 
     private function listingByPath(string $locale, string $path): ?array
@@ -575,8 +599,8 @@ class CorporateResolver
         return [
             'externalId' => $listing->external_id,
             'urlPath' => $card['urlPath'] ?? $translation->url_path,
-            'image' => $card['image'] ?? '',
-            'imageWebp' => $card['imageWebp'] ?? '',
+            'image' => $this->publicImage($card['image'] ?? '', 'property'),
+            'imageWebp' => $this->publicImage($card['imageWebp'] ?? '', 'property'),
             'processType' => $card['processType'] ?? '',
             'adSubType' => $card['adSubType'] ?? '',
             'adTypeIcon' => $card['adTypeIcon'] ?? '',
@@ -1751,8 +1775,8 @@ class CorporateResolver
             'urlPath' => $translation->url_path !== '' ? $translation->url_path : $canonical,
             'shortPath' => $translation->short_path,
             'name' => $translation->name,
-            'image' => $detail['image'] ?? ($card['image'] ?? ''),
-            'imageWebp' => $detail['imageWebp'] ?? ($card['imageWebp'] ?? ''),
+            'image' => $this->publicImage($detail['image'] ?? ($card['image'] ?? ''), 'officelogo'),
+            'imageWebp' => $this->publicImage($detail['imageWebp'] ?? ($card['imageWebp'] ?? ''), 'officelogo'),
             'phoneHref' => $detail['phoneHref'] ?? ($card['phoneHref'] ?? ''),
             'phoneLabel' => $detail['phoneLabel'] ?? ($card['phoneLabel'] ?? ''),
             'email' => $detail['email'] ?? ($card['email'] ?? ''),
@@ -1800,8 +1824,8 @@ class CorporateResolver
             'urlPath' => $translation->url_path,
             'name' => $translation->name,
             'role' => $translation->role,
-            'image' => $detail['image'] ?? ($card['image'] ?? ''),
-            'imageWebp' => $detail['imageWebp'] ?? ($card['imageWebp'] ?? ''),
+            'image' => $this->publicImage($detail['image'] ?? ($card['image'] ?? ''), 'user'),
+            'imageWebp' => $this->publicImage($detail['imageWebp'] ?? ($card['imageWebp'] ?? ''), 'user'),
             'email' => $detail['email'] ?? ($card['email'] ?? ''),
             'phoneHref' => $detail['phoneHref'] ?? ($card['phoneHref'] ?? ''),
             'phoneLabel' => $detail['phoneLabel'] ?? ($card['phoneLabel'] ?? ''),
@@ -1839,8 +1863,8 @@ class CorporateResolver
             'externalId' => $office->external_id,
             'urlPath' => $card['urlPath'] ?? $shortPath,
             'name' => $card['name'] ?? $translation->name,
-            'image' => $card['image'] ?? ($detail['image'] ?? ''),
-            'imageWebp' => $card['imageWebp'] ?? ($detail['imageWebp'] ?? ''),
+            'image' => $this->publicImage($card['image'] ?? ($detail['image'] ?? ''), 'officelogo'),
+            'imageWebp' => $this->publicImage($card['imageWebp'] ?? ($detail['imageWebp'] ?? ''), 'officelogo'),
             'phoneHref' => $card['phoneHref'] ?? ($detail['phoneHref'] ?? ''),
             'phoneLabel' => $card['phoneLabel'] ?? ($detail['phoneLabel'] ?? ''),
             'email' => $card['email'] ?? ($detail['email'] ?? ''),
@@ -1870,8 +1894,8 @@ class CorporateResolver
             'urlPath' => $href,
             'name' => $card['name'] ?? $translation->name,
             'role' => $card['role'] ?? $translation->role,
-            'image' => $card['image'] ?? '',
-            'imageWebp' => $card['imageWebp'] ?? '',
+            'image' => $this->publicImage($card['image'] ?? '', 'user'),
+            'imageWebp' => $this->publicImage($card['imageWebp'] ?? '', 'user'),
             'phoneHref' => $card['phoneHref'] ?? '',
             'phoneLabel' => $card['phoneLabel'] ?? '',
             'email' => $card['email'] ?? '',
@@ -2010,6 +2034,11 @@ class CorporateResolver
         }
 
         return null;
+    }
+
+    private function publicImage(mixed $value, string $directory): string
+    {
+        return MediaPath::absolute(is_string($value) ? $value : '', $directory);
     }
 
     private function escapeLike(string $value): string

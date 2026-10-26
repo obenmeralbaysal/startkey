@@ -101,6 +101,12 @@ class HomepageApiTest extends TestCase
             ], [
                 'id' => 8,
                 'name' => 'No coordinates',
+            ], [
+                'id' => 9,
+                'name' => 'Baytu',
+                'latitude' => '25.2',
+                'longitude' => '55.3',
+                'location_needs_review' => true,
             ]]]),
             'https://portal.test/api/v1/integrations/portal/catalogue/consultants' => Http::response(['data' => [[
                 'id' => 3,
@@ -119,14 +125,17 @@ class HomepageApiTest extends TestCase
             ->assertJsonPath('data.featuredProperties.0.area', '120 m²')
             ->assertJsonPath('data.featuredProperties.0.location', 'Konak / İzmir')
             ->assertJsonPath('data.featuredProperties.0.adSubType', 'Daire')
-            ->assertJsonCount(1, 'data.offices')
+            ->assertJsonCount(2, 'data.offices')
             ->assertJsonPath('data.offices.0.name', 'Kadikoy')
             ->assertJsonPath('data.offices.0.latitude', 41)
+            ->assertJsonPath('data.offices.0.locationNeedsReview', false)
+            ->assertJsonPath('data.offices.1.name', 'Baytu')
+            ->assertJsonPath('data.offices.1.locationNeedsReview', true)
             ->assertJsonCount(2, 'data.popularCities')
             ->assertJsonFragment([
                 'cityCode' => '100',
                 'name' => 'İzmir',
-                'image' => 'izmir.jpg',
+                'image' => '/media/micrositecontent/izmir.jpg',
                 'urlPath' => '/tr/portfoy?FilterDTO.CityId=100',
             ])
             ->assertJsonFragment([

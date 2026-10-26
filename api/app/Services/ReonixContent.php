@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Support\MediaPath;
+
 /**
  * Reads StartKey news, blog, announcements, trainings and champions from Reonix.
  * These page types have no local database fallback.
@@ -188,8 +190,8 @@ class ReonixContent
                 'title' => (string) ($locale['title'] ?? ''),
                 'dateLabel' => (string) ($document['date_label'] ?? ''),
                 'category' => (string) ($document['category'] ?? ''),
-                'image' => (string) (($document['list_image'] ?? '') !== '' ? $document['list_image'] : ($document['image'] ?? '')),
-                'imageWebp' => (string) (($document['list_image_webp'] ?? '') !== '' ? $document['list_image_webp'] : ($document['image_webp'] ?? '')),
+                'image' => $this->contentImage(($document['list_image'] ?? '') !== '' ? $document['list_image'] : ($document['image'] ?? '')),
+                'imageWebp' => $this->contentImage(($document['list_image_webp'] ?? '') !== '' ? $document['list_image_webp'] : ($document['image_webp'] ?? '')),
                 'width' => $document['list_width'] ?? null,
                 'height' => $document['list_height'] ?? null,
                 'imageAlt' => $spec['list_image_alt'] ?? '',
@@ -212,7 +214,19 @@ class ReonixContent
                 'searchPlaceholder' => $stored['searchPlaceholder'] ?? '',
                 'searchAction' => $stored['searchAction'] ?? (string) ($list['url_path'] ?? ''),
                 'popularHeading' => $stored['popularHeading'] ?? '',
-                'popular' => array_values($popular),
+                'popular' => array_map(function ($item) {
+                    if (! is_array($item)) {
+                        return $item;
+                    }
+                    if (array_key_exists('image', $item)) {
+                        $item['image'] = $this->contentImage($item['image']);
+                    }
+                    if (array_key_exists('imageWebp', $item)) {
+                        $item['imageWebp'] = $this->contentImage($item['imageWebp']);
+                    }
+
+                    return $item;
+                }, array_values($popular)),
             ];
             $searchBox = [
                 'action' => (string) ($list['url_path'] ?? ''),
@@ -269,8 +283,8 @@ class ReonixContent
             'dateLabel' => (string) ($document['date_label'] ?? ''),
             'category' => (string) ($document['category'] ?? ''),
             'bodyHtml' => (string) ($locale['body'] ?? ''),
-            'image' => (string) ($document['image'] ?? ''),
-            'imageWebp' => (string) ($document['image_webp'] ?? ''),
+            'image' => $this->contentImage($document['image'] ?? ''),
+            'imageWebp' => $this->contentImage($document['image_webp'] ?? ''),
             'shareLabel' => (string) ($document['share_label'] ?? ''),
             'breadcrumb' => $document['breadcrumb'] ?? ['heading' => $locale['title'] ?? '', 'trail' => []],
             'meta' => $document['meta'] ?? [],
@@ -308,7 +322,7 @@ class ReonixContent
                     'urlPath' => (string) (($document['card_url_path'] ?? '') !== '' ? $document['card_url_path'] : ($document['url_path'] ?? '')),
                     'detailUrlPath' => (string) (($document['url_path'] ?? '') !== '' ? $document['url_path'] : ($document['card_url_path'] ?? '')),
                     'title' => (string) ($locale['title'] ?? ''),
-                    'image' => (string) ($document['list_image'] ?? ''),
+                    'image' => $this->contentImage($document['list_image'] ?? ''),
                     'infoLines' => $document['info_lines'] ?? [],
                     'detailLabel' => (string) ($document['detail_label'] ?? ''),
                 ];
@@ -353,7 +367,7 @@ class ReonixContent
             'group' => $group,
             'urlPath' => (string) ($document['url_path'] ?? ''),
             'title' => (string) ($locale['title'] ?? ''),
-            'image' => (string) (($document['image'] ?? '') !== '' ? $document['image'] : ($document['list_image'] ?? '')),
+            'image' => $this->contentImage(($document['image'] ?? '') !== '' ? $document['image'] : ($document['list_image'] ?? '')),
             'datePrefix' => (string) ($document['date_prefix'] ?? ''),
             'dateValue' => (string) ($document['date_value'] ?? ''),
             'timePrefix' => (string) ($document['time_prefix'] ?? ''),
@@ -427,6 +441,11 @@ class ReonixContent
         } catch (ReonixException) {
             return null;
         }
+    }
+
+    private function contentImage(mixed $value): string
+    {
+        return MediaPath::absolute(is_string($value) ? $value : '', 'content');
     }
 
     private function idAfterPrefix(string $path, string $prefix): ?int
