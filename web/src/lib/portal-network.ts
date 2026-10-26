@@ -73,6 +73,9 @@ export function networkHome(lang: string | null | undefined): string {
 
 export const NETWORK_OFFICE_MISSING = "Ofis bulunamadı";
 
+/** Consultant filter whose `office_id` is outside the signed-in franchise network. */
+export const NETWORK_OFFICE_DENIED = "Ofis bulunamadı / erişim yok";
+
 /** `/portal/network/offices/{id}` — a franchise office detail id, or null. */
 export function networkOfficeId(parts: readonly string[]): number | null {
   if (parts.length !== 2 || parts[0] !== "offices") return null;

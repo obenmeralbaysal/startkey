@@ -36,7 +36,7 @@ class PortalNetworkController extends Controller
 
         $raw = $upstream->json();
         if (! $upstream->successful() || ! is_array($raw)) {
-            return response()->json(['message' => __('messages.portal.unavailable')], 422);
+            return $this->failedUpstream($upstream);
         }
 
         return response()->json([
@@ -100,7 +100,7 @@ class PortalNetworkController extends Controller
 
         $raw = $upstream->json();
         if (! $upstream->successful() || ! is_array($raw)) {
-            return response()->json(['message' => __('messages.portal.unavailable')], 422);
+            return $this->failedUpstream($upstream);
         }
 
         $rows = is_array($raw['data'] ?? null) ? $this->stripContact($raw['data']) : [];
@@ -116,6 +116,37 @@ class PortalNetworkController extends Controller
             'data' => $rows,
             'pagination' => $pagination,
         ]);
+    }
+
+    /**
+     * Reonix validation (`message` + `errors`) is shown in the portal.
+     * A transport or HTML failure stays the generic unavailable response.
+     */
+    private function failedUpstream(\Illuminate\Http\Client\Response $upstream): JsonResponse
+    {
+        $status = $upstream->status();
+        $raw = $upstream->json();
+        if (in_array($status, [403, 404, 422], true) && is_array($raw)) {
+            $body = [];
+            $message = $raw['message'] ?? null;
+            if (is_string($message)) {
+                $message = trim($message);
+                if ($message !== '') {
+                    $body['message'] = $message;
+                }
+            }
+            if (isset($raw['errors']) && is_array($raw['errors'])) {
+                $errors = PortalPayload::scrub($raw['errors']);
+                if (is_array($errors) && $errors !== []) {
+                    $body['errors'] = $errors;
+                }
+            }
+            if ($body !== []) {
+                return response()->json($body, $status);
+            }
+        }
+
+        return response()->json(['message' => __('messages.portal.unavailable')], 422);
     }
 
     private function stripContact(mixed $value): mixed

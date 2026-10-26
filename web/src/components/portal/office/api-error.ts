@@ -21,6 +21,56 @@ export function fieldErrors(payload: Payload): FieldErrors {
   return out;
 }
 
+const OFFICE_FALLBACK = "İşlem tamamlanamadı.";
+
+export type LoadFailure =
+  | { kind: "denied" }
+  | { kind: "error"; message: string };
+
+export type NetworkFailureView =
+  | { view: "denied"; title: string }
+  | { view: "error"; message: string };
+
+/** Laravel `{ message, errors }` text. A generic validation message yields to field text. */
+export function apiErrorMessage(payload: unknown, fallback: string): string {
+  if (!isRecord(payload)) return fallback;
+  const text = errorText(payload).trim();
+  if (text === "" || (text === OFFICE_FALLBACK && !statesOfficeFallback(payload))) return fallback;
+  return text;
+}
+
+/** 422, 403, or 404 whose validation errors name `office_id` (office outside the network). */
+export function officeAccessDenied(status: number, payload: unknown): boolean {
+  if (status !== 422 && status !== 403 && status !== 404) return false;
+  if (!isRecord(payload)) return false;
+  return Object.keys(fieldErrors(payload)).some((key) => key === "office_id" || key.endsWith(".office_id"));
+}
+
+export function loadFailure(status: number, payload: unknown, fallback: string): LoadFailure {
+  if (officeAccessDenied(status, payload)) return { kind: "denied" };
+  return { kind: "error", message: apiErrorMessage(payload, fallback) };
+}
+
+export class ApiLoadError extends Error {
+  readonly failure: LoadFailure;
+
+  constructor(failure: LoadFailure) {
+    super(failure.kind === "denied" ? "office_id" : failure.message);
+    this.name = "ApiLoadError";
+    this.failure = failure;
+  }
+}
+
+/** What the franchise network screens render after a failed list request. */
+export function networkFailureView(error: unknown, fallback: string, deniedTitle: string): NetworkFailureView {
+  if (error instanceof ApiLoadError) {
+    if (error.failure.kind === "denied") return { view: "denied", title: deniedTitle };
+    return { view: "error", message: error.failure.message || fallback };
+  }
+  const message = error instanceof Error ? error.message.trim() : "";
+  return { view: "error", message: message || fallback };
+}
+
 export function errorText(payload: Payload, labels: string[] = []): string {
   const message = typeof payload.message === "string" ? payload.message.trim() : "";
   const texts = validationTexts(payload);
@@ -70,6 +120,12 @@ function firstErrorText(value: unknown): string {
   }
   if (isRecord(value)) return firstErrorText(value.message ?? value.error);
   return "";
+}
+
+function statesOfficeFallback(payload: Payload): boolean {
+  const message = typeof payload.message === "string" ? payload.message.trim() : "";
+  const error = typeof payload.error === "string" ? payload.error.trim() : "";
+  return message === OFFICE_FALLBACK || error === OFFICE_FALLBACK;
 }
 
 function isRecord(value: unknown): value is Payload {

@@ -115,6 +115,60 @@ class PortalNetworkTest extends TestCase
             && $request->hasHeader('Authorization', 'Bearer secret-token'));
     }
 
+    #[DataProvider('officeDenials')]
+    public function test_consultant_office_validation_is_returned_with_its_status(int $status): void
+    {
+        $cookie = $this->login('franchise_admin');
+        Http::fake([
+            'http://reonix.test/api/v1/admin/network/consultants*' => Http::response([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'office_id' => ['Seçilen ofis ağda yok.'],
+                    'password' => ['gizli'],
+                ],
+            ], $status),
+        ]);
+
+        $response = $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->getJson('/api/v1/portal/network/consultants?office_id=999');
+
+        $response->assertStatus($status);
+        $response->assertJsonPath('message', 'The given data was invalid.');
+        $response->assertJsonPath('errors.office_id.0', 'Seçilen ofis ağda yok.');
+        $this->assertArrayNotHasKey('password', $response->json('errors'));
+    }
+
+    /**
+     * @return list<array{0: int}>
+     */
+    public static function officeDenials(): array
+    {
+        return [[422], [403], [404]];
+    }
+
+    public function test_network_field_errors_are_returned_and_a_bare_failure_stays_generic(): void
+    {
+        $cookie = $this->login('franchise_staff');
+        Http::fake([
+            'http://reonix.test/api/v1/admin/network/summary' => Http::response([
+                'message' => 'The given data was invalid.',
+                'errors' => ['q' => ['En fazla 80 karakter.']],
+            ], 422),
+            'http://reonix.test/api/v1/admin/network/offices*' => Http::response('upstream down', 500),
+        ]);
+
+        $call = $this->withCredentials()->withUnencryptedCookie($cookie->getName(), $cookie->getValue());
+
+        $call->getJson('/api/v1/portal/network/summary')
+            ->assertStatus(422)
+            ->assertJsonPath('errors.q.0', 'En fazla 80 karakter.');
+
+        $call->getJson('/api/v1/portal/network/offices')
+            ->assertStatus(422)
+            ->assertJsonPath('message', __('messages.portal.unavailable'));
+    }
+
     public function test_an_office_user_cannot_read_the_network(): void
     {
         $cookie = $this->login('owner');

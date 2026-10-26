@@ -13,6 +13,7 @@ import {
   emptyLimitPayload,
   isPortalLimitRequest,
   localePortalRedirect,
+  NETWORK_OFFICE_DENIED,
   NETWORK_OFFICE_MISSING,
   networkApiUrl,
   networkHref,
@@ -110,6 +111,7 @@ test("franchise roles do not call the super-admin limit queue", () => {
 
 test("a missing franchise office id is the office-not-found route", () => {
   assert.equal(NETWORK_OFFICE_MISSING, "Ofis bulunamadı");
+  assert.equal(NETWORK_OFFICE_DENIED, "Ofis bulunamadı / erişim yok");
   assert.equal(networkOfficeId(["offices", "999999"]), 999999);
   assert.equal(networkOfficeId(["offices"]), null);
   assert.equal(networkOfficeId(["offices", "0"]), null);

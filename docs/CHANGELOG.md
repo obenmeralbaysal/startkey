@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[Bugfix]**: Franchise ağ listesi Reonix 422 gövdesindeki `message` ve `errors` metnini gösterir. `office_id` hatası 422, 403 veya 404 ise danışman, ofis ve özet ekranı "Ofis bulunamadı / erişim yok" durumuna düşer. Bağlantı kopması genel "liste alınamadı" metninde kalır. #2182
 - **[Bugfix]**: Portal 422 yanıtında API mesajı ve alan doğrulama metni görünür. Formda aynı adlı alan varsa her alanın ilk hatası alanın yanında durur. `/portal/network/offices/{id}` "Ofis bulunamadı" sayfasını HTTP 404 ile açar. #2182
 - **[Bugfix]**: Harita en uzak seviyede dünyayı kadrajın tamamına yayar. `minZoom`, kap genişliğinden `getBoundsZoom` ile hesaplanır ve boyut değişince yenilenir; `maxBounds`, `maxBoundsViscosity` 1 ve `noWrap` her Leaflet haritasında durur. “Filigranlı görsel” rozeti beyaz yazı, koyu kontur ve `rgba(0,0,0,.65)` zeminle ilan kartında, ana sayfa şeridinde, galeri küçük resminde ve portalda okunur. #2185
 - **[Bugfix]**: Franchise ağ özeti `/portal/network` ve `/portal/network/summary` açılır; ofisler ve danışmanlar aynı salt okunur menüdedir. `/{tr|en|de}/portal/...` portala döner. Franchise rolleri `admin/portal-limit-requests` çağırmaz; 403 boş liste sayılır, ofis sayfası kırılmaz. #2182

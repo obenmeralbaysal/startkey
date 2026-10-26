@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { PORTAL_NETWORK_COPY } from "@/content/portal-network";
 import { officeCall } from "@/components/portal/office/api";
+import { ApiLoadError, loadFailure, networkFailureView } from "@/components/portal/office/api-error";
 import { EmptyState, Skeleton } from "@/components/portal/office/ui";
 import { AppShell, Icon, initials, type ShellLink } from "@/components/portal/shell";
 import {
@@ -32,6 +33,7 @@ import {
   toPage,
   toSummary,
   networkLang,
+  NETWORK_OFFICE_DENIED,
 } from "@/lib/portal-network";
 import type { Locale } from "@/lib/locales";
 import type { NetworkConsultant, NetworkOffice, NetworkPage, NetworkPagination, NetworkQuery, NetworkRole, NetworkSection, NetworkSummary } from "@/types/portal-network";
@@ -184,6 +186,7 @@ function SummaryScreen({ lang }: { lang: Locale }) {
   const copy = PORTAL_NETWORK_COPY[lang];
   const state = useNetwork("summary", {}, lang);
   if (state.kind === "loading") return <Skeleton label={copy.loading} />;
+  if (state.kind === "denied") return <OfficeDenied lang={lang} offices={copy.offices} />;
   if (state.kind === "error") return <ErrorState message={state.message || copy.error} retry={copy.retry} onRetry={state.retry} />;
   const summary = state.data as NetworkSummary;
   const cards = [
@@ -224,8 +227,7 @@ function OfficeScreen({ lang }: { lang: Locale }) {
     <section>
       <h1>{copy.offices}</h1>
       <SearchBox lang={lang} section="offices" placeholder={copy.searchOffices} />
-      {state.kind === "loading" ? <Skeleton label={copy.loading} /> : null}
-      {state.kind === "error" ? <ErrorState message={state.message || copy.error} retry={copy.retry} onRetry={state.retry} /> : null}
+      <NetworkFailure lang={lang} copy={copy} state={state} />
       {state.kind === "ready" ? <OfficeList lang={lang} page={state.data as NetworkPage<NetworkOffice>} empty={copy.empty} /> : null}
     </section>
   );
@@ -249,8 +251,7 @@ function ConsultantScreen({ lang }: { lang: Locale }) {
         <SearchBox lang={lang} section="consultants" placeholder={copy.searchConsultants} />
         <OfficeFilter lang={lang} options={options} />
       </div>
-      {state.kind === "loading" ? <Skeleton label={copy.loading} /> : null}
-      {state.kind === "error" ? <ErrorState message={state.message || copy.error} retry={copy.retry} onRetry={state.retry} /> : null}
+      <NetworkFailure lang={lang} copy={copy} state={state} />
       {state.kind === "ready" ? <ConsultantList lang={lang} page={state.data as NetworkPage<NetworkConsultant>} empty={copy.empty} /> : null}
     </section>
   );
@@ -404,6 +405,22 @@ function Pager({ lang, section, pagination }: { lang: Locale; section: "offices"
   );
 }
 
+function NetworkFailure({ lang, copy, state }: { lang: Locale; copy: (typeof PORTAL_NETWORK_COPY)["tr"]; state: LoadState }) {
+  if (state.kind === "loading") return <Skeleton label={copy.loading} />;
+  if (state.kind === "denied") return <OfficeDenied lang={lang} offices={copy.offices} />;
+  if (state.kind === "error") return <ErrorState message={state.message || copy.error} retry={copy.retry} onRetry={state.retry} />;
+  return null;
+}
+
+function OfficeDenied({ lang, offices }: { lang: Locale; offices: string }) {
+  return (
+    <div className="glass-card" role="status">
+      <h2>{NETWORK_OFFICE_DENIED}</h2>
+      <Link className="glass-btn" href={networkHref("offices", { lang })}>{offices}</Link>
+    </div>
+  );
+}
+
 function ErrorState({ message, retry, onRetry }: { message: string; retry: string; onRetry: () => void }) {
   return (
     <div className="glass-card" role="alert">
@@ -430,6 +447,7 @@ function Loading({ label }: { label: string }) {
 
 type LoadState =
   | { kind: "loading"; retry: () => void }
+  | { kind: "denied"; retry: () => void }
   | { kind: "error"; message: string; retry: () => void }
   | { kind: "ready"; data: NetworkSummary | NetworkPage<NetworkOffice> | NetworkPage<NetworkConsultant>; retry: () => void };
 
@@ -457,7 +475,13 @@ function useNetwork(section: NetworkSection, query: NetworkQuery, lang: Locale):
         if (!cancelled) setState({ kind: "ready", data, retry });
       })
       .catch((error: unknown) => {
-        if (!cancelled) setState({ kind: "error", message: error instanceof Error ? error.message : "", retry });
+        if (cancelled) return;
+        const view = networkFailureView(error, "", NETWORK_OFFICE_DENIED);
+        if (view.view === "denied") {
+          setState({ kind: "denied", retry });
+          return;
+        }
+        setState({ kind: "error", message: view.message, retry });
       });
     return () => {
       cancelled = true;
@@ -504,10 +528,7 @@ async function readJson(url: string): Promise<unknown> {
   const response = await fetch(url, { credentials: "include", headers: { Accept: "application/json" }, cache: "no-store" });
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const message = body && typeof body === "object" && "message" in body && typeof (body as { message?: unknown }).message === "string"
-      ? (body as { message: string }).message
-      : "";
-    throw new Error(message);
+    throw new ApiLoadError(loadFailure(response.status, body, ""));
   }
   return body;
 }
