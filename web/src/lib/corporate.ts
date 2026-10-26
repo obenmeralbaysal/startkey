@@ -352,6 +352,7 @@ export type CorporatePayload =
       seeAllLabel?: string;
       pin?: MapOffice | null;
       map: { query?: string; iframeSrc?: string; directionsLabel?: string; streetViewLabel?: string };
+      rankBadges?: RankBadge[];
       breadcrumb: CorporateBreadcrumb;
       meta: CorporateMeta;
       alternates: Record<string, string>;
@@ -400,6 +401,7 @@ export type CorporatePayload =
         captchaError: string;
       };
       ratingLabel: string;
+      rankBadges?: RankBadge[];
       breadcrumb: CorporateBreadcrumb;
       meta: CorporateMeta;
       alternates: Record<string, string>;
@@ -453,6 +455,14 @@ export interface DirectoryFilterData {
   ui?: DirectoryUi;
 }
 
+export interface RankBadge {
+  year: number | null;
+  category: "ciro" | "islem" | "club";
+  label: string;
+  rank: number | null;
+  imageUrl: string;
+}
+
 export interface DirectoryCardData {
   externalId: number;
   urlPath: string;
@@ -467,6 +477,7 @@ export interface DirectoryCardData {
   instagram?: string;
   variant: "office" | "consultant";
   badges?: { title: string; period: string }[];
+  rankBadges?: RankBadge[];
 }
 
 export interface ListingCardData {

@@ -6,9 +6,17 @@ import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { DirectoryCard } from "@/components/corporate/DirectoryCard";
 import { ListingCard } from "@/components/corporate/ListingCard";
 import { Picture } from "@/components/corporate/Picture";
+import { RankBadges } from "@/components/corporate/RankBadges";
 import { OfficeMap } from "@/components/home/OfficeMap";
 import type { CorporatePayload } from "@/lib/corporate";
+import type { Locale } from "@/lib/locales";
 import { mapPinPosition } from "@/lib/map-coordinates";
+
+function localeOf(path: string): Locale {
+  if (path.startsWith("/en/") || path === "/en") return "en";
+  if (path.startsWith("/de/") || path === "/de") return "de";
+  return "tr";
+}
 
 type OfficeDetailData = Extract<CorporatePayload, { kind: "office-detail" }>;
 
@@ -53,6 +61,7 @@ export function OfficeDetail({ data }: { data: OfficeDetailData }) {
             <div className="sk-agent-half">
               <div className="sk-agent-name">
                 <h2>{data.name}</h2>
+                <RankBadges badges={data.rankBadges} locale={localeOf(data.urlPath)} variant="detail" />
               </div>
               <ul className="sk-agent-info">
                 {data.phoneHref ? (
