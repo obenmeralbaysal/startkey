@@ -796,7 +796,7 @@ class ReonixCatalogue
     private function gallery(array $row): array
     {
         $id = (int) ($row['id'] ?? 0);
-        $count = min(12, max(0, (int) ($row['image_count'] ?? 0)));
+        $count = min(60, max(0, (int) ($row['image_count'] ?? 0)));
         $slides = [];
         for ($index = 0; $index < $count; $index++) {
             $url = '/api/v1/catalogue/media/portfolios/'.$id.'/'.$index;

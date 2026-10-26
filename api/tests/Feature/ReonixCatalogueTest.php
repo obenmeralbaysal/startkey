@@ -374,6 +374,49 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.items.0.image', '/media/officelogo/a-plus.png');
     }
 
+    public function test_a_listing_gallery_includes_every_photo_up_to_the_media_index(): void
+    {
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios/9' => Http::response(['data' => [
+                'portfolio' => [
+                    'id' => 9,
+                    'title' => 'Moda daire',
+                    'type' => 'sale',
+                    'image_count' => 80,
+                ],
+                'office' => [],
+                'agent' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/portfolios/10' => Http::response(['data' => [
+                'portfolio' => [
+                    'id' => 10,
+                    'title' => 'Az foto',
+                    'type' => 'sale',
+                    'image_count' => 3,
+                ],
+                'office' => [],
+                'agent' => [],
+            ]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/media/portfolios/9/59' => Http::response('jpeg', 200, ['Content-Type' => 'image/jpeg']),
+        ]);
+
+        $full = $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy/9/satilik')
+            ->assertOk()
+            ->json('data.gallery');
+        $this->assertCount(60, $full);
+        $this->assertSame('/api/v1/catalogue/media/portfolios/9/0', $full[0]['original']);
+        $this->assertSame('/api/v1/catalogue/media/portfolios/9/59', $full[59]['original']);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/portfoy/10/satilik')
+            ->assertOk()
+            ->assertJsonCount(3, 'data.gallery');
+
+        $this->get('/api/v1/catalogue/media/portfolios/9/59')
+            ->assertOk()
+            ->assertHeader('content-type', 'image/jpeg');
+        $this->get('/api/v1/catalogue/media/portfolios/9/60')->assertNotFound();
+    }
+
     public function test_a_catalogue_photo_is_served_from_this_site(): void
     {
         Http::fake([
