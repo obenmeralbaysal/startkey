@@ -4,6 +4,19 @@ import { useEffect, useRef } from "react";
 
 import type { MapOffice } from "@/lib/api";
 
+/** Mainland box used when Reonix has not sent `locationNeedsReview`. Inclusive. */
+const TURKEY_LATITUDE = { min: 35.8, max: 42.2 };
+const TURKEY_LONGITUDE = { min: 25.6, max: 44.9 };
+
+function isInsideTurkey(latitude: number, longitude: number): boolean {
+  return (
+    latitude >= TURKEY_LATITUDE.min &&
+    latitude <= TURKEY_LATITUDE.max &&
+    longitude >= TURKEY_LONGITUDE.min &&
+    longitude <= TURKEY_LONGITUDE.max
+  );
+}
+
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (char) => {
     switch (char) {
@@ -27,11 +40,14 @@ export function OfficeMap({
   zoom = 8,
   label = "Startkey Global",
   className = "",
+  constrainBoundsToTurkey = false,
 }: {
   offices: MapOffice[];
   zoom?: number;
   label?: string;
   className?: string;
+  /** Homepage fitBounds ignores pins outside Turkey. Detail maps stay centered on their pin. */
+  constrainBoundsToTurkey?: boolean;
 }) {
   const node = useRef<HTMLDivElement>(null);
 
@@ -66,7 +82,8 @@ export function OfficeMap({
         })
           .bindPopup(`<a href="${escapeHtml(href)}">${escapeHtml(office.name)}</a>`)
           .addTo(map);
-        if (office.locationNeedsReview !== true) {
+        const outsideTurkey = constrainBoundsToTurkey && !isInsideTurkey(office.latitude, office.longitude);
+        if (office.locationNeedsReview !== true && !outsideTurkey) {
           bounds.push([office.latitude, office.longitude]);
         }
       }
@@ -92,7 +109,7 @@ export function OfficeMap({
       cancelled = true;
       map?.remove();
     };
-  }, [offices, zoom]);
+  }, [offices, zoom, constrainBoundsToTurkey]);
 
   const classes = className === "" ? "sk-office-map" : `sk-office-map ${className}`;
 
