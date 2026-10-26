@@ -298,10 +298,42 @@ function PortfolioNew({ step }: { step?: string }) {
   return (
     <section className="glass-card" data-screen="portfolio-new">
       <h2>Yeni portföy</h2>
-      <div className="glass-actions">
-        <Link className="glass-btn" href="/portal/office/portfolios/new/manual" data-choice="manual">El ile</Link>
-        <Link className="glass-btn" href="/portal/office/portfolios/new/voice" data-choice="voice">Sesle</Link>
-        <Link className="glass-btn" href="/portal/office/portfolios/new/sahibinden" data-choice="sahibinden">Sahibinden linkiyle</Link>
+      <div className="portfolio-choice-grid">
+        <Link className="portfolio-choice" href="/portal/office/portfolios/new/manual" data-choice="manual">
+          <span className="portfolio-choice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28">
+              <path d="M4 20h4l10.5-10.5-4-4L4 16v4z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M13 6.5l4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </span>
+          <span>
+            <strong>El ile</strong>
+            <small>Alanları kendiniz doldurun</small>
+          </span>
+        </Link>
+        <Link className="portfolio-choice" href="/portal/office/portfolios/new/voice" data-choice="voice">
+          <span className="portfolio-choice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28">
+              <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M6 11a6 6 0 0 0 12 0M12 17v4M8 21h8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </span>
+          <span>
+            <strong>Sesle</strong>
+            <small>Konuşarak taslak oluşturun</small>
+          </span>
+        </Link>
+        <Link className="portfolio-choice" href="/portal/office/portfolios/new/sahibinden" data-choice="sahibinden">
+          <span className="portfolio-choice-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28">
+              <path d="M10 14a4 4 0 0 0 5.7 0l2-2a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-2 2a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </span>
+          <span>
+            <strong>Sahibinden linkiyle</strong>
+            <small>İlan adresinden formu doldurun</small>
+          </span>
+        </Link>
       </div>
     </section>
   );

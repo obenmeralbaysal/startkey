@@ -2877,3 +2877,76 @@ button.glass-chip {
   min-height: 220px;
   margin: 8px 0;
 }
+
+.portfolio-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.portfolio-choice {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  min-height: 72px;
+  padding: 16px;
+  border: 2px solid #e4e4e7;
+  border-radius: 20px;
+  background: #fff;
+  color: #1d1d1f;
+  text-decoration: none;
+}
+
+.glass-page a.portfolio-choice,
+.glass-page a.portfolio-choice:hover,
+.glass-page a.portfolio-choice:focus-visible {
+  color: #1d1d1f;
+  text-decoration: none;
+}
+
+.portfolio-choice:hover,
+.portfolio-choice:focus-visible,
+.portfolio-choice:active {
+  border-color: #ec3323;
+}
+
+.portfolio-choice:focus-visible {
+  outline: 2px solid #ec3323;
+  outline-offset: 2px;
+}
+
+.portfolio-choice-icon {
+  display: inline-flex;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(236, 51, 35, 0.08);
+  color: #ec3323;
+}
+
+.portfolio-choice strong,
+.portfolio-choice small {
+  display: block;
+}
+
+.portfolio-choice strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.portfolio-choice small {
+  margin-top: 2px;
+  color: #6e6e73;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+@media (min-width: 900px) {
+  .portfolio-choice-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

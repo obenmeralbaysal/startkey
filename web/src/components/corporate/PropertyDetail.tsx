@@ -4,104 +4,17 @@ import { useState } from "react";
 
 import { Breadcrumb } from "@/components/corporate/Breadcrumb";
 import { ListingCard } from "@/components/corporate/ListingCard";
+import { ListingGallery } from "@/components/corporate/ListingGallery";
 import { Picture } from "@/components/corporate/Picture";
 import { CaptchaNotice } from "@/components/forms/CaptchaNotice";
 import { publicFormStatus } from "@/content/public-form-status";
 import type { CorporatePayload, ListingAgentData } from "@/lib/corporate";
+import { isPlaceholderPhoto, listingContactCopy, showListingConsultant } from "@/lib/listing-gallery";
 import { executeRecaptchaV3Action } from "@/lib/recaptcha-v3";
 import type { Locale } from "@/lib/locales";
 import { scaled } from "@/lib/scale";
 
 type ListingDetailData = Extract<CorporatePayload, { kind: "listing-detail" }>;
-
-const AGENT_CARD_CSS = `
-    .agent-card-modern {
-        padding: 0 !important;
-        overflow: hidden;
-        border-radius: calc(14px * var(--sk-scale, 1));
-        background: #fff;
-    }
-    .agent-card-modern .acm-head {
-        position: relative;
-        height: calc(96px * var(--sk-scale, 1));
-        background: linear-gradient(135deg, #EC3323 0%, #9e1a10 100%);
-    }
-    .agent-card-modern .acm-avatar {
-        position: absolute;
-        left: 50%;
-        bottom: calc(-55px * var(--sk-scale, 1));
-        transform: translateX(-50%);
-        width: calc(110px * var(--sk-scale, 1));
-        height: calc(110px * var(--sk-scale, 1));
-        border-radius: 50%;
-        overflow: hidden;
-        background: #fff;
-        border: calc(4px * var(--sk-scale, 1)) solid #fff;
-        box-shadow: 0 calc(6px * var(--sk-scale, 1)) calc(18px * var(--sk-scale, 1)) rgba(0, 0, 0, 0.18);
-    }
-    .agent-card-modern .acm-avatar a,
-    .agent-card-modern .acm-avatar picture,
-    .agent-card-modern .acm-avatar img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-    .agent-card-modern .acm-body {
-        padding: calc(68px * var(--sk-scale, 1)) calc(20px * var(--sk-scale, 1)) calc(24px * var(--sk-scale, 1));
-        text-align: center;
-    }
-    .agent-card-modern .acm-name {
-        margin: 0 0 calc(6px * var(--sk-scale, 1));
-        font-size: calc(19px * var(--sk-scale, 1));
-        font-weight: 700;
-        line-height: 1.3;
-    }
-    .agent-card-modern .acm-name a {
-        color: inherit;
-        transition: color .25s ease;
-    }
-    .agent-card-modern .acm-name a:hover {
-        color: #EC3323;
-    }
-    .agent-card-modern .acm-contact {
-        list-style: none;
-        padding: 0;
-        margin: calc(16px * var(--sk-scale, 1)) 0 0;
-    }
-    .agent-card-modern .acm-contact li {
-        margin: 0 0 calc(8px * var(--sk-scale, 1));
-    }
-    .agent-card-modern .acm-contact li:last-child {
-        margin-bottom: 0;
-    }
-    .agent-card-modern .acm-contact li a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: calc(6px * var(--sk-scale, 1));
-        color: inherit;
-    }
-    .agent-card-modern .acm-contact li a:hover {
-        color: #EC3323;
-    }
-    .agent-card-modern .acm-contact li a i {
-        font-size: calc(16px * var(--sk-scale, 1));
-    }
-    .agent-card-modern .acm-contact li a.agent-mail {
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    .dw-proprty-info li {
-        margin-top: calc(0.2rem * var(--sk-scale, 1));
-        font-size: 0.9em !important;
-        border-bottom: 1px dotted #b0b0b0 !important;
-    }
-    .dw-proprty-info li strong {
-        width: calc(140px * var(--sk-scale, 1)) !important;
-    }
-`;
 
 export function PropertyDetail({
   data,
@@ -110,77 +23,50 @@ export function PropertyDetail({
   data: ListingDetailData;
   locale: Locale;
 }) {
+  const copy = listingContactCopy(locale);
+  const consultant = showListingConsultant(data.agent);
+  const phones = consultant ? data.agent.phones ?? [] : [];
+  const callHref = callLink(phones);
+  const whatsappHref = whatsappLink(phones);
+  const badges = [...(data.badges ?? []), data.processType ?? ""].map((badge) => badge.trim()).filter((badge, index, all) => badge !== "" && all.indexOf(badge) === index);
+
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: AGENT_CARD_CSS }} />
       <Breadcrumb breadcrumb={data.breadcrumb} />
-      <section className="property-details-wrap pt-100 pb-75">
+      <section className="property-details-wrap listing-detail-page pt-100 pb-75" data-screen="listing-detail">
         <div className="container">
-          <div className="sk-split">
-            <div className="sk-two-thirds">
-              <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] max-md:[margin:0_0_calc(10px_*_var(--sk-scale,_1))]">
-                <h2>{data.title}</h2>
-              </div>
-            </div>
-          </div>
-          <div className="sk-split">
-            <div className="sk-half">
-              <div id="mainCarousel" className="sk-gallery" data-carousel="single">
-                {data.gallery.map((slide, index) => (
-                  <div
-                    className="carousel__slide"
-                    key={`${slide.original}-${index}`}
-                    data-src={slide.original}
-                    data-fancybox="gallery"
-                    data-caption={slide.caption}
-                  >
-                    <Picture width={600} height={400}>
-                      {slide.imageWebp ? <source srcSet={slide.imageWebp} type="image/webp" /> : null}
-                      <img src={slide.image} alt="Property-photo" width={600} height={400} loading="lazy" />
-                    </Picture>
-                  </div>
-                ))}
-              </div>
-              <div id="thumbCarousel" className="sk-thumbs">
-                {data.gallery.map((slide, index) => (
-                  <div className="carousel__slide" key={`thumb-${slide.thumb}-${index}`}>
-                    <Picture className="panzoom__content" width={100} height={100}>
-                      <img src={slide.thumb || slide.image} alt="Property-photo" width={100} height={100} />
-                    </Picture>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="sk-quarter">
-              <div className="[margin-bottom:calc(.5rem_*_var(--sk-scale,_1))]">
-                <div className="pr-price-into">
-                  <h6>
-                    <p className="text-brand [font-size:calc(18px_*_var(--sk-scale,_1))] font-bold [font-family:poppins,_sans-serif] [margin:0] relative [top:calc(7px_*_var(--sk-scale,_1))]">{data.price}</p>
-                  </h6>
-                </div>
-                <i className="flaticon-location" style={{ fontSize: scaled(18) }} />
-                {data.locationLinks.map((link, index) => (
-                  <a className="[color:#039] font-bold [transition:color_0.3s] hover:text-brand" href={link.href ?? undefined} key={`${link.label}-${index}`}>
-                    {link.label}
-                    {index < data.locationLinks.length - 1 ? " /" : ""}
-                  </a>
-                ))}
-              </div>
-              <div className="block-body">
-                <ul className="dw-proprty-info" style={{ borderTop: "1px solid #dcdcdc" }}>
+          <div className="listing-detail-layout">
+            <div className="listing-detail-main">
+              <ListingGallery slides={data.gallery} locale={locale} title={data.title} />
+              {badges.length > 0 ? (
+                <ul className="listing-badges">
+                  {badges.map((badge) => (
+                    <li key={badge}>{badge}</li>
+                  ))}
+                </ul>
+              ) : null}
+              <h2 className="listing-detail-title">{data.title}</h2>
+              {data.locationLinks.length > 0 ? (
+                <p className="listing-location">
+                  <i className="flaticon-location" style={{ fontSize: scaled(18) }} />
+                  {data.locationLinks.map((link, index) => (
+                    <a href={link.href ?? undefined} key={`${link.label}-${index}`}>
+                      {link.label}
+                      {index < data.locationLinks.length - 1 ? " / " : ""}
+                    </a>
+                  ))}
+                </p>
+              ) : null}
+              {data.specs.length > 0 ? (
+                <ul className="listing-feature-strip" data-feature-strip>
                   {data.specs.map((spec) => (
                     <li key={spec.label}>
-                      <strong>{spec.label}:</strong> {spec.value}
+                      <span>{spec.label}</span>
+                      <strong>{spec.value}</strong>
                     </li>
                   ))}
                 </ul>
-              </div>
-            </div>
-            <div className="sk-quarter">
-              <div className="max-xl:[margin:calc(50px_*_var(--sk-scale,_1))_0_0] max-xl:[margin-top:calc(25px_*_var(--sk-scale,_1))]">
-                <AgentCard agent={data.agent} />
-              </div>
-            </div>
+              ) : null}
             <div className="block">
               {data.descriptionHtml ? (
                 <div className="w-full [margin-top:calc(1.5rem_*_var(--sk-scale,_1))]">
@@ -253,6 +139,19 @@ export function PropertyDetail({
                 </div>
               ) : null}
             </div>
+            </div>
+            <aside className="listing-contact-sticky" data-contact-card>
+              <p className="listing-price">{data.price}</p>
+              <ContactCard
+                agent={data.agent}
+                consultant={consultant}
+                callLabel={copy.call}
+                officeLabel={copy.office}
+                callHref={callHref}
+                whatsappHref={whatsappHref}
+              />
+            </aside>
+          </div>
             <div className="w-full">
               <div className="contact-form-wrap contact-form-bg">
                 <div className="[margin-bottom:calc(25px_*_var(--sk-scale,_1))] last:[margin-bottom:0] max-md:[margin-bottom:calc(15px_*_var(--sk-scale,_1))]">
@@ -281,64 +180,99 @@ export function PropertyDetail({
                 </div>
               </div>
             ) : null}
-          </div>
         </div>
       </section>
+      <div className="sk-mobile-contact" data-mobile-bar>
+        <p className="sk-mobile-price">{data.price}</p>
+        <ContactActions callHref={callHref} whatsappHref={whatsappHref} callLabel={copy.call} />
+      </div>
     </>
   );
 }
 
-function AgentCard({ agent }: { agent: ListingAgentData }) {
-  if (!agent.name) {
-    return null;
+function ContactCard({
+  agent,
+  consultant,
+  callLabel,
+  officeLabel,
+  callHref,
+  whatsappHref,
+}: {
+  agent: ListingAgentData;
+  consultant: boolean;
+  callLabel: string;
+  officeLabel: string;
+  callHref: string;
+  whatsappHref: string;
+}) {
+  if (!consultant && !agent.officeName) {
+    return <ContactActions callHref={callHref} whatsappHref={whatsappHref} callLabel={callLabel} />;
   }
 
   return (
-    <div className="[margin:0_0_calc(30px_*_var(--sk-scale,_1))] relative z-[1] [padding:calc(25px_*_var(--sk-scale,_1))] [box-shadow:0_0_calc(25px_*_var(--sk-scale,_1))_rgba(0,_0,_0,_0.09)] last:[margin:0] max-md:[padding:calc(20px_*_var(--sk-scale,_1))] agent-card-modern">
-      <div className="acm-head">
-        <div className="acm-avatar">
-          <a href={agent.href}>
-            <Picture width={220} height={220}>
-              {agent.imageWebp ? <source srcSet={agent.imageWebp} type="image/webp" /> : null}
-              <img src={agent.image} alt="User-photo" width={220} height={220} />
-            </Picture>
-          </a>
-        </div>
-      </div>
-      <div className="acm-body">
-        <h6 className="acm-name">
-          <a className="text-inherit" href={agent.href}>
-            {agent.name}
-          </a>
-        </h6>
-        <ul className="acm-contact list-none">
-          {agent.officeName ? (
-            <li>
-              <a className="text-inherit" href={agent.officeHref}>
-                <i className="ri-building-4-line" /> {agent.officeName}
-              </a>
-            </li>
-          ) : null}
-          {(agent.phones ?? []).map((phone) => (
-            <li key={phone.href + phone.label}>
-              <a href={phone.href} target="_blank" rel="noreferrer">
-                <i className={phone.icon || "ri-phone-line"} />
-                {phone.label}
-              </a>
-            </li>
-          ))}
-          {agent.emailHref ? (
-            <li>
-              <a className="agent-mail" href={agent.emailHref}>
-                <i className="ri-mail-send-line" />
-                {agent.emailLabel}
-              </a>
-            </li>
-          ) : null}
-        </ul>
-      </div>
+    <div className="listing-contact-card" data-contact={consultant ? "consultant" : "office"}>
+      {consultant && !isPlaceholderPhoto(agent.image) ? (
+        <a className="listing-contact-avatar" href={agent.href || undefined}>
+          <Picture width={72} height={72}>
+            {agent.imageWebp ? <source srcSet={agent.imageWebp} type="image/webp" /> : null}
+            <img src={agent.image} alt="" width={72} height={72} />
+          </Picture>
+        </a>
+      ) : null}
+      {consultant ? (
+        <h3>
+          {agent.href ? <a href={agent.href}>{agent.name}</a> : agent.name}
+        </h3>
+      ) : (
+        <p className="listing-contact-kicker">{officeLabel}</p>
+      )}
+      {agent.officeName ? (
+        <p>
+          {agent.officeHref ? <a href={agent.officeHref}>{agent.officeName}</a> : agent.officeName}
+        </p>
+      ) : null}
+      <ContactActions callHref={callHref} whatsappHref={whatsappHref} callLabel={callLabel} />
+      {consultant && agent.emailHref ? (
+        <a className="listing-contact-mail" href={agent.emailHref}>
+          {agent.emailLabel}
+        </a>
+      ) : null}
     </div>
   );
+}
+
+function ContactActions({ callHref, whatsappHref, callLabel }: { callHref: string; whatsappHref: string; callLabel: string }) {
+  if (!callHref && !whatsappHref) {
+    return null;
+  }
+  return (
+    <div className="sk-contact-actions">
+      {callHref ? (
+        <a className="sk-call-btn" href={callHref} data-contact-action="call">
+          {callLabel}
+        </a>
+      ) : null}
+      {whatsappHref ? (
+        <a className="sk-wa-btn" href={whatsappHref} target="_blank" rel="noreferrer" data-contact-action="whatsapp">
+          WhatsApp
+        </a>
+      ) : null}
+    </div>
+  );
+}
+
+function callLink(phones: ListingAgentData["phones"]): string {
+  return phones.find((phone) => phone.href.startsWith("tel:"))?.href ?? "";
+}
+
+function whatsappLink(phones: ListingAgentData["phones"]): string {
+  const marked = phones.find((phone) => /whatsapp|wa\.me/i.test(`${phone.icon} ${phone.href}`));
+  if (marked && /^https?:/i.test(marked.href)) {
+    return marked.href;
+  }
+  const tel = marked?.href.startsWith("tel:") ? marked.href : callLink(phones);
+  const digits = tel.replace(/\D/g, "");
+  return digits ? `https://wa.me/${digits}` : "";
 }
 
 function ListingInquiryForm({ data, locale }: { data: ListingDetailData; locale: Locale }) {

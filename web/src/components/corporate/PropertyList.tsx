@@ -8,7 +8,7 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
   const sorting = scalar(values["SortingType"]);
 
   return (
-    <>
+    <div className="sk-listing-page" data-screen="listing-list">
       <Breadcrumb breadcrumb={data.breadcrumb} />
       <section className="listing-wrap ptb-100">
         <div className="container">
@@ -72,7 +72,7 @@ export function PropertyList({ data }: { data: Extract<CorporatePayload, { kind:
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 

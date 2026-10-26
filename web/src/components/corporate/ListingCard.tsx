@@ -1,5 +1,6 @@
-import { Picture } from "@/components/corporate/Picture";
+import { ListingPhoto } from "@/components/corporate/ListingGallery";
 import type { ListingCardData } from "@/lib/corporate";
+import { localeFromListingPath } from "@/lib/listing-gallery";
 
 export function ListingCard({ item }: { item: ListingCardData }) {
   const style = item.style === "style6" ? "property-card style6" : "property-card style3";
@@ -9,12 +10,16 @@ export function ListingCard({ item }: { item: ListingCardData }) {
   return (
     <div className={style}>
       <div className="property-img">
-        <a href={item.urlPath}>
-          <Picture width={width} height={height}>
-            {item.imageWebp ? <source srcSet={item.imageWebp} type="image/webp" /> : null}
-            <img src={item.image} alt="Property-photo" width={width} height={height} />
-          </Picture>
-        </a>
+        <ListingPhoto
+          image={item.image}
+          imageWebp={item.imageWebp}
+          images={item.images}
+          locale={localeFromListingPath(item.urlPath)}
+          width={width}
+          height={height}
+          href={item.urlPath}
+          title={item.title}
+        />
         {item.processType ? <span className="property-estatestatus">{item.processType}</span> : null}
         {item.adSubType ? <span className="property-status">{item.adSubType}</span> : null}
       </div>

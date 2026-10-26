@@ -284,6 +284,8 @@ export type CorporatePayload =
       urlPath: string;
       title: string;
       price: string;
+      processType?: string;
+      badges?: string[];
       gallery: ListingGallerySlide[];
       locationLinks: { href: string | null; label: string }[];
       specs: { label: string; value: string }[];
@@ -484,6 +486,7 @@ export interface ListingCardData {
   features: { icon: string; text: string }[];
   detailLabel: string;
   style?: string;
+  images?: string[];
 }
 
 export interface ListingGallerySlide {
@@ -508,6 +511,8 @@ export interface ListingAgentData {
   phones: { href: string; label: string; icon: string }[];
   emailHref: string;
   emailLabel: string;
+  /** Omitted means the named consultant is shown. `false` keeps the office block. */
+  approved?: boolean;
 }
 
 export interface ListingFilterData {
