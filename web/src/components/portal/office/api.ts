@@ -16,6 +16,16 @@ export class OfficeError extends Error {
 const readCache = new Map<string, { at: number; body: OfficeRecord }>();
 const READ_TTL_MS = 20_000;
 const CACHED_GET = /^(me$|portfolios$|categories(?:[/?]|$)|locations\/(?:cities$|districts\?|neighborhoods\?)|dashboard\/|duty-roster\/today$)/;
+
+/** Category and location reads depend on the office header or the query string. The browser must not reuse them. */
+export function officeHttpCache(path: string, method = "GET"): RequestCache {
+  const verb = method.toUpperCase();
+  if (verb !== "GET") return "reload";
+  if (path === "categories" || path.startsWith("categories/") || path.startsWith("categories?") || path.startsWith("locations/")) {
+    return "no-store";
+  }
+  return CACHED_GET.test(path) ? "default" : "reload";
+}
 const STORAGE_PREFIX = "sk-office-read:";
 let bypassBrowserCacheUntil = 0;
 
@@ -58,7 +68,7 @@ export async function officeCall(
   const response = await fetch(`/api/v1/portal/office/${path.replace(/^\//, "")}`, {
     method,
     credentials: "include",
-    cache: cacheable && Date.now() >= bypassBrowserCacheUntil ? "default" : "reload",
+    cache: bypassBrowserCacheUntil > Date.now() ? "reload" : officeHttpCache(path, method),
     headers,
     body,
   });
@@ -66,7 +76,7 @@ export async function officeCall(
   if (!response.ok) {
     throw new OfficeError(errorText(payload), missingLabels(payload), missingKinds(payload), response.status);
   }
-  if (cacheable) {
+  if (cacheable && !isEmptyList(payload)) {
     const entry = { at: Date.now(), body: payload };
     readCache.set(cacheKey, entry);
     writeStored(cacheKey, entry);
@@ -163,19 +173,29 @@ export function isRecord(value: unknown): value is OfficeRecord {
 }
 
 export function rows(payload: unknown): OfficeRecord[] {
-  if (Array.isArray(payload)) {
-    return payload.filter(isRecord);
-  }
-  if (!isRecord(payload)) {
-    return [];
-  }
-  if (Array.isArray(payload.data)) {
-    return payload.data.filter(isRecord);
-  }
-  if (isRecord(payload.data) && Array.isArray(payload.data.data)) {
-    return payload.data.data.filter(isRecord);
+  const direct = asRows(payload);
+  if (direct) return direct;
+  if (!isRecord(payload)) return [];
+  for (const key of ["data", "categories", "items"]) {
+    const nested = payload[key];
+    const found = asRows(nested);
+    if (found) return found;
+    if (isRecord(nested) && Array.isArray(nested.data)) return nested.data.filter(isRecord);
   }
   return [];
+}
+
+function asRows(value: unknown): OfficeRecord[] | null {
+  if (Array.isArray(value)) return value.filter(isRecord);
+  if (!isRecord(value)) return null;
+  const keys = Object.keys(value);
+  if (keys.length === 0 || keys.some((key) => !/^\d+$/.test(key))) return null;
+  return Object.values(value).filter(isRecord);
+}
+
+function isEmptyList(payload: unknown): boolean {
+  if (Array.isArray(payload)) return payload.length === 0;
+  return isRecord(payload) && Array.isArray(payload.data) && payload.data.length === 0;
 }
 
 export function one(payload: unknown): OfficeRecord | null {

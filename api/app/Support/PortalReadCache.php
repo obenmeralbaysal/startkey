@@ -35,6 +35,9 @@ final class PortalReadCache
         if ($key === null || $ttl === null) {
             return;
         }
+        if (self::emptyList($body)) {
+            return;
+        }
         Cache::put($key, $body, $ttl);
     }
 
@@ -46,6 +49,19 @@ final class PortalReadCache
 
     public static function seconds(string $path): ?int
     {
+        return self::ttl($path);
+    }
+
+    /**
+     * Redis may keep these reads. The browser must not: the office is a header,
+     * and a path-only cache would reuse one neighborhood or category list for every query.
+     */
+    public static function browserSeconds(string $path): ?int
+    {
+        if ($path === 'categories' || str_starts_with($path, 'categories/') || str_starts_with($path, 'locations/')) {
+            return null;
+        }
+
         return self::ttl($path);
     }
 
@@ -105,5 +121,15 @@ final class PortalReadCache
     private static function generationKey(string $sessionId): string
     {
         return 'portal-read-gen:'.$sessionId;
+    }
+
+    /**
+     * @param  array<string, mixed>  $body
+     */
+    private static function emptyList(array $body): bool
+    {
+        $rows = $body['data'] ?? (array_is_list($body) ? $body : null);
+
+        return is_array($rows) && array_is_list($rows) && $rows === [];
     }
 }

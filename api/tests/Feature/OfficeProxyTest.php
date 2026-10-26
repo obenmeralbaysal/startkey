@@ -152,6 +152,67 @@ class OfficeProxyTest extends TestCase
         Http::assertSent(fn ($request) => str_contains($request->url(), 'district_id=9'));
     }
 
+    public function test_category_and_neighborhood_lookups_are_not_collapsed_or_emptied(): void
+    {
+        $cookie = $this->login();
+        $calls = 0;
+        Http::fake(function ($request) use (&$calls) {
+            $calls++;
+            $url = $request->url();
+            if (str_contains($url, '/categories')) {
+                return Http::response([
+                    ['id' => 4, 'name' => 'Konut'],
+                    ['id' => 5, 'name' => 'Arsa'],
+                ]);
+            }
+            if (str_contains($url, 'district_id=9')) {
+                $rows = [];
+                for ($i = 1; $i <= 2500; $i++) {
+                    $rows[] = ['id' => $i, 'name' => 'Konak '.$i, 'district_id' => 9];
+                }
+
+                return Http::response(['status' => 'success', 'data' => $rows]);
+            }
+            if (str_contains($url, 'district_id=12')) {
+                return Http::response(['status' => 'success', 'data' => [['id' => 8, 'name' => 'Buca Mah.', 'district_id' => 12]]]);
+            }
+
+            return Http::response(['status' => 'success', 'data' => []]);
+        });
+        $call = $this->withCredentials()
+            ->withUnencryptedCookie($cookie->getName(), $cookie->getValue())
+            ->withHeader('X-Portal-Office', '7');
+
+        $call->getJson('/api/v1/portal/office/categories')
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'no-store, private')
+            ->assertJsonPath('0.name', 'Konut')
+            ->assertJsonPath('1.name', 'Arsa');
+
+        $call->getJson('/api/v1/portal/office/locations/neighborhoods?district_id=9')
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'no-store, private')
+            ->assertJsonCount(2500, 'data')
+            ->assertJsonPath('data.0.name', 'Konak 1');
+
+        $call->getJson('/api/v1/portal/office/locations/neighborhoods?district_id=12')
+            ->assertOk()
+            ->assertJsonPath('data.0.name', 'Buca Mah.')
+            ->assertJsonCount(1, 'data');
+
+        $before = $calls;
+        $call->getJson('/api/v1/portal/office/locations/neighborhoods?district_id=0')
+            ->assertStatus(422);
+        $call->getJson('/api/v1/portal/office/locations/neighborhoods?district_id=44')
+            ->assertOk()
+            ->assertJsonPath('data', []);
+        $call->getJson('/api/v1/portal/office/locations/neighborhoods?district_id=44')
+            ->assertOk()
+            ->assertJsonPath('data', []);
+
+        $this->assertSame($before + 2, $calls);
+    }
+
     #[DataProvider('deniedSettings')]
     public function test_settings_the_role_cannot_open_are_forbidden(string $role, ?int $branchId, string $method, string $url): void
     {

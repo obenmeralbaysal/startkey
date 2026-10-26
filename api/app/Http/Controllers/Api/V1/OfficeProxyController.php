@@ -53,7 +53,7 @@ class OfficeProxyController extends Controller
         if ($request->isMethod('GET') && is_string($sessionId) && $sessionId !== '') {
             $cached = PortalReadCache::get($sessionId, $officeId, $remotePath, $query);
             if ($cached !== null) {
-                return $this->json($cached, 200, PortalReadCache::seconds($remotePath));
+                return $this->json($cached, 200, PortalReadCache::browserSeconds($remotePath), $remotePath);
             }
         }
 
@@ -122,13 +122,6 @@ class OfficeProxyController extends Controller
             return response()->json(['message' => __('messages.portal.unavailable')], $upstream->status() >= 400 ? $upstream->status() : 422);
         }
 
-        if (str_starts_with($path, 'locations/') && $this->oversized($raw)) {
-            return response()->json([
-                'message' => __('messages.portal.location_too_large'),
-                'data' => [],
-            ], 422);
-        }
-
         $rotated = $path === 'auth/switch-office' && is_string($raw['data']['token'] ?? null)
             ? $raw['data']['token']
             : null;
@@ -155,34 +148,34 @@ class OfficeProxyController extends Controller
 
         $ttl = null;
         if ($upstream->status() === 200 && is_string($sessionId) && $sessionId !== '' && strtoupper($method) === 'GET') {
-            $ttl = PortalReadCache::seconds($path);
             PortalReadCache::put($sessionId, $officeId, $path, $query, $body);
+            $ttl = PortalReadCache::browserSeconds($path);
         }
 
-        return $this->json($body, $upstream->status(), $ttl);
+        return $this->json($body, $upstream->status(), $ttl, $path);
     }
 
     /**
      * @param  array<string, mixed>  $body
      */
-    private function json(array $body, int $status, ?int $ttl = null): Response
+    private function json(array $body, int $status, ?int $ttl = null, ?string $path = null): Response
     {
         $response = response()->json($body, $status);
         if ($status === 200 && $ttl !== null && $ttl > 0) {
             $response->headers->set('Cache-Control', 'private, max-age='.$ttl);
+        } elseif ($status === 200 && self::lookup($path)) {
+            $response->headers->set('Cache-Control', 'private, no-store');
+            $response->headers->set('Vary', 'X-Portal-Office');
         }
 
         return $response;
     }
 
-    /**
-     * @param  array<string, mixed>  $raw
-     */
-    private function oversized(array $raw): bool
+    private static function lookup(?string $path): bool
     {
-        $rows = $raw['data'] ?? $raw;
-
-        return is_array($rows) && count($rows) > 2000;
+        return $path === 'categories'
+            || ($path !== null && str_starts_with($path, 'categories/'))
+            || ($path !== null && str_starts_with($path, 'locations/'));
     }
 
     private function binary(string $type): bool
