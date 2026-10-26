@@ -1329,6 +1329,47 @@ article ol li {
   padding: 3px 8px;
 }
 
+.sk-rank-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: calc(6px * var(--sk-scale, 1));
+}
+
+.sk-rank-badges img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.sk-rank-detail {
+  margin-top: calc(12px * var(--sk-scale, 1));
+}
+
+.sk-rank-year,
+.sk-rank-col-title {
+  display: block;
+  margin: 0 0 calc(6px * var(--sk-scale, 1));
+  color: #000;
+  font-size: calc(14px * var(--sk-scale, 1));
+  font-weight: 700;
+}
+
+.sk-rank-year {
+  margin-top: calc(12px * var(--sk-scale, 1));
+}
+
+.sk-rank-cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(16px * var(--sk-scale, 1));
+}
+
+.sk-rank-detail .sk-rank-badges img {
+  width: 64px;
+  height: 64px;
+}
+
 .sk-dir-clear,
 .sk-dir-clear-search {
   border: 0;

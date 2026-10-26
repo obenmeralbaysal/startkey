@@ -13,6 +13,7 @@ import json
 import os
 import re
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -21,7 +22,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from office_catalogue import dedupe_catalogue, parse_comments
+from office_catalogue import dedupe_catalogue, office_id_from_href, parse_comments, parse_rank_badges, stamp_team_offices
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAP = ROOT / "reference" / "snapshots" / "offices"
@@ -48,6 +49,25 @@ AGENT_PREFIX = {"tr": "/tr/danismanlar", "en": "/en/agents", "de": "/de/immobili
 OFFICE_PREFIX = {"tr": "/tr/ofisler", "en": "/en/offices", "de": "/de/anbieteren"}
 
 ALL_HTML: list[str] = []
+_RATE_LOCK = threading.Lock()
+_RATE_NEXT = 0.0
+RATE_SECONDS = 3.0
+
+
+def _read_limited(req: urllib.request.Request) -> tuple[str, str]:
+    """One live request at a time, with at least 3s after the previous one finishes."""
+    global _RATE_NEXT
+    with _RATE_LOCK:
+        wait = _RATE_NEXT - time.monotonic()
+        if wait > 0:
+            time.sleep(wait)
+        try:
+            with urllib.request.urlopen(req, timeout=90) as response:
+                html = response.read().decode("utf-8", "replace")
+                final = response.geturl()
+        finally:
+            _RATE_NEXT = time.monotonic() + RATE_SECONDS
+    return final, html
 
 
 def fetch(path: str) -> str:
@@ -56,13 +76,11 @@ def fetch(path: str) -> str:
     last_error = None
     for attempt in range(4):
         try:
-            with urllib.request.urlopen(req, timeout=90) as response:
-                html = response.read().decode("utf-8", "replace")
-                ALL_HTML.append(html)
-                return html
+            _final, html = _read_limited(req)
+            ALL_HTML.append(html)
+            return html
         except (urllib.error.URLError, TimeoutError, urllib.error.HTTPError) as error:
             last_error = error
-            time.sleep(1.5 * (attempt + 1))
     raise RuntimeError(f"GET {path} failed: {last_error}")
 
 
@@ -72,13 +90,11 @@ def fetch_final(path: str) -> tuple[str, str]:
     last_error = None
     for attempt in range(4):
         try:
-            with urllib.request.urlopen(req, timeout=90) as response:
-                html = response.read().decode("utf-8", "replace")
-                ALL_HTML.append(html)
-                return response.geturl(), html
+            final, html = _read_limited(req)
+            ALL_HTML.append(html)
+            return final, html
         except (urllib.error.URLError, TimeoutError, urllib.error.HTTPError) as error:
             last_error = error
-            time.sleep(1.5 * (attempt + 1))
     raise RuntimeError(f"GET {path} failed: {last_error}")
 
 
@@ -336,13 +352,18 @@ def parse_consultant_detail(page: str, lang: str, url_path: str, card: dict | No
     office_href = ""
     office_name = ""
     office_id = ""
-    om = re.search(r'href="((?:/tr/ofisler|/en/offices|/de/anbieteren)/\d+/[^"]+)"[^>]*>([\s\S]*?)</a>', page)
+    info = re.search(r'class="agent-info(?:\s|")([\s\S]*?)</ul>', page)
+    info_html = info.group(1) if info else page
+    om = re.search(
+        r'href="((?:/(?:tr|en|de))?/(?:ofisler|offices|anbieteren)/\d+/[^"]+)"[^>]*>([\s\S]*?)</a>',
+        info_html,
+    )
+    if not om:
+        om = re.search(r'href="(/(?:(?:tr|en|de)/)?[a-z0-9]+(?:-[a-z0-9]+)*)"[^>]*>([\s\S]*?)</a>', info_html)
     if om:
-        office_href = om.group(1)
+        office_href = om.group(1).split("?")[0]
         office_name = text_of(om.group(2))
-        oid = re.search(r"/(\d+)/", office_href)
-        if oid:
-            office_id = oid.group(1)
+        office_id = office_id_from_href(office_href)
     tabs = []
     for tm in re.finditer(r'data-bs-target="#(tab_\d+)"[^>]*>([\s\S]*?)</button>', page):
         tabs.append({"id": tm.group(1), "label": text_of(tm.group(2))})
@@ -406,6 +427,7 @@ def parse_consultant_detail(page: str, lang: str, url_path: str, card: dict | No
         "meta": meta(page),
         "externalId": int(id_m.group(1)) if id_m else (card or {}).get("externalId"),
         "slug": url_path.rstrip("/").split("/")[-1],
+        "rankBadges": parse_rank_badges(page),
     }
 
 
@@ -547,6 +569,11 @@ def listing_consultant_ids() -> list[int]:
 
 def short_path(lang: str, slug: str) -> str:
     return f"/{slug}" if lang == "tr" else f"/{lang}/{slug}"
+
+
+def consultant_fetch_slug(team_slug: str, stored: str, list_slug: str) -> str:
+    """Office-page slug wins when it differs from the consultant-list slug."""
+    return team_slug or stored or list_slug or ""
 
 
 def main() -> int:
@@ -701,7 +728,8 @@ def main() -> int:
         if full:
             continue
         tr_card = cards_by_id.get(ext, {}).get("tr") or (rec.get("translations") or {}).get("tr", {}).get("card")
-        slug = rec.get("slug") or (tr_card or {}).get("slug") or str(ext)
+        team_slug = ((team_cards.get(ext) or {}).get("tr") or {}).get("slug") or ""
+        slug = consultant_fetch_slug(team_slug, rec.get("slug") or "", (tr_card or {}).get("slug") or "") or str(ext)
         for lang in LANGS:
             if lang in have and rec.get("hasFullDetail"):
                 continue
@@ -737,9 +765,16 @@ def main() -> int:
                 },
             )
             rec["externalId"] = ext
-            rec["slug"] = parsed.get("slug") or rec.get("slug") or str(ext)
+            rec["slug"] = ((team_cards.get(ext) or {}).get("tr") or {}).get("slug") or parsed.get("slug") or rec.get("slug") or str(ext)
             if parsed.get("officeId"):
                 rec["officeId"] = parsed["officeId"]
+            elif not rec.get("officeId") and parsed.get("officeHref"):
+                rec["officeHref"] = parsed["officeHref"]
+            incoming = parsed.get("rankBadges") or []
+            if lang == "tr":
+                rec["rankBadges"] = incoming or rec.get("rankBadges") or []
+            elif not rec.get("rankBadges"):
+                rec["rankBadges"] = incoming
             rec.setdefault("translations", {})
             rec["translations"][lang] = parsed
             rec["hasFullDetail"] = set(rec["translations"]) == set(LANGS)
@@ -833,6 +868,7 @@ def main() -> int:
         print(f"WARN offices without id: {missing_offices[:12]} ({len(missing_offices)})", file=sys.stderr)
 
     office_rows = [offices[s] for s in tr_order if s in offices]
+    stamp_team_offices(office_rows, consultants)
     consultant_rows = [consultants[i] for i in detail_ids if i in consultants] + [
         consultants[i] for i in consultants if i not in set(detail_ids)
     ]

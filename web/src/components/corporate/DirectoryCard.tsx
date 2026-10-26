@@ -1,6 +1,14 @@
 import { Pagination } from "@/components/corporate/Pagination";
 import { Picture } from "@/components/corporate/Picture";
+import { RankBadges } from "@/components/corporate/RankBadges";
 import type { DirectoryCardData } from "@/lib/corporate";
+import type { Locale } from "@/lib/locales";
+
+function localeOf(path: string): Locale {
+  if (path.startsWith("/en/") || path === "/en") return "en";
+  if (path.startsWith("/de/") || path === "/de") return "de";
+  return "tr";
+}
 
 function FramedPhoto({
   href,
@@ -97,6 +105,7 @@ export function DirectoryCard({ item }: { item: DirectoryCardData; compact?: boo
         </h3>
         {item.role ? <span>{item.role}</span> : null}
         <AwardBadges badges={item.badges} />
+        <RankBadges badges={item.rankBadges} locale={localeOf(item.urlPath)} variant="card" />
         {item.phoneHref ? (
           <div>
             <i className="flaticon-phone-call" /> <a href={item.phoneHref} target="_blank">{item.phoneLabel}</a>

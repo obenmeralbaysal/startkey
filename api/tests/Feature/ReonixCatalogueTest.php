@@ -601,4 +601,49 @@ class ReonixCatalogueTest extends TestCase
             ->assertJsonPath('data.items.1.role', 'Immobilienberater')
             ->assertJsonPath('data.items.1.urlPath', '/de/anbieteren/4/burak');
     }
+
+    public function test_consultant_rank_badges_are_returned_on_the_list_and_the_detail(): void
+    {
+        $badges = [
+            ['year' => 2024, 'category' => 'islem', 'label' => 'İşlem Birincisi', 'rank' => 1, 'imageUrl' => 'https://cdnc.re-os.com/club/old.png'],
+            ['year' => 2025, 'category' => 'club', 'label' => 'Ticari Kulüp', 'rank' => 4, 'imageUrl' => 'https://cdnc.re-os.com/club/club.png'],
+            ['year' => 2025, 'category' => 'ciro', 'label' => 'Ciro Yedincisi', 'rank' => 7, 'imageUrl' => 'https://cdnc.re-os.com/club/ciro.png'],
+            ['year' => null, 'category' => 'nope', 'label' => 'Yok', 'rank' => 1, 'imageUrl' => 'https://cdnc.re-os.com/club/nope.png'],
+            ['year' => 2025, 'category' => 'ciro', 'label' => '', 'rank' => 2, 'imageUrl' => 'https://cdnc.re-os.com/club/empty.png'],
+        ];
+        $consultant = [
+            'id' => 9,
+            'name' => 'Ada Yılmaz',
+            'role' => 'agent',
+            'phone' => '05550000001',
+            'email' => 'ada@example.com',
+            'office_id' => 7,
+            'office_name' => 'A Plus',
+            'rankBadges' => $badges,
+        ];
+        Http::fake([
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants' => Http::response(['data' => [$consultant]]),
+            'https://portal.test/api/v1/integrations/portal/catalogue/consultants/9' => Http::response(['data' => [
+                'consultant' => $consultant,
+                'portfolios' => [],
+            ]]),
+        ]);
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar')
+            ->assertOk()
+            ->assertJsonPath('data.items.0.rankBadges.0.label', 'Ciro Yedincisi')
+            ->assertJsonPath('data.items.0.rankBadges.0.year', 2025)
+            ->assertJsonPath('data.items.0.rankBadges.0.category', 'ciro')
+            ->assertJsonPath('data.items.0.rankBadges.1.category', 'club')
+            ->assertJsonPath('data.items.0.rankBadges.1.rank', null)
+            ->assertJsonPath('data.items.0.rankBadges.2.label', 'İşlem Birincisi')
+            ->assertJsonPath('data.items.0.rankBadges.2.year', 2024)
+            ->assertJsonCount(3, 'data.items.0.rankBadges');
+
+        $this->getJson('/api/v1/corporate?locale=tr&path=/tr/danismanlar/9/ada-yilmaz')
+            ->assertOk()
+            ->assertJsonPath('data.rankBadges.0.imageUrl', 'https://cdnc.re-os.com/club/ciro.png')
+            ->assertJsonPath('data.rankBadges.1.label', 'Ticari Kulüp')
+            ->assertJsonCount(3, 'data.rankBadges');
+    }
 }

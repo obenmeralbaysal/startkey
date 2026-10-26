@@ -319,6 +319,7 @@ class ReonixCatalogue
             ],
             'meta' => ['title' => 'Startkey Türkiye | '.$name],
             'alternates' => $this->alternates('consultants', (int) $row['id'], (string) $row['name']),
+            'rankBadges' => $this->rankBadges($row),
         ];
     }
 
@@ -570,6 +571,7 @@ class ReonixCatalogue
             'location' => (string) ($row['office_name'] ?? ''),
             'variant' => 'consultant',
             'badges' => $this->badges($row),
+            'rankBadges' => $this->rankBadges($row),
         ];
     }
 
@@ -888,6 +890,52 @@ class ReonixCatalogue
             }
             $out[] = ['title' => $title, 'period' => trim((string) ($badge['period'] ?? ''))];
         }
+
+        return $out;
+    }
+
+    /**
+     * Ciro / işlem / club icons from the portal catalogue. Year descending, ciro before işlem.
+     *
+     * @param  array<string, mixed>  $row
+     * @return list<array{year: ?int, category: string, label: string, rank: ?int, imageUrl: string}>
+     */
+    private function rankBadges(array $row): array
+    {
+        $raw = $row['rankBadges'] ?? $row['rank_badges'] ?? [];
+        $out = [];
+        foreach (is_array($raw) ? $raw : [] as $badge) {
+            if (! is_array($badge)) {
+                continue;
+            }
+            $category = (string) ($badge['category'] ?? '');
+            if (! in_array($category, ['ciro', 'islem', 'club'], true)) {
+                continue;
+            }
+            $label = trim((string) ($badge['label'] ?? ''));
+            $image = trim((string) ($badge['imageUrl'] ?? $badge['image_url'] ?? ''));
+            if ($label === '' || ! preg_match('#^https://#i', $image)) {
+                continue;
+            }
+            $year = $badge['year'] ?? null;
+            $rank = $badge['rank'] ?? null;
+            $out[] = [
+                'year' => is_numeric($year) ? (int) $year : null,
+                'category' => $category,
+                'label' => $label,
+                'rank' => $category === 'club' || ! is_numeric($rank) ? null : (int) $rank,
+                'imageUrl' => $image,
+            ];
+        }
+        $order = ['ciro' => 0, 'islem' => 1, 'club' => 2];
+        usort($out, function (array $a, array $b) use ($order): int {
+            $year = ((int) ($b['year'] ?? -1)) <=> ((int) ($a['year'] ?? -1));
+            if ($year !== 0) {
+                return $year;
+            }
+
+            return ($order[$a['category']] ?? 9) <=> ($order[$b['category']] ?? 9);
+        });
 
         return $out;
     }
