@@ -67,6 +67,7 @@ services:
       REONIX_PORTAL_KEY: ${REONIX_PORTAL_KEY:-}
       REONIX_NETWORK_SLUG: ${REONIX_NETWORK_SLUG:-startkey}
       FORCE_DB_SEED: ${FORCE_DB_SEED:-}
+      SEED_PRUNE_LISTINGS: ${SEED_PRUNE_LISTINGS:-}
     volumes:
       - ./api:/var/www/html
     healthcheck:

@@ -112,7 +112,9 @@ class PortfolioDataSeeder extends Seeder
             static fn (array $row) => (int) ($row['externalId'] ?? 0),
             $listings,
         )));
-        if ($keep !== []) {
+        // Pruning deletes every listing not in the snapshot (including admin-created ones),
+        // so it only runs when SEED_PRUNE_LISTINGS=1 is set explicitly.
+        if ($keep !== [] && self::pruneEnabled()) {
             CmsListing::query()->whereNotIn('external_id', $keep)->delete();
         }
     }
@@ -223,5 +225,15 @@ class PortfolioDataSeeder extends Seeder
         }
 
         return $value;
+    }
+
+    public static function pruneEnabled(): bool
+    {
+        $value = getenv('SEED_PRUNE_LISTINGS');
+        if ($value === false) {
+            $value = $_ENV['SEED_PRUNE_LISTINGS'] ?? $_SERVER['SEED_PRUNE_LISTINGS'] ?? '';
+        }
+
+        return trim((string) $value) === '1';
     }
 }
