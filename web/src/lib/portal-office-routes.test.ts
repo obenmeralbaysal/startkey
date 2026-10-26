@@ -17,4 +17,11 @@ test("retired office paths redirect to the new screens", () => {
   assert.equal(officeSectionRedirect(["portfolios", "new"]), null);
   assert.equal(officeSectionRedirect(["settings", "integrations", "sahibinden"]), null);
   assert.equal(officeSectionRedirect(["settings", "whatsapp"]), null);
+  assert.equal(officeSectionRedirect(["team"]), "/portal/office/settings/team");
+  assert.equal(officeSectionRedirect(["team", "4"]), "/portal/office/settings/team");
+  assert.equal(officeSectionRedirect(["team"], "en"), "/portal/office/settings/team?lang=en");
+  assert.equal(officeSectionRedirect(["team"], "de"), "/portal/office/settings/team?lang=de");
+  assert.equal(officeSectionRedirect(["team"], "tr"), "/portal/office/settings/team");
+  assert.equal(officeSectionRedirect(["settings", "team"]), null);
+  assert.equal(officeSectionRedirect(["sahibinden"], "en"), "/portal/office/portfolios/new?lang=en");
 });

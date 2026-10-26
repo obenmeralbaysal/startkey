@@ -112,7 +112,7 @@ export function OfficeDashboard() {
         ) : null}
       </div>
 
-      {pendingClosed ? <p className="ux-muted">{copy.summaryClosed}</p> : showPending ? (
+      {showPending || pendingClosed ? (
         <p className="ux-pending-line">
           <Link className="ux-pending" href={withLang("/portal/office/portfolios", locale)}>{pendingText}</Link>
         </p>

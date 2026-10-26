@@ -4,6 +4,7 @@ import test from "node:test";
 import { PORTAL_UX_COPY } from "../content/portal-ux.ts";
 import {
   APPROVAL_SENT,
+  BRANCH_NAME_FALLBACK,
   BULK_RATE_PATH,
   DUPLICATE_EMAIL,
   LOGO_NOTE,
@@ -17,7 +18,10 @@ import {
   displayCell,
   duplicateTeamEmail,
   isSafeHex,
+  branchOptionLabel,
+  branchRecords,
   matchmakingScoreBody,
+  memberBranchLabel,
   memberRoleLabel,
   officeFieldError,
   bulkRateSent,
@@ -166,6 +170,20 @@ test("team create and edit send the branch and licence fields", () => {
   assert.deepEqual(assignableRoles(roles).map((role) => role.label), ["Danışman"]);
   assert.equal(memberRoleLabel({ role_slug: "office_manager" }, PORTAL_UX_COPY.tr.roles), "Ofis Yöneticisi");
   assert.equal(memberRoleLabel({ role_slug: "agent" }, PORTAL_UX_COPY.en.roles), "Consultant");
+  assert.equal(memberRoleLabel({ role: { slug: "agent", name: "Danışman" } }, PORTAL_UX_COPY.en.roles), "Consultant");
+  assert.equal(memberRoleLabel({ role: "office_manager" }, PORTAL_UX_COPY.de.roles), "Büroleiter");
+  assert.equal(memberRoleLabel({ role_name: "Consultant" }, PORTAL_UX_COPY.tr.roles), "Danışman");
+  assert.equal(memberRoleLabel({ role: "broker" }, PORTAL_UX_COPY.de.roles), "Büroinhaber");
+  assert.equal(memberRoleLabel({ role: 4 }, PORTAL_UX_COPY.tr.roles), BRANCH_NAME_FALLBACK);
+  const branches = branchRecords({
+    data: { branches: [{ id: 9, branch_name: "Bayraklı" }, { id: 3, title: "Alsancak" }] },
+  });
+  assert.equal(branchOptionLabel(branches[0]), "Bayraklı");
+  assert.equal(memberBranchLabel({ branch_id: 9 }, branches), "Bayraklı");
+  assert.equal(memberBranchLabel({ branch: 3 }, branches), "Alsancak");
+  assert.equal(memberBranchLabel({ branch: { id: 9, name: "9" } }, branches), "Bayraklı");
+  assert.equal(memberBranchLabel({ branch_id: 8, branch: 8 }, branches), BRANCH_NAME_FALLBACK);
+  assert.equal(memberBranchLabel({ branch_id: 8, branch_name: "Bostanlı" }, []), "Bostanlı");
 });
 
 test("bulk rate is visible only for the owner", () => {

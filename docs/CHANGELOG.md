@@ -1,5 +1,6 @@
 ## [2026-10-26]
 
+- **[UI]**: Ofis ayarlarındaki LOGO kutusu kalktı; logo notu durur. Ekip listesinde rol TR/EN/DE etiketidir, şube GET şube listesindeki addır, bulunamazsa "—". Özet, role kapalı kartı basmaz; o rolde yalnız bekleyen iş sayısı ve bağlantısı durur. `/portal/office/team` ekip ayarına döner. #2182
 - **[Bugfix]**: Portal giriş e-posta kontrolü herhangi bir `local@domain.tld` adresini kabul eder. `.invalid` gibi uzun son ekler artık reddedilmez. #2182
 - **[Security]**: Ekip ve şube yazma (ekleme, güncelleme, silme, davet, rol, durum) yalnız ofis sahibi ve ofis yöneticisindedir. Yönetici bu kayıtları okur; ekip ekleme formu ve satır düzenleme gizlenir. #2182
 - **[UI]**: Ekip ekranındaki toplu oran düğmesi ve formu yalnız ofis sahibi için basılır. Diğer rollerde bu alan hiç görünmez. Gönderim `POST commission-policy/changes` kalır; `pending_approval` "Onaya gönderildi" olur. #2182

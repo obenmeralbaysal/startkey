@@ -14,7 +14,12 @@ import {
   bulkRateBody,
   bulkRateSent,
   bulkRateVisible,
+  branchOptionId,
+  branchOptionLabel,
+  branchRecords,
   duplicateTeamEmail,
+  memberBranchId,
+  memberBranchLabel,
   memberRoleLabel,
   roleOptions,
   teamFieldError,
@@ -65,7 +70,7 @@ export function TeamSettings() {
         if (cancelled) return;
         setMembers(rows(teamPayload));
         setRoles(assignableRoles(roleOptions(rolePayload, labels)));
-        setBranches(rows(branchPayload));
+        setBranches(branchRecords(branchPayload));
       } catch {
         if (!cancelled) notice(copy.savedError);
       }
@@ -168,9 +173,7 @@ export function TeamSettings() {
   }
 
   function branchLabel(row: OfficeRecord): string {
-    const id = String(row.branch_id ?? "");
-    const match = branches.find((branch) => String(branch.id) === id);
-    return match ? text(match, ["name", "title"]) : text(row, ["branch_name", "branch"]);
+    return memberBranchLabel(row, branches);
   }
 
   return (
@@ -199,7 +202,11 @@ export function TeamSettings() {
           <Field label={copy.teamBranch} error={fieldError?.field === "branch_id" ? fieldError.message : ""}>
             <select name="branch_id" value={form.branch_id} onChange={(event) => setForm({ ...form, branch_id: event.target.value })}>
               <option value="">{copy.teamBranch}</option>
-              {branches.map((branch) => <option key={String(branch.id)} value={String(branch.id)}>{text(branch, ["name", "title"])}</option>)}
+              {branches.map((branch) => {
+                const id = branchOptionId(branch);
+                if (!id) return null;
+                return <option key={id} value={id}>{branchOptionLabel(branch)}</option>;
+              })}
             </select>
           </Field>
           <Field label={copy.teamLicence} error={fieldError?.field === "ttbs_no" ? fieldError.message : ""}>
@@ -250,7 +257,7 @@ export function TeamSettings() {
                       {canWrite ? (
                         <select
                           aria-label={copy.teamBranch}
-                          defaultValue={String(row.branch_id ?? "")}
+                          defaultValue={branches.some((branch) => branchOptionId(branch) === memberBranchId(row)) ? memberBranchId(row) : ""}
                           onChange={(event) => {
                             const id = row.id ?? row.user_id;
                             void officeCall(`team/${id}`, officeId, {
@@ -271,8 +278,12 @@ export function TeamSettings() {
                             });
                           }}
                         >
-                          <option value="">{copy.teamBranch}</option>
-                          {branches.map((branch) => <option key={String(branch.id)} value={String(branch.id)}>{text(branch, ["name", "title"])}</option>)}
+                          <option value="">{branches.some((branch) => branchOptionId(branch) === memberBranchId(row)) ? copy.teamBranch : branchLabel(row)}</option>
+                          {branches.map((branch) => {
+                            const id = branchOptionId(branch);
+                            if (!id) return null;
+                            return <option key={id} value={id}>{branchOptionLabel(branch)}</option>;
+                          })}
                         </select>
                       ) : branchLabel(row)}
                     </td>

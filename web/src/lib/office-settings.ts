@@ -1,7 +1,10 @@
+import { PORTAL_UX_COPY } from "../content/portal-ux.ts";
+
 export const TTBS_REQUIRED = "TTBS yetki belge numarası zorunludur.";
 export const DUPLICATE_EMAIL = "Bu e-posta ekipte zaten var.";
 export const APPROVAL_SENT = "Onaya gönderildi";
 export const LOGO_NOTE = "Logo ve marka rengini StartKey yönetimi belirler.";
+export const BRANCH_NAME_FALLBACK = "—";
 
 /** GET settings returns data.groups.office. GET/PUT settings/office is the flat office record. */
 export const OFFICE_SETTINGS_GROUP = "office";
@@ -226,11 +229,103 @@ export function roleLabel(value: string, labels: Record<string, string>): string
 }
 
 export function memberRoleLabel(row: OfficeRecord, labels: Record<string, string>): string {
-  const slug = stringAt(row, ["role_slug", "role", "slug"]);
-  if (slug && labels[slug.toLowerCase()]) return roleLabel(slug, labels);
-  const name = stringAt(row, ["role_name", "role_title"]);
-  if (name) return roleLabel(name, labels);
-  return roleLabel(slug, labels);
+  for (const value of roleCandidates(row)) {
+    const slug = roleSlugFromText(value);
+    if (slug && labels[slug]) return labels[slug];
+  }
+  return BRANCH_NAME_FALLBACK;
+}
+
+/** Branch id on a team row: `branch_id`, numeric `branch`, or `branch.id`. */
+export function memberBranchId(row: OfficeRecord): string {
+  const direct = row.branch_id;
+  if (typeof direct === "number" && Number.isFinite(direct)) return String(direct);
+  if (typeof direct === "string" && /^\d+$/.test(direct.trim())) return direct.trim();
+  const branch = row.branch;
+  if (typeof branch === "number" && Number.isFinite(branch)) return String(branch);
+  if (typeof branch === "string" && /^\d+$/.test(branch.trim())) return branch.trim();
+  if (isRecord(branch)) return stringAt(branch, ["id", "branch_id"]);
+  return "";
+}
+
+export function branchOptionId(row: OfficeRecord): string {
+  return stringAt(row, ["id", "branch_id"]);
+}
+
+/** Visible branch name. A bare id is not a name. */
+export function branchOptionLabel(row: OfficeRecord): string {
+  const name = stringAt(row, ["name", "title", "branch_name", "label"]);
+  if (!name || name === branchOptionId(row) || /^\d+$/.test(name)) return BRANCH_NAME_FALLBACK;
+  return name;
+}
+
+/** Name from the GET branches list. Missing matches stay "—", never the id. */
+export function memberBranchLabel(row: OfficeRecord, branches: readonly OfficeRecord[]): string {
+  const id = memberBranchId(row);
+  if (id) {
+    const match = branches.find((branch) => branchOptionId(branch) === id);
+    if (match) {
+      const name = branchOptionLabel(match);
+      if (name !== BRANCH_NAME_FALLBACK) return name;
+    }
+  }
+  const named = stringAt(row, ["branch_name"]);
+  if (named && !/^\d+$/.test(named)) return named;
+  const branch = row.branch;
+  if (isRecord(branch)) {
+    const name = branchOptionLabel(branch);
+    if (name !== BRANCH_NAME_FALLBACK) return name;
+  }
+  if (typeof branch === "string" && branch.trim() && !/^\d+$/.test(branch.trim())) return branch.trim();
+  return BRANCH_NAME_FALLBACK;
+}
+
+export function branchRecords(payload: unknown): OfficeRecord[] {
+  const list = rows(payload);
+  if (list.length > 0) return list;
+  if (!isRecord(payload)) return [];
+  const root = unwrap(payload);
+  for (const key of ["branches", "items"]) {
+    if (Array.isArray(root[key])) return root[key].filter(isRecord);
+  }
+  return [];
+}
+
+const ROLE_FIELDS = ["role", "role_slug", "role_name"] as const;
+
+function roleCandidates(row: OfficeRecord): string[] {
+  const found: string[] = [];
+  for (const key of ROLE_FIELDS) pushRoleText(found, row[key]);
+  return found;
+}
+
+function pushRoleText(found: string[], value: unknown): void {
+  if (typeof value === "string") {
+    const text = value.trim();
+    if (text && !/^\d+$/.test(text)) found.push(text);
+    return;
+  }
+  if (!isRecord(value)) return;
+  for (const key of ["slug", "role_slug", "role", "name", "role_name", "title"]) {
+    pushRoleText(found, value[key]);
+  }
+}
+
+function roleSlugFromText(value: string): string | null {
+  const key = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (!key || /^\d+$/.test(key)) return null;
+  if (key === "broker") return "owner";
+  const locales = [PORTAL_UX_COPY.tr.roles, PORTAL_UX_COPY.en.roles, PORTAL_UX_COPY.de.roles];
+  for (const roles of locales) {
+    if (key in roles) return key;
+  }
+  const folded = value.trim().toLocaleLowerCase("tr");
+  for (const roles of locales) {
+    for (const [slug, label] of Object.entries(roles)) {
+      if (label.trim().toLocaleLowerCase("tr") === folded) return slug;
+    }
+  }
+  return null;
 }
 
 export function bulkRateBody(userIds: readonly number[], rate: number): { user_ids: number[]; rate_percentage: number } {

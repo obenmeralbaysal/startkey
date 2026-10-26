@@ -20,7 +20,7 @@ export default async function OfficePage({
   const { section } = await params;
   const { lang, tab: tabQuery } = await searchParams;
   const parts = section ?? [];
-  const destination = officeSectionRedirect(parts);
+  const destination = officeSectionRedirect(parts, lang);
   if (destination) redirect(destination);
   const settingsTab = parts[0] === "settings" ? parts[1] : undefined;
   if (settingsTab && (await settingsClosed(settingsTab))) forbidden();

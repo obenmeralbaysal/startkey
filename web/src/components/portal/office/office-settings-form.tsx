@@ -47,7 +47,6 @@ export function OfficeSettingsForm() {
   const [tab, setTab] = useState<Tab>("general");
   const [profile, setProfile] = useState<OfficeProfileInput>(EMPTY_PROFILE);
   const [rules, setRules] = useState<OfficeRules>(EMPTY_RULES);
-  const [logoUrl, setLogoUrl] = useState("");
   const [brandColor, setBrandColor] = useState("");
   const [fieldError, setFieldError] = useState<FieldErrors>({});
   const [branchName, setBranchName] = useState("");
@@ -64,7 +63,6 @@ export function OfficeSettingsForm() {
         const view = readOfficeSettings(payload);
         setProfile(view.profile);
         setRules(view.rules);
-        setLogoUrl(view.logoUrl);
         setBrandColor(view.brandColor);
       } catch (error) {
         if (cancelled) return;
@@ -179,7 +177,6 @@ export function OfficeSettingsForm() {
         {tab === "general" ? (
           <form className="ux-office-form" onSubmit={saveProfile}>
             <div className="ux-brand">
-              {logoUrl ? <img alt="" src={logoUrl} /> : <span className="ux-logo-placeholder">LOGO</span>}
               {color ? (
                 <span className="ux-swatch-row">
                   <span className="ux-swatch" style={{ background: color }} aria-hidden="true" />
