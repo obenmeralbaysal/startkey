@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function () {
         ->whereNumber('id')
         ->where('kind', 'offices|consultants|portfolios')
         ->where('index', '[0-9]+')
-        ->middleware('throttle:120,1');
+        ->middleware('throttle:600,1');
     Route::get('corporate/alternate', [CorporateController::class, 'alternate']);
 
     Route::get('lookups/{endpoint}', LookupController::class);
