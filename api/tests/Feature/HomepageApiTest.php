@@ -127,6 +127,8 @@ class HomepageApiTest extends TestCase
             'https://portal.test/api/v1/integrations/portal/catalogue/offices' => Http::response(['data' => [[
                 'id' => 7,
                 'name' => 'Kadikoy',
+                'city' => 'İstanbul',
+                'district' => 'Kadıköy',
                 'latitude' => '41',
                 'longitude' => '29',
             ], [
@@ -148,6 +150,15 @@ class HomepageApiTest extends TestCase
                 'id' => 3,
                 'name' => 'Ayse Demir',
                 'office_id' => 7,
+            ], [
+                'id' => 4,
+                'name' => 'Mehmet Kaya',
+                'office_id' => 7,
+            ], [
+                'id' => 70,
+                'name' => 'Kadikoy',
+                'type' => 'office',
+                'office_id' => 7,
             ]]]),
         ]);
 
@@ -168,6 +179,11 @@ class HomepageApiTest extends TestCase
             ->assertJsonPath('data.offices.0.name', 'Kadikoy')
             ->assertJsonPath('data.offices.0.latitude', 41)
             ->assertJsonPath('data.offices.0.locationNeedsReview', false)
+            ->assertJsonPath('data.offices.0.city', 'İstanbul')
+            ->assertJsonPath('data.offices.0.district', 'Kadıköy')
+            ->assertJsonPath('data.offices.0.consultantCount', 2)
+            ->assertJsonPath('data.offices.1.city', '')
+            ->assertJsonPath('data.offices.1.consultantCount', 0)
             ->assertJsonPath('data.offices.1.name', 'Baytu')
             ->assertJsonPath('data.offices.1.locationNeedsReview', true)
             ->assertJsonCount(2, 'data.popularCities')

@@ -582,13 +582,31 @@ class ReonixCatalogue
     /**
      * Homepage map pins. Offices without a numeric latitude and longitude are skipped.
      *
-     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float, locationNeedsReview: bool}>
+     * Each pin also carries the office's city and district and its consultant count
+     * (people only: consultant rows with type=office are left out, as in the header
+     * counter). A missing value is '' or null so the card can hide it.
+     *
+     * @return list<array{id: int, name: string, urlPath: string, latitude: float, longitude: float, locationNeedsReview: bool, city: string, district: string, consultantCount: ?int}>
      */
     public function mapOffices(string $locale): array
     {
         $rows = $this->collection('offices');
         if (! is_array($rows)) {
             return [];
+        }
+        $consultants = $this->collection('consultants');
+        $perOffice = null;
+        if (is_array($consultants)) {
+            $perOffice = [];
+            foreach ($consultants as $person) {
+                if (! is_array($person) || ($person['type'] ?? '') === 'office') {
+                    continue;
+                }
+                $officeId = (int) ($person['office_id'] ?? 0);
+                if ($officeId > 0) {
+                    $perOffice[$officeId] = ($perOffice[$officeId] ?? 0) + 1;
+                }
+            }
         }
 
         $pins = [];
@@ -608,6 +626,9 @@ class ReonixCatalogue
                 'latitude' => $latitude,
                 'longitude' => $longitude,
                 'locationNeedsReview' => $this->locationNeedsReview($row),
+                'city' => trim((string) ($row['city'] ?? '')),
+                'district' => trim((string) ($row['district'] ?? '')),
+                'consultantCount' => $perOffice === null ? null : ($perOffice[(int) $card['externalId']] ?? 0),
             ];
         }
 
