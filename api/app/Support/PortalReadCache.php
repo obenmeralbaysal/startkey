@@ -35,13 +35,18 @@ final class PortalReadCache
         if ($key === null || $ttl === null) {
             return;
         }
-        Cache::put($key, $body, now()->addSeconds($ttl));
+        Cache::put($key, $body, $ttl);
     }
 
     public static function bump(string $sessionId): void
     {
         $key = self::generationKey($sessionId);
-        Cache::put($key, ((int) Cache::get($key, 0)) + 1, now()->addHours(12));
+        Cache::put($key, ((int) Cache::get($key, 0)) + 1, 12 * 3600);
+    }
+
+    public static function seconds(string $path): ?int
+    {
+        return self::ttl($path);
     }
 
     /**
@@ -51,6 +56,9 @@ final class PortalReadCache
     {
         if (self::ttl($path) === null || $sessionId === '') {
             return null;
+        }
+        foreach (['_', 't', 'ts', 'timestamp', 'nonce', 'request_id'] as $volatile) {
+            unset($query[$volatile]);
         }
         ksort($query);
         $encoded = md5((string) json_encode($query));
@@ -77,6 +85,7 @@ final class PortalReadCache
             $path === 'dashboard/my-revisions',
             str_starts_with($path, 'dashboard/visuals'),
             $path === 'duty-roster/today' => 15,
+            $path === 'portfolios' => 20,
             default => null,
         };
     }

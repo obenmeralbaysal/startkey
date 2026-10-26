@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { SETTINGS_DENIED, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
+import { SETTINGS_DENIED, settingsHttpDecision, settingsLinks, settingsPageAccess, type OfficeMembership } from "./access.ts";
 
 const office = (role: string, branchId: number | null = null): OfficeMembership => ({
   id: 7,
@@ -46,4 +46,16 @@ test("owner, office manager, and agent see different settings tabs", () => {
   assert.equal(owner.includes("commission"), true);
   assert.equal(owner.includes("rates"), true);
   assert.equal(owner.includes("badges"), true);
+});
+
+test("a me payload decides the settings HTTP status", () => {
+  const me = { user: { office_id: 7 }, offices: [office("agent")] };
+  assert.equal(settingsHttpDecision("commission", me), "deny");
+  assert.equal(settingsHttpDecision("profile", me), "allow");
+  assert.equal(settingsHttpDecision("team", { user: { office_id: 7 }, offices: [office("office_manager")] }), "allow");
+  assert.equal(settingsHttpDecision("rates", { offices: [office("office_manager")] }), "deny");
+  assert.equal(settingsHttpDecision("matchmaking", { offices: [office("office_manager", 4)] }), "deny");
+  assert.equal(settingsHttpDecision("office", { offices: [office("owner")] }), "allow");
+  assert.equal(settingsHttpDecision("commission", {}), "unknown");
+  assert.equal(settingsHttpDecision("badges", { data: { user: { office_id: 7 }, offices: [office("owner")] } }), "allow");
 });
