@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\LookupController;
 use App\Http\Controllers\Api\V1\NewsletterController;
 use App\Http\Controllers\Api\V1\OfficeProxyController;
 use App\Http\Controllers\Api\V1\PortalMediaController;
+use App\Http\Controllers\Api\V1\PortalNetworkController;
 use App\Http\Controllers\Api\V1\PortalSessionController;
 use App\Http\Controllers\Api\V1\PublicPortalController;
 use App\Http\Controllers\Api\V1\SeminarCountController;
@@ -66,6 +67,9 @@ Route::prefix('v1')->group(function () {
         Route::put('portal/offices/{officeId}/users/{userId}/password', [PortalSessionController::class, 'updateOfficeUserPassword'])->whereNumber('officeId')->whereNumber('userId');
         Route::get('portal/desk/offices', [PortalSessionController::class, 'deskOffices']);
         Route::get('portal/desk/stats', [PortalSessionController::class, 'deskStats']);
+        Route::get('portal/network/summary', [PortalNetworkController::class, 'summary']);
+        Route::get('portal/network/offices', [PortalNetworkController::class, 'offices']);
+        Route::get('portal/network/consultants', [PortalNetworkController::class, 'consultants']);
         Route::put('portal/offices/{id}/presence', [PortalSessionController::class, 'officePresence'])->whereNumber('id');
         Route::put('portal/offices/{id}/currency', [PortalSessionController::class, 'officeCurrency'])->whereNumber('id');
         Route::put('portal/offices/{id}/location', [PortalSessionController::class, 'officeLocation'])->whereNumber('id');

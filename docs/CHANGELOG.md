@@ -1,5 +1,7 @@
 ## [2026-10-26]
 
+- **[Backend]**: Franchise yöneticisi ve franchise personeli mevcut portal girişi ile ağı salt okunur görür. Ofis seçimi bu roller için gerekmez; `/me` `context: network` ve `role` döner. Ağ özeti, ofis ve danışman listeleri Reonix’ten gelir. Bu rollerin portal yazma istekleri 403 olur. #2182
+
 - **[Backend]**: Katalog görselleri yerel diskte 6 saat tutulur; üst sistem susarsa eski kopya döner, eşleşen ETag 304 verir. Medya ucu dakikada 600 isteğe çıkar. Galeri küçük resimleri ve aktif olmayan kareler geç yüklenir. #2185
 - **[UI]**: İlan detayındaki danışman fotoğrafı 72px yuvarlak yerine kartın tam genişliğinde, kendi oranıyla gösterilir; kırpılmaz, yüz kesilmez. Telefonda da kart genişliğindedir. #2185
 - **[UI]**: Danışman listesinde ofis kartları yeniden durur. Kişi başına bir kart kalır; ofis satırları aynen geçer ve kişilerle tek Türkçe A-Z sırada karışır. Ofis kartının alt satırı Gayrimenkul Danışmanı (EN Real Estate Consultant, DE Immobilienberater), görseli ofis logosu, bağlantısı ofis detayıdır. Liste sayacı ofisleri de sayar; boş sonuç “0 Danışman Bulundu” kalır. Üst sayaç yalnız kişileri sayar. #2178

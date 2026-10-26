@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Services\ReonixClient;
 use App\Services\ReonixException;
+use App\Support\PortalNetworkAccess;
 use App\Support\PortalPath;
 use App\Support\PortalPayload;
 use App\Support\PortalReadCache;
@@ -135,6 +136,16 @@ class OfficeProxyController extends Controller
         $body = PortalPayload::scrub($raw, $rotated !== null);
         if (! is_array($body)) {
             return response()->json(['message' => __('messages.portal.unavailable')], 422);
+        }
+
+        $role = PortalNetworkAccess::role($session['user']);
+        if ($path === 'me' && $role !== null) {
+            $body['context'] = 'network';
+            $body['role'] = $role;
+            if (isset($body['user']) && is_array($body['user'])) {
+                $body['user']['context'] = 'network';
+                $body['user']['role'] = $role;
+            }
         }
 
         if (is_string($sessionId) && $sessionId !== '') {
